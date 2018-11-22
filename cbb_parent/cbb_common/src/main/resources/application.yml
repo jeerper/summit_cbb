@@ -1,7 +1,2 @@
 server:
   port: 8088
-spring:
-  data:
-    elasticsearch:
-      cluster-name: elasticsearch
-      cluster-nodes: 127.0.0.1:9300
