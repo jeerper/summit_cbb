@@ -12,3 +12,9 @@ disconf/
 *.pdb
 *.db
 backend/.factorypath
+cbb_parent/cbb_server/backend/.factorypath
+cbb_parent/cbb_pptn/backend/.factorypath
+cbb_parent/cbb_apigateway/backend/.factorypath
+cbb_parent/cbb_apigateway/backend/.springBeans
+cbb_parent/cbb_common/.factorypath
+cbb_parent/cbb_demo/backend/.factorypath
