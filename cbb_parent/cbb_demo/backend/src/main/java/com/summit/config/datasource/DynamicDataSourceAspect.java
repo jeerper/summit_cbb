@@ -1,16 +1,19 @@
 package com.summit.config.datasource;
 
+import java.lang.reflect.Method;
+
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.After;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.reflect.MethodSignature;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
-import java.lang.reflect.Method;
 
 
 @Aspect
 @Component
+@Order(value=-1)
 public class DynamicDataSourceAspect {
 	 @Before("@annotation(SwitchDataSource)")
 	    public void beforeSwitchDS(JoinPoint point){

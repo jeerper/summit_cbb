@@ -3,7 +3,7 @@
  
 <mapper namespace="com.summit.dao.DemoDao">
        <!-- 查询所有user -->
-       <select id="getAllUser" resultType="com.summit.domain.User">
+       <select id="getAllUser1" resultType="com.summit.domain.User">
               select * from user
        </select>
 </mapper>

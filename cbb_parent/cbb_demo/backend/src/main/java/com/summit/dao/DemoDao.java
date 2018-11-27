@@ -2,12 +2,10 @@ package com.summit.dao;
 
 import java.util.List;
 
-import org.apache.ibatis.annotations.Mapper;
-
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.summit.domain.User;
 
-@Mapper
-public interface DemoDao {
+public interface DemoDao extends BaseMapper<User> {
     //使用xml配置形式查询
-    public List<User> getAllUser();
+    public List<User> getAllUser1();
 }

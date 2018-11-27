@@ -16,14 +16,14 @@ public class UserService {
 
 	@SwitchDataSource("master")
     public List<User> getAllUser1(){
-		System.out.println(demoDao.getAllUser());
-        return demoDao.getAllUser();
+		System.out.println(demoDao.getAllUser1());
+        return demoDao.getAllUser1();
     }
     //使用数据源2查询
 	@SwitchDataSource("slave")
     public List<User> getAllUser2(){
-		System.out.println(demoDao.getAllUser());
-        return demoDao.getAllUser();
+		System.out.println(demoDao.getAllUser1());
+        return demoDao.getAllUser1();
     }
 
 }
