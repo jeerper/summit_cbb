@@ -5,6 +5,6 @@
     <artifactId>cbb_apigateway</artifactId>
     <version>1.0.0.RELEASE</version>
   </parent>
-  <artifactId>${project.parent.artifactId}_backend</artifactId>
+    <artifactId>${project.parent.artifactId}_backend</artifactId>
 
 </project>

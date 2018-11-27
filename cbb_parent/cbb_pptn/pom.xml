@@ -8,11 +8,13 @@
   <groupId>com.summit.pptn</groupId>
   <artifactId>cbb_pptn</artifactId>
   <packaging>pom</packaging>
- 
  <dependencies>
 		<dependency>
 			<groupId>com.summit.common</groupId>
 			<artifactId>cbb_common</artifactId>
 		</dependency>
-	</dependencies>
+	</dependencies> 
+ <modules>
+ 	<module>backend</module>
+ </modules>
 </project>

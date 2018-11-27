@@ -1,2 +1,25 @@
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/
 server:
-  port: 8088
+  port: 8769
+spring:
+  application:
+    name: service-zuul
+  redis:
+    host: 127.0.0.1
+zuul:
+  routes:
+    api-a:
+      path: /api-a/**
+      serviceId: service-ribbon
+    api-b:
+      path: /api-b/**
+      serviceId: service-feign
+    auth:
+      path: /auth/**
+      sensitiveHeaders:
+      serviceId:  auth-server
+  add-proxy-headers: true
+  

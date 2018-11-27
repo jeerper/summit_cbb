@@ -7,19 +7,42 @@
 		<version>1.0.0.RELEASE</version>
 	</parent>
 	<groupId>com.summit.apigateway</groupId>
-
 	<artifactId>cbb_apigateway</artifactId>
 	<packaging>pom</packaging>
-
 	<dependencies>
 		<dependency>
 			<groupId>com.summit.common</groupId>
 			<artifactId>cbb_common</artifactId>
 		</dependency>
-	</dependencies>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-security</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-security</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.security.oauth</groupId>
+			<artifactId>spring-security-oauth2</artifactId>
+			<version>2.3.2.RELEASE</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-jwt</artifactId>
+			<version>1.0.9.RELEASE</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-oauth2</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-netflix-zuul</artifactId>
+		</dependency>
 
+	</dependencies>
 	<modules>
 		<module>backend</module>
-		<module>frontend</module>
 	</modules>
 </project>

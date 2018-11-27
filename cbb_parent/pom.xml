@@ -33,6 +33,8 @@
 				<spring.version>5.0.7.RELEASE</spring.version>
 				<spring.data.elasticsearch.version>3.1.0.RELEASE</spring.data.elasticsearch.version>
 				<common.version>1.0.0.RELEASE</common.version>
+				        <spring-cloud.version>Finchley.SR2</spring-cloud.version>
+				
 			</properties>
 		</profile>
 	</profiles>
@@ -45,7 +47,15 @@
 			<artifactId>cbb_common</artifactId>
 			<version>${common.version}</version>
 		</dependency>
+		   <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-dependencies</artifactId>
+                <version>${spring-cloud.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
 	</dependencies>
+
 	</dependencyManagement>
 
 	<build>
@@ -139,9 +149,10 @@
   
   
   <modules>
-  	<module>cbb_apigateway</module>
-  	<module>cbb_common</module>
   	<module>cbb_demo</module>
+  	<module>cbb_common</module>
+  	<module>cbb_apigateway</module>
+  	<module>cbb_server</module>
   	<module>cbb_pptn</module>
   </modules>
 </project>
