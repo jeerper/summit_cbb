@@ -163,8 +163,8 @@
   <modules>
   	<module>cbb_demo</module>
   	<module>cbb_common</module>
-  	<module>cbb_apigateway</module>
-  	<module>cbb_server</module>
+  	<module>cbb_api_gateway_es</module>
+  	<module>cbb_register_center</module>
   	<module>cbb_pptn</module>
   </modules>
 </project>

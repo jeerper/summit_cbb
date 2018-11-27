@@ -6,7 +6,7 @@ server:
   port: 8765
 spring:
   application:
-    name: service-feign
+    name: service-demo
   datasource:
     master:
       jdbc-url: jdbc:mysql://127.0.0.1:3306/db1?useUnicode=true&characterEncoding=utf-8&useSSL=false

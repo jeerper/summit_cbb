@@ -7,7 +7,7 @@
 		<version>1.0.0.RELEASE</version>
 	</parent>
 	<groupId>com.summit.apigateway</groupId>
-	<artifactId>cbb_apigateway</artifactId>
+	<artifactId>cbb_api_gateway_es</artifactId>
 	<packaging>pom</packaging>
 	<dependencies>
 		<dependency>

@@ -15,8 +15,8 @@ zuul:
       path: /api/pptn/**
       serviceId: service-pptn
     api-b:
-      path: /api/feign/**
-      serviceId: service-feign
+      path: /api/demo/**
+      serviceId: service-demo
     auth:
       path: /auth/**
       sensitiveHeaders:

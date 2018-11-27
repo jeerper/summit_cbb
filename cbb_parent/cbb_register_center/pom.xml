@@ -6,7 +6,7 @@
     <version>1.0.0.RELEASE</version>
   </parent>
   <groupId>com.summit.server</groupId>
-  <artifactId>cbb_server</artifactId>
+  <artifactId>cbb_register_center</artifactId>
   <packaging>pom</packaging>
   
     <dependencies>
