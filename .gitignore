@@ -11,3 +11,4 @@ log/
 disconf/
 *.pdb
 *.db
+backend/.factorypath
