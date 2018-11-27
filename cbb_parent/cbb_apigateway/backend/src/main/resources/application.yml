@@ -12,10 +12,10 @@ spring:
 zuul:
   routes:
     api-a:
-      path: /api-a/**
-      serviceId: service-ribbon
+      path: /api/pptn/**
+      serviceId: service-pptn
     api-b:
-      path: /api-b/**
+      path: /api/feign/**
       serviceId: service-feign
     auth:
       path: /auth/**

@@ -6,5 +6,7 @@
     <version>1.0.0.RELEASE</version>
   </parent>
     <artifactId>${project.parent.artifactId}_backend</artifactId>
-
+<build>
+	<finalName>backend</finalName>
+</build>
 </project>

@@ -12,10 +12,10 @@ import org.springframework.web.client.RestTemplate;
 @EnableZuulProxy
 @EnableEurekaClient
 @EnableDiscoveryClient
-public class DemoApplication {
+public class MainAction {
 
     public static void main(String[] args) {
-        SpringApplication.run(DemoApplication.class, args);
+        SpringApplication.run(MainAction.class, args);
     }
 
     @Bean
