@@ -166,5 +166,6 @@
   	<module>cbb_api_gateway_es</module>
   	<module>cbb_register_center</module>
   	<module>cbb_pptn</module>
+  	<module>cbb_weather</module>
   </modules>
 </project>

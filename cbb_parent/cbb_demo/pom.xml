@@ -1,35 +1,37 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <parent>
-    <groupId>com.summit</groupId>
-    <artifactId>cbb_parent</artifactId>
-    <version>1.0.0.RELEASE</version>
-  </parent>
-  <artifactId>cbb_demo</artifactId>
-  <packaging>pom</packaging>
- 
- <dependencies>
-	 <dependency>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>com.summit</groupId>
+		<artifactId>cbb_parent</artifactId>
+		<version>1.0.0.RELEASE</version>
+	</parent>
+	<artifactId>cbb_demo</artifactId>
+	<packaging>pom</packaging>
+
+	<dependencies>
+		<dependency>
 			<groupId>com.summit.common</groupId>
 			<artifactId>cbb_common</artifactId>
 		</dependency>
-			<!--mybatis -->
+		<!--mybatis -->
 		<dependency>
 			<groupId>com.baomidou</groupId>
 			<artifactId>mybatis-plus-boot-starter</artifactId>
 			<version>3.0.5</version>
 		</dependency>
-			<dependency>
+		<dependency>
 			<groupId>mysql</groupId>
 			<artifactId>mysql-connector-java</artifactId>
 		</dependency>
- <dependency>
-    <groupId>org.aspectj</groupId>
-    <artifactId>aspectjweaver</artifactId>
-</dependency>
-	 
-	</dependencies> 
-  <modules>
-  	<module>backend</module>
-  </modules>
+		<dependency>
+			<groupId>org.aspectj</groupId>
+			<artifactId>aspectjweaver</artifactId>
+		</dependency>
+
+	</dependencies>
+	<modules>
+		<module>backend</module>
+	</modules>
 </project>
