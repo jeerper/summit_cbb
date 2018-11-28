@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>com.summit.apigateway</groupId>
-    <artifactId>cbb_apigateway</artifactId>
+    <artifactId>cbb_api_gateway_es</artifactId>
     <version>1.0.0.RELEASE</version>
   </parent>
     <artifactId>${project.parent.artifactId}_backend</artifactId>
