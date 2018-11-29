@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>com.summit.server</groupId>
-    <artifactId>cbb_server</artifactId>
+    <artifactId>cbb_register_center</artifactId>
     <version>1.0.0.RELEASE</version>
   </parent>
 <artifactId>${project.parent.artifactId}_backend</artifactId>
