@@ -5,12 +5,11 @@ target/
 .DS_Store
 *.iml
 .idea/
-logs/
-log/
 *.versionsBackup
 disconf/
 *.pdb
 *.db
+logs/
 backend/.factorypath
 cbb_parent/cbb_server/backend/.factorypath
 cbb_parent/cbb_pptn/backend/.factorypath

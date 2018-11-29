@@ -21,8 +21,9 @@ import com.summit.util.SysConstants;
 import net.sf.json.JSONObject;
 
 
-@Service
+
 @Transactional
+@Service
 public class DictionaryService {
 	@Autowired
 	private UserRepository ur;

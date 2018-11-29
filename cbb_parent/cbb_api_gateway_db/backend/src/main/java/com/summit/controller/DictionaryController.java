@@ -24,7 +24,7 @@ import com.summit.util.SysConstants;
 @RequestMapping("dictionary")
 public class DictionaryController {
 	@Autowired
-	private DictionaryService ds;
+	private DictionaryService dictionaryService;
 	@Autowired
 	ILogUtil logUtil;
 
@@ -35,7 +35,7 @@ public class DictionaryController {
 		LogBean logBean = new LogBean();
 		try {
 			logBean = logUtil.insertLog(request,"1", "数据字典新增");
-			res = ds.add(dictionaryBean);
+			res = dictionaryService.add(dictionaryBean);
 		} catch (Exception e) {
 			e.printStackTrace();
 			logBean.setActionFlag("0");
@@ -52,7 +52,7 @@ public class DictionaryController {
 		LogBean logBean = new LogBean();
 		try {
 			logBean = logUtil.insertLog(request,"1", "数据字典删除");
-			res = ds.del(codes);
+			res = dictionaryService.del(codes);
 		} catch (Exception e) {
 			e.printStackTrace();
 			logBean.setActionFlag("0");
@@ -69,7 +69,7 @@ public class DictionaryController {
 		LogBean logBean = new LogBean();
 		try {
 			logBean = logUtil.insertLog(request,"1", "数据字典修改");
-			res = ds.edit(dictionaryBean);
+			res = dictionaryService.edit(dictionaryBean);
 		} catch (Exception e) {
 			e.printStackTrace();
 			logBean.setActionFlag("0");
@@ -86,7 +86,7 @@ public class DictionaryController {
 		LogBean logBean = new LogBean();
 		try {
 			logBean = logUtil.insertLog(request,"1", "数据字典按照编码查询");
-			res = ds.queryByCode(code);
+			res = dictionaryService.queryByCode(code);
 		} catch (Exception e) {
 			e.printStackTrace();
 			logBean.setActionFlag("0");
@@ -103,7 +103,7 @@ public class DictionaryController {
 		LogBean logBean = new LogBean();
 		try {
 			logBean = logUtil.insertLog(request,"1", "数据字典查询树形结构");
-			res = ds.queryTree();
+			res = dictionaryService.queryTree();
 		} catch (Exception e) {
 			e.printStackTrace();
 			logBean.setActionFlag("0");
@@ -123,7 +123,7 @@ public class DictionaryController {
 			logBean = logUtil.insertLog(request,"1", "数据字典分页查询");
 			start = (start == null) ? 1 : start;
 			limit = (limit == null) ? SysConstants.PAGE_SIZE : limit;
-			res = ds.queryByPage(start, limit, pId);
+			res = dictionaryService.queryByPage(start, limit, pId);
 		} catch (Exception e) {
 			e.printStackTrace();
 			logBean.setActionFlag("0");
@@ -140,7 +140,7 @@ public class DictionaryController {
 		LogBean logBean = new LogBean();
 		try {
 			logBean = logUtil.insertLog(request,"1", "数据字典按照父ID查询");
-			res = ds.queryByPid(pId);
+			res = dictionaryService.queryByPid(pId);
 		} catch (Exception e) {
 			e.printStackTrace();
 			logBean.setActionFlag("0");
