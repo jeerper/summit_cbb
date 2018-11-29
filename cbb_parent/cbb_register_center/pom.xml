@@ -8,7 +8,6 @@
   <groupId>com.summit.server</groupId>
   <artifactId>cbb_register_center</artifactId>
   <packaging>pom</packaging>
-  
     <dependencies>
         <dependency>
             <groupId>org.springframework.cloud</groupId>
