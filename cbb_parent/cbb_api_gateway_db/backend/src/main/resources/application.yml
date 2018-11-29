@@ -1,0 +1,31 @@
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/
+server:
+  port: 8769
+spring:
+  application:
+    name: service-zuul
+  datasource:
+    master:
+      jdbc-url: jdbc:sqlserver://192.168.141.113:1433;DatabaseName=watf20181112
+      driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
+      username: sa
+      password: summit123
+  redis:
+    host: 127.0.0.1
+zuul:
+  routes:
+    api-a:
+      path: /api/pptn/**
+      serviceId: service-pptn
+    api-b:
+      path: /api/demo/**
+      serviceId: service-demo
+    auth:
+      path: /auth/**
+      sensitiveHeaders:
+      serviceId:  auth-server
+  add-proxy-headers: true
+  
