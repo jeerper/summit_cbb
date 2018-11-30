@@ -9,6 +9,14 @@
   <artifactId>cbb_api_gateway_db</artifactId>
   <packaging>pom</packaging>
 
+	<repositories>
+		<repository>
+			<id>java.net</id>
+			<url>http://clojars.org/repo/</url>
+		</repository>
+	</repositories>
+
+
 <dependencies>
 		<dependency>
 			<groupId>com.summit.common</groupId>
