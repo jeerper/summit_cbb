@@ -36,6 +36,7 @@ if [ ! -d ${fileStoragePath}/${projectName} ]
 then
   echo "装载java后台启动程序包装模板"
   cp -rf ${java_service_wrapper_template_path} ${fileStoragePath}/${projectName}
+  sed -i 's,${AppName},'${projectName}',g' ${fileStoragePath}/${projectName}/conf/wrapper.conf
 fi
 
 
