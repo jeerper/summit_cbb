@@ -12,13 +12,23 @@ sed -i 's,${spring_boot_admin_username},'${spring_boot_admin_username}',g' ./.en
 sed -i 's,${spring_boot_admin_password},'${spring_boot_admin_password}',g' ./.env
 
 
-echo "打包cbb_store_server"
+echo "编译cbb_register_center"
 
 cd ${WORKSPACE}/cbb_parent
 
 mvn clean
 
 mvn install
+
+
+cd ${WORKSPACE}/cbb_parent/${projectName}/deploy
+
+echo "部署cbb_register_center(Docker版本)"
+
+docker-compose -p ${projectName} down  --rmi all
+
+docker-compose -p ${projectName} up  -d
+
 
 #echo "部署cbb_store_server"
 #
@@ -45,11 +55,7 @@ mvn install
 #
 #
 #
-#cd ${WORKSPACE}/deploy
-#
-#docker-compose -p ${projectName} down  --rmi all
-#
-#docker-compose -p ${projectName} up  -d
+
 
 
 
