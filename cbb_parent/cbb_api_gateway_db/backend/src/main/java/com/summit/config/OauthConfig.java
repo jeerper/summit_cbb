@@ -66,11 +66,11 @@ public class OauthConfig {
 		@Override
 		public void configure(HttpSecurity http) throws Exception {
 			// 保险起见，防止被主过滤器链路拦截
-			//http.requestMatchers().antMatchers("/api*/**").and().authorizeRequests().anyRequest().authenticated().and()
-			//.authorizeRequests().antMatchers("/api*/**").access("#oauth2.hasScope('get_user_info')");
+			http.requestMatchers().antMatchers("/api*/**").and().authorizeRequests().anyRequest().authenticated().and()
+			.authorizeRequests().antMatchers("/api*/**").access("#oauth2.hasScope('get_user_info')");
 
 		
-			http.authorizeRequests().antMatchers("/demo/**").access("#oauth2.hasScope('get_user_info')");
+			//http.authorizeRequests().antMatchers("/demo/**").access("#oauth2.hasScope('get_user_info')");
 		}
 	}
 

@@ -6,7 +6,11 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import javax.sql.DataSource;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -35,6 +39,15 @@ public class UserService {
 	@Autowired
 	private UserBeanRowMapper ubr;
 
+	
+	@Autowired
+	@Qualifier("masterJdbcTemplate")
+	private JdbcTemplate masterJdbcTemplate;
+
+	@Autowired
+	@Qualifier("masterDataSource")
+	private DataSource dataSource;
+
 	public Map<String, Object> add(UserBean userBean) {
         BCryptPasswordEncoder encoder =new BCryptPasswordEncoder();
 		String sql = "SELECT * FROM SYS_USER WHERE USERNAME = ?";
@@ -43,7 +56,7 @@ public class UserService {
 			return st.error("登陆名" + userBean.getUserName() + "已存在！");
 		}
 		sql = "INSERT INTO [SYS_USER] (USERNAME,NAME,PASSWORD,IS_ENABLED,EMAIL,PHONE_NUMBER,STATE,NOTE,LAST_UPDATE_TIME) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-		ur.jdbcTemplate.update(sql, userBean.getUserName(), userBean.getName(),
+		masterJdbcTemplate.update(sql, userBean.getUserName(), userBean.getName(),
 				encoder.encode(userBean.getPassword()),
 				userBean.getIsEnabled(), userBean.getEmail(), userBean
 						.getPhoneNumber(), 1, userBean.getNote(), st.DTFormat(

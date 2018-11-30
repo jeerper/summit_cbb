@@ -9,7 +9,6 @@ import javax.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -24,9 +23,7 @@ import com.summit.util.SysConstants;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
 import net.sf.json.JSONObject;
-
 
 @Api("user模块")
 @CrossOrigin(origins = "*", maxAge = 3600)
@@ -45,9 +42,7 @@ public class UserController {
 	@RequestMapping(value = "/add", method = RequestMethod.POST)
 	@ResponseBody
 	@ApiOperation(value = "新增用户", notes = "用于application/json格式")
-	public Map<String, Object> add(
-			@ApiParam(value = "用戶信息example:{\"USERNAME\":\"zhangsan\",\"PASSWORD\":\"888888\",\"EMAIL\":\"@qq.com\",\"NAME\":\"zhangsan\",\"PHONE_NUMBER\":\"123456\",\"NOTE\": \"备注 \"}", required = true) @RequestBody UserBean userBean,
-			HttpServletRequest request) {
+	public Map<String, Object> add(UserBean userBean, HttpServletRequest request) {
 		Map<String, Object> res = new HashMap<String, Object>();
 		LogBean logBean = new LogBean();
 		try {
