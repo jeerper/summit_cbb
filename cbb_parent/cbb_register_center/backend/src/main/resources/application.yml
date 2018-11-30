@@ -1,15 +1,52 @@
-server:
-  port: 8761
-
-eureka:
-  instance:
-    hostname: localhost
-  client:
-    registerWithEureka: false
-    fetchRegistry: false
-    serviceUrl:
-      defaultZone: http://${eureka.instance.hostname}:${server.port}/eureka/
-
 spring:
   application:
     name: eurka-server
+  #强制检测运行环境编码格式,不符合设置则退出当前程序
+  mandatory-file-encoding: UTF-8
+  boot:
+    admin:
+      context-path: /admin
+      monitor:
+        #被监控的应用信息的更新频率，单位毫秒
+        period: 2000ms
+        #被监控的应用信息的过期时间，单位毫秒
+        status-lifetime: 2000ms
+      ui:
+        title: 共享组件平台服务状态监控
+        brand: <img src="summit-banner-icon.svg" style="max-height:1.5rem"><span>共享组件平台服务状态监控</span>
+  security:
+    user:
+      name: "${spring_boot_admin_username:ucp}"
+      password: "${spring_boot_admin_password:summit}"
+
+server:
+  port: "${WebServer_Port:8761}"
+
+
+eureka:
+  server:
+    #注册中心自我保护
+    enable-self-preservation: false
+  instance:
+    #使用IP注册服务
+    prefer-ip-address: true
+    metadata-map:
+      name: 共享组件平台注册中心
+      user.name: "${spring.security.user.name}"
+      user.password: "${spring.security.user.password}"
+  client:
+    healthcheck:
+      enabled: true
+    serviceUrl:
+      defaultZone: http://${spring.security.user.name}:${spring.security.user.password}@localhost:${server.port}/eureka/
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      show-details: ALWAYS
+logging:
+  file: logs/all.log
