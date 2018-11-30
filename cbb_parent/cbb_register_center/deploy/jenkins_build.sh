@@ -2,7 +2,7 @@
 #项目名称
 projectName="cbb_register_center"
 
-source ${WORKSPACE}/env/evn.sh
+source ${WORKSPACE}/env/env.sh
 
 
 sed -i 's/${WebServer_Port}/'${Registry_Center_Port}'/g' ./.env
