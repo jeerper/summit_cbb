@@ -30,6 +30,17 @@ docker-compose -p ${projectName} down  --rmi all
 docker-compose -p ${projectName} up  -d
 
 
+echo "打包cbb_register_center(Windows版本)"
+
+if [ ! -d ${fileStoragePath}/${projectName} ]
+then
+  echo "装载java后台启动程序包装模板"
+  cp -rf java_service_wrapper_template_path ${fileStoragePath}/${projectName}
+fi
+
+
+
+
 #echo "部署cbb_store_server"
 #
 #if [ ! -d ${fileStoragePath} ]
