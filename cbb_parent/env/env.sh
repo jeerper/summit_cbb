@@ -3,7 +3,7 @@
 #此处用于存放公共变量
 
 #注册中心端口
-Registry_Center_Port=30008
+Registry_Center_Port=45000
 
 
 
