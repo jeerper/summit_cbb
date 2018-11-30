@@ -5,9 +5,9 @@ projectName="cbb_register_center"
 source ${WORKSPACE}/cbb_parent/env/env.sh
 
 
-sed -i 's/${WebServer_Port}/'${Registry_Center_Port}'/g' ./.env
-sed -i 's/${spring_boot_admin_username}/'${spring_boot_admin_username}'/g' ./.env
-sed -i 's/${spring_boot_admin_password}/'${spring_boot_admin_password}'/g' ./.env
+sed -i 's,${WebServer_Port},'${Registry_Center_Port}',g' ./.env
+sed -i 's,${spring_boot_admin_username},'${spring_boot_admin_username}',g' ./.env
+sed -i 's,${spring_boot_admin_password},'${spring_boot_admin_password}',g' ./.env
 sed -i 's,${Registry_Center_URL},'${Registry_Center_URL}',g' ./.env
 
 echo "打包cbb_store_server"
