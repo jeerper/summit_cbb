@@ -4,7 +4,7 @@ services:
     build:
       context: ../backend
       dockerfile: Dockerfile-backend
-    image: cbb_register_center/backend:1.0
+    image: ${projectName}/backend:1.0
     restart: always
     env_file:
     - .env
