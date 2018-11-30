@@ -2,7 +2,7 @@
 #项目名称
 projectName="cbb_register_center"
 
-source ${WORKSPACE}/env/env.sh
+source ${WORKSPACE}/cbb_parent/env/env.sh
 
 
 sed -i 's/${WebServer_Port}/'${Registry_Center_Port}'/g' ./.env
@@ -11,7 +11,7 @@ sed -i 's/${spring_boot_admin_password}/'${spring_boot_admin_password}'/g' ./.en
 
 echo "打包cbb_store_server"
 
-cd ${WORKSPACE}
+cd ${WORKSPACE}/cbb_parent
 
 mvn clean
 
