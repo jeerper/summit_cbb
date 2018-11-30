@@ -44,38 +44,3 @@ cd ${WORKSPACE}/cbb_parent/${projectName}/backend/target
 cp -rf backend.jar ${fileStoragePath}/${projectName}/bin
 cp -rf lib ${fileStoragePath}/${projectName}/bin/lib
 cp -rf config ${fileStoragePath}/${projectName}/bin/config
-
-
-
-#echo "部署cbb_store_server"
-#
-#if [ ! -d ${fileStoragePath} ]
-#then
-#  echo "初始化基本文件夹"
-#  mkdir  ${fileStoragePath}
-#fi
-#
-#
-#if [ ! -d ${java_service_wrapper_template_path} ]
-#then
-#  echo "初始化java后台启动程序包装模板文件夹"
-#  cp -rf ${WORKSPACE}/deploy/java_service_wrapper_template ${java_service_wrapper_template_path}
-#fi
-#
-#
-#if [ ! -d ${java_jdk_path} ]
-#then
-#  echo "初始化jdk环境文件夹"
-#  cp -rf ${WORKSPACE}/deploy/jdk ${java_jdk_path}
-#fi
-#
-#
-#
-#
-
-
-
-
-
-
-
