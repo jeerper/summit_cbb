@@ -17,4 +17,4 @@ spring_boot_admin_password=Summit2018
 #注册中心IP
 Registry_Center_IP=172.17.2.226
 #注册中心URL
-Registry_Center_URL=http://${spring_boot_admin_username}:${spring_boot_admin_password}@${Registry_Center_IP}:${Registry_Center_Port}/eureka/
+Registry_Center_URL="http://${spring_boot_admin_username}:${spring_boot_admin_password}@${Registry_Center_IP}:${Registry_Center_Port}/eureka/"
