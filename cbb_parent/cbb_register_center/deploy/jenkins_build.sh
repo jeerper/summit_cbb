@@ -14,9 +14,9 @@ echo "打包cbb_store_server"
 
 cd ${WORKSPACE}/cbb_parent
 
-mvn clean
-
-mvn install
+#mvn clean
+#
+#mvn install
 
 #echo "部署cbb_store_server"
 #
