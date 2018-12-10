@@ -30,6 +30,24 @@ public class UserBean implements UserDetails, Serializable {
 
     private Collection<GrantedAuthority> authorities;
 
+    public UserBean() {
+    }
+
+    public UserBean(String name, String userName, String password,
+                    String email, String phoneNumber, Integer isEnabled, Integer state,
+                    String lastUpdateTime, String note) {
+        super();
+        this.name = name;
+        this.userName = userName;
+        this.password = password;
+        this.email = email;
+        this.phoneNumber = phoneNumber;
+        this.isEnabled = isEnabled;
+        this.state = state;
+        this.lastUpdateTime = lastUpdateTime;
+        this.note = note;
+    }
+
 
     public String getName() {
         return name;
@@ -39,6 +57,9 @@ public class UserBean implements UserDetails, Serializable {
         this.name = name;
     }
 
+    public String getUserName() {
+        return userName;
+    }
 
     public void setUserName(String userName) {
         this.userName = userName;

@@ -1,14 +1,10 @@
 package com.summit.handle;
 
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.summit.domain.log.LogBean;
+import com.summit.service.function.FunctionService;
+import com.summit.service.log.ILogUtil;
+import com.summit.util.UserContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,11 +12,13 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.web.client.RestTemplate;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.summit.config.UserContext;
-import com.summit.domain.log.LogBean;
-import com.summit.service.function.FunctionService;
-import com.summit.service.log.ILogUtil;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * 

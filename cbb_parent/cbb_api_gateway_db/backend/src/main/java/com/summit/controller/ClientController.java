@@ -1,7 +1,11 @@
 package com.summit.controller;
 
-import java.util.List;
-
+import com.summit.domain.SummitClient;
+import com.summit.service.JdbcClientImpl;
+import com.summit.util.SummitTools;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.oauth2.provider.ClientDetails;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -12,13 +16,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.summit.config.JdbcClientImpl;
-import com.summit.domain.SummitClient;
-import com.summit.util.SummitTools;
-
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import java.util.List;
 
 /**
  * 

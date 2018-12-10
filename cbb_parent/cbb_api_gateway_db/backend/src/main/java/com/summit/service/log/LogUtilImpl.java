@@ -1,14 +1,9 @@
 package com.summit.service.log;
 
-import java.net.InetAddress;
-import java.net.UnknownHostException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.sql.DataSource;
-
+import com.summit.domain.log.LogBean;
+import com.summit.repository.UserRepository;
+import com.summit.util.SummitTools;
+import com.summit.util.UserContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,10 +12,13 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
-import com.summit.config.UserContext;
-import com.summit.domain.log.LogBean;
-import com.summit.repository.UserRepository;
-import com.summit.util.SummitTools;
+import javax.servlet.http.HttpServletRequest;
+import javax.sql.DataSource;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 @Component
 @Service
 public class LogUtilImpl implements ILogUtil {

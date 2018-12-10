@@ -1,13 +1,14 @@
 package com.summit.service.user;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-
-import javax.sql.DataSource;
-
+import com.summit.domain.user.UserBean;
+import com.summit.domain.user.UserBeanRowMapper;
+import com.summit.repository.UserRepository;
+import com.summit.util.Page;
+import com.summit.util.SummitTools;
+import com.summit.util.SummitTools.DateTimeType;
+import com.summit.util.SysConstants;
+import com.summit.util.UserContext;
+import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -17,16 +18,12 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.summit.config.UserContext;
-import com.summit.domain.user.UserBean;
-import com.summit.domain.user.UserBeanRowMapper;
-import com.summit.repository.UserRepository;
-import com.summit.util.Page;
-import com.summit.util.SummitTools;
-import com.summit.util.SummitTools.DateTimeType;
-import com.summit.util.SysConstants;
-
-import net.sf.json.JSONObject;
+import javax.sql.DataSource;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 @Service
 @Transactional
