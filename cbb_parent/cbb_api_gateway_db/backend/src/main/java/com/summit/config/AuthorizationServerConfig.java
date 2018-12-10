@@ -19,9 +19,8 @@
 
 package com.summit.config;
 
-import com.pig4cloud.pigx.common.core.constant.SecurityConstants;
-import com.pig4cloud.pigx.common.security.service.PigxUserDetailsService;
 import com.summit.common.constant.CommonConstant;
+import com.summit.domain.user.UserBean;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -59,7 +58,7 @@ import java.util.Map;
 @EnableAuthorizationServer
 public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdapter {
 	private final DataSource dataSource;
-	private final PigxUserDetailsService pigxUserDetailsService;
+	private final UserDetailsServiceImpl userDetailsServiceImpl;
 	private final AuthenticationManager authenticationManager;
 	private final RedisConnectionFactory redisConnectionFactory;
 
@@ -86,7 +85,7 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
 			.allowedTokenEndpointRequestMethods(HttpMethod.GET, HttpMethod.POST)
 			.tokenStore(tokenStore())
 			.tokenEnhancer(tokenEnhancerChain)
-			.userDetailsService(pigxUserDetailsService)
+			.userDetailsService(userDetailsServiceImpl)
 			.authenticationManager(authenticationManager)
 			.reuseRefreshTokens(false)
 			.exceptionTranslator(new DefaultWebResponseExceptionTranslator());
@@ -124,9 +123,9 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
 		return (accessToken, authentication) -> {
 			final Map<String, Object> additionalInfo = new HashMap<>(2);
 			additionalInfo.put("license", CommonConstant.LICENSE);
-			UserDetailsImpl user = (UserDetailsImpl) authentication.getUserAuthentication().getPrincipal();
+			UserBean user = (UserBean) authentication.getUserAuthentication().getPrincipal();
 			if (user != null) {
-				additionalInfo.put("userId", user.getUserId());
+				additionalInfo.put("username", user.getUsername());
 			}
 			((DefaultOAuth2AccessToken) accessToken).setAdditionalInformation(additionalInfo);
 			return accessToken;

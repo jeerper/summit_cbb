@@ -1,148 +1,153 @@
 package com.summit.domain.user;
 
-import java.io.Serializable;
-import java.util.Collection;
-
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.io.Serializable;
+import java.util.Collection;
+
 public class UserBean implements UserDetails, Serializable {
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
-	private String name;
-	private String userName;
-	private String password;
-	private String email;
-	private String phoneNumber;
-	private Integer isEnabled;
-	private Integer state;
-	private String lastUpdateTime;
-	private String note;
+    private static final long serialVersionUID = 1380548705685500354L;
 
-	private Collection<GrantedAuthority> authorities;
+    private String name;
+    private String userName;
+    private String password;
+    private String email;
+    private String phoneNumber;
+    private Integer isEnabled;
+    private Integer state;
+    private String lastUpdateTime;
+    private String note;
+    /**
+     * 权限标识集合
+     */
+    private String[] permissions;
 
-	public UserBean() {
-		super();
-	}
+    /**
+     * 角色集合
+     */
+    private String[] roles;
 
-	public UserBean(String name, String userName, String password,
-			String email, String phoneNumber, Integer isEnabled, Integer state,
-			String lastUpdateTime, String note) {
-		super();
-		this.name = name;
-		this.userName = userName;
-		this.password = password;
-		this.email = email;
-		this.phoneNumber = phoneNumber;
-		this.isEnabled = isEnabled;
-		this.state = state;
-		this.lastUpdateTime = lastUpdateTime;
-		this.note = note;
-	}
+    private Collection<GrantedAuthority> authorities;
 
-	public String getName() {
-		return name;
-	}
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public String getUserName() {
-		return userName;
-	}
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	public void setUserName(String userName) {
-		this.userName = userName;
-	}
 
-	public String getPassword() {
-		return password;
-	}
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
 
-	public void setPassword(String password) {
-		this.password = password;
-	}
+    @Override
+    public String getPassword() {
+        return password;
+    }
 
-	public String getEmail() {
-		return email;
-	}
+    public void setPassword(String password) {
+        this.password = password;
+    }
 
-	public void setEmail(String email) {
-		this.email = email;
-	}
+    public String getEmail() {
+        return email;
+    }
 
-	public String getPhoneNumber() {
-		return phoneNumber;
-	}
+    public void setEmail(String email) {
+        this.email = email;
+    }
 
-	public void setPhoneNumber(String phoneNumber) {
-		this.phoneNumber = phoneNumber;
-	}
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
 
-	public Integer getIsEnabled() {
-		return isEnabled;
-	}
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
 
-	public void setIsEnabled(Integer isEnabled) {
-		this.isEnabled = isEnabled;
-	}
+    public Integer getIsEnabled() {
+        return isEnabled;
+    }
 
-	public Integer getState() {
-		return state;
-	}
+    public void setIsEnabled(Integer isEnabled) {
+        this.isEnabled = isEnabled;
+    }
 
-	public Collection<GrantedAuthority> getAuthorities() {
-		return authorities;
-	}
+    public Integer getState() {
+        return state;
+    }
 
-	public void setAuthorities(Collection<GrantedAuthority> authorities) {
-		this.authorities = authorities;
-	}
+    public void setState(Integer state) {
+        this.state = state;
+    }
 
-	public void setState(Integer state) {
-		this.state = state;
-	}
+    @Override
+    public Collection<GrantedAuthority> getAuthorities() {
+        return authorities;
+    }
 
-	public String getLastUpdateTime() {
-		return lastUpdateTime;
-	}
+    public void setAuthorities(Collection<GrantedAuthority> authorities) {
+        this.authorities = authorities;
+    }
 
-	public void setLastUpdateTime(String lastUpdateTime) {
-		this.lastUpdateTime = lastUpdateTime;
-	}
+    public String getLastUpdateTime() {
+        return lastUpdateTime;
+    }
 
-	public String getNote() {
-		return note;
-	}
+    public void setLastUpdateTime(String lastUpdateTime) {
+        this.lastUpdateTime = lastUpdateTime;
+    }
 
-	public void setNote(String note) {
-		this.note = note;
-	}
+    public String getNote() {
+        return note;
+    }
 
-	public String getUsername() {
-		return userName;
-	}
+    public void setNote(String note) {
+        this.note = note;
+    }
 
-	public boolean isAccountNonExpired() {
-		return true;
-	}
+    @Override
+    public String getUsername() {
+        return userName;
+    }
 
-	public boolean isAccountNonLocked() {
-		return true;
-	}
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
 
-	public boolean isCredentialsNonExpired() {
-		return true;
-	}
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
 
-	public boolean isEnabled() {
-		if (isEnabled == 1) {
-			return true;
-		}
-		return false;
-	}
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
 
+    @Override
+    public boolean isEnabled() {
+        return isEnabled == 1;
+    }
+
+    public String[] getPermissions() {
+        return permissions;
+    }
+
+    public void setPermissions(String[] permissions) {
+        this.permissions = permissions;
+    }
+
+    public String[] getRoles() {
+        return roles;
+    }
+
+    public void setRoles(String[] roles) {
+        this.roles = roles;
+    }
 }
