@@ -1,23 +1,20 @@
 package com.summit.handle;
 
-import java.io.IOException;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.access.AccessDeniedHandler;
-import org.springframework.stereotype.Component;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * 定义403无权限访问的处理，重定向到/403页面
@@ -25,7 +22,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  * @author Administrator
  *
  */
-@Component("myAccessDeniedHandler")
+//@Component("myAccessDeniedHandler")
 public class MyAccessDeniedHandler implements AccessDeniedHandler {
 	private static Logger logger = LoggerFactory.getLogger(MyAccessDeniedHandler.class);
 

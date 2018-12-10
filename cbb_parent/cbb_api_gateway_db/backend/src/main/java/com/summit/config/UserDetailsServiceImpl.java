@@ -17,7 +17,7 @@
 
 package com.summit.config;
 
-import com.summit.domain.user.UserBean;
+import com.summit.model.user.UserBean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.GrantedAuthority;

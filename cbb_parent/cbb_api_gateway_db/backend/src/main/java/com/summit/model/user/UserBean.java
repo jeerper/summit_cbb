@@ -1,4 +1,4 @@
-package com.summit.domain.user;
+package com.summit.model.user;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;

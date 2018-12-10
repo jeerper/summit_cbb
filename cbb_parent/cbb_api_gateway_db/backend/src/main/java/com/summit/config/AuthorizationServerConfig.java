@@ -20,7 +20,7 @@
 package com.summit.config;
 
 import com.summit.common.constant.CommonConstant;
-import com.summit.domain.user.UserBean;
+import com.summit.model.user.UserBean;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -57,78 +57,79 @@ import java.util.Map;
 @AllArgsConstructor
 @EnableAuthorizationServer
 public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdapter {
-	private final DataSource dataSource;
-	private final UserDetailsServiceImpl userDetailsServiceImpl;
-	private final AuthenticationManager authenticationManager;
-	private final RedisConnectionFactory redisConnectionFactory;
+    private final DataSource dataSource;
+    private final UserDetailsServiceImpl userDetailsServiceImpl;
+    private final AuthenticationManager authenticationManager;
+    private final RedisConnectionFactory redisConnectionFactory;
 
-	@Override
-	public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
-		JdbcClientDetailsService clientDetailsService = new JdbcClientDetailsService(dataSource);
-		clients.withClientDetails(clientDetailsService);
-	}
+    @Override
+    public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
+        JdbcClientDetailsService clientDetailsService = new JdbcClientDetailsService(dataSource);
+        clients.withClientDetails(clientDetailsService);
+    }
 
-	@Override
-	public void configure(AuthorizationServerSecurityConfigurer oauthServer) {
-		oauthServer
-			.allowFormAuthenticationForClients()
-			.checkTokenAccess("permitAll()");
-	}
+    @Override
+    public void configure(AuthorizationServerSecurityConfigurer oauthServer) {
+        oauthServer
+                .allowFormAuthenticationForClients()
+                .checkTokenAccess("permitAll()");
+    }
 
-	@Override
-	public void configure(AuthorizationServerEndpointsConfigurer endpoints) {
-		//token增强配置
-		TokenEnhancerChain tokenEnhancerChain = new TokenEnhancerChain();
-		tokenEnhancerChain.setTokenEnhancers(
-				Arrays.asList(tokenEnhancer(), jwtAccessTokenConverter()));
-		endpoints
-			.allowedTokenEndpointRequestMethods(HttpMethod.GET, HttpMethod.POST)
-			.tokenStore(tokenStore())
-			.tokenEnhancer(tokenEnhancerChain)
-			.userDetailsService(userDetailsServiceImpl)
-			.authenticationManager(authenticationManager)
-			.reuseRefreshTokens(false)
-			.exceptionTranslator(new DefaultWebResponseExceptionTranslator());
-	}
-	@Bean
-	public JwtAccessTokenConverter jwtAccessTokenConverter() {
-		SummitJwtAccessTokenConverter jwtAccessTokenConverter = new SummitJwtAccessTokenConverter();
-		jwtAccessTokenConverter.setSigningKey(CommonConstant.SIGN_KEY);
-		return jwtAccessTokenConverter;
-	}
+    @Override
+    public void configure(AuthorizationServerEndpointsConfigurer endpoints) {
+        //token增强配置
+        TokenEnhancerChain tokenEnhancerChain = new TokenEnhancerChain();
+        tokenEnhancerChain.setTokenEnhancers(Arrays.asList(tokenEnhancer(), jwtAccessTokenConverter()));
+        endpoints
+                .allowedTokenEndpointRequestMethods(HttpMethod.GET, HttpMethod.POST)
+                .tokenStore(tokenStore())
+                .tokenEnhancer(tokenEnhancerChain)
+                .userDetailsService(userDetailsServiceImpl)
+                .authenticationManager(authenticationManager)
+                .reuseRefreshTokens(false)
+                .exceptionTranslator(new DefaultWebResponseExceptionTranslator());
+    }
+
+    @Bean
+    public JwtAccessTokenConverter jwtAccessTokenConverter() {
+        SummitJwtAccessTokenConverter jwtAccessTokenConverter = new SummitJwtAccessTokenConverter();
+        jwtAccessTokenConverter.setSigningKey(CommonConstant.SIGN_KEY);
+        return jwtAccessTokenConverter;
+    }
 
 
-	@Bean
-	public TokenStore tokenStore() {
-		RedisTokenStore tokenStore = new RedisTokenStore(redisConnectionFactory);
-		tokenStore.setPrefix(CommonConstant.PROJECT_PREFIX + CommonConstant.OAUTH_PREFIX);
-		return tokenStore;
-	}
-	@Bean
-	public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory redisConnectionFactory) {
-		RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
-		redisTemplate.setConnectionFactory(redisConnectionFactory);
-		redisTemplate.setKeySerializer(new StringRedisSerializer());
-		redisTemplate.setValueSerializer(new StringRedisSerializer());
-		return redisTemplate;
-	}
+    @Bean
+    public TokenStore tokenStore() {
+        RedisTokenStore tokenStore = new RedisTokenStore(redisConnectionFactory);
+        tokenStore.setPrefix(CommonConstant.PROJECT_PREFIX + CommonConstant.OAUTH_PREFIX);
+        return tokenStore;
+    }
 
-	/**
-	 * jwt 生成token 定制化处理
-	 *
-	 * @return TokenEnhancer
-	 */
-	@Bean
-	public TokenEnhancer tokenEnhancer() {
-		return (accessToken, authentication) -> {
-			final Map<String, Object> additionalInfo = new HashMap<>(2);
-			additionalInfo.put("license", CommonConstant.LICENSE);
-			UserBean user = (UserBean) authentication.getUserAuthentication().getPrincipal();
-			if (user != null) {
-				additionalInfo.put("username", user.getUsername());
-			}
-			((DefaultOAuth2AccessToken) accessToken).setAdditionalInformation(additionalInfo);
-			return accessToken;
-		};
-	}
+    @Bean
+    public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory redisConnectionFactory) {
+        RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
+        redisTemplate.setConnectionFactory(redisConnectionFactory);
+        redisTemplate.setKeySerializer(new StringRedisSerializer());
+        redisTemplate.setValueSerializer(new StringRedisSerializer());
+        return redisTemplate;
+    }
+
+    /**
+     * jwt 生成token 定制化处理
+     *
+     * @return TokenEnhancer
+     */
+    @Bean
+    public TokenEnhancer tokenEnhancer() {
+        return (accessToken, authentication) -> {
+            final Map<String, Object> additionalInfo = new HashMap<>(2);
+            additionalInfo.put("license", CommonConstant.LICENSE);
+            UserBean user = (UserBean) authentication.getUserAuthentication().getPrincipal();
+            if (user != null) {
+                additionalInfo.put("username", user.getUsername());
+            }
+            ((DefaultOAuth2AccessToken) accessToken).setAdditionalInformation(additionalInfo);
+            return accessToken;
+        };
+    }
 }

@@ -7,6 +7,7 @@
         <version>1.0.0.RELEASE</version>
     </parent>
     <artifactId>${project.parent.artifactId}_backend</artifactId>
+    <packaging>jar</packaging>
     <build>
         <finalName>backend</finalName>
     </build>
