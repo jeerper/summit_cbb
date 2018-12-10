@@ -8,7 +8,7 @@
   <parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-dependencies</artifactId>
-		<version>2.0.3.RELEASE</version>
+		<version>2.0.7.RELEASE</version>
 	</parent>
 
 
@@ -25,15 +25,11 @@
 				<maven.compiler.compilerVersion>1.8</maven.compiler.compilerVersion>
 				<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 				<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-				<sql-maven-plugin.delimiter>;</sql-maven-plugin.delimiter>
 				<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 				<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 				<elasticsearch.version>6.2.2</elasticsearch.version>
-				<webVersion>3.0</webVersion>
-				<spring.version>5.0.7.RELEASE</spring.version>
 				<spring.data.elasticsearch.version>3.1.0.RELEASE</spring.data.elasticsearch.version>
-				<common.version>1.0.0.RELEASE</common.version>
-				<spring-cloud.version>Finchley.SR2</spring-cloud.version>
+				<spring-cloud.version>Finchley SR2</spring-cloud.version>
 				<spring-boot-admin.version>2.0.4</spring-boot-admin.version>
 			</properties>
 		</profile>
@@ -45,7 +41,7 @@
 		<dependency>
 			<groupId>com.summit.common</groupId>
 			<artifactId>cbb_common</artifactId>
-			<version>${common.version}</version>
+			<version>${project.version}</version>
 		</dependency>
 		   <dependency>
                 <groupId>org.springframework.cloud</groupId>
