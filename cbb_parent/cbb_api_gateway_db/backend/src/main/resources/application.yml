@@ -35,13 +35,13 @@ eureka:
 #      serviceId:  auth-server
 #  add-proxy-headers: true
   
-#management:
-#  endpoints:
-#    web:
-#      exposure:
-#        include: "*"
-#  endpoint:
-#    health:
-#      show-details: ALWAYS
-#logging:
-#  file: logs/all.log
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      show-details: ALWAYS
+logging:
+  file: logs/all.log

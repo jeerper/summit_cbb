@@ -7,7 +7,6 @@ import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
 
 //@EnableZuulProxy
 @EnableEurekaClient
-//@ImportResource(locations= {"classpath:applicationContext.xml"})
 @SpringBootApplication
 public class MainAction {
 

@@ -21,7 +21,7 @@ package com.summit.config;
 
 import com.summit.common.constant.CommonConstant;
 import com.summit.model.user.UserBean;
-import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
@@ -54,13 +54,16 @@ import java.util.Map;
  * 认证服务器配置
  */
 @Configuration
-@AllArgsConstructor
 @EnableAuthorizationServer
 public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdapter {
-    private final DataSource dataSource;
-    private final UserDetailsServiceImpl userDetailsServiceImpl;
-    private final AuthenticationManager authenticationManager;
-    private final RedisConnectionFactory redisConnectionFactory;
+    @Autowired
+    private  DataSource dataSource;
+    @Autowired
+    private  UserDetailsServiceImpl userDetailsServiceImpl;
+    @Autowired
+    private  AuthenticationManager authenticationManager;
+    @Autowired
+    private  RedisConnectionFactory redisConnectionFactory;
 
     @Override
     public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
