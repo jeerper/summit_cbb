@@ -19,28 +19,12 @@
         <dependency>
             <groupId>com.summit.common</groupId>
             <artifactId>cbb_common</artifactId>
-            <!--<exclusions>-->
-                <!--<exclusion>-->
-                    <!--<groupId>org.springframework.boot</groupId>-->
-                    <!--<artifactId>spring-boot-starter-data-elasticsearch</artifactId>-->
-                <!--</exclusion>-->
-                <!--<exclusion>-->
-                    <!--<groupId>org.springframework.cloud</groupId>-->
-                    <!--<artifactId>spring-cloud-starter-openfeign</artifactId>-->
-                <!--</exclusion>-->
-                <!--<exclusion>-->
-                    <!--<groupId>org.nlpcn</groupId>-->
-                    <!--<artifactId>elasticsearch-sql</artifactId>-->
-                <!--</exclusion>-->
-                <!--<exclusion>-->
-                    <!--<groupId>org.elasticsearch.client</groupId>-->
-                    <!--<artifactId>transport</artifactId>-->
-                <!--</exclusion>-->
-                <!--<exclusion>-->
-                    <!--<groupId>commons-dbcp</groupId>-->
-                    <!--<artifactId>commons-dbcp</artifactId>-->
-                <!--</exclusion>-->
-            <!--</exclusions>-->
+            <exclusions>
+                <exclusion>
+                    <groupId>org.springframework.cloud</groupId>
+                    <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>
