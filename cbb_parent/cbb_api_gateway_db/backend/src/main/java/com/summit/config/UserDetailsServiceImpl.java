@@ -53,10 +53,10 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         //TODO:来自用户服务组件
         UserBean user = new UserBean();
         user.setUserName("admin");
-        user.setPassword("f496fcf355c1217f0b3091005e4247e5267e74f8");
+        user.setPassword("$2a$10$qXkUoWj.gogGI49w1f/UXeIDVvviYhM0wmZD3uAN3CqmJsQf5unNK");
         user.setName("系统管理员");
         user.setIsEnabled(1);
-
+        user.setRoles(new String[]{"ROLE_ADMIN"});
         if (user == null) {
             throw new UsernameNotFoundException("用户不存在");
         }
