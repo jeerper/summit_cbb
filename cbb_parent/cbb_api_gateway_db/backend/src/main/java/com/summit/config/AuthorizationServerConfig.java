@@ -57,13 +57,13 @@ import java.util.Map;
 @EnableAuthorizationServer
 public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdapter {
     @Autowired
-    private  DataSource dataSource;
+    private DataSource dataSource;
     @Autowired
-    private  UserDetailsServiceImpl userDetailsServiceImpl;
+    private UserDetailsServiceImpl userDetailsServiceImpl;
     @Autowired
-    private  AuthenticationManager authenticationManager;
+    private AuthenticationManager authenticationManager;
     @Autowired
-    private  RedisConnectionFactory redisConnectionFactory;
+    private RedisConnectionFactory redisConnectionFactory;
 
     @Override
     public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
