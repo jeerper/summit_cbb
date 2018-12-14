@@ -32,7 +32,7 @@ import org.springframework.security.oauth2.provider.expression.OAuth2WebSecurity
 
 @Configuration
 @EnableResourceServer
-public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter {
+public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
 
     @Autowired
     protected SummitResourceAuthExceptionEntryPoint summitResourceAuthExceptionEntryPoint;

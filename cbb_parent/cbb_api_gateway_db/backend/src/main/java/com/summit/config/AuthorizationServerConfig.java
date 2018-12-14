@@ -49,7 +49,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * @author lengleng
+ * @author Administrator
  * @date 2018/6/22
  * 认证服务器配置
  */

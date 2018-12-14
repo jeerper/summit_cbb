@@ -32,7 +32,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 /**
- * @author lengleng
+ * @author Administrator
  * @date 2018/6/22
  * 认证相关配置
  */
