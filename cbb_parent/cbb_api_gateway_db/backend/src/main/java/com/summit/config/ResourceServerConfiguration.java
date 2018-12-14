@@ -18,6 +18,7 @@
 package com.summit.config;
 
 import com.summit.handle.SummitAccessDeniedHandler;
+import com.summit.handle.SummitResourceAuthExceptionEntryPoint;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -34,7 +35,9 @@ import org.springframework.security.oauth2.provider.expression.OAuth2WebSecurity
 public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter {
 
     @Autowired
-    private OAuth2WebSecurityExpressionHandler expressionHandler;
+    protected SummitResourceAuthExceptionEntryPoint summitResourceAuthExceptionEntryPoint;
+    @Autowired
+    private OAuth2WebSecurityExpressionHandler oAuth2WebSecurityExpressionHandler;
     @Autowired
     private SummitAccessDeniedHandler summitAccessDeniedHandler;
 
@@ -52,8 +55,9 @@ public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter
 
     @Override
     public void configure(ResourceServerSecurityConfigurer resources) {
-        resources.expressionHandler(expressionHandler);
-        resources.accessDeniedHandler(summitAccessDeniedHandler);
+        resources.expressionHandler(oAuth2WebSecurityExpressionHandler)
+                .accessDeniedHandler(summitAccessDeniedHandler)
+                .authenticationEntryPoint(summitResourceAuthExceptionEntryPoint);
     }
 
 

@@ -23,7 +23,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
-import org.springframework.security.oauth2.common.exceptions.InvalidTokenException;
 import org.springframework.security.oauth2.provider.error.OAuth2AccessDeniedHandler;
 import org.springframework.stereotype.Component;
 
@@ -61,15 +60,10 @@ public class SummitAccessDeniedHandler extends OAuth2AccessDeniedHandler {
     public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException authException) throws IOException, ServletException {
         log.info("授权失败，禁止访问 {}", request.getRequestURI());
 
-        Map<String, Object> map = new HashMap<String, Object>();
-        Throwable cause = authException.getCause();
-        if(cause instanceof InvalidTokenException) {
-            map.put("code", "401");//401
-            map.put("msg", "无效的token");
-        }else{
-            map.put("code", "login_error");//401
-            map.put("msg", "访问此资源需要完全的身份验证");
-        }
+
+        Map<String,Object> map = new HashMap<String,Object>();
+        map.put("code", HttpStatus.FORBIDDEN.value());
+        map.put("msg", "权限不足,禁止访问");
         map.put("data", authException.getMessage());
         map.put("success", false);
         map.put("path", request.getServletPath());
@@ -77,7 +71,7 @@ public class SummitAccessDeniedHandler extends OAuth2AccessDeniedHandler {
 
         response.setCharacterEncoding(CommonConstant.UTF8);
         response.setContentType(CommonConstant.CONTENT_TYPE);
-        response.setStatus(HttpStatus.UNAUTHORIZED.value());
+        response.setStatus(HttpStatus.FORBIDDEN.value());
         PrintWriter printWriter = response.getWriter();
         printWriter.append(objectMapper.writeValueAsString(map));
     }
