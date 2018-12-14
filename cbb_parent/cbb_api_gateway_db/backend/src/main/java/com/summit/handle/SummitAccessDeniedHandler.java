@@ -36,10 +36,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * @author lengleng
- * @date 2017/12/29
- * 授权拒绝处理器，覆盖默认的OAuth2AccessDeniedHandler
- * 包装失败信息到PigDeniedException
+ * @author Administrator
+ * 权限不足，拒绝访问处理器，覆盖默认的OAuth2AccessDeniedHandler
+ * 包装失败信息到SummitAccessDeniedHandler
  */
 @Slf4j
 @Component
@@ -58,7 +57,7 @@ public class SummitAccessDeniedHandler extends OAuth2AccessDeniedHandler {
      */
     @Override
     public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException authException) throws IOException, ServletException {
-        log.info("授权失败，禁止访问 {}", request.getRequestURI());
+        log.info("权限验证失败，禁止访问 {}", request.getRequestURI());
 
 
         Map<String,Object> map = new HashMap<String,Object>();

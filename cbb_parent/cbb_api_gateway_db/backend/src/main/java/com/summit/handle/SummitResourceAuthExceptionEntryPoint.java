@@ -35,10 +35,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * @author lengleng
- * @date 2018/7/8
+ * @author Administrator
  * 客户端异常处理
- * 1. 可以根据 AuthenticationException 不同细化异常处理
+ * 可以根据 AuthenticationException 不同细化异常处理
  */
 
 @Component
