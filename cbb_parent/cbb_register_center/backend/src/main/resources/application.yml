@@ -1,6 +1,6 @@
 spring:
   application:
-    name: eurka-server
+    name: register-center
   #强制检测运行环境编码格式,不符合设置则退出当前程序
   mandatory-file-encoding: UTF-8
   boot:

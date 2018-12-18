@@ -2,7 +2,7 @@ server:
   port: 22222
 spring:
   application:
-    name: service-gateway
+    name: api-gateway
   datasource:
       driver-class-name: com.mysql.jdbc.Driver
       url: jdbc:mysql://192.168.140.155/summit_cbb?useSSL=false&useUnicode=yes&characterEncoding=UTF-8

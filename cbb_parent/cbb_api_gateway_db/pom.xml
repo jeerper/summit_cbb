@@ -14,17 +14,10 @@
         <module>backend</module>
     </modules>
 
-
     <dependencies>
         <dependency>
             <groupId>com.summit.common</groupId>
             <artifactId>cbb_common</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.springframework.cloud</groupId>
-                    <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
 
         <dependency>
