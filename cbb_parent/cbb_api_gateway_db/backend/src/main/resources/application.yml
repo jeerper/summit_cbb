@@ -1,5 +1,5 @@
 server:
-  port: 22222
+  port: "${WebServer_Port:22222}"
 spring:
   application:
     name: api-gateway
@@ -20,7 +20,7 @@ eureka:
     healthcheck:
       enabled: true
     serviceUrl:
-      defaultZone: http://ucp:Summit2018@localhost:8761/eureka/
+      defaultZone: "${Registry_Center_URL:http://ucp:Summit2018@localhost:8761/eureka/}"
 #zuul:
 #  routes:
 #    api-a:

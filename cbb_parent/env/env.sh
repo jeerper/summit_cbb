@@ -4,6 +4,7 @@
 
 #注册中心端口
 Registry_Center_Port=45000
+ApiGateway_Port=45001
 
 
 
