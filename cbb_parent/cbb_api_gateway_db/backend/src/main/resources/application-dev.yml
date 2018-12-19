@@ -14,4 +14,4 @@ eureka:
     healthcheck:
       enabled: true
     serviceUrl:
-      defaultZone: "${Registry_Center_URL:http://ucp:Summit2018@localhost:8761/eureka/}"
+      defaultZone: "http://ucp:Summit2018@192.168.140.155:45000/eureka/"
