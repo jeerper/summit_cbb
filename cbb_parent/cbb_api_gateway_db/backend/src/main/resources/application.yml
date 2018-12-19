@@ -5,9 +5,7 @@ spring:
     active: pro
   application:
     name: "${projectName:cbb_api_gateway_db}"
-  redis:
-    host: localhost
-    port: 6379
+
 
 #zuul:
 #  routes:
