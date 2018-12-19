@@ -13,3 +13,8 @@ services:
     volumes:
     - ./backend/logs:/opt/backend/App/logs
     user: root
+  redis:
+    image: redis:latest
+    restart: always
+    ports:
+      - "6379:6379"
