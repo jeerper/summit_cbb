@@ -14,7 +14,7 @@ sed -i 's,${Registry_Center_IP},'${Registry_Center_IP}',g' ./.env
 
 
 
-echo "编译cbb_register_center"
+echo "编译"${projectName}
 
 cd ${WORKSPACE}/cbb_parent
 
@@ -25,7 +25,7 @@ mvn install
 
 cd ${WORKSPACE}/cbb_parent/${projectName}/deploy
 
-echo "部署cbb_register_center(Docker版本)"
+echo "部署"${projectName}"(Docker版本)"
 
 
 docker-compose -p ${projectName} down  --rmi all
@@ -33,7 +33,7 @@ docker-compose -p ${projectName} down  --rmi all
 docker-compose -p ${projectName} up  -d
 
 
-echo "打包cbb_register_center(Windows版本)"
+echo "打包"${projectName}"(Windows版本)"
 
 if [ ! -d ${fileStoragePath}/${projectName} ]
 then
