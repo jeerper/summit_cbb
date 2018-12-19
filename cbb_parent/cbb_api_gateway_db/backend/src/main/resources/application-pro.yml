@@ -10,6 +10,7 @@ eureka:
   instance:
     #使用IP注册服务
     prefer-ip-address: true
+    ip-address: "${Registry_Center_IP:localhost}"
   client:
     healthcheck:
       enabled: true
