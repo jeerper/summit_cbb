@@ -1,25 +1,25 @@
 #!/bin/sh -l
 #项目名称
 projectName="cbb_register_center"
-#
-#source ${WORKSPACE}/cbb_parent/env/env.sh
-#
-#sed -i 's,${projectName},'${projectName}',g' ./.env
-#
-#sed -i 's,${WebServer_Port},'${Registry_Center_Port}',g' ./.env
-#
-#sed -i 's,${spring_boot_admin_username},'${spring_boot_admin_username}',g' ./.env
-#sed -i 's,${spring_boot_admin_password},'${spring_boot_admin_password}',g' ./.env
-#
-#
-#echo "编译cbb_register_center"
-#
-#cd ${WORKSPACE}/cbb_parent
-#
+
+source ${WORKSPACE}/cbb_parent/env/env.sh
+
+sed -i 's,${projectName},'${projectName}',g' ./.env
+
+sed -i 's,${WebServer_Port},'${Registry_Center_Port}',g' ./.env
+
+sed -i 's,${spring_boot_admin_username},'${spring_boot_admin_username}',g' ./.env
+sed -i 's,${spring_boot_admin_password},'${spring_boot_admin_password}',g' ./.env
+
+
+echo "编译cbb_register_center"
+
+cd ${WORKSPACE}/cbb_parent
+
 #mvn clean
 #
 #mvn install
-#
+
 
 cd ${WORKSPACE}/cbb_parent/${projectName}/deploy
 
