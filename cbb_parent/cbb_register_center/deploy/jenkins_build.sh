@@ -25,9 +25,11 @@ cd ${WORKSPACE}/cbb_parent/${projectName}/deploy
 
 echo "部署cbb_register_center(Docker版本)"
 
-docker-compose -p ${projectName} down  --rmi all
+docker ps
 
-docker-compose -p ${projectName} up  -d
+#docker-compose -p ${projectName} down  --rmi all
+#
+#docker-compose -p ${projectName} up  -d
 
 
 #echo "打包cbb_register_center(Windows版本)"
