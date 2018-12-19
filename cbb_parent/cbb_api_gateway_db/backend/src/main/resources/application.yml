@@ -20,7 +20,7 @@ eureka:
     healthcheck:
       enabled: true
     serviceUrl:
-      defaultZone: http://ucp:summit@localhost:8761/eureka/
+      defaultZone: http://ucp:Summit2018@localhost:8761/eureka/
 #zuul:
 #  routes:
 #    api-a:
