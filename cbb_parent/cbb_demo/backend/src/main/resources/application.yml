@@ -1,27 +1,25 @@
-eureka:
-  client:
-    serviceUrl:
-      defaultZone: http://localhost:8761/eureka/
 server:
-  port: 8765
+  port: "${WebServer_Port:22222}"
 spring:
+  profiles:
+    active: pro
   application:
-    name: service-demo
-  datasource:
-    master:
-      jdbc-url: jdbc:mysql://127.0.0.1:3306/db1?useUnicode=true&characterEncoding=utf-8&useSSL=false
-      driver-class-name: com.mysql.jdbc.Driver
-      username: root
-      password: root
-    slave:
-      jdbc-url: jdbc:mysql://127.0.0.1:3306/db2?useUnicode=true&characterEncoding=utf-8&useSSL=false
-      driver-class-name: com.mysql.jdbc.Driver
-      username: root
-      password: root
-      
+    name: "${projectName:demo}"
+
 feign:
   hystrix:
     enabled: true    
 mybatis-plus:
   mapper-locations: classpath:com/summit/dao/*.xml
   config-location: classpath:mybatis-config.xml
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      show-details: ALWAYS
+logging:
+  file: logs/all.log
