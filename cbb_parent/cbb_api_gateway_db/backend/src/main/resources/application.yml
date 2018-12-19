@@ -2,7 +2,7 @@ server:
   port: "${WebServer_Port:22222}"
 spring:
   profiles:
-    active: dev
+    active: pro
   application:
     name: "${projectName:cbb_api_gateway}"
   redis:
