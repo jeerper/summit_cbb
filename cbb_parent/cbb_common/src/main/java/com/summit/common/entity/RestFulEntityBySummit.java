@@ -11,7 +11,7 @@ import java.io.Serializable;
  * @author Administrator
  */
 
-public class ResponseEntityBySummit<T> implements Serializable {
+public class RestFulEntityBySummit<T> implements Serializable {
 
 
     private static final long serialVersionUID = 4157608212869329025L;
@@ -26,7 +26,7 @@ public class ResponseEntityBySummit<T> implements Serializable {
     /**
      * 用于只响应正确状态时使用
      */
-    public ResponseEntityBySummit() {
+    public RestFulEntityBySummit() {
     }
 
     /**
@@ -34,7 +34,7 @@ public class ResponseEntityBySummit<T> implements Serializable {
      *
      * @param data 内容主体
      */
-    public ResponseEntityBySummit(T data) {
+    public RestFulEntityBySummit(T data) {
         this.data = data;
     }
 
@@ -44,7 +44,7 @@ public class ResponseEntityBySummit<T> implements Serializable {
      * @param data 内容主体
      * @param msg  响应的额外信息
      */
-    public ResponseEntityBySummit(T data, String msg) {
+    public RestFulEntityBySummit(T data, String msg) {
         this.data = data;
         this.msg = msg;
     }
@@ -54,7 +54,7 @@ public class ResponseEntityBySummit<T> implements Serializable {
      *
      * @param e 异常实例
      */
-    public ResponseEntityBySummit(Throwable e) {
+    public RestFulEntityBySummit(Throwable e) {
         this.msg = e.getMessage();
         this.code = HttpStatus.INTERNAL_SERVER_ERROR.value();
     }
@@ -65,7 +65,7 @@ public class ResponseEntityBySummit<T> implements Serializable {
      * @param httpStatus 响应状态
      * @param msg        响应消息
      */
-    public ResponseEntityBySummit(HttpStatus httpStatus, String msg) {
+    public RestFulEntityBySummit(HttpStatus httpStatus, String msg) {
         this.msg = msg;
         this.code = httpStatus.value();
     }
