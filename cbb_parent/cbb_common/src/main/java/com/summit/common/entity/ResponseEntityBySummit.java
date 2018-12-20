@@ -33,6 +33,7 @@ import java.io.Serializable;
 public class ResponseEntityBySummit<T> implements Serializable {
 
 
+    private static final long serialVersionUID = 4157608212869329025L;
     private int code = HttpStatus.OK.value();
 
 
