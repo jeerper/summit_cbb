@@ -1,18 +1,16 @@
 package com.summit.controller;
 
-import java.io.BufferedReader;
-import java.util.Enumeration;
-
-import javax.servlet.http.HttpServletRequest;
-
+import com.summit.service.DemoService;
+import com.summit.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.summit.service.DemoService;
-import com.summit.service.UserService;
+import javax.servlet.http.HttpServletRequest;
+import java.io.BufferedReader;
+import java.util.Enumeration;
 
 @RestController
 public class DemoController {
@@ -26,6 +24,10 @@ public class DemoController {
 	@GetMapping(value = "/hi")
 	public String sayHi(@RequestParam String name) {
 		return demoService.demo(name);
+	}
+	@GetMapping(value = "/liuyuanss")
+	public String liuyuan() {
+		return "liuyuan";
 	}
 
 	@RequestMapping("/testDemo1")
