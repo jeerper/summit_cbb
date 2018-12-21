@@ -93,4 +93,41 @@ public class RestFulEntityBySummit<T> implements Serializable {
     public void setData(T data) {
         this.data = data;
     }
+
+
+    public static final class RestFulEntityBySummitBuilder<T> {
+        private int code = HttpStatus.OK.value();
+        private String msg = "success";
+        private T data;
+
+        private RestFulEntityBySummitBuilder() {
+        }
+
+        public static RestFulEntityBySummitBuilder create() {
+            return new RestFulEntityBySummitBuilder();
+        }
+
+        public RestFulEntityBySummitBuilder withCode(int code) {
+            this.code = code;
+            return this;
+        }
+
+        public RestFulEntityBySummitBuilder withMsg(String msg) {
+            this.msg = msg;
+            return this;
+        }
+
+        public RestFulEntityBySummitBuilder withData(T data) {
+            this.data = data;
+            return this;
+        }
+
+        public RestFulEntityBySummit build() {
+            RestFulEntityBySummit restFulEntityBySummit = new RestFulEntityBySummit();
+            restFulEntityBySummit.setCode(code);
+            restFulEntityBySummit.setMsg(msg);
+            restFulEntityBySummit.setData(data);
+            return restFulEntityBySummit;
+        }
+    }
 }
