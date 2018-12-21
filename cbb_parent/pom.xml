@@ -1,68 +1,92 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <groupId>com.summit</groupId>
-  <artifactId>cbb_parent</artifactId>
-  <version>1.0.0.RELEASE</version>
-  <packaging>pom</packaging>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>com.summit</groupId>
+    <artifactId>cbb_parent</artifactId>
+    <version>1.0.0.RELEASE</version>
+    <packaging>pom</packaging>
 
-  <parent>
-		<groupId>org.springframework.boot</groupId>
-		<artifactId>spring-boot-dependencies</artifactId>
-		<version>2.0.7.RELEASE</version>
-	</parent>
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-dependencies</artifactId>
+        <version>2.0.7.RELEASE</version>
+    </parent>
 
-
-	<profiles>
-		<profile>
-			<id>jdk-1.8</id>
-			<activation>
-				<activeByDefault>true</activeByDefault>
-				<jdk>1.8</jdk>
-			</activation>
-			<properties>
-				<maven.compiler.source>1.8</maven.compiler.source>
-				<maven.compiler.target>1.8</maven.compiler.target>
-				<maven.compiler.compilerVersion>1.8</maven.compiler.compilerVersion>
-				<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-				<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-				<sql-maven-plugin.delimiter>;</sql-maven-plugin.delimiter>
-				<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-				<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-				<elasticsearch.version>6.2.2</elasticsearch.version>
-				<elasticsearch-sql.version>6.2.2.0</elasticsearch-sql.version>
-				<spring-cloud.version>Finchley.SR2</spring-cloud.version>
-				<spring-boot-admin.version>2.0.4</spring-boot-admin.version>
-			</properties>
-		</profile>
-	</profiles>
+    <properties>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+        <maven.compiler.compilerVersion>1.8</maven.compiler.compilerVersion>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <elasticsearch.version>6.2.2</elasticsearch.version>
+        <elasticsearch-sql.version>6.2.2.0</elasticsearch-sql.version>
+        <spring-cloud.version>Finchley.SR2</spring-cloud.version>
+        <spring-boot-admin.version>2.0.4</spring-boot-admin.version>
+        <mybatis-plus.version>3.0.6</mybatis-plus.version>
+        <javassist.version>3.24.0-GA</javassist.version>
+        <logstash-logback-encoder.version>5.2</logstash-logback-encoder.version>
+        <springfox-swagger.version>2.9.2</springfox-swagger.version>
+        <spring-security-oauth2.version>2.3.4.RELEASE</spring-security-oauth2.version>
+    </properties>
 
 
-	<dependencyManagement>
-		<dependencies>
-		<dependency>
-			<groupId>com.summit.common</groupId>
-			<artifactId>cbb_common</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-		   <dependency>
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>com.summit.common</groupId>
+                <artifactId>cbb_common</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>org.springframework.cloud</groupId>
                 <artifactId>spring-cloud-dependencies</artifactId>
                 <version>${spring-cloud.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
-			<dependency>
-				<groupId>de.codecentric</groupId>
-				<artifactId>spring-boot-admin-starter-server</artifactId>
-				<version>${spring-boot-admin.version}</version>
-			</dependency>
+            <dependency>
+                <groupId>com.baomidou</groupId>
+                <artifactId>mybatis-plus-boot-starter</artifactId>
+                <version>${mybatis-plus.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>de.codecentric</groupId>
+                <artifactId>spring-boot-admin-starter-server</artifactId>
+                <version>${spring-boot-admin.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>net.logstash.logback</groupId>
+                <artifactId>logstash-logback-encoder</artifactId>
+                <version>${logstash-logback-encoder.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.javassist</groupId>
+                <artifactId>javassist</artifactId>
+                <version>${javassist.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.springfox</groupId>
+                <artifactId>springfox-swagger2</artifactId>
+                <version>${springfox-swagger.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.springfox</groupId>
+                <artifactId>springfox-swagger-ui</artifactId>
+                <version>${springfox-swagger.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.security.oauth</groupId>
+                <artifactId>spring-security-oauth2</artifactId>
+                <version>${spring-security-oauth2.version}</version>
+            </dependency>
+        </dependencies>
 
-	</dependencies>
+    </dependencyManagement>
 
-	</dependencyManagement>
-
-	<build>
-	  <resources>
+    <build>
+        <resources>
             <resource>
                 <directory>src/main/resources</directory>
             </resource>
@@ -74,107 +98,105 @@
                 <filtering>true</filtering>
             </resource>
         </resources>
-	
-		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-resources-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>copy-resources</id>
-						<phase>package</phase>
-						<goals>
-							<goal>copy-resources</goal>
-						</goals>
-						<configuration>
-							<encoding>UTF-8</encoding>
-							<outputDirectory>${project.build.directory}/config</outputDirectory>
-							<!--将以下文件复制到config文件夹下 -->
-							<resources>
-								<resource>
-									<directory>src/main/resources</directory>
-									<includes>
-										<include>logback.xml</include>
-										<include>*.properties</include>
-										<include>*.yml</include>
-										<include>db/*.sql</include>
-										<include>**/*.xls</include>
-										<include>**/*.xls</include>
-									</includes>
-									<filtering>true</filtering>
-								</resource>
-							</resources>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-			<!-- 控制依赖Jar的拷贝 -->
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-dependency-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>copy-dependencies</id>
-						<phase>package</phase>
-						<goals>
-							<goal>copy-dependencies</goal>
-						</goals>
-						<configuration>
-							<outputDirectory>${project.build.directory}/lib</outputDirectory>
-							<overWriteReleases>false</overWriteReleases>
-							<overWriteSnapshots>false</overWriteSnapshots>
-							<overWriteIfNewer>true</overWriteIfNewer>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-jar-plugin</artifactId>
-				<configuration>
-					<archive>
-						<manifest>
-							<addClasspath>true</addClasspath>
-							<mainClass>com.summit.MainAction</mainClass>
-							<classpathPrefix>lib/</classpathPrefix>
-						</manifest>
-						<manifestEntries>
-							<Class-Path>config/</Class-Path>
-						</manifestEntries>
-					</archive>
-					<!--不将以下文件打入Jar包内 -->
-					<excludes>
-						<exclude>*.properties</exclude>
-						<exclude>*.yml</exclude>
-						<exclude>logback.xml</exclude>
-						<exclude>db/</exclude>
-					</excludes>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-maven-plugin</artifactId>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-surefire-plugin</artifactId>
-				<configuration>
-					<skipTests>true</skipTests>
-				</configuration>
-			</plugin>
-		</plugins>
-	</build>
-  
-  
-  
-  <modules>
-  	<module>cbb_demo</module>
-  	<module>cbb_common</module>
-  	<module>cbb_api_gateway_es</module>
-  	<module>cbb_register_center</module>
-  	<module>cbb_pptn</module>
-  	<module>cbb_weather</module>
-  	<module>cbb_api_gateway_db</module>
-	 <module>cbb_auth</module>
-  </modules>
+
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>copy-resources</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <encoding>UTF-8</encoding>
+                            <outputDirectory>${project.build.directory}/config</outputDirectory>
+                            <!--将以下文件复制到config文件夹下 -->
+                            <resources>
+                                <resource>
+                                    <directory>src/main/resources</directory>
+                                    <includes>
+                                        <include>logback.xml</include>
+                                        <include>*.properties</include>
+                                        <include>*.yml</include>
+                                        <include>db/*.sql</include>
+                                        <include>**/*.xls</include>
+                                        <include>**/*.xls</include>
+                                    </includes>
+                                    <filtering>true</filtering>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <!-- 控制依赖Jar的拷贝 -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>copy-dependencies</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy-dependencies</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/lib</outputDirectory>
+                            <overWriteReleases>false</overWriteReleases>
+                            <overWriteSnapshots>false</overWriteSnapshots>
+                            <overWriteIfNewer>true</overWriteIfNewer>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <addClasspath>true</addClasspath>
+                            <mainClass>com.summit.MainAction</mainClass>
+                            <classpathPrefix>lib/</classpathPrefix>
+                        </manifest>
+                        <manifestEntries>
+                            <Class-Path>config/</Class-Path>
+                        </manifestEntries>
+                    </archive>
+                    <!--不将以下文件打入Jar包内 -->
+                    <excludes>
+                        <exclude>*.properties</exclude>
+                        <exclude>*.yml</exclude>
+                        <exclude>logback.xml</exclude>
+                        <exclude>db/</exclude>
+                    </excludes>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <skipTests>true</skipTests>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+
+    <modules>
+        <module>cbb_demo</module>
+        <module>cbb_common</module>
+        <module>cbb_api_gateway_es</module>
+        <module>cbb_register_center</module>
+        <module>cbb_pptn</module>
+        <module>cbb_weather</module>
+        <module>cbb_api_gateway_db</module>
+    </modules>
 </project>
