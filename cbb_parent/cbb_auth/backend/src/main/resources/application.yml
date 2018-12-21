@@ -1,0 +1,27 @@
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/
+server:
+  port: 8765
+spring:
+  application:
+    name: service-auth
+  datasource:
+    master:
+    jdbc-url: jdbc:sqlserver://192.168.141.113:1433;DatabaseName=watf20181112
+    driver-class-name: net.sourceforge.jtds.jdbc.Driver
+    username: sa
+    password: summit123
+    slave:
+      jdbc-url: jdbc:sqlserver://192.168.141.113:1433;DatabaseName=watf20181112
+      driver-class-name: net.sourceforge.jtds.jdbc.Driver
+      username: sa
+      password: summit123
+      
+feign:
+  hystrix:
+    enabled: true    
+mybatis-plus:
+  mapper-locations: classpath:com/summit/dao/*.xml
+  config-location: classpath:mybatis-config.xml
