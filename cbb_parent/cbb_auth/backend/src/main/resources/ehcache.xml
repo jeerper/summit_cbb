@@ -4,49 +4,10 @@
 	xsi:noNamespaceSchemaLocation="ehcache.xsd" updateCheck="false"
 	monitoring="autodetect" dynamicConfig="true">
 
-
-
-
 	<diskStore path="java.io.tmpdir" />
-
-	<cacheManagerPeerProviderFactory
-		class="net.sf.ehcache.distribution.RMICacheManagerPeerProviderFactory"
-		properties="peerDiscovery=manual,
-		rmiUrls=//127.0.0.1:40001/dictionary|//127.0.0.1:40001/quartz"/>
-
-	<cacheManagerPeerListenerFactory      
-        class="net.sf.ehcache.distribution.RMICacheManagerPeerListenerFactory"      
-        properties="hostName=127.0.0.1,port=40000,socketTimeoutMillis=120000" /> 
 
 	<!-- 字典缓存 -->
 	<cache name="dictionary" maxEntriesLocalHeap="0" eternal="true"
-		timeToIdleSeconds="10000" timeToLiveSeconds="10000" overflowToDisk="false">
-		<cacheEventListenerFactory
-			class="net.sf.ehcache.distribution.RMICacheReplicatorFactory" />
-		 <bootstrapCacheLoaderFactory  
-            class="net.sf.ehcache.distribution.RMIBootstrapCacheLoaderFactory"
-			properties="bootstrapAsynchronously=true"/> 
-	</cache>
-	
-	<!-- 连接池缓存 -->
-	<cache name="connPool" maxEntriesLocalHeap="0" eternal="true"
-		timeToIdleSeconds="10000" timeToLiveSeconds="10000" overflowToDisk="false">
-		<cacheEventListenerFactory
-			class="net.sf.ehcache.distribution.RMICacheReplicatorFactory" />
-		 <bootstrapCacheLoaderFactory  
-            class="net.sf.ehcache.distribution.RMIBootstrapCacheLoaderFactory"
-			properties="bootstrapAsynchronously=true"/> 
-	</cache>
-	
-	
-	<!-- 连接池缓存 -->
-	<cache name="quartz" maxEntriesLocalHeap="0" eternal="true"
-		timeToIdleSeconds="10000" timeToLiveSeconds="10000" overflowToDisk="false">
-		<cacheEventListenerFactory
-			class="net.sf.ehcache.distribution.RMICacheReplicatorFactory" />
-		 <bootstrapCacheLoaderFactory  
-            class="net.sf.ehcache.distribution.RMIBootstrapCacheLoaderFactory"
-			properties="bootstrapAsynchronously=true"/> 
-	</cache>
+		timeToIdleSeconds="10000" timeToLiveSeconds="10000" overflowToDisk="false" />
 	
 </ehcache>
