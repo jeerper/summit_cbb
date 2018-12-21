@@ -8,7 +8,7 @@ spring:
 
 feign:
   hystrix:
-    enabled: true    
+    enabled: true
 mybatis-plus:
   mapper-locations: classpath:com/summit/dao/*.xml
   config-location: classpath:mybatis-config.xml
