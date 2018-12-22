@@ -2,7 +2,7 @@ server:
   port: "${WebServer_Port:22222}"
 spring:
   profiles:
-    active: pro
+    active: dev
   application:
     name: "${projectName:cbb_api_gateway_db}"
 
@@ -19,16 +19,14 @@ zuul:
 #当zuul.routes的配置用指定url进行路由时,是zuul.host.connect-timeout-millis,zuul.host.socket-timeout-millis这两个配生效，
 #当zuul.routes的配置用serviceId进行路由时,是ribbon.ReadTimeout,ribbon.SocketTimeout生效。
 #熔断器超时时间要大于负载均衡器超时时间
+#值设置的计算公式
+#timeoutInMilliseconds = (ribbonReadTimeout + ribbonConnectTimeout) * (maxAutoRetries + 1) * (maxAutoRetriesNextServer + 1);
 hystrix:
   command:
     default:
       execution:
-        timeout:
-          enabled: true
         isolation:
           thread:
-            #值设置的计算公式
-            #timeoutInMilliseconds = (ribbonReadTimeout + ribbonConnectTimeout) * (maxAutoRetries + 1) * (maxAutoRetriesNextServer + 1);
             timeoutInMilliseconds: 40000
 
 ribbon:
@@ -36,8 +34,8 @@ ribbon:
   ConnectTimeout: 10000
   # 请求处理的超时时间
   ReadTimeout: 10000
-#  httpclient:
-#    enable: false
+  httpclient:
+    enable: false
   okhttp:
     enabled: true
 
@@ -45,6 +43,8 @@ feign:
   httpclient:
     enabled: false
   okhttp:
+    enabled: true
+  hystrix:
     enabled: true
 
 management:
