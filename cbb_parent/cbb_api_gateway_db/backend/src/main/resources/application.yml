@@ -27,15 +27,17 @@ hystrix:
           enabled: true
         isolation:
           thread:
-            timeoutInMilliseconds: 15000
+            #值设置的计算公式
+            #timeoutInMilliseconds = (ribbonReadTimeout + ribbonConnectTimeout) * (maxAutoRetries + 1) * (maxAutoRetriesNextServer + 1);
+            timeoutInMilliseconds: 40000
 
 ribbon:
   # 请求连接的超时时间
-  SocketTimeout: 10000
+  ConnectTimeout: 10000
   # 请求处理的超时时间
   ReadTimeout: 10000
-  httpclient:
-    enable: false
+#  httpclient:
+#    enable: false
   okhttp:
     enabled: true
 
