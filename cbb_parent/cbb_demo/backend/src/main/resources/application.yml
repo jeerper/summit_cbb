@@ -7,8 +7,11 @@ spring:
     name: "${projectName:cbb_demo}"
 
 feign:
-  hystrix:
+  httpclient:
+    enabled: false
+  okhttp:
     enabled: true
+
 mybatis-plus:
   mapper-locations: classpath:com/summit/dao/*.xml
   config-location: classpath:mybatis-config.xml
