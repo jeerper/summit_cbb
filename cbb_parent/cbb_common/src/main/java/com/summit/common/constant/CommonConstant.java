@@ -11,7 +11,15 @@ public interface CommonConstant {
      * token分割符
      */
     String TOKEN_SPLIT = "Bearer ";
+    /**
+     * 用户信息头
+     */
+    String USER_HEADER = "x-user-header";
 
+    /**
+     * 角色信息头
+     */
+    String ROLE_HEADER = "x-role-header";
     /**
      * jwt签名
      */
