@@ -40,8 +40,6 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
     @Autowired
     private DataSource dataSource;
     @Autowired
-    private UserDetailsServiceImpl userDetailsServiceImpl;
-    @Autowired
     private AuthenticationManager authenticationManager;
     @Autowired
     private RedisConnectionFactory redisConnectionFactory;
@@ -68,7 +66,6 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
                 .allowedTokenEndpointRequestMethods(HttpMethod.GET, HttpMethod.POST)
                 .tokenStore(tokenStore())
                 .tokenEnhancer(tokenEnhancerChain)
-                .userDetailsService(userDetailsServiceImpl)
                 .authenticationManager(authenticationManager)
                 .reuseRefreshTokens(false)
                 .exceptionTranslator(new DefaultWebResponseExceptionTranslator());
