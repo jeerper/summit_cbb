@@ -36,7 +36,7 @@ public class SummitAuthenticationProvider extends DaoAuthenticationProvider {
         String presentedPassword = authentication.getCredentials().toString();
 
         try {
-            presentedPassword = decryptAES(presentedPassword, key);
+            presentedPassword = decryptAES(presentedPassword, key).trim();
         } catch (Exception e) {
             LOGGER.error("密码解密失败:{}", presentedPassword);
         }
