@@ -47,6 +47,11 @@ feign:
   hystrix:
     enabled: true
 
+#登录密码密钥必须是16字节长度的
+password:
+  encode:
+    key: summitsummitsumm
+
 management:
   endpoints:
     web:
