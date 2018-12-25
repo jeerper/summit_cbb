@@ -58,7 +58,7 @@
 	<!--</appender>-->
 
 	<logger name="io.netty" level="error"/>
-	<!--<logger name="org.springframework" level="error"/>-->
+	<logger name="org.springframework" level="error"/>
 	<logger name="com.zaxxer.hikari" level="error"/>
 	<logger name="reactor" level="error"/>
 	<logger name="de.codecentric" level="error"/>
@@ -67,6 +67,7 @@
 	<logger name="org.apache.juli" level="error"/>
 	<logger name="org.apache.catalina" level="error"/>
 	<logger name="io.lettuce.core" level="error"/>
+
 
 
 
