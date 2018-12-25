@@ -1,22 +1,47 @@
-package com.summit.model.user;
-
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
+package com.summit.common.entity;
 
 import java.io.Serializable;
-import java.util.Collection;
 
-public class UserBean implements UserDetails, Serializable {
-    private static final long serialVersionUID = 1380548705685500354L;
+/**
+ * 用户基本信息接口实体
+ */
+public class UserInfo implements Serializable {
 
+    private static final long serialVersionUID = -3561620536450870088L;
+
+    /**
+     * 用户昵称
+     */
     private String name;
+    /**
+     * 账户名称
+     */
     private String userName;
+    /**
+     * 账户密码
+     */
     private String password;
+    /**
+     * 邮箱
+     */
     private String email;
+    /**
+     * 电话号码
+     */
     private String phoneNumber;
+    /**
+     * 启用状态
+     */
     private Integer isEnabled;
+    /**
+     * 最后一次更新时间
+     */
     private String lastUpdateTime;
+    /**
+     * 备注
+     */
     private String note;
+
     /**
      * 权限标识集合
      */
@@ -26,24 +51,6 @@ public class UserBean implements UserDetails, Serializable {
      * 角色集合
      */
     private String[] roles;
-
-    private Collection<GrantedAuthority> authorities;
-
-    public UserBean() {
-    }
-
-    public UserBean(String name, String userName, String password,
-                    String email, String phoneNumber, Integer isEnabled,
-                    String lastUpdateTime, String note) {
-        this.name = name;
-        this.userName = userName;
-        this.password = password;
-        this.email = email;
-        this.phoneNumber = phoneNumber;
-        this.isEnabled = isEnabled;
-        this.lastUpdateTime = lastUpdateTime;
-        this.note = note;
-    }
 
 
     public String getName() {
@@ -62,7 +69,6 @@ public class UserBean implements UserDetails, Serializable {
         this.userName = userName;
     }
 
-    @Override
     public String getPassword() {
         return password;
     }
@@ -95,17 +101,6 @@ public class UserBean implements UserDetails, Serializable {
         this.isEnabled = isEnabled;
     }
 
-
-
-    @Override
-    public Collection<GrantedAuthority> getAuthorities() {
-        return authorities;
-    }
-
-    public void setAuthorities(Collection<GrantedAuthority> authorities) {
-        this.authorities = authorities;
-    }
-
     public String getLastUpdateTime() {
         return lastUpdateTime;
     }
@@ -120,31 +115,6 @@ public class UserBean implements UserDetails, Serializable {
 
     public void setNote(String note) {
         this.note = note;
-    }
-
-    @Override
-    public String getUsername() {
-        return userName;
-    }
-
-    @Override
-    public boolean isAccountNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isAccountNonLocked() {
-        return true;
-    }
-
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isEnabled() {
-        return isEnabled == 1;
     }
 
     public String[] getPermissions() {
