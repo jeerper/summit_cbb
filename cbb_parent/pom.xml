@@ -204,5 +204,6 @@
         <module>cbb_pptn</module>
         <module>cbb_weather</module>
         <module>cbb_api_gateway_db</module>
+        <module>cbb_userauth</module>
     </modules>
 </project>

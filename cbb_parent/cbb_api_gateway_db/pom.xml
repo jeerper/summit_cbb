@@ -6,7 +6,6 @@
         <artifactId>cbb_parent</artifactId>
         <version>1.0.0.RELEASE</version>
     </parent>
-    <groupId>com.summit.apigateway</groupId>
     <artifactId>cbb_api_gateway_db</artifactId>
     <packaging>pom</packaging>
 
