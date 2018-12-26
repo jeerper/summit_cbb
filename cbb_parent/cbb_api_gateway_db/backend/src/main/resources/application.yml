@@ -9,9 +9,9 @@ spring:
 
 zuul:
   routes:
-    api-a:
-      path: /api/pptn/**
-      serviceId: service-pptn
+    cbb_userauth:
+      path: /api/userauth/**
+      serviceId: cbb_userauth
     cbb_demo:
       path: /api/demo/**
       serviceId: cbb_demo
