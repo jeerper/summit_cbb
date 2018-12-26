@@ -6,8 +6,10 @@
 Registry_Center_Port=45000
 #API网关端口
 ApiGateway_Port=45001
+#用户管理端口
+UserAuth_Port=45002
 #Demo端口
-Demo_Port=45002
+Demo_Port=45003
 
 
 
