@@ -1,8 +1,10 @@
 
 package com.summit.handle;
 
+import cn.hutool.core.date.DateUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.summit.common.constant.CommonConstant;
+import com.summit.common.entity.RestFulEntityBySummit;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.AuthenticationException;
@@ -14,7 +16,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -46,13 +47,13 @@ public class SummitResourceAuthExceptionEntryPoint implements AuthenticationEntr
 		map.put("data", authException.getMessage());
 		map.put("success", false);
 		map.put("path", request.getServletPath());
-		map.put("timestamp", String.valueOf(new Date().getTime()));
-
+		map.put("timestamp", DateUtil.now());
+		RestFulEntityBySummit<Map<String, Object>> entity = new RestFulEntityBySummit<>(map);
 
 		response.setCharacterEncoding(CommonConstant.UTF8);
 		response.setContentType(CommonConstant.CONTENT_TYPE);
 		response.setStatus(HttpStatus.UNAUTHORIZED.value());
 		PrintWriter printWriter = response.getWriter();
-		printWriter.append(objectMapper.writeValueAsString(map));
+		printWriter.append(objectMapper.writeValueAsString(entity));
 	}
 }
