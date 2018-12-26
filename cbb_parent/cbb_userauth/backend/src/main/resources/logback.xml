@@ -65,6 +65,8 @@
 	<logger name="org.thymeleaf" level="error"/>
 	<logger name="org.apache.juli" level="error"/>
 	<logger name="org.apache.catalina" level="error"/>
+	<logger name="springfox" level="error"/>
+
 
 
 

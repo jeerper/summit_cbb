@@ -2,7 +2,7 @@ server:
   port: "${WebServer_Port:22223}"
 spring:
   profiles:
-    active: pro
+    active: dev
   application:
     name: "${projectName:cbb_demo}"
 
