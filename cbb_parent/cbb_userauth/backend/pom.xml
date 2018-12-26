@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
     <parent>
     <groupId>com.summit</groupId>
-    <artifactId>cbb_auth</artifactId>
+    <artifactId>cbb_userauth</artifactId>
     <version>1.0.0.RELEASE</version>
   </parent>
   <groupId>com.summit.auth</groupId>

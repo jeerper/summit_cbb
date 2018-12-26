@@ -1,5 +1,6 @@
 package com.summit.controller;
 
+import com.summit.common.entity.UserInfo;
 import com.summit.domain.log.LogBean;
 import com.summit.domain.user.UserBean;
 import com.summit.service.log.ILogUtil;
@@ -10,6 +11,7 @@ import com.summit.util.SysConstants;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import net.sf.json.JSONObject;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -20,6 +22,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Api("user模块")
@@ -229,6 +232,42 @@ public class UserController {
 			} else {
 				res = us.grantRole(userName, role);
 			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			logBean.setActionFlag("0");
+			logBean.setErroInfo(e.toString());
+		}
+		logUtil.updateLog(logBean, "1");
+		return res;
+	}
+
+	@ApiOperation(value = "根据用户名查询用户权限信息")
+	@RequestMapping("/queryUserRoleByUserName")
+	@ResponseBody
+	public Map<String, Object> queryUserRoleByUserName(String userName, HttpServletRequest request) {
+		Map<String, Object> res = new HashMap<String, Object>();
+		LogBean logBean = new LogBean();
+		try {
+			logBean = logUtil.insertLog(request, "1", "根据用户名查询用户权限信息",userName);
+			UserBean ub = us.queryByUserName(userName);
+			List<String> roleList =  us.queryRoleByUserName(userName);
+			List<String> funList = us.getFunByUserName(userName);
+			UserInfo ui = new UserInfo();
+			BeanUtils.copyProperties(ub, ui);
+			String[] tmpStrRole = new String[roleList.size()];
+			tmpStrRole = roleList.toArray(tmpStrRole);
+
+			String[] tmpStrFun = new String[funList.size()];
+			tmpStrFun = funList.toArray(tmpStrFun);
+			ui.setPermissions(tmpStrFun);
+			ui.setRoles(tmpStrFun);
+			if (ui == null) {
+				return st.error("");
+			}
+			ub.setPassword(null);
+			ub.setState(null);
+			ub.setLastUpdateTime(null);
+			res = st.success("", ui);
 		} catch (Exception e) {
 			e.printStackTrace();
 			logBean.setActionFlag("0");

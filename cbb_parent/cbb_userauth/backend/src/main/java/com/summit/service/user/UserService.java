@@ -14,8 +14,6 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import javax.sql.DataSource;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -34,12 +32,8 @@ public class UserService {
 
 	
 	@Autowired
-	@Qualifier("masterJdbcTemplate")
-	private JdbcTemplate masterJdbcTemplate;
+	private JdbcTemplate jdbcTemplate;
 
-	@Autowired
-	@Qualifier("masterDataSource")
-	private DataSource dataSource;
 
 	public Map<String, Object> add(UserBean userBean) {
         BCryptPasswordEncoder encoder =new BCryptPasswordEncoder();
@@ -49,7 +43,7 @@ public class UserService {
 			return st.error("登陆名" + userBean.getUserName() + "已存在！");
 		}
 		sql = "INSERT INTO [SYS_USER] (USERNAME,NAME,PASSWORD,IS_ENABLED,EMAIL,PHONE_NUMBER,STATE,NOTE,LAST_UPDATE_TIME) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-		masterJdbcTemplate.update(sql, userBean.getUserName(), userBean.getName(),
+		jdbcTemplate.update(sql, userBean.getUserName(), userBean.getName(),
 				encoder.encode(userBean.getPassword()),
 				userBean.getIsEnabled(), userBean.getEmail(), userBean
 						.getPhoneNumber(), 1, userBean.getNote(), st.DTFormat(
@@ -137,10 +131,6 @@ public class UserService {
 
 	public List<String> queryRoleByUserName(String userName) {
 		List<String> list = new ArrayList<String>();
-		if (st.stringEquals(SysConstants.SUPER_USERNAME, userName)) {
-			list.add(SysConstants.SUROLE_CODE);
-			return list;
-		}
 		String sql = "SELECT ROLE_CODE FROM SYS_USER_ROLE WHERE USERNAME = ?";
 		List<JSONObject> l = ur.queryAllCustom(sql, userName);
 		for (JSONObject o : l) {
@@ -168,6 +158,17 @@ public class UserService {
 		}
 		ur.jdbcTemplate.batchUpdate(sql, batchArgs);
 		return st.success("");
+	}
+
+
+	public List<String> getFunByUserName(String userName){
+		List<String> list = new ArrayList<String>();
+		String sql = "SELECT DISTINCT SF.ID FROM SYS_USER_ROLE SUR INNER JOIN SYS_ROLE_FUNCTION SRF ON ( SUR.ROLE_CODE = SRF.ROLE_CODE ) INNER JOIN SYS_FUNCTION SF ON (SRF.FUNCTION_ID = SF.ID) WHERE SF.IS_ENABLED = '1' AND SF.SUPER_FUN = 0 AND SUR.USERNAME = ? ORDER BY FDESC";
+		List<JSONObject> l = ur.queryAllCustom(sql, userName);
+		for (JSONObject o : l) {
+			list.add(st.objJsonGetString(o, "ID"));
+		}
+		return list;
 	}
 
 }

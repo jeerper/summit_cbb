@@ -29,14 +29,15 @@ public class SwaggerConfig {
 
 	/**
 	 *  构建 api文档的详细信息函数,注意这里的注解引用的是哪个
+	 *  访问路径http://localhost:8080/swagger-ui.html
 	 * @return
 	 */
 	private ApiInfo apiInfo() {
 		return new ApiInfoBuilder()
 				// 页面标题
-				.title("api_gateway通用测试rest接口发布")
+				.title("cbb_userauth通用测试rest接口发布")
 				// 创建人
-				.contact(new Contact("SilenceYt", "http://www.baidu.com", ""))
+				.contact(new Contact("ChengHu", "http://www.baidu.com", ""))
 				// 版本号
 				.version("1.0")
 				// 描述

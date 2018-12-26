@@ -27,14 +27,8 @@ public class LogUtilImpl implements ILogUtil {
 	public UserRepository ur;
 	
 	@Autowired
-	@Qualifier("masterJdbcTemplate")
-	private JdbcTemplate masterJdbcTemplate;
+	private JdbcTemplate jdbcTemplate;
 
-	@Autowired
-	@Qualifier("masterDataSource")
-	private DataSource dataSource;
-
-	
 	/**
 	 * 
 	 * 新增日志方法
@@ -49,7 +43,7 @@ public class LogUtilImpl implements ILogUtil {
 		if(request !=null && logType!=null && logType.trim().length()>0 && funName!=null && funName.trim().length()>0){
 			String id = new SummitTools().getKey();
 			String callerIP = "";
-			String sTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss:s").format(new Date());
+			String sTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.sss").format(new Date());
 			String insertLogSql = "";
 			String dbName = "";
 			if("1".equals(logType)){
@@ -60,7 +54,7 @@ public class LogUtilImpl implements ILogUtil {
 				dbName = "WF_DATA_SERVICESLOG";
 			}
 			insertLogSql = "INSERT INTO "+dbName+"(id,userName,callerIP,funName,sTime) VALUES (?,?,?,?,?) ";
-			int insertLogCount = masterJdbcTemplate.update(insertLogSql, id,userName,callerIP,funName,sTime);
+			int insertLogCount = jdbcTemplate.update(insertLogSql, id,userName,callerIP,funName,sTime);
 			if(insertLogCount>0){
 				logger.debug("插入日志记录成功！");
 				lg = new LogBean();
@@ -91,7 +85,7 @@ public class LogUtilImpl implements ILogUtil {
 	 */
 	public int updateLog(LogBean logBean,String logType) {
 		if(logBean!=null && logType!=null && logType.trim().length()>0){
-			SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss:s");
+			SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.sss");
 			String sTime = logBean.getsTime();
 			String eTime = sf.format(new Date());
 			String dbName = "";
@@ -110,7 +104,7 @@ public class LogUtilImpl implements ILogUtil {
 			logBean.seteTime(eTime);
 			logBean.setActionTime(actionTime+"");
 			String updateLogSql = "UPDATE "+dbName+" SET eTime=?,actionTime =?,actionFlag = ?,erroInfo = ? WHERE id = ? ";
-			int upfateoLgCount = masterJdbcTemplate.update(
+			int upfateoLgCount = jdbcTemplate.update(
 					updateLogSql,
 					eTime,
 					actionTime,

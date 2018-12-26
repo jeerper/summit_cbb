@@ -26,13 +26,15 @@ import java.util.List;
 public class UserRepository extends JdbcDaoSupport {
 	
 	@Autowired
-    @Qualifier("masterJdbcTemplate")
 	public JdbcTemplate jdbcTemplate;
+	@Autowired
+	DataSource dataSource;
 
 	@Autowired
-	public UserRepository(@Autowired @Qualifier("masterDataSource")DataSource dataSource) {
+	public UserRepository(DataSource dataSource) {
 		setDataSource(dataSource);
 		jdbcTemplate = super.getJdbcTemplate();
+//		System.out.print("datasource==========="+dataSource);
 	}
 
 	@Autowired
