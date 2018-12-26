@@ -6,12 +6,11 @@
         <artifactId>cbb_parent</artifactId>
         <version>1.0.0.RELEASE</version>
     </parent>
-    <groupId>com.summit.apigateway</groupId>
     <artifactId>cbb_api_gateway_es</artifactId>
     <packaging>pom</packaging>
     <dependencies>
         <dependency>
-            <groupId>com.summit.common</groupId>
+            <groupId>com.summit</groupId>
             <artifactId>cbb_common</artifactId>
         </dependency>
         <dependency>

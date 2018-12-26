@@ -36,7 +36,7 @@
     <dependencyManagement>
         <dependencies>
             <dependency>
-                <groupId>com.summit.common</groupId>
+                <groupId>com.summit</groupId>
                 <artifactId>cbb_common</artifactId>
                 <version>${project.version}</version>
             </dependency>
