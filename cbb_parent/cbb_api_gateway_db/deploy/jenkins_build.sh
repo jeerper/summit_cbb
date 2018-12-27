@@ -1,6 +1,6 @@
 #!/bin/sh -l
 #项目名称
-projectName="cbb-api-gateway-db"
+projectName="cbb_api_gateway_db"
 
 source ${WORKSPACE}/cbb_parent/env/env.sh
 

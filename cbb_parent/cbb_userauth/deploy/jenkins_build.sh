@@ -1,6 +1,6 @@
 #!/bin/sh -l
 #项目名称
-projectName="cbb-userauth"
+projectName="cbb_userauth"
 
 source ${WORKSPACE}/cbb_parent/env/env.sh
 
