@@ -10,6 +10,7 @@ import com.summit.util.SummitTools;
 import com.summit.util.SysConstants;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import lombok.extern.slf4j.Slf4j;
 import net.sf.json.JSONObject;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +32,7 @@ import java.util.Map;
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
 @RequestMapping("/api/user")
+@Slf4j
 public class UserController {
 
 	@Autowired
@@ -225,7 +227,7 @@ public class UserController {
 				res = us.grantRole(userName, role);
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.error("授权错误",e);
 			logBean.setActionFlag("0");
 			logBean.setErroInfo(e.toString());
 		}

@@ -22,17 +22,15 @@ import java.util.Map;
 @Service
 @Transactional
 public class UserService {
+
 	@Autowired
 	private UserRepository ur;
 	@Autowired
 	private SummitTools st;
-	
+	@Autowired
+	public JdbcTemplate jdbcTemplate;
 	@Autowired
 	private UserBeanRowMapper ubr;
-
-	
-	@Autowired
-	private JdbcTemplate jdbcTemplate;
 
 
 	public Map<String, Object> add(UserBean userBean) {
@@ -62,7 +60,7 @@ public class UserService {
 				+ SysConstants.SUPER_USERNAME
 				+ "' AND USERNAME IN ('"
 				+ userNames + "')";
-		ur.jdbcTemplate.update(sql, st.DTFormat(DateTimeType.dateTime,
+		jdbcTemplate.update(sql, st.DTFormat(DateTimeType.dateTime,
 				new Date()));
 		delUserRoleByUserName(userNames);
 		return st.success("");
@@ -70,7 +68,7 @@ public class UserService {
 
 	public Map<String, Object> edit(UserBean userBean) {
 		String sql = "UPDATE SYS_USER SET NAME = ?, EMAIL = ?, PHONE_NUMBER =?, NOTE = ?, IS_ENABLED = ?, LAST_UPDATE_TIME = ? WHERE USERNAME = ? AND STATE = 1";
-		ur.jdbcTemplate.update(sql, userBean.getName(), userBean.getEmail(),
+		jdbcTemplate.update(sql, userBean.getName(), userBean.getEmail(),
 				userBean.getPhoneNumber(), userBean.getNote(), userBean
 						.getIsEnabled(), st.DTFormat(DateTimeType.dateTime,
 						new Date()), userBean.getUserName());
@@ -89,7 +87,7 @@ public class UserService {
 			return st.error("，密码错误");
 		}
 		String sql = "UPDATE SYS_USER SET PASSWORD = ?, LAST_UPDATE_TIME = ? WHERE USERNAME = ? AND STATE = 1";
-		ur.jdbcTemplate.update(sql, encoder.encode(password), st.DTFormat(DateTimeType.dateTime, new Date()), ub
+		jdbcTemplate.update(sql, encoder.encode(password), st.DTFormat(DateTimeType.dateTime, new Date()), ub
 				.getUserName());
 		return st.success("");
 	}
@@ -129,7 +127,7 @@ public class UserService {
 		userNames = userNames.replaceAll(",", "','");
         BCryptPasswordEncoder encoder =new BCryptPasswordEncoder();
 		String sql = "UPDATE SYS_USER SET PASSWORD = ?, LAST_UPDATE_TIME = ? WHERE USERNAME = ?";
-		ur.jdbcTemplate.update(sql, encoder.encode("888888"), st.DTFormat(DateTimeType.dateTime, new Date()),
+		jdbcTemplate.update(sql, encoder.encode("888888"), st.DTFormat(DateTimeType.dateTime, new Date()),
 				userNames);
 		return st.success("");
 	}
@@ -147,7 +145,7 @@ public class UserService {
 	public void delUserRoleByUserName(String userNames){
 		String sql = "DELETE FROM SYS_USER_ROLE WHERE USERNAME IN ('"
 				+ userNames + "')";
-		ur.jdbcTemplate.update(sql);
+		jdbcTemplate.update(sql);
 	}
 	
 	public Map<String, Object> grantRole(String userName, String role) {
@@ -155,13 +153,13 @@ public class UserService {
 		if (st.stringIsNull(role)) {
 			return st.success("");
 		}
-		String sql = "INSERT INTO [SYS_USER_ROLE] ([ID], [USERNAME], [ROLE_CODE]) VALUES (?, ?, ?)";
+		String sql = "INSERT INTO SYS_USER_ROLE (ID, USERNAME, ROLE_CODE) VALUES (?, ?, ?)";
 		List<Object[]> batchArgs = new ArrayList<Object[]>();
 		String[] roleArr = role.split(",");
 		for (String roleCode : roleArr) {
 			batchArgs.add(new Object[] { st.getKey(), userName, roleCode });
 		}
-		ur.jdbcTemplate.batchUpdate(sql, batchArgs);
+		jdbcTemplate.batchUpdate(sql, batchArgs);
 		return st.success("");
 	}
 
