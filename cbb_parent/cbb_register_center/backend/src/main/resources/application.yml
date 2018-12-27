@@ -1,6 +1,6 @@
 spring:
   application:
-    name: "${projectName:cbb_register_center}"
+    name: "${projectName:cbb-register-center}"
   #强制检测运行环境编码格式,不符合设置则退出当前程序
   mandatory-file-encoding: UTF-8
   boot:

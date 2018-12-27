@@ -1,6 +1,6 @@
 #!/bin/sh -l
 #项目名称
-projectName="cbb_register_center"
+projectName="cbb-register-center"
 
 source ${WORKSPACE}/cbb_parent/env/env.sh
 
