@@ -1,6 +1,6 @@
 #!/bin/sh -l
 #项目名称
-projectName="cbb_demo"
+projectName="cbb-demo"
 
 source ${WORKSPACE}/cbb_parent/env/env.sh
 
