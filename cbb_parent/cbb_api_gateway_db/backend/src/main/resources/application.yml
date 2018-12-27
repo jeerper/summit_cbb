@@ -4,17 +4,17 @@ spring:
   profiles:
     active: pro
   application:
-    name: "${projectName:cbb_api_gateway_db}"
+    name: "${projectName:cbb-api-gateway-db}"
 
 
 zuul:
   routes:
     cbb_userauth:
       path: /api/userauth/**
-      serviceId: cbb_userauth
+      serviceId: cbb-userauth
     cbb_demo:
       path: /api/demo/**
-      serviceId: cbb_demo
+      serviceId: cbb-demo
 
 #当zuul.routes的配置用指定url进行路由时,是zuul.host.connect-timeout-millis,zuul.host.socket-timeout-millis这两个配生效，
 #当zuul.routes的配置用serviceId进行路由时,是ribbon.ReadTimeout,ribbon.SocketTimeout生效。
