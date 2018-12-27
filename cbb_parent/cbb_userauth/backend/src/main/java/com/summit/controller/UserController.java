@@ -31,7 +31,7 @@ import java.util.Map;
 @Api("user模块")
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
-@RequestMapping("/api/user")
+@RequestMapping("/user")
 @Slf4j
 public class UserController {
 

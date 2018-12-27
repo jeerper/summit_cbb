@@ -1,8 +1,12 @@
 package com.summit.config;
 
+import com.summit.common.api.userauth.RemoteUserAuthService;
+import com.summit.common.entity.RestFulEntityBySummit;
+import com.summit.common.entity.UserInfo;
 import com.summit.model.user.UserBean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -23,7 +27,8 @@ import java.util.List;
 public class UserDetailsServiceImpl implements UserDetailsService {
 
     private static final Logger logger = LoggerFactory.getLogger(UserDetailsServiceImpl.class);
-//	private final RemoteUserService remoteUserService;
+    @Autowired
+    private  RemoteUserAuthService remoteUserAuthService;
 
     /**
      * 通过用户名查找用户
@@ -33,6 +38,8 @@ public class UserDetailsServiceImpl implements UserDetailsService {
      */
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        RestFulEntityBySummit<UserInfo> userInfoRestFulEntity= remoteUserAuthService.queryUserRoleByUserName(username);
+
         //TODO:来自用户服务组件
         UserBean user = new UserBean();
         user.setUserName("admin");
