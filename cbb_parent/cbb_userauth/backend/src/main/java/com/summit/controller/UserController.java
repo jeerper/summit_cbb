@@ -258,7 +258,7 @@ public class UserController {
 			ub.setPassword(null);
 			ub.setState(null);
 			ub.setLastUpdateTime(null);
-			res = st.success("", ui);
+			res = st.success("success", ui);
 		} catch (Exception e) {
 			e.printStackTrace();
 			logBean.setActionFlag("0");

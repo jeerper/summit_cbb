@@ -80,7 +80,7 @@ public class SummitTools {
 
 	public Map<String, Object> success(String msg, Object data) {
 		Map<String, Object> map = new HashMap<String, Object>();
-		map.put("success", true);
+		map.put("code", 200);
 		map.put("msg", msg);
 		map.put("data", data);
 		return map;
