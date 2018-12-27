@@ -51,7 +51,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         user.setName(userInfo.getName());
         user.setIsEnabled(userInfo.getIsEnabled());
         user.setRoles(userInfo.getRoles());
-
+        user.setPermissions(userInfo.getPermissions());
         List<GrantedAuthority> authorities = AuthorityUtils.createAuthorityList(user.getRoles());
 //        authorities.add(new SimpleGrantedAuthority("ROLE_DEFAULT"));
         user.setAuthorities(authorities);
