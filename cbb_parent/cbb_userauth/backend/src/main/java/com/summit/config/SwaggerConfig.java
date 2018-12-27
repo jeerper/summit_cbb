@@ -29,7 +29,7 @@ public class SwaggerConfig {
 
 	/**
 	 *  构建 api文档的详细信息函数,注意这里的注解引用的是哪个
-	 *  访问路径http://localhost:8080/swagger-ui.html
+	 *  访问路径http://localhost:22224/swagger-ui.html
 	 * @return
 	 */
 	private ApiInfo apiInfo() {

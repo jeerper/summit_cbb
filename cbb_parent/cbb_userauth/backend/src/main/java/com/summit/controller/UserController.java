@@ -13,11 +13,13 @@ import io.swagger.annotations.ApiOperation;
 import net.sf.json.JSONObject;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
@@ -27,7 +29,7 @@ import java.util.Map;
 
 @Api("user模块")
 @CrossOrigin(origins = "*", maxAge = 3600)
-@Controller
+@RestController
 @RequestMapping("/api/user")
 public class UserController {
 
@@ -39,8 +41,7 @@ public class UserController {
 	@Autowired
 	ILogUtil logUtil;
 
-	@RequestMapping(value = "/add", method = RequestMethod.POST)
-	@ResponseBody
+	@PostMapping("/add")
 	@ApiOperation(value = "新增用户", notes = "用于application/json格式")
 	public Map<String, Object> add(UserBean userBean, HttpServletRequest request, String userName) {
 		Map<String, Object> res = new HashMap<String, Object>();
@@ -58,9 +59,7 @@ public class UserController {
 	}
 
 	@ApiOperation(value = "删除用户信息")
-
-	@RequestMapping("/del")
-	@ResponseBody
+    @DeleteMapping("/del")
 	public Map<String, Object> del(String userNames, HttpServletRequest request, String userName) {
 		Map<String, Object> res = new HashMap<String, Object>();
 		LogBean logBean = new LogBean();
@@ -77,8 +76,7 @@ public class UserController {
 	}
 
 	@ApiOperation(value = "修改用户", notes = "用于application/json格式")
-	@RequestMapping("/edit")
-	@ResponseBody
+	@PutMapping("/edit")
 	public Map<String, Object> edit(UserBean userBean, HttpServletRequest request, String userName) {
 		Map<String, Object> res = new HashMap<String, Object>();
 		LogBean logBean = new LogBean();
@@ -99,8 +97,7 @@ public class UserController {
 	}
 
 	@ApiOperation(value = "修改密码")
-	@RequestMapping("/editPassword")
-	@ResponseBody
+	@PutMapping("/editPassword")
 	public Map<String, Object> editPassword(String oldPassword, String password, String repeatPassword,
 			HttpServletRequest request, String userName) {
 		Map<String, Object> res = new HashMap<String, Object>();
@@ -128,8 +125,7 @@ public class UserController {
 	}
 
 	@ApiOperation(value = "根据用户名查询用户信息")
-	@RequestMapping("/queryByUserName")
-	@ResponseBody
+	@GetMapping("/queryByUserName")
 	public Map<String, Object> queryByUserName(String userName, HttpServletRequest request) {
 		Map<String, Object> res = new HashMap<String, Object>();
 		LogBean logBean = new LogBean();
@@ -156,8 +152,7 @@ public class UserController {
 	}
 
 	@ApiOperation(value = "分页查询")
-	@RequestMapping("/queryByPage")
-	@ResponseBody
+	@GetMapping("/queryByPage")
 	public Page<JSONObject> queryByPage(Integer start, Integer limit, UserBean userBean, HttpServletRequest request, String userName) {
 		Page<JSONObject> res = new Page<JSONObject>();
 		LogBean logBean = new LogBean();
@@ -176,8 +171,7 @@ public class UserController {
 	}
 
 	@ApiOperation(value = "重置密码")
-	@RequestMapping("/resetPassword")
-	@ResponseBody
+	@PutMapping("/resetPassword")
 	public Map<String, Object> resetPassword(String userName, HttpServletRequest request) {
 		Map<String, Object> res = new HashMap<String, Object>();
 		LogBean logBean = new LogBean();
@@ -198,8 +192,7 @@ public class UserController {
 	}
 
 	@ApiOperation(value = "根据用户名查询权限")
-	@RequestMapping("/queryRoleByUserName")
-	@ResponseBody
+	@GetMapping("/queryRoleByUserName")
 	public Map<String, Object> queryRoleByUserName(String userName, HttpServletRequest request) {
 		Map<String, Object> res = new HashMap<String, Object>();
 		LogBean logBean = new LogBean();
@@ -220,8 +213,7 @@ public class UserController {
 	}
 
 	@ApiOperation(value = "授权权限")
-	@RequestMapping("/grantRole")
-	@ResponseBody
+	@PutMapping("/grantRole")
 	public Map<String, Object> grantRole(String userName, String role, HttpServletRequest request) {
 		Map<String, Object> res = new HashMap<String, Object>();
 		LogBean logBean = new LogBean();
@@ -242,8 +234,7 @@ public class UserController {
 	}
 
 	@ApiOperation(value = "根据用户名查询用户权限信息")
-	@RequestMapping("/queryUserRoleByUserName")
-	@ResponseBody
+	@GetMapping("/queryUserRoleByUserName")
 	public Map<String, Object> queryUserRoleByUserName(String userName, HttpServletRequest request) {
 		Map<String, Object> res = new HashMap<String, Object>();
 		LogBean logBean = new LogBean();
