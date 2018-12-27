@@ -43,11 +43,11 @@ public class UserController {
 
 	@PostMapping("/add")
 	@ApiOperation(value = "新增用户", notes = "用于application/json格式")
-	public Map<String, Object> add(UserBean userBean, HttpServletRequest request, String userName) {
+	public Map<String, Object> add(UserBean userBean, HttpServletRequest request) {
 		Map<String, Object> res = new HashMap<String, Object>();
 		LogBean logBean = new LogBean();
 		try {
-			logBean = logUtil.insertLog(request, "1", "用户新增",userName);
+			logBean = logUtil.insertLog(request, "1", "用户新增",userBean.getUserName());
 			res = us.add(userBean);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -82,7 +82,7 @@ public class UserController {
 		LogBean logBean = new LogBean();
 		try {
 			logBean = logUtil.insertLog(request, "1", "修改用户",userName);
-			if (st.stringEquals(SysConstants.SUPER_USERNAME, userBean.getUsername())) {
+			if (st.stringEquals(SysConstants.SUPER_USERNAME, userBean.getUserName())) {
 				res = st.success("", new ArrayList<Object>());
 			} else {
 				res = us.edit(userBean);
@@ -251,7 +251,7 @@ public class UserController {
 			String[] tmpStrFun = new String[funList.size()];
 			tmpStrFun = funList.toArray(tmpStrFun);
 			ui.setPermissions(tmpStrFun);
-			ui.setRoles(tmpStrFun);
+			ui.setRoles(tmpStrRole);
 			if (ui == null) {
 				return st.error("");
 			}

@@ -1,7 +1,6 @@
 package com.summit.domain.user;
 
 import java.io.Serializable;
-import java.util.Collection;
 
 public class UserBean implements  Serializable {
 	/**
@@ -109,9 +108,7 @@ public class UserBean implements  Serializable {
 		this.note = note;
 	}
 
-	public String getUsername() {
-		return userName;
-	}
+
 
 
 	public boolean isEnabled() {

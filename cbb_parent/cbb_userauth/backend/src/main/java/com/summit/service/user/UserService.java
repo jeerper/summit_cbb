@@ -9,11 +9,11 @@ import com.summit.util.SummitTools.DateTimeType;
 import com.summit.util.SysConstants;
 import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -42,12 +42,17 @@ public class UserService {
 		if (st.collectionNotNull(l)) {
 			return st.error("登陆名" + userBean.getUserName() + "已存在！");
 		}
-		sql = "INSERT INTO [SYS_USER] (USERNAME,NAME,PASSWORD,IS_ENABLED,EMAIL,PHONE_NUMBER,STATE,NOTE,LAST_UPDATE_TIME) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-		jdbcTemplate.update(sql, userBean.getUserName(), userBean.getName(),
+		sql = "INSERT INTO SYS_USER (USERNAME,NAME,PASSWORD,IS_ENABLED,EMAIL,PHONE_NUMBER,STATE,NOTE,LAST_UPDATE_TIME) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+		jdbcTemplate.update(sql,
+				userBean.getUserName(),
+				userBean.getName(),
 				encoder.encode(userBean.getPassword()),
-				userBean.getIsEnabled(), userBean.getEmail(), userBean
-						.getPhoneNumber(), 1, userBean.getNote(), st.DTFormat(
-						DateTimeType.dateTime, new Date()));
+				userBean.getIsEnabled(),
+				userBean.getEmail(),
+				userBean.getPhoneNumber(),
+				1,
+				userBean.getNote(),
+				st.DTFormat(DateTimeType.dateTime, new Date()));
 		return st.success("");
 	}
 
