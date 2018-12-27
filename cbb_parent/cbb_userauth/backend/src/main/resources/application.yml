@@ -4,7 +4,7 @@ spring:
   profiles:
     active: pro
   application:
-    name: "${projectName:cbb-userauth}"
+    name: "cbb-userauth"
 
 feign:
   httpclient:
