@@ -8,6 +8,7 @@ spring:
 
 
 zuul:
+  ignoredServices: '*'
   routes:
     cbb_userauth:
       path: /api/userauth/**
