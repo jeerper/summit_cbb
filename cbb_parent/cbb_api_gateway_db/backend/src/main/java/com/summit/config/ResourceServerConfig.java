@@ -13,9 +13,8 @@ import org.springframework.security.oauth2.config.annotation.web.configurers.Res
 import org.springframework.security.oauth2.provider.expression.OAuth2WebSecurityExpressionHandler;
 
 /**
+ *  资源服务器配置
  * @author Administrator
- * @date 2018/6/22
- * 资源服务器配置
  */
 @Configuration
 @EnableResourceServer
@@ -30,12 +29,10 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
 
     @Override
     public void configure(HttpSecurity http) throws Exception {
+        //允许使用iframe 嵌套，避免swagger-ui 不被加载的问题
+        http.headers().frameOptions().disable();
         http.authorizeRequests()
-                .antMatchers("/actuator/**"
-                        , "/user/info/*"
-                        , "/social/info/**"
-                        , "/log/**"
-                        , "/v2/api-docs").permitAll()
+                .antMatchers(WebSecurityConfigurer.AUTH_WHITELIST).permitAll()
                 .anyRequest().authenticated()
                 .and().csrf().disable();
     }

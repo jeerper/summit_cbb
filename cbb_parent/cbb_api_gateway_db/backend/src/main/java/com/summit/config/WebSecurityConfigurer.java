@@ -30,17 +30,16 @@ public class WebSecurityConfigurer extends WebSecurityConfigurerAdapter {
     /**
      * 需要放行的URL
      */
-    private static final String[] AUTH_WHITELIST = {
+    public static final String[] AUTH_WHITELIST = {
             // -- business url
+            //actuator url
             "/actuator/**",
-            "/oauth/removeToken",
-            "/oauth/delToken/*",
-            "/oauth/listToken",
             // -- swagger ui
             "/v2/api-docs",
+            "/**/v2/api-docs",
             "/swagger-resources/**",
-            "/configuration/**",
             "/swagger-ui.html",
+            "/swagger/api-docs",
             "/webjars/**"
     };
 
