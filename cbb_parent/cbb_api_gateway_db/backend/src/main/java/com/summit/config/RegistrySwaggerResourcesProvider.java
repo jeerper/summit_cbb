@@ -30,7 +30,7 @@ public class RegistrySwaggerResourcesProvider implements SwaggerResourcesProvide
         routes.forEach(route -> {
             resources.add(swaggerResource(route.getId(), route.getFullPath().replace("**", "v2/api-docs")));
         });
-        resources.add(swaggerResource("api_gateway", "/v2/api-docs"));
+        resources.add(swaggerResource("cbb_api_gateway", "/v2/api-docs"));
         return resources;
     }
 
