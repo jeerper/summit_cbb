@@ -8,15 +8,19 @@ import springfox.documentation.builders.ApiInfoBuilder;
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
 import springfox.documentation.service.ApiInfo;
-import springfox.documentation.service.ApiKey;
 import springfox.documentation.service.AuthorizationScope;
 import springfox.documentation.service.Contact;
+import springfox.documentation.service.GrantType;
+import springfox.documentation.service.OAuth;
+import springfox.documentation.service.ResourceOwnerPasswordCredentialsGrant;
 import springfox.documentation.service.SecurityReference;
 import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spi.service.contexts.SecurityContext;
 import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static com.google.common.base.Predicates.and;
@@ -39,9 +43,10 @@ public class SwaggerConfig {
                 .apis(RequestHandlerSelectors.withMethodAnnotation(ApiOperation.class))
                 .paths(PathSelectors.any())
                 .build()
-                .securitySchemes(newArrayList(new ApiKey("Authorization", "Authorization", "header")))
+                .securitySchemes(Collections.singletonList(securitySchema()))
                 .securityContexts(newArrayList(securityContexts()));
     }
+
     private List<SecurityContext> securityContexts() {
         return newArrayList(
                 SecurityContext.builder()
@@ -51,10 +56,25 @@ public class SwaggerConfig {
         );
     }
 
+    private OAuth securitySchema() {
+        ArrayList<AuthorizationScope> authorizationScopeList = new ArrayList<>();
+        authorizationScopeList.add(new AuthorizationScope("server", "server all"));
+
+        ArrayList<GrantType> grantTypes = new ArrayList<>();
+//        grantTypes.add(new ResourceOwnerPasswordCredentialsGrant("http://192.168.141.222:22222/oauth/token"));
+        grantTypes.add(new ResourceOwnerPasswordCredentialsGrant("/oauth/token"));
+
+        return new OAuth("SummitOauth2", authorizationScopeList, grantTypes);
+    }
+
     private List<SecurityReference> defaultAuth() {
-        AuthorizationScope[] authorizationScopes = new AuthorizationScope[1];
-        authorizationScopes[0] = new AuthorizationScope("global", "accessEverything");
-        return newArrayList(new SecurityReference("Authorization", authorizationScopes));
+        ArrayList<AuthorizationScope> authorizationScopeList = new ArrayList<>();
+        authorizationScopeList.add(new AuthorizationScope("server", "server all"));
+
+        AuthorizationScope[] authorizationScopes = new AuthorizationScope[authorizationScopeList.size()];
+        authorizationScopeList.toArray(authorizationScopes);
+
+        return newArrayList(new SecurityReference("SummitOauth2", authorizationScopes));
     }
 
     private Predicate<String> securityPaths() {
@@ -67,7 +87,7 @@ public class SwaggerConfig {
                 .title("共享组件平台 Restful API")
                 .description("接口说明与调试界面")
                 .termsOfServiceUrl("http://www.summit.com.cn/")
-                .contact(new Contact("Summit","http://www.summit.com.cn/",""))
+                .contact(new Contact("Summit", "http://www.summit.com.cn/", ""))
                 .version("1.0")
                 .build();
     }
