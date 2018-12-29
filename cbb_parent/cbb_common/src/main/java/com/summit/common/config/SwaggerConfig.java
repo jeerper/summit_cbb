@@ -34,6 +34,8 @@ import static springfox.documentation.builders.PathSelectors.regex;
 @EnableSwagger2
 public class SwaggerConfig {
 
+    private static final String OAuth2Name = "SummitOauth2";
+
     @Bean
     public Docket createRestApi() {
 
@@ -57,25 +59,27 @@ public class SwaggerConfig {
     }
 
     private OAuth securitySchema() {
-        ArrayList<AuthorizationScope> authorizationScopeList = new ArrayList<>();
-        authorizationScopeList.add(new AuthorizationScope("server", "server all"));
-
         ArrayList<GrantType> grantTypes = new ArrayList<>();
-//        grantTypes.add(new ResourceOwnerPasswordCredentialsGrant("http://192.168.141.222:22222/oauth/token"));
         grantTypes.add(new ResourceOwnerPasswordCredentialsGrant("/oauth/token"));
-
-        return new OAuth("SummitOauth2", authorizationScopeList, grantTypes);
+        return new OAuth(OAuth2Name, getAuthorizationScopeList(), grantTypes);
     }
 
     private List<SecurityReference> defaultAuth() {
-        ArrayList<AuthorizationScope> authorizationScopeList = new ArrayList<>();
-        authorizationScopeList.add(new AuthorizationScope("server", "server all"));
+        ArrayList<AuthorizationScope> authorizationScopeList =
+                (ArrayList<AuthorizationScope>) getAuthorizationScopeList();
 
         AuthorizationScope[] authorizationScopes = new AuthorizationScope[authorizationScopeList.size()];
         authorizationScopeList.toArray(authorizationScopes);
 
-        return newArrayList(new SecurityReference("SummitOauth2", authorizationScopes));
+        return newArrayList(new SecurityReference(OAuth2Name, authorizationScopes));
     }
+
+    private List<AuthorizationScope> getAuthorizationScopeList() {
+        ArrayList<AuthorizationScope> authorizationScopeList = new ArrayList<>();
+        authorizationScopeList.add(new AuthorizationScope("server", ""));
+        return authorizationScopeList;
+    }
+
 
     private Predicate<String> securityPaths() {
         return and(regex("^(?!oauth).*$"));
