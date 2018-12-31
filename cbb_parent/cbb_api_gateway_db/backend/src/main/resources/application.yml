@@ -47,6 +47,11 @@ feign:
     enabled: true
   hystrix:
     enabled: true
+  compression:
+    request:
+      enabled: true
+    response:
+      enabled: true
 
 #登录密码密钥必须是16字节长度的
 password:
