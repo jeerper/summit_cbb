@@ -10,7 +10,7 @@
 - IDE Idea&Eclipse
 - lombok
 
-## 工程结构
+## 父工程结构
 
 ```
 cbb_parent
@@ -26,7 +26,7 @@ cbb_parent
 └── pom.xml             --主工程的maven配置文件
 ```
 
-## module目录结构
+## 子工程 module目录结构
 
 ```
 ├── backend 				--组件源代码工程
