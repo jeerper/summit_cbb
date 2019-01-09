@@ -2,7 +2,7 @@
 
 ## 共享组件货架Swagger访问地址
 
-`http://192.168.140.155:43000/swagger-ui.html`
+`[http://192.168.140.155:43000/swagger-ui.html](http://192.168.140.155:43000/swagger-ui.html)`
 
 ## 组件基本信息
 
