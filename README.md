@@ -103,6 +103,6 @@ cbb_parent
 
 ![SpringBootAdmin监控](doc/SpringBootAdmin.png)
 
-- 各个组件启动完成后访问`http://localhost:22222/swagger-ui.html`,这个界面来进行接口调试，入下图所示：
+- 各个组件启动完成后访问`http://localhost:22222/swagger-ui.html`,这个界面来进行接口调试，如下图所示：
  
   ![Swagger接口调试界面](doc/Swagger-test-ui.png)
