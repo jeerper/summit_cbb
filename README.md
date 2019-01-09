@@ -102,7 +102,7 @@ cbb_parent
           defaultZone: "http://ucp:Summit2018@localhost:8761/eureka/" --注册中心组件默认端口是8761，所以注册中心组件无需配置，所以直接启动即可
     ```
 - 根据上述组件启动清单，依次启动组件，运行`MainAction.java`
-- 各个组件启动完成后访问`http://localhost:8761/admin/login`,查看各个组件运行状态，访问SpringBootAdmin的用户名和密码分别是：
+- 各个组件启动完成后访问<http://localhost:8761/admin/login>,查看各个组件运行状态，访问SpringBootAdmin的用户名和密码分别是：
     ```
       用户名:ucp
       密码:Summit2018
