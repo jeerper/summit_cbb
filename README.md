@@ -45,8 +45,15 @@ cbb_parent
 ## 子工程 module目录结构
 
 ```
-├── backend                 --组件源代码工程
-│   ├── src                 --源码目录
+├── backend  --组件源代码工程
+│   ├── src  --源码目录
+│   │   └── main
+│   │       ├── java
+│   │       └── resources
+│   │            ├── application.yml       --公共
+│   │            ├── application-dev.yml   --开发环境配置文件
+│   │            ├── application-pro.yml   --生产环境配置文件
+│   │            └── logback.xml           --日志配置文件
 │   ├── .dockerignore       --构建Docker镜像时复制文件的忽略文件清单
 │   ├── Dockerfile-backend  --构建Docker镜像脚本
 │   └── pom.xml             --组件的maven配置文件
