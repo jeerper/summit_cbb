@@ -99,9 +99,9 @@ cbb_parent
       用户名:ucp
       密码:Summit2018
      ```
-- 当出现如下状态，这表示组件运行正常:
+- 当出现如下状态，<font color=green size=5px>all up</font> 则表示组件运行正常:
 
 ![SpringBootAdmin](doc/SpringBootAdmin.png)
 
-- 各个组件启动完成后访问`http://localhost:22222/swagger-ui.html`,
+- 各个组件启动完成后访问`http://localhost:22222/swagger-ui.html`,这个界面来进行接口调试。
   

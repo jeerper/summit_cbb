@@ -88,7 +88,7 @@ public class SwaggerConfig {
 
     private ApiInfo apiInfo() {
         return new ApiInfoBuilder()
-                .title("共享组件平台 Restful API")
+                .title("山脉科技共享组件平台 Restful API")
                 .description("接口说明与调试界面")
                 .termsOfServiceUrl("http://www.summit.com.cn/")
                 .contact(new Contact("Summit", "http://www.summit.com.cn/", ""))
