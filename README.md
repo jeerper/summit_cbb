@@ -1,5 +1,13 @@
 # 山脉科技共享组件平台
 
+## 共享组件货架Swagger访问地址
+
+<http://192.168.140.155:43000/swagger-ui.html>
+
+## 共享组件平台Swagger访问地址
+
+<http://192.168.140.155:45001/swagger-ui.html>
+
 ## 组件基本信息
 
 |组件名称|组件工程名|生产服务器组件访问地址|本地运行默认端口|负责人|
@@ -94,7 +102,7 @@ cbb_parent
           defaultZone: "http://ucp:Summit2018@localhost:8761/eureka/" --注册中心组件默认端口是8761，所以注册中心组件无需配置，所以直接启动即可
     ```
 - 根据上述组件启动清单，依次启动组件，运行`MainAction.java`
-- 各个组件启动完成后访问`http://localhost:8761/admin/login`,查看各个组件运行状态，访问SpringBootAdmin的用户名和密码分别是：
+- 各个组件启动完成后访问<http://localhost:8761/admin/login>,查看各个组件运行状态，访问SpringBootAdmin的用户名和密码分别是：
     ```
       用户名:ucp
       密码:Summit2018
@@ -103,7 +111,7 @@ cbb_parent
 
 ![SpringBootAdmin监控](doc/SpringBootAdmin.png)
 
-- 各个组件启动完成后访问`http://localhost:22222/swagger-ui.html`,这个界面来进行接口调试，如下图所示：
+- 各个组件启动完成后访问<http://localhost:22222/swagger-ui.html>,这个界面来进行接口调试，如下图所示：
 
 ![Swagger接口调试界面](doc/Swagger-test-ui.png)
 
