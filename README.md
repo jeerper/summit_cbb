@@ -71,6 +71,16 @@ cbb_parent
 └── pom.xml                 --module的maven配置文件
 ```
 
+## 编译源代码
+
+``` 
+cd cbb_parent
+
+mvn clean
+
+mvn install
+```
+
 ## 启动
 
 ### 方式一、所有组件本地启动
