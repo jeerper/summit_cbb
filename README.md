@@ -85,11 +85,17 @@ cbb_parent
 
 #### 修改所有要启动的组件的配置文件
 
-- 切换到开发环境模式配置文件,需要配置组件中的`application.yml`配置文件:
+- 切换到开发环境模式配置文件，需要配置组件中的`application.yml`配置文件:
     ``` yml
     spring:
       profiles:
         active: dev --改为dev
+    ```
+- 修改自己开发的组件的应用程序名称(需要辨识该服务相关信息)，需要配置组件中的`application.yml`配置文件:
+    ``` yml
+    spring:
+      application:
+        name: "cbb-demo" --此处用应用程序开发模板作为例子
     ```
 
 - 并修改`application-dev.yml`配置文件中的:
@@ -109,10 +115,39 @@ cbb_parent
      ```
 - 当出现如下状态，<font color=green size=5px>all up</font> 则表示组件运行正常:
 
-![SpringBootAdmin监控](doc/SpringBootAdmin.png)
+  ![SpringBootAdmin监控](doc/SpringBootAdmin.png)
 
-- 各个组件启动完成后访问<http://localhost:22222/swagger-ui.html>,这个界面来进行接口调试，如下图所示：
+- 各个组件启动完成后访问<http://localhost:22222/swagger-ui.html>,这个界面来进行接口调试，并在下图红框中切换各个组件，调试各个组件的接口，如下图所示：
 
-![Swagger接口调试界面](doc/Swagger-test-ui.png)
+  ![Swagger接口调试界面](doc/Swagger-test-ui.png)
 
 ### 方式二、只启动自己所要开发的组件
+
+#### 修改自己所要开发的组件的配置文件
+
+- 切换到开发环境模式配置文件，需要配置组件中的`application.yml`配置文件:
+    ``` yml
+    spring:
+      profiles:
+        active: dev --改为dev
+    ```
+- 修改自己开发的组件的应用程序名称(需要辨识该服务相关信息)，需要配置组件中的`application.yml`配置文件:
+    ``` yml
+    spring:
+      application:
+        name: "cbb-demo-test" --此处用应用程序开发模板作为例子(不能与服务器平台中已经运行的组件应用程序重名)
+    ```
+    <font color=red size=5px>注意：上图的组件应用程序名称不能与服务器平台中已经运行的组件应用程序重名，一旦重名，平台会认为是同一个组件的多个实例，网关在调用组件接口时，Ribbon负载均衡器会根据负载均衡算法，自动路由到相同的应用程序名称的组件的其中一个，造成从网关过来的请求无法到达你本地开发机的问题。</font>
+- 运行自己组件的`MainAction.java`文件即可。
+- 当自己的组件启动完成后访问<http://192.168.140.155:45000/admin/login>,查看各个组件运行状态，访问SpringBootAdmin的用户名和密码分别是：
+    ```
+      用户名:ucp
+      密码:Summit2018
+     ```
+- 当出现如下状态，有红框处的组件状态，<font color=green size=5px>all up</font> 则表示组件运行正常:
+
+  ![SpringBootAdmin监控](doc/Swagger-test-ui-cloud.png)
+
+- 各个组件启动完成后访问<http://192.168.140.155:45001/swagger-ui.html>,这个界面来进行接口调试，并在下图红框中切换各个组件，调试各个组件的接口，如下图所示：
+
+  ![Swagger接口调试界面](doc/Swagger-test-ui.png)
