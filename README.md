@@ -151,3 +151,4 @@ cbb_parent
 - 各个组件启动完成后访问<http://192.168.140.155:45001/swagger-ui.html>,这个界面来进行接口调试，并在下图红框中切换各个组件，调试各个组件的接口，如下图所示：
 
   ![Swagger接口调试界面](doc/Swagger-test-ui.png)
+   <font color=red size=5px>注意：</font>由于网关动态路由组件的<font color=red size=5px>配置接口暂未开发</font>，所以如果大家有新开发的组件，要注册到网关Swagger接口中，请联系<font color=red size=5px>刘源</font>来进行网关路由配置。
