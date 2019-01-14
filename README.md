@@ -162,3 +162,5 @@ mvn install
 
   ![Swagger接口调试界面](doc/Swagger-test-ui.png)
    <font color=red size=5px>注意：</font>由于网关动态路由组件的<font color=red size=5px>配置接口暂未开发</font>，所以如果大家有新开发的组件，要注册到网关Swagger接口中，请联系<font color=red size=5px>刘源</font>来进行网关路由配置。
+
+- 或者可以访问你正在开发组件的swagger界面进行调试，在自己组件开发可以不用登陆，因为已经绕过了网关。
