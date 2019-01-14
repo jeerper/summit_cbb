@@ -101,6 +101,7 @@ mvn install
       profiles:
         active: dev --改为dev
     ```
+
 - 修改自己开发的组件的应用程序名称(需要辨识该服务相关信息)，需要配置组件中的`application.yml`配置文件:
     ``` yml
     spring:
@@ -117,12 +118,15 @@ mvn install
         serviceUrl:
           defaultZone: "http://ucp:Summit2018@localhost:8761/eureka/" --注册中心组件默认端口是8761，所以注册中心组件无需配置，所以直接启动即可
     ```
+
 - 根据上述组件启动清单，依次启动组件，运行`MainAction.java`
+
 - 各个组件启动完成后访问<http://localhost:8761/admin/login>,查看各个组件运行状态，访问SpringBootAdmin的用户名和密码分别是：
     ```
       用户名:ucp
       密码:Summit2018
      ```
+
 - 当出现如下状态，<font color=green size=5px>all up</font> 则表示组件运行正常:
 
   ![SpringBootAdmin监控](doc/SpringBootAdmin.png)
