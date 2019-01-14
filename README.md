@@ -194,10 +194,16 @@ mvn install
 
     ![授权成功](doc/Auth_success.png)
 
-    此时就可以测试接口了!
+     <font color=black size=5px>此时就可以测试接口了!</font>
 
    <font color=red size=5px>注意：</font>`password`字段在<http://tool.chacuo.net/cryptaes>这个站点进行AES加密和解密，<font color=red size=5px>秘钥</font>目前使用的是`summitsummitsumm`
 
    加解密方式如下图：
 
    ![password字段加密和解密方法](doc/AES_decode_encode.png)
+
+## 最后
+
+  平台最终发布的对外接口服务的URL请以网关的swagger提供的为准，所以前端和测试同学，在使用的时候只需要通过网关来访问所需要的接口即可。如下图：
+
+  ![测试接口的url](doc/test_api.png)
