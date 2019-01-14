@@ -204,6 +204,8 @@ mvn install
 
 ## 最后
 
-  平台最终发布的对外接口服务的URL请以网关的swagger提供的为准，所以前端和测试同学，在使用的时候只需要通过网关来访问所需要的接口即可。如下图：
+  平台最终发布的对外接口服务的URL请以网关的swagger提供的为准，所以前端和测试同学，在使用的时候只需要通过网关来访问所需要的接口即可。例如下图：
 
   ![测试接口的url](doc/test_api.png)
+
+  后端同学请注意，网关在对外提供各个服务组件的URL接口时，都会给不同的服务组件追加URL访问前缀，例如`/api/userauth/user/queryUserRoleByUserName`，实际上该组件的真实接口是`/user/queryUserRoleByUserName`,所以各个服务组件的开发同学，不用刻意的给你的rest接口加访问前缀，<font color=black size=5px>不用担心和其他组件的接口冲突。</font>
