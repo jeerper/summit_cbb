@@ -195,6 +195,8 @@ mvn install
     ![授权成功](doc/Auth_success.png)
 
     <font color=black size=5px>此时就可以测试接口了!</font>
+    <br>
+    <br>
 
     <font color=red size=5px>注意：</font>`password`字段在<http://tool.chacuo.net/cryptaes>这个站点进行AES加密和解密，<font color=red size=5px>秘钥</font>目前使用的是`summitsummitsumm`
 
