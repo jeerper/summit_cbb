@@ -183,9 +183,21 @@ mvn install
     grant_type: password   --OAuth2.0认证模式
     scope: server    --认证作用域(默认全平台有效)
     ```
+
+    登录方式如下图:
+
+    ![登录获取授权](doc/Auth.png)
+
+    填完认证表单后点击`Authorize`按钮即可完成接口访问授权。
+
+    授权成功后，会出现锁子闭合的图标，即表示接口允许访问，如下图:
+
+    ![授权成功](doc/Auth_success.png)
+
+    此时就可以测试接口了!
+
    <font color=red size=5px>注意：</font>`password`字段在<http://tool.chacuo.net/cryptaes>这个站点进行AES加密和解密，<font color=red size=5px>秘钥</font>目前使用的是`summitsummitsumm`
-   
+
    加解密方式如下图：
 
-   ![Swagger接口调试界面](doc/AES_decode_encode.png)
-   
+   ![password字段加密和解密方法](doc/AES_decode_encode.png)
