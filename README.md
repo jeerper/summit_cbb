@@ -164,3 +164,28 @@ mvn install
    <font color=red size=5px>注意：</font>由于网关动态路由组件的<font color=red size=5px>配置接口暂未开发</font>，所以如果大家有新开发的组件，要注册到网关Swagger接口中，请联系<font color=red size=5px>刘源</font>来进行网关路由配置。
 
 - 或者可以访问你正在开发组件的swagger界面进行调试，在自己组件开发可以不用登陆，因为已经绕过了网关。
+
+## 测试接口
+
+由于使用OAuth2.0授权认证模式，所以通过网关访问接口时，需要登录认证才能访问。
+
+### 登录
+
+- 使用OAuth2.0的`password`模式登录
+
+    ``` yml
+    需要如下参数:
+
+    username: admin  --登录用户名
+    password: 0VlUiYNzE+SnJMcW1636jQ==  --登录用户密码(已经通过AES加密,原密码是:123456)
+    client_id: summit  --请求客户端ID
+    client_secret: summit  --请求客户端code
+    grant_type: password   --OAuth2.0认证模式
+    scope: server    --认证作用域(默认全平台有效)
+    ```
+   <font color=red size=5px>注意：</font>`password`字段在<http://tool.chacuo.net/cryptaes>这个站点进行AES加密和解密，<font color=red size=5px>秘钥</font>目前使用的是`summitsummitsumm`
+   
+   加解密方式如下图：
+
+   ![Swagger接口调试界面](doc/AES_decode_encode.png)
+   
