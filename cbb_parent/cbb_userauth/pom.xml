@@ -69,7 +69,4 @@
 			<version>1.3.2</version>
 		</dependency>
 	</dependencies>
-	<modules>
-		<module>backend</module>
-	</modules>
 </project>
