@@ -8,7 +8,11 @@
 		<version>1.0.0.RELEASE</version>
 	</parent>
 	<artifactId>cbb_userauth</artifactId>
-	<packaging>pom</packaging>
+	<packaging>jar</packaging>
+
+	<build>
+		<finalName>backend</finalName>
+	</build>
 
 	<dependencies>
 		<dependency>

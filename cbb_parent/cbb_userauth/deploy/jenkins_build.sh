@@ -42,8 +42,8 @@ then
   sed -i 's,${AppName},'${projectName}',g' ${fileStoragePath}/${projectName}/conf/wrapper.conf
 fi
 
-cd ${WORKSPACE}/cbb_parent/${projectName}/backend/target
+cd ${WORKSPACE}/cbb_parent/${projectName}/target
 
 cp -rf backend.jar ${fileStoragePath}/${projectName}/bin
-cp -rf lib ${fileStoragePath}/${projectName}/bin/lib
-cp -rf config ${fileStoragePath}/${projectName}/bin/config
+cp -rf lib ${fileStoragePath}/${projectName}/bin/
+cp -rf config ${fileStoragePath}/${projectName}/bin/
