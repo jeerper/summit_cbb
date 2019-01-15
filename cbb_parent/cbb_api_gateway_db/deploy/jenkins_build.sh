@@ -45,5 +45,5 @@ fi
 cd ${WORKSPACE}/cbb_parent/${projectName}/backend/target
 
 cp -rf backend.jar ${fileStoragePath}/${projectName}/bin
-cp -rf lib ${fileStoragePath}/${projectName}/bin/lib
-cp -rf config ${fileStoragePath}/${projectName}/bin/config
+cp -rf lib ${fileStoragePath}/${projectName}/bin/
+cp -rf config ${fileStoragePath}/${projectName}/bin/
