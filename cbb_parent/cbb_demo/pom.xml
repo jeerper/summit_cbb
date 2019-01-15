@@ -8,7 +8,10 @@
         <version>1.0.0.RELEASE</version>
     </parent>
     <artifactId>cbb_demo</artifactId>
-    <packaging>pom</packaging>
+    <packaging>jar</packaging>
+    <build>
+        <finalName>backend</finalName>
+    </build>
 
     <dependencies>
         <dependency>
@@ -16,11 +19,13 @@
             <artifactId>cbb_common</artifactId>
         </dependency>
         <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+        </dependency>
+        <dependency>
             <groupId>com.baomidou</groupId>
             <artifactId>mybatis-plus-boot-starter</artifactId>
         </dependency>
     </dependencies>
-    <modules>
-        <module>backend</module>
-    </modules>
+
 </project>
