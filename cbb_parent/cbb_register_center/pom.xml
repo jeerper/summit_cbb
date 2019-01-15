@@ -6,7 +6,7 @@
     <version>1.0.0.RELEASE</version>
   </parent>
   <artifactId>cbb_register_center</artifactId>
-  <packaging>pom</packaging>
+  <packaging>jar</packaging>
     <dependencies>
         <!--web组件-->
         <dependency>
@@ -40,7 +40,7 @@
             <artifactId>spring-boot-configuration-processor</artifactId>
         </dependency>
     </dependencies>
-  <modules>
-  	<module>backend</module>
-  </modules>
+    <build>
+        <finalName>backend</finalName>
+    </build>
 </project>

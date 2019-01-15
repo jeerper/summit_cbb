@@ -2,8 +2,8 @@ version: '2'
 services:
   backend:
     build:
-      context: ../backend
-      dockerfile: Dockerfile-backend
+      context: ../
+      dockerfile: Dockerfile
     image: ${projectName}/backend:1.0
     restart: always
     env_file:
@@ -11,7 +11,7 @@ services:
     ports:
     - "${WebServer_Port}:${WebServer_Port}"
     volumes:
-    - ./backend/logs:/opt/backend/App/logs
+    - ./logs:/opt/App/logs
     user: root
   redis:
     image: redis:latest
