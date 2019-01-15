@@ -1,10 +1,9 @@
 package com.summit.bo.weather;
 
-import java.util.List;
-
-
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+
+import java.util.List;
 
 /**
  * 
