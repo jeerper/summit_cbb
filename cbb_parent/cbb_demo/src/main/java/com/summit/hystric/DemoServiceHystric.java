@@ -1,8 +1,7 @@
 package com.summit.hystric;
 
-import org.springframework.stereotype.Component;
-
 import com.summit.service.DemoService;
+import org.springframework.stereotype.Component;
 
 @Component
 public class DemoServiceHystric implements DemoService{
