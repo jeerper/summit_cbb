@@ -5,6 +5,13 @@ spring:
     active: pro
   application:
     name: "cbb-demo"
+  flyway:
+    # 如果启动的时候需要flyway管理sql脚本的话，将enabled设置为true
+    enabled: true
+    baseline-on-migrate: true
+    locations: classpath:db
+    encoding: UTF-8
+
 
 #熔断器超时时间要大于负载均衡器超时时间
 #值设置的计算公式
