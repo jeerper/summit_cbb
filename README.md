@@ -67,6 +67,7 @@ cbb_parent
 │         │    └── com.summit
 │         │         └── MainAction.java --组件的启动类(main函数入口)
 │         └── resources
+│              ├── db                    --flyway管理的sql脚本目录
 │              ├── application.yml       --公共变量配置文件
 │              ├── application-dev.yml   --开发环境配置文件
 │              ├── application-pro.yml   --生产环境配置文件
