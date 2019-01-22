@@ -10,7 +10,8 @@ ApiGateway_Port=45001
 UserAuth_Port=45002
 #Demo端口
 Demo_Port=45003
-
+#天气组件端口
+Weather_Port=45004
 
 
 #文件仓库地址

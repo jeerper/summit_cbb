@@ -1,0 +1,23 @@
+package com.summit.weather.repository;
+
+import java.util.List;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+
+import com.summit.weather.dto.OpWeatherReal;
+
+import java.lang.String;
+/**
+ * 查询天气历史情况
+* @Title: OpWeatherRealRepository.java
+* @Package com.summit.homs.repository.weather
+* @Description: TODO
+* @author hyn  
+* @date 2018年12月3日 下午8:15:15
+* @version V1.0  
+ */
+public interface OpWeatherRealRepository extends JpaRepository<OpWeatherReal, String>, JpaSpecificationExecutor<OpWeatherReal>{
+
+	
+}
