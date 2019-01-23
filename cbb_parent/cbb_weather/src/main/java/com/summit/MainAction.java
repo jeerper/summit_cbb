@@ -1,4 +1,4 @@
-package com.summit.weather;
+package com.summit;
 
 
 import org.springframework.boot.SpringApplication;
