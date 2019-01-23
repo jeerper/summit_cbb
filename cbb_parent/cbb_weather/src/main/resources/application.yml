@@ -4,7 +4,9 @@ server:
 spring:
   application: 
     name: "cbb-weather"
-  profiles:    active:    - pro
+  profiles:
+    active:
+    - pro
   flyway:
     # 如果启动的时候需要flyway管理sql脚本的话，将enabled设置为true
     enabled: false
@@ -20,6 +22,9 @@ management:
   endpoint:
     health:
       show-details: ALWAYS
+
+logging:
+  file: logs/all.log
 ###天气组件的KEY
 weather:
 ##需要保存历史数据的城市名

@@ -13,13 +13,13 @@
 
 	<appender name="FILE"
 			  class="ch.qos.logback.core.rolling.RollingFileAppender">
-		<File>logs/weather.log</File>
+		<File>logs/all.log</File>
 		<Append>true</Append>
 		<filter class="ch.qos.logback.classic.filter.ThresholdFilter">
 			<level>ALL</level>
 		</filter>
 		<rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
-			<FileNamePattern>logs/all-%d{yyyy-MM-dd,aux}/weather-%d{yyyy-MM-dd}.%i.zip</FileNamePattern>
+			<FileNamePattern>logs/all-%d{yyyy-MM-dd,aux}/all-%d{yyyy-MM-dd}.%i.zip</FileNamePattern>
 			<maxFileSize>32MB</maxFileSize>
 		</rollingPolicy>
 		<encoder>
@@ -30,7 +30,7 @@
 	<appender name="ERRORFILE"
 			  class="ch.qos.logback.core.rolling.RollingFileAppender">
 		<Append>true</Append>
-		<File>logs/error/weather-error.log</File>
+		<File>logs/error/error.log</File>
 		<encoder>
 			<charset>utf-8</charset>
 			<pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n</pattern>
@@ -39,7 +39,7 @@
 			<level>ERROR</level>
 		</filter>
 		<rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
-			<FileNamePattern>logs/error/error-%d{yyyy-MM-dd,aux}/weather-error-%d{yyyy-MM-dd}.%i.zip</FileNamePattern>
+			<FileNamePattern>logs/error/error-%d{yyyy-MM-dd,aux}/error-%d{yyyy-MM-dd}.%i.zip</FileNamePattern>
 			<maxFileSize>32MB</maxFileSize>
 		</rollingPolicy>
 	</appender>
