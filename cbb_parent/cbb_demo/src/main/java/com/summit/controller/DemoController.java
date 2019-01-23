@@ -15,7 +15,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.BufferedReader;
 import java.util.Enumeration;
 
-@Api(tags="Demo模块接口测试")
+@Api(description="Demo模块接口测试")
 @RestController
 public class DemoController {
 
