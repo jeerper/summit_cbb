@@ -1,5 +1,7 @@
 package com.summit.controller;
 
+import com.summit.common.entity.ResponseCodeBySummit;
+import com.summit.common.entity.RestFulEntityBySummit;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,8 +16,8 @@ public class DictionaryController {
 
 	@ApiOperation(value = "测试页面")
 	@RequestMapping(value = "/logPage",method = RequestMethod.GET)
-	public String  add() {
-		return "haha";
+	public RestFulEntityBySummit add() {
+		return new RestFulEntityBySummit(ResponseCodeBySummit.CODE_0000,null);
 	}
 
 }

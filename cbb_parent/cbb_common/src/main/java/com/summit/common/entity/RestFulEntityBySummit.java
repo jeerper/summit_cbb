@@ -1,5 +1,6 @@
 package com.summit.common.entity;
 
+import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
 import java.io.Serializable;
@@ -10,7 +11,7 @@ import java.io.Serializable;
  * @param <T>
  * @author Administrator
  */
-
+@ApiModel(description = "响应信息主体")
 public class RestFulEntityBySummit<T> implements Serializable {
 
 
