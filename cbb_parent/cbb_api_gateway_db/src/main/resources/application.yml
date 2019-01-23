@@ -19,6 +19,9 @@ zuul:
     cbb_userauth:
       path: /api/userauth/**
       serviceId: cbb-userauth
+    cbb_weather:
+      path: /api/weather/**
+      serviceId: cbb-weather
     cbb_demo:
       path: /api/demo/**
       serviceId: cbb-demo
