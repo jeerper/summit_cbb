@@ -9,7 +9,7 @@
 		<version>1.0.0.RELEASE</version>
 	</parent>
 	<artifactId>cbb_weather</artifactId>
-	<packaging>pom</packaging>
+    <packaging>jar</packaging>
 	<dependencies>
 		<dependency>
 			<groupId>com.summit</groupId>
