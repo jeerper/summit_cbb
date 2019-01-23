@@ -1,6 +1,7 @@
 package com.summit.config;
 
 import com.summit.common.api.userauth.RemoteUserAuthService;
+import com.summit.common.entity.ResponseCodeBySummit;
 import com.summit.common.entity.RestFulEntityBySummit;
 import com.summit.common.entity.UserInfo;
 import com.summit.model.user.UserBean;
@@ -40,10 +41,10 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         RestFulEntityBySummit<UserInfo> userInfoRestFulEntity = remoteUserAuthService.queryUserRoleByUserName(username);
 
-        if (userInfoRestFulEntity.getCode() != 200) {
+        if (!userInfoRestFulEntity.getCode().equals(ResponseCodeBySummit.CODE_0000.name())) {
             throw new UsernameNotFoundException("用户不存在");
         }
-        UserInfo userInfo=userInfoRestFulEntity.getData();
+        UserInfo userInfo = userInfoRestFulEntity.getData();
 
         UserBean user = new UserBean();
         user.setUserName(userInfo.getUserName());

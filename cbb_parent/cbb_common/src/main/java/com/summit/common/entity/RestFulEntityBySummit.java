@@ -1,6 +1,6 @@
 package com.summit.common.entity;
 
-import org.springframework.http.HttpStatus;
+import io.swagger.annotations.ApiModelProperty;
 
 import java.io.Serializable;
 
@@ -15,12 +15,15 @@ public class RestFulEntityBySummit<T> implements Serializable {
 
 
     private static final long serialVersionUID = 4157608212869329025L;
-    private int code = HttpStatus.OK.value();
 
 
-    private String msg = "success";
+    @ApiModelProperty(value = "返回码", name = "code", example = "CODE_0000")
+    private String code = ResponseCodeBySummit.CODE_0000.name();
 
+    @ApiModelProperty(value = "返回信息", name = "msg", example = "操作成功")
+    private String msg = ResponseCodeBySummit.CODE_0000.getDescription();
 
+    @ApiModelProperty(value = "返回数据", name = "data")
     private T data;
 
     /**
@@ -39,14 +42,15 @@ public class RestFulEntityBySummit<T> implements Serializable {
     }
 
     /**
-     * 响应正确消息时使用
+     * 自定义响应消息
      *
-     * @param data 内容主体
-     * @param msg  响应的额外信息
+     * @param responseCodeBySummit 状态码枚举
+     * @param data                 主体数据
      */
-    public RestFulEntityBySummit(T data, String msg) {
+    public RestFulEntityBySummit(ResponseCodeBySummit responseCodeBySummit, T data) {
+        this.code = responseCodeBySummit.name();
+        this.msg = responseCodeBySummit.getDescription();
         this.data = data;
-        this.msg = msg;
     }
 
     /**
@@ -55,26 +59,15 @@ public class RestFulEntityBySummit<T> implements Serializable {
      * @param e 异常实例
      */
     public RestFulEntityBySummit(Throwable e) {
-        this.msg = e.getMessage();
-        this.code = HttpStatus.INTERNAL_SERVER_ERROR.value();
+        this.code = ResponseCodeBySummit.CODE_9999.name();
+        this.msg = ResponseCodeBySummit.CODE_9999.getDescription() + ":" + e.getMessage();
     }
 
-    /**
-     * 自定义消息
-     *
-     * @param httpStatus 响应状态
-     * @param msg        响应消息
-     */
-    public RestFulEntityBySummit(HttpStatus httpStatus, String msg) {
-        this.msg = msg;
-        this.code = httpStatus.value();
-    }
-
-    public int getCode() {
+    public String getCode() {
         return code;
     }
 
-    public void setCode(int code) {
+    public void setCode(String code) {
         this.code = code;
     }
 
@@ -94,20 +87,19 @@ public class RestFulEntityBySummit<T> implements Serializable {
         this.data = data;
     }
 
-
     public static final class RestFulEntityBySummitBuilder<T> {
-        private int code = HttpStatus.OK.value();
-        private String msg = "success";
+        private String code = ResponseCodeBySummit.CODE_0000.name();
+        private String msg = ResponseCodeBySummit.CODE_0000.getDescription();
         private T data;
 
         private RestFulEntityBySummitBuilder() {
         }
 
-        public static RestFulEntityBySummitBuilder create() {
+        public static RestFulEntityBySummitBuilder createBuilder() {
             return new RestFulEntityBySummitBuilder();
         }
 
-        public RestFulEntityBySummitBuilder withCode(int code) {
+        public RestFulEntityBySummitBuilder withCode(String code) {
             this.code = code;
             return this;
         }
