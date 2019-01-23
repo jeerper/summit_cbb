@@ -4,7 +4,7 @@ server:
 spring:
   application: 
     name: "cbb-weather"
-  profiles:    active:    - prd
+  profiles:    active:    - pro
 ##监控配置
 management:
   endpoints:
