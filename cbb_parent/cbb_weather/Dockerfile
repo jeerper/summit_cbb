@@ -19,9 +19,9 @@ FROM operating_system
 
 MAINTAINER liuyuan <405653510@qq.com>
 
-ADD ./target/  /opt/backend/App/
+ADD ./target/  /opt/App/
 
-WORKDIR /opt/backend/App/
+WORKDIR /opt/App/
 
 ENTRYPOINT ["java", "-jar"]
 

@@ -3,7 +3,7 @@ services:
   backend:
     build:
       context: ../
-      dockerfile: Dockerfile-backend
+      dockerfile: Dockerfile
     image: ${projectName}/backend:1.0
     restart: always
     env_file:
@@ -11,5 +11,5 @@ services:
     ports:
     - "${WebServer_Port}:${WebServer_Port}"
     volumes:
-    - ./backend/logs:/opt/backend/App/logs
+    - ./logs:/opt/App/logs
     user: root
