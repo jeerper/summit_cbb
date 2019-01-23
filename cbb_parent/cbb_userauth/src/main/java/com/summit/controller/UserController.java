@@ -59,6 +59,13 @@ public class UserController {
         return res;
     }
 
+    /**
+     * 此处的删除只修改状态。
+     * @param userNames
+     * @param request
+     * @param userName
+     * @return
+     */
     @ApiOperation(value = "删除用户信息")
     @DeleteMapping("/del")
     public Map<String, Object> del(String userNames, HttpServletRequest request, String userName) {
@@ -114,7 +121,7 @@ public class UserController {
             } else if (!st.stringEquals(password, repeatPassword)) {
                 res = st.error("，两次输入的密码不一致");
             } else {
-                res = us.editPassword(oldPassword, password, repeatPassword, userName);
+                res = us.editPassword(userName,oldPassword, password, repeatPassword);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -227,7 +234,6 @@ public class UserController {
                 res = us.grantRole(userName, role);
             }
         } catch (Exception e) {
-            log.error("授权错误", e);
             logBean.setActionFlag("0");
             logBean.setErroInfo(e.toString());
         }

@@ -20,6 +20,6 @@ public class FunctionBeanRowMapper implements RowMapper<FunctionBean> {
 				"NAME"), rmu.resultSetGetInt(rs, "FDESC"), rmu.resultSetGetInt(
 				rs, "IS_ENABLED"), rmu.resultSetGetString(rs, "FURL"), rmu
 				.resultSetGetString(rs, "IMGULR"), rmu.resultSetGetString(rs,
-				"NOTE"));
+				"NOTE"),rmu.resultSetGetString(rs, "SUPER_FUN"));
 	}
 }

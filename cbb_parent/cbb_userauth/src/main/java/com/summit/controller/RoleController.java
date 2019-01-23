@@ -8,9 +8,18 @@ import com.summit.service.role.RoleService;
 import com.summit.util.Page;
 import com.summit.util.SummitTools;
 import com.summit.util.SysConstants;
+
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import lombok.extern.slf4j.Slf4j;
 import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -18,9 +27,10 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.Map;
 
-
+@Api(description = "角色管理")
 @Controller
 @RequestMapping("role")
+@Slf4j
 public class RoleController {
 	@Autowired
 	private RoleService rs;
@@ -31,7 +41,8 @@ public class RoleController {
 	@Autowired
 	ILogUtil logUtil;
 
-	@RequestMapping("add")
+    @ApiOperation(value = "新增角色", notes = "用于application/json格式")
+    @PostMapping("/add")
 	@ResponseBody
 	public Map<String, Object> add(RoleBean roleBean, HttpServletRequest request,String userName) {
 		Map<String, Object> res = new HashMap<String, Object>();
@@ -48,7 +59,8 @@ public class RoleController {
 		return res;
 	}
 
-	@RequestMapping("del")
+	@ApiOperation(value = "角色管理删除")
+	@DeleteMapping("del")
 	@ResponseBody
 	public Map<String, Object> del(String codes, HttpServletRequest request,String userName) {
 		Map<String, Object> res = new HashMap<String, Object>();
@@ -65,7 +77,8 @@ public class RoleController {
 		return res;
 	}
 
-	@RequestMapping("edit")
+	@ApiOperation(value = "角色管理修改")
+	@PutMapping("edit")
 	@ResponseBody
 	public Map<String, Object> edit(RoleBean roleBean, HttpServletRequest request,String userName) {
 		Map<String, Object> res = new HashMap<String, Object>();
@@ -82,7 +95,8 @@ public class RoleController {
 		return res;
 	}
 
-	@RequestMapping("queryByCode")
+	@ApiOperation(value = "角色管理按照编号查询")
+	@GetMapping("queryByCode")
 	@ResponseBody
 	public Map<String, Object> queryByCode(String code, HttpServletRequest request,String userName) {
 		Map<String, Object> res = new HashMap<String, Object>();
@@ -99,7 +113,8 @@ public class RoleController {
 		return res;
 	}
 
-	@RequestMapping("queryByPage")
+	@ApiOperation(value = "角色管理分页查询")
+	@GetMapping("queryByPage")
 	@ResponseBody
 	public Page<JSONObject> queryByPage(Integer start, Integer limit,
 			RoleBean roleBean, HttpServletRequest request,String userName) {
@@ -119,13 +134,14 @@ public class RoleController {
 		return res;
 	}
 
-	@RequestMapping("queryAll")
+	@ApiOperation(value = "角色管理查询所有数据")
+	@GetMapping("queryAll")
 	@ResponseBody
 	public Page<JSONObject> queryAll(HttpServletRequest request,String userName) {
 		Page<JSONObject> res = new Page<JSONObject>();
 		LogBean logBean = new LogBean();
 		try {
-			logBean = logUtil.insertLog(request,"1", "角色管理分页查询",userName);
+			logBean = logUtil.insertLog(request,"1", "查询所有数据",userName);
 			res = rs.queryAll();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -136,7 +152,8 @@ public class RoleController {
 		return res;
 	}
 
-	@RequestMapping("getRoleFunInfo")
+	@ApiOperation(value = "角色管理查询角色权限")
+	@GetMapping("getRoleFunInfo")
 	@ResponseBody
 	public Map<String, Object> getRoleFunInfo(String roleCode, HttpServletRequest request,String userName) {
 		Map<String, Object> res = new HashMap<String, Object>();
@@ -156,7 +173,8 @@ public class RoleController {
 		return res;
 	}
 
-	@RequestMapping("roleAuthorization")
+	@ApiOperation(value = "角色管理角色授权")
+	@GetMapping("roleAuthorization")
 	@ResponseBody
 	public Map<String, Object> roleAuthorization(String roleCode, String funIds, HttpServletRequest request,String userName) {
 		Map<String, Object> res = new HashMap<String, Object>();

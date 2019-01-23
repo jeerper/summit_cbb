@@ -7,6 +7,7 @@ import com.summit.util.Page;
 import com.summit.util.SummitTools;
 import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,6 +22,8 @@ public class RoleService {
 	@Autowired
 	private UserRepository ur;
 	@Autowired
+	public JdbcTemplate jdbcTemplate;
+	@Autowired
 	private SummitTools st;
 	@Autowired
 	private RoleBeanRowMapper rbrm;
@@ -31,27 +34,26 @@ public class RoleService {
 		if (st.collectionNotNull(l)) {
 			return st.error("角色名" + rb.getName() + "已存在！");
 		}
-		sql = "INSERT INTO [SYS_ROLE] (CODE,NAME,NOTE) VALUES ( ?, ?, ?)";
-		ur.jdbcTemplate.update(sql, "ROLE_" + System.currentTimeMillis(), rb
-				.getName(), rb.getNote());
+		sql = "INSERT INTO SYS_ROLE (CODE,NAME,NOTE) VALUES ( ?, ?, ?)";
+		jdbcTemplate.update(sql, "ROLE_" + System.currentTimeMillis(), rb.getName(), rb.getNote());
 		return st.success("");
 	}
 
 	public Map<String, Object> del(String codes) {
 		codes = codes.replaceAll(",", "','");
 		String sql = "DELETE FROM SYS_ROLE WHERE CODE IN ('" + codes + "')";
-		ur.jdbcTemplate.update(sql);
+		jdbcTemplate.update(sql);
 
 		sql = "DELETE FROM SYS_USER_ROLE WHERE ROLE_CODE IN ('" + codes + "')";
-		ur.jdbcTemplate.update(sql);
+		jdbcTemplate.update(sql);
 		
 		delRoleAuthorizationByRoleCode(codes);
 		return st.success("");
 	}
 
 	public Map<String, Object> edit(RoleBean rb) {
-		String sql = "UPDATE SYS_ROLE SET NOTE = ? WHERE CODE = ?";
-		ur.jdbcTemplate.update(sql, rb.getNote(), rb.getCode());
+		String sql = "UPDATE SYS_ROLE SET NOTE = ?,NAME=? WHERE CODE = ?";
+		jdbcTemplate.update(sql, rb.getNote(),rb.getName(), rb.getCode());
 		return st.success("");
 	}
 
@@ -91,7 +93,7 @@ public class RoleService {
 	
 	public void delRoleAuthorizationByRoleCode(String roleCodes){
 		String sql = "DELETE FROM SYS_ROLE_FUNCTION WHERE ROLE_CODE IN ('" + roleCodes + "')";
-		ur.jdbcTemplate.update(sql);
+		jdbcTemplate.update(sql);
 	}
 	
 	public Map<String, Object> roleAuthorization(String roleCode, String funIds) {
@@ -99,13 +101,13 @@ public class RoleService {
 		if (st.stringIsNull(funIds)) {
 			return st.success("");
 		}
-		String sql = "INSERT INTO [SYS_ROLE_FUNCTION] ([ID], [ROLE_CODE], [FUNCTION_ID]) VALUES (?, ?, ?)";
+		String sql = "INSERT INTO SYS_ROLE_FUNCTION (ID, ROLE_CODE, FUNCTION_ID) VALUES (?, ?, ?)";
 		List<Object[]> batchArgs = new ArrayList<Object[]>();
 		String[] funIdArr = funIds.split(",");
 		for (String funId : funIdArr) {
 			batchArgs.add(new Object[] { st.getKey(), roleCode, funId });
 		}
-		ur.jdbcTemplate.batchUpdate(sql, batchArgs);
+		jdbcTemplate.batchUpdate(sql, batchArgs);
 		return st.success("");
 	}
 }

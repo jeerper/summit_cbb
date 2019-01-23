@@ -7,9 +7,16 @@ import com.summit.service.log.ILogUtil;
 import com.summit.util.Page;
 import com.summit.util.SummitTools;
 import com.summit.util.SysConstants;
+
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -17,7 +24,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.Map;
 
-
+@Api(description = "功能管理")
 @Controller
 @RequestMapping("function")
 public class FunctionController {
@@ -28,7 +35,8 @@ public class FunctionController {
 	@Autowired
 	ILogUtil logUtil;
 
-	@RequestMapping("add")
+	@ApiOperation(value = "新增功能", notes = "用于application/json格式")
+	@PostMapping("/add")
 	@ResponseBody
 	public Map<String, Object> add(FunctionBean functionBean, HttpServletRequest request, String userName) {
 		Map<String, Object> res = new HashMap<String, Object>();
@@ -45,7 +53,8 @@ public class FunctionController {
 		return res;
 	}
 
-	@RequestMapping("del")
+	@ApiOperation(value = "功能管理删除")
+	@DeleteMapping("del")
 	@ResponseBody
 	public Map<String, Object> del(String ids, HttpServletRequest request,String userName) {
 		Map<String, Object> res = new HashMap<String, Object>();
@@ -62,7 +71,8 @@ public class FunctionController {
 		return res;
 	}
 
-	@RequestMapping("edit")
+	@ApiOperation(value = "功能管理修改")
+	@PutMapping("edit")
 	@ResponseBody
 	public Map<String, Object> edit(FunctionBean functionBean, HttpServletRequest request,String userName) {
 		Map<String, Object> res = new HashMap<String, Object>();
@@ -79,7 +89,8 @@ public class FunctionController {
 		return res;
 	}
 
-	@RequestMapping("queryById")
+	@ApiOperation(value = "功能管理根据ID查询")
+	@GetMapping("queryById")
 	@ResponseBody
 	public Map<String, Object> queryById(String id, String userName, HttpServletRequest request) {
 		Map<String, Object> res = new HashMap<String, Object>();
@@ -96,7 +107,8 @@ public class FunctionController {
 		return res;
 	}
 
-	@RequestMapping("queryTree")
+	@ApiOperation(value = "功能管理查询树形图")
+	@GetMapping("queryTree")
 	@ResponseBody
 	public Map<String, Object> queryTree(String userName,HttpServletRequest request) {
 		Map<String, Object> res = new HashMap<String, Object>();
@@ -113,7 +125,8 @@ public class FunctionController {
 		return res;
 	}
 
-	@RequestMapping("queryByPage")
+	@ApiOperation(value = "功能管理分页查询")
+	@GetMapping("queryByPage")
 	@ResponseBody
 	public Page<JSONObject> queryByPage(Integer start, Integer limit, String pId, String userName, HttpServletRequest request) {
 		Page<JSONObject> res = new Page<JSONObject>();

@@ -4,7 +4,11 @@ import com.summit.util.SummitTools.TreeNodeClass;
 import net.sf.json.JSONObject;
 
 import java.io.Serializable;
-
+/**
+ * 功能基本属性
+ * @author Administrator
+ *
+ */
 public class FunctionBean implements Serializable, TreeNodeClass<JSONObject> {
 	/**
 	 * 
@@ -18,13 +22,17 @@ public class FunctionBean implements Serializable, TreeNodeClass<JSONObject> {
 	private String furl;
 	private String imgUlr;
 	private String note;
+	/**
+	 * 超级功能
+	 */
+	private String superfun;
 
 	public FunctionBean() {
 		super();
 	}
 
 	public FunctionBean(String id, String pid, String name, Integer fdesc,
-			Integer isEnabled, String furl, String imgUlr, String note) {
+			Integer isEnabled, String furl, String imgUlr, String note,String superfun) {
 		super();
 		this.id = id;
 		this.pid = pid;
@@ -34,6 +42,7 @@ public class FunctionBean implements Serializable, TreeNodeClass<JSONObject> {
 		this.furl = furl;
 		this.imgUlr = imgUlr;
 		this.note = note;
+		this.superfun=superfun;
 	}
 
 	public String getId() {
@@ -134,4 +143,11 @@ public class FunctionBean implements Serializable, TreeNodeClass<JSONObject> {
 		return true;
 	}
 
+	public String getSuperfun() {
+		return superfun;
+	}
+
+	public void setSuperfun(String superfun) {
+		this.superfun = superfun;
+	}
 }

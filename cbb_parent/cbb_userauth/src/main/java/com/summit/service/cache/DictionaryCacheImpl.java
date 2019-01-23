@@ -21,7 +21,9 @@ public class DictionaryCacheImpl extends CacheImpl implements DictionaryCacheInf
 	public void addDic(DictionaryBean db){
 		setCacheElement(SysConstants.DICTIONARY, db.getCode(), db);
 		List<DictionaryBean>  all = (List<DictionaryBean>)getCacheElement(SysConstants.DICTIONARY, "dictionaryAll");
-		all.add(db);
+		if(all!=null){
+			all.add(db);
+		}
 		setCacheElement(SysConstants.DICTIONARY, "dictionaryAll", all);
 	}
 	

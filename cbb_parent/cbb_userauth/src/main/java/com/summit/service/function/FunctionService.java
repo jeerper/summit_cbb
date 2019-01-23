@@ -10,6 +10,7 @@ import com.summit.util.TreeNode;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,13 +22,15 @@ public class FunctionService {
 	@Autowired
 	private UserRepository ur;
 	@Autowired
+	public JdbcTemplate jdbcTemplate;
+	@Autowired
 	private SummitTools st;
 	@Autowired
 	private FunctionBeanRowMapper fbrm;
 
 	public Map<String, Object> add(FunctionBean fb) {
-		String sql = "INSERT INTO [SYS_FUNCTION] ([ID], [PID], [NAME], [FDESC], [IS_ENABLED], [FURL], [IMGULR], [NOTE], [SUPER_FUN]) VALUES (?, ?, ?, ?, ?, ?, ?, ?,?)";
-		ur.jdbcTemplate.update(sql, st.getKey(), fb.getPid(), fb.getName(), fb
+		String sql = "INSERT INTO SYS_FUNCTION (ID, PID, NAME, FDESC, IS_ENABLED, FURL, IMGULR, NOTE, SUPER_FUN) VALUES (?, ?, ?, ?, ?, ?, ?, ?,?)";
+		jdbcTemplate.update(sql, st.getKey(), fb.getPid(), fb.getName(), fb
 				.getFdesc(), fb.getIsEnabled(), fb.getFurl(), fb.getImgUlr(),
 				fb.getNote(), 0);
 		return st.success("");
@@ -42,16 +45,16 @@ public class FunctionService {
 		}
 		sql = "DELETE FROM SYS_FUNCTION WHERE ID IN ('" + ids
 				+ "') AND SUPER_FUN <> 1";
-		ur.jdbcTemplate.update(sql);
+		jdbcTemplate.update(sql);
 
 		sql = "DELETE FROM SYS_ROLE_FUNCTION WHERE FUNCTION_ID IN ('" + ids + "')";
-		ur.jdbcTemplate.update(sql);
+		jdbcTemplate.update(sql);
 		return st.success("");
 	}
 
 	public Map<String, Object> edit(FunctionBean fb) {
 		String sql = "UPDATE SYS_FUNCTION SET NAME = ?, FDESC = ?, IS_ENABLED = ?, FURL = ?, IMGULR = ?, NOTE = ? WHERE ID = ?";
-		ur.jdbcTemplate.update(sql, fb.getName(), fb.getFdesc(), fb
+		jdbcTemplate.update(sql, fb.getName(), fb.getFdesc(), fb
 				.getIsEnabled(), fb.getFurl(), fb.getImgUlr(), fb.getNote(), fb
 				.getId());
 		return st.success("");
