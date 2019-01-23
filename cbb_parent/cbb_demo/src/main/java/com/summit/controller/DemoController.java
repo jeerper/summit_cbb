@@ -1,17 +1,21 @@
 package com.summit.controller;
 
+import com.summit.common.entity.ResponseCodeBySummit;
+import com.summit.common.entity.RestFulEntityBySummit;
 import com.summit.service.DemoService;
 import com.summit.service.UserService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.BufferedReader;
 import java.util.Enumeration;
 
+@Api(tags="Demo模块接口测试")
 @RestController
 public class DemoController {
 
@@ -21,10 +25,19 @@ public class DemoController {
 	@Autowired
 	UserService userService;
 
-	@GetMapping(value = "/hi")
-	public String sayHi(@RequestParam String name) {
-		return demoService.demo(name);
+	@ApiOperation(value = "第一个demo接口,无参数传递,返回成功代码")
+	@GetMapping(value = "/oneDemo")
+	public RestFulEntityBySummit oneDemo() {
+		return new RestFulEntityBySummit();
 	}
+
+	@ApiOperation(value = "第二个demo接口,无参数传递，返回失败代码")
+	@GetMapping(value = "/twoDemo")
+	public RestFulEntityBySummit twoDemo() {
+		return new RestFulEntityBySummit<>(ResponseCodeBySummit.CODE_9999,null);
+	}
+
+
 	@GetMapping(value = "/liuyuanss")
 	public String liuyuan() {
 		return "liuyuan";
