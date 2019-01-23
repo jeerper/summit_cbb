@@ -14,10 +14,10 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/dictionary")
 public class DictionaryController {
 
-	@ApiOperation(value = "测试页面")
+	@ApiOperation(value = "测试页面",notes = "asdsad")
 	@RequestMapping(value = "/logPage",method = RequestMethod.GET)
 	public RestFulEntityBySummit add() {
-		return new RestFulEntityBySummit(ResponseCodeBySummit.CODE_0000,null);
+		return new RestFulEntityBySummit<>(ResponseCodeBySummit.CODE_0000,"haha");
 	}
 
 }
