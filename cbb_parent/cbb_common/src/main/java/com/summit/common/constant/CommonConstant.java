@@ -15,6 +15,10 @@ public interface CommonConstant {
      * 用户信息头
      */
     String USER_HEADER = "x-user-header";
+    /**
+     * 用户信息缓存前缀
+     */
+    String USER_INFO_CACHE_PREFIX = "user_info_";
 
     /**
      * 角色信息头
@@ -27,7 +31,7 @@ public interface CommonConstant {
     /**
      * 许可
      */
-    String LICENSE="MadeBySummit";
+    String LICENSE = "MadeBySummit";
     /**
      * 前缀
      */

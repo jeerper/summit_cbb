@@ -1,6 +1,7 @@
 package com.summit.common.web.filter;
 
 import com.alibaba.ttl.TransmittableThreadLocal;
+import com.summit.common.entity.UserInfo;
 
 /**
  * 用户信息全局获取工具类
@@ -11,31 +12,31 @@ public class UserContextHolder {
     /**
      * 用户信息实体存储容器.
      */
-    private final static ThreadLocal<String> USER_NAME_THREAD_LOCAL = new TransmittableThreadLocal<>();
+    private final static ThreadLocal<UserInfo> USER_INFO_THREAD_LOCAL = new TransmittableThreadLocal<>();
 
     /**
-     * 获取用户名称
+     * 获取用户信息
      *
      * @return
      */
-    public static String getUserName() {
-        return USER_NAME_THREAD_LOCAL.get();
+    public static UserInfo getUserInfo() {
+        return USER_INFO_THREAD_LOCAL.get();
     }
 
     /**
-     * 设置用户名称
+     * 设置用户信息
      *
-     * @param userName 用户名称
+     * @param userInfo 用户信息
      */
-    static void setUserName(String userName) {
-        USER_NAME_THREAD_LOCAL.set(userName);
+    static void setUserInfo(UserInfo userInfo) {
+        USER_INFO_THREAD_LOCAL.set(userInfo);
     }
 
     /**
-     * 移除用户名称
+     * 移除用户信息
      */
     public static void clear() {
-        USER_NAME_THREAD_LOCAL.remove();
+        USER_INFO_THREAD_LOCAL.remove();
     }
 
 

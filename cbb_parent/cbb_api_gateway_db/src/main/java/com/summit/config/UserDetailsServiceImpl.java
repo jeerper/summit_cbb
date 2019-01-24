@@ -4,6 +4,7 @@ import com.summit.common.api.userauth.RemoteUserAuthService;
 import com.summit.common.entity.ResponseCodeBySummit;
 import com.summit.common.entity.RestFulEntityBySummit;
 import com.summit.common.entity.UserInfo;
+import com.summit.common.redis.user.UserInfoCache;
 import com.summit.model.user.UserBean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,6 +31,8 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     @Autowired
     private RemoteUserAuthService remoteUserAuthService;
 
+    @Autowired
+    UserInfoCache userInfoCache;
     /**
      * 通过用户名查找用户
      *
@@ -45,6 +48,8 @@ public class UserDetailsServiceImpl implements UserDetailsService {
             throw new UsernameNotFoundException("用户不存在");
         }
         UserInfo userInfo = userInfoRestFulEntity.getData();
+
+        userInfoCache.setUserInfo(userInfo.getUserName(),userInfo);
 
         UserBean user = new UserBean();
         user.setUserName(userInfo.getUserName());
