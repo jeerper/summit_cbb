@@ -39,7 +39,9 @@ public class DemoController {
 	@ApiOperation(value = "第二个demo接口,无参数传递，返回失败代码")
 	@GetMapping(value = "/twoDemo")
 	public RestfulEntityBySummit twoDemo() {
-		return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_9999,null);
+		UserInfo userInfo = UserContextHolder.getUserInfo();
+
+		return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_9999,userInfo.getUserName());
 	}
 
 	@ApiOperation(value = "第个demo接口,有参数传递，返回失败代码")
@@ -48,7 +50,7 @@ public class DemoController {
 
 		UserInfo userInfo = UserContextHolder.getUserInfo();
 
-		return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_9999,null);
+		return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_9999,userInfo.getUserName());
 	}
 
 
