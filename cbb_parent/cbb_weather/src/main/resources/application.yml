@@ -6,7 +6,7 @@ spring:
     name: "cbb-weather"
   profiles:
     active:
-    - dev
+    - pro
   flyway:
     # 如果启动的时候需要flyway管理sql脚本的话，将enabled设置为true
     enabled: false
