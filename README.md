@@ -224,3 +224,12 @@ mvn install
   ![测试接口的url](doc/test_api.png)
   
   后端同学请注意，网关在对外提供各个服务组件的rest接口时，都会给不同的服务组件追加URL访问前缀，例如`/api/userauth/user/queryUserRoleByUserName`，实际上该组件的真实接口是`/user/queryUserRoleByUserName`,所以各个服务组件的开发同学，不用刻意的给你的rest接口加访问前缀，<font color=black size=5px>不用担心和其他组件的接口冲突。</font>
+
+## 其他注意事项
+
+- 组件获取登录的用户信息的方式如下(仅针对SpringMVC使用):
+
+    ``` java
+    //该方法可获取用户的基本信息，比如用户名称、密码、地址等等，详见UserInfo类
+    UserInfo userInfo = UserContextHolder.getUserInfo();
+    ```
