@@ -2,7 +2,6 @@ package com.summit.common.web.filter;
 
 import cn.hutool.core.util.StrUtil;
 import com.summit.common.constant.CommonConstant;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
@@ -16,7 +15,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-@Slf4j
 @Component
 @Order(Ordered.HIGHEST_PRECEDENCE)
 public class UserContextHolderFilter extends GenericFilterBean {
@@ -27,7 +25,6 @@ public class UserContextHolderFilter extends GenericFilterBean {
         HttpServletResponse response = (HttpServletResponse) servletResponse;
 
         String userName = request.getHeader(CommonConstant.USER_HEADER);
-        log.debug("获取header中的用户名称为:{}", userName);
 
         if (StrUtil.isNotBlank(userName)) {
             UserContextHolder.setUserName(userName);
