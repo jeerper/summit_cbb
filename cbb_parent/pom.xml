@@ -30,6 +30,7 @@
         <springfox-swagger.version>2.9.2</springfox-swagger.version>
         <spring-security-oauth2.version>2.3.4.RELEASE</spring-security-oauth2.version>
         <hutool-all.version>4.3.1</hutool-all.version>
+        <transmittable-thread-local.version>2.10.2</transmittable-thread-local.version>
     </properties>
 
 
@@ -86,6 +87,11 @@
                 <groupId>cn.hutool</groupId>
                 <artifactId>hutool-all</artifactId>
                 <version>${hutool-all.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.alibaba</groupId>
+                <artifactId>transmittable-thread-local</artifactId>
+                <version>${transmittable-thread-local.version}</version>
             </dependency>
         </dependencies>
 

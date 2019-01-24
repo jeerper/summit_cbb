@@ -63,7 +63,7 @@
 	<logger name="org.apache.catalina" level="error"/>
 
 
-	<root level="INFO">
+	<root level="debug">
 		<!--<appender-ref ref="AsyncFile"/>-->
 		<appender-ref ref="CONSOLE"/>
 		<appender-ref ref="FILE"/>

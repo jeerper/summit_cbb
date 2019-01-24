@@ -15,8 +15,9 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.BufferedReader;
 import java.util.Enumeration;
 
-@Api(description="Demo模块接口测试")
+@Api(tags="Demo模块接口测试")
 @RestController
+@RequestMapping("/demo")
 public class DemoController {
 
 	@Autowired
@@ -24,6 +25,7 @@ public class DemoController {
 
 	@Autowired
 	UserService userService;
+
 
 	@ApiOperation(value = "第一个demo接口,无参数传递,返回成功代码")
 	@GetMapping(value = "/oneDemo")
@@ -34,6 +36,14 @@ public class DemoController {
 	@ApiOperation(value = "第二个demo接口,无参数传递，返回失败代码")
 	@GetMapping(value = "/twoDemo")
 	public RestFulEntityBySummit twoDemo() {
+		return new RestFulEntityBySummit<>(ResponseCodeBySummit.CODE_9999,null);
+	}
+
+	@ApiOperation(value = "第个demo接口,有参数传递，返回失败代码")
+	@GetMapping(value = "/haveParamDemo")
+	public RestFulEntityBySummit haveParamDemo() {
+
+
 		return new RestFulEntityBySummit<>(ResponseCodeBySummit.CODE_9999,null);
 	}
 
