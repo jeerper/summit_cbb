@@ -106,14 +106,14 @@ public class DictionaryController {
 		return res;
 	}
 
-	@ApiOperation(value = "数据字典查询树形结构--查询所有数据")
+	@ApiOperation(value = "数据字典查询所有数据")
 	@GetMapping("queryTree")
 	@ResponseBody
 	public Map<String, Object> queryTree(HttpServletRequest request, String userName) {
 		Map<String, Object> res = new HashMap<String, Object>();
 		LogBean logBean = new LogBean();
 		try {
-			logBean = logUtil.insertLog(request,"1", "数据字典查询树形结构",userName);
+			logBean = logUtil.insertLog(request,"1", "数据字典查询全部数据",userName);
 			res = dictionaryService.queryTree();
 		} catch (Exception e) {
 			e.printStackTrace();
