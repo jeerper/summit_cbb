@@ -62,6 +62,20 @@ public class ADCDService {
 	}
 
 	/**
+	 * 根据adcds查询
+	 * @param adcds
+	 * @return
+	 */
+	public Map<String, Object> queryByAdcds(String adcds) {
+		adcds = adcds.replaceAll(",", "','");
+		String sql = "SELECT * FROM AD_CD_B WHERE ADCD IN ('"+ adcds + "') ";
+		List<ADCDBean> l = ur.queryAllCustom(sql, atm, null);
+		if (st.collectionIsNull(l)) {
+			return st.error("");
+		}
+		return st.success("", l.get(0));
+	}
+	/**
 	 * 
 	 * 编辑（查询）
 	 * @param start

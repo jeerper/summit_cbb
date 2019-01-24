@@ -86,10 +86,26 @@ public class ADCDController {
 			logBean.setErroInfo(e.toString());
 		}
 		logUtil.updateLog(logBean,"1");
-		
 		return list;
 	}
 	
+	@ApiOperation(value = "根据Adcds查询不分页")
+	@RequestMapping(value = "/queryByAdcds",method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String, Object> queryByAdcds(String adcds) {
+		HttpServletRequest request = ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest();
+		LogBean logBean = logUtil.insertLog(request,"1", "根据adcds查询","");
+		Map<String, Object> list = null;
+		try {
+			list = ds.queryByAdcds(adcds);
+		} catch (Exception e) {
+			e.printStackTrace();
+			logBean.setActionFlag("0");
+			logBean.setErroInfo(e.toString());
+		}
+		logUtil.updateLog(logBean,"1");
+		return list;
+	}
 	@ApiOperation(value = "根据PADCD查询分页")
 	@RequestMapping(value = "/queryByPadcdPage",method = RequestMethod.POST)
 	@ResponseBody
