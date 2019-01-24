@@ -229,7 +229,7 @@ mvn install
 
 - 组件获取登录的用户信息的方式如下(仅针对SpringMVC使用):
 
-    ``` Java
+    ``` java
     //该方法可获取用户的基本信息，比如用户名称、密码、地址等等，详见UserInfo类
     UserInfo userInfo = UserContextHolder.getUserInfo();
     ```
