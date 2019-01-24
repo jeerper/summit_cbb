@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import net.sf.json.JSONObject;
+
+import org.apache.commons.collections.map.LinkedMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
@@ -52,13 +54,31 @@ public class ADCDService {
 	 * @param adcd
 	 * @return
 	 */
-	public Map<String, Object> queryById(String adcd) {
-		String sql = "SELECT * FROM AD_CD_B WHERE ADCD = ?";
-		List<ADCDBean> l = ur.queryAllCustom(sql, atm, adcd);
-		if (st.collectionIsNull(l)) {
+	public Map<String, Object> queryByPId(JSONObject paramJson) {
+		StringBuffer sql =new StringBuffer( "SELECT * FROM AD_CD_B WHERE 1=1 ");
+		LinkedMap map = new LinkedMap();
+		if(paramJson!=null){
+            Integer index = 1;
+			if(paramJson.containsKey("padcd")){
+				sql.append(" and  padcd = ?");
+				map.put(index, paramJson.get("padcd") );
+                index++;
+			}
+			if(paramJson.containsKey("level")){
+				sql.append(" and  level = ?");
+				map.put(index, paramJson.get("level") );
+                index++;
+			}
+		}
+		List<Object> l;
+		try {
+			l = ur.queryAllCustom(sql.toString(), map);
+			return st.success("", l);
+		} catch (Exception e) {
+			e.printStackTrace();
 			return st.error("");
 		}
-		return st.success("", l.get(0));
+		
 	}
 
 	/**
@@ -73,7 +93,7 @@ public class ADCDService {
 		if (st.collectionIsNull(l)) {
 			return st.error("");
 		}
-		return st.success("", l.get(0));
+		return st.success("", l);
 	}
 	/**
 	 * 

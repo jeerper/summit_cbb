@@ -68,18 +68,21 @@ public class ADCDController {
 	
 	/**
 	 * 
-	 * 根据id查询（分页）
+	 * 根据特定条件查询
 	 * 
 	 */
-	@ApiOperation(value = "根据ADCD查询分页")
-	@RequestMapping(value = "/queryByIdPage",method = RequestMethod.POST)
+	@ApiOperation(value = "根据特定条件查询[padcd,level]")
+	@RequestMapping(value = "/queryByPadcd",method = RequestMethod.GET)
 	@ResponseBody
-	public Map<String, Object> queryById(String id) {
+	public Map<String, Object> queryByPadcd(String padcd,String level) {
 		HttpServletRequest request = ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest();
-		LogBean logBean = logUtil.insertLog(request,"1", "根据id查询分页","");
+		LogBean logBean = logUtil.insertLog(request,"1", "根据特定条件查询","");
 		Map<String, Object> list = null;
 		try {
-			list = ds.queryById(id);
+			JSONObject json =new JSONObject();
+			json.put("padcd", padcd);
+			json.put("level", level);
+			list = ds.queryByPId(json);
 		} catch (Exception e) {
 			e.printStackTrace();
 			logBean.setActionFlag("0");
@@ -89,8 +92,8 @@ public class ADCDController {
 		return list;
 	}
 	
-	@ApiOperation(value = "根据Adcds查询不分页")
-	@RequestMapping(value = "/queryByAdcds",method = RequestMethod.POST)
+	@ApiOperation(value = "根据编码查询不分页")
+	@RequestMapping(value = "/queryByAdcds",method = RequestMethod.GET)
 	@ResponseBody
 	public Map<String, Object> queryByAdcds(String adcds) {
 		HttpServletRequest request = ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest();
@@ -106,8 +109,8 @@ public class ADCDController {
 		logUtil.updateLog(logBean,"1");
 		return list;
 	}
-	@ApiOperation(value = "根据PADCD查询分页")
-	@RequestMapping(value = "/queryByPadcdPage",method = RequestMethod.POST)
+	@ApiOperation(value = "根据父节点查询分页")
+	@RequestMapping(value = "/queryByPadcdPage",method = RequestMethod.GET)
 	@ResponseBody
 	public Page<JSONObject> queryByPage(int start, int limit, String padcd) {
 		HttpServletRequest request = ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest();
@@ -171,7 +174,7 @@ public class ADCDController {
 	 * 删除
 	 */
 	@ApiOperation(value = "行政区划删除")
-	@RequestMapping(value = "/del",method = RequestMethod.GET)
+	@RequestMapping(value = "/del",method = RequestMethod.DELETE)
 	@ResponseBody
 	public Map<String, Object> del(String ids) {
 		HttpServletRequest request = ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest();
