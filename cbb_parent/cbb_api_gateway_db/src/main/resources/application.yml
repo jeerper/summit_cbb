@@ -28,6 +28,9 @@ zuul:
     ppnetwork:
       path: /api/ppnetwork/**
       serviceId: ppnetwork
+    web_service_skeleton:
+      path: /api/webserviceskeleton/**
+      serviceId: web-service-skeleton
 
 #当zuul.routes的配置用指定url进行路由时,是zuul.host.connect-timeout-millis,zuul.host.socket-timeout-millis这两个配生效，
 #当zuul.routes的配置用serviceId进行路由时,是ribbon.ReadTimeout,ribbon.SocketTimeout生效。
