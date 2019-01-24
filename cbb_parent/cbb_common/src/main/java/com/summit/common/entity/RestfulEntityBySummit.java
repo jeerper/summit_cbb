@@ -12,7 +12,7 @@ import java.io.Serializable;
  * @author Administrator
  */
 @ApiModel(description = "响应信息主体")
-public class RestFulEntityBySummit<T> implements Serializable {
+public class RestfulEntityBySummit<T> implements Serializable {
 
 
     private static final long serialVersionUID = 4157608212869329025L;
@@ -30,7 +30,7 @@ public class RestFulEntityBySummit<T> implements Serializable {
     /**
      * 用于只响应正确状态时使用
      */
-    public RestFulEntityBySummit() {
+    public RestfulEntityBySummit() {
     }
 
     /**
@@ -38,7 +38,7 @@ public class RestFulEntityBySummit<T> implements Serializable {
      *
      * @param data 内容主体
      */
-    public RestFulEntityBySummit(T data) {
+    public RestfulEntityBySummit(T data) {
         this.data = data;
     }
 
@@ -48,7 +48,7 @@ public class RestFulEntityBySummit<T> implements Serializable {
      * @param responseCodeBySummit 状态码枚举
      * @param data                 主体数据
      */
-    public RestFulEntityBySummit(ResponseCodeBySummit responseCodeBySummit, T data) {
+    public RestfulEntityBySummit(ResponseCodeBySummit responseCodeBySummit, T data) {
         this.code = responseCodeBySummit.name();
         this.msg = responseCodeBySummit.getDescription();
         this.data = data;
@@ -59,7 +59,7 @@ public class RestFulEntityBySummit<T> implements Serializable {
      *
      * @param e 异常实例
      */
-    public RestFulEntityBySummit(Throwable e) {
+    public RestfulEntityBySummit(Throwable e) {
         this.code = ResponseCodeBySummit.CODE_9999.name();
         this.msg = ResponseCodeBySummit.CODE_9999.getDescription() + ":" + e.getMessage();
     }
@@ -115,8 +115,8 @@ public class RestFulEntityBySummit<T> implements Serializable {
             return this;
         }
 
-        public RestFulEntityBySummit build() {
-            RestFulEntityBySummit restFulEntityBySummit = new RestFulEntityBySummit();
+        public RestfulEntityBySummit build() {
+            RestfulEntityBySummit restFulEntityBySummit = new RestfulEntityBySummit();
             restFulEntityBySummit.setCode(code);
             restFulEntityBySummit.setMsg(msg);
             restFulEntityBySummit.setData(data);

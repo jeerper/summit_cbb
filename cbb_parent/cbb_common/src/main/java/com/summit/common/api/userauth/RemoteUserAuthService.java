@@ -1,7 +1,7 @@
 package com.summit.common.api.userauth;
 
 import com.summit.common.constant.ServiceNameConstant;
-import com.summit.common.entity.RestFulEntityBySummit;
+import com.summit.common.entity.RestfulEntityBySummit;
 import com.summit.common.entity.UserInfo;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,6 +20,6 @@ public interface RemoteUserAuthService {
      * @return RestFulEntityBySummit
      */
     @GetMapping("/user/queryUserRoleByUserName")
-    RestFulEntityBySummit<UserInfo> queryUserRoleByUserName(@RequestParam("userName") String userName);
+    RestfulEntityBySummit<UserInfo> queryUserRoleByUserName(@RequestParam("userName") String userName);
 
 }

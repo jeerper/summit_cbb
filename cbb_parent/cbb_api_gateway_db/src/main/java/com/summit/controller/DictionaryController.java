@@ -1,7 +1,7 @@
 package com.summit.controller;
 
 import com.summit.common.entity.ResponseCodeBySummit;
-import com.summit.common.entity.RestFulEntityBySummit;
+import com.summit.common.entity.RestfulEntityBySummit;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.security.core.Authentication;
@@ -18,10 +18,10 @@ public class DictionaryController {
 
 	@ApiOperation(value = "测试页面",notes = "asdsad")
 	@RequestMapping(value = "/logPage",method = RequestMethod.GET)
-	public RestFulEntityBySummit add() {
+	public RestfulEntityBySummit add() {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-		return new RestFulEntityBySummit<>(ResponseCodeBySummit.CODE_0000,"haha");
+		return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_0000,"haha");
 	}
 
 }

@@ -1,7 +1,7 @@
 package com.summit.controller;
 
 import com.summit.common.entity.ResponseCodeBySummit;
-import com.summit.common.entity.RestFulEntityBySummit;
+import com.summit.common.entity.RestfulEntityBySummit;
 import com.summit.common.entity.UserInfo;
 import com.summit.common.web.filter.UserContextHolder;
 import com.summit.service.DemoService;
@@ -32,23 +32,23 @@ public class DemoController {
 
 	@ApiOperation(value = "第一个demo接口,无参数传递,返回成功代码")
 	@GetMapping(value = "/oneDemo")
-	public RestFulEntityBySummit oneDemo() {
-		return new RestFulEntityBySummit();
+	public RestfulEntityBySummit oneDemo() {
+		return new RestfulEntityBySummit();
 	}
 
 	@ApiOperation(value = "第二个demo接口,无参数传递，返回失败代码")
 	@GetMapping(value = "/twoDemo")
-	public RestFulEntityBySummit twoDemo() {
-		return new RestFulEntityBySummit<>(ResponseCodeBySummit.CODE_9999,null);
+	public RestfulEntityBySummit twoDemo() {
+		return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_9999,null);
 	}
 
 	@ApiOperation(value = "第个demo接口,有参数传递，返回失败代码")
 	@GetMapping(value = "/haveParamDemo")
-	public RestFulEntityBySummit haveParamDemo() {
+	public RestfulEntityBySummit haveParamDemo() {
 
 		UserInfo userInfo = UserContextHolder.getUserInfo();
 
-		return new RestFulEntityBySummit<>(ResponseCodeBySummit.CODE_9999,null);
+		return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_9999,null);
 	}
 
 

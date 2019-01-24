@@ -3,7 +3,7 @@ package com.summit.handle;
 import cn.hutool.core.date.DateUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.summit.common.constant.CommonConstant;
-import com.summit.common.entity.RestFulEntityBySummit;
+import com.summit.common.entity.RestfulEntityBySummit;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -52,7 +52,7 @@ public class SummitAccessDeniedHandler extends OAuth2AccessDeniedHandler {
         map.put("timestamp", DateUtil.now());
 
 
-        RestFulEntityBySummit<Map<String, Object>> entity = new RestFulEntityBySummit<>(map);
+        RestfulEntityBySummit<Map<String, Object>> entity = new RestfulEntityBySummit<>(map);
 
         response.setCharacterEncoding(CommonConstant.UTF8);
         response.setContentType(CommonConstant.CONTENT_TYPE);

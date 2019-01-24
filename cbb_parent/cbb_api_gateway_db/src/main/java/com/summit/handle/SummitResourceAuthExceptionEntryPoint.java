@@ -4,7 +4,7 @@ package com.summit.handle;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.summit.common.constant.CommonConstant;
 import com.summit.common.entity.ResponseCodeBySummit;
-import com.summit.common.entity.RestFulEntityBySummit;
+import com.summit.common.entity.RestfulEntityBySummit;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.AuthenticationException;
@@ -34,11 +34,11 @@ public class SummitResourceAuthExceptionEntryPoint implements AuthenticationEntr
                          AuthenticationException authException) throws IOException {
 
 		Throwable cause = authException.getCause();
-		RestFulEntityBySummit entity;
+		RestfulEntityBySummit entity;
 		if(cause instanceof InvalidTokenException) {
-			entity=new RestFulEntityBySummit(ResponseCodeBySummit.CODE_4008,null);
+			entity=new RestfulEntityBySummit(ResponseCodeBySummit.CODE_4008,null);
 		}else{
-			entity=new RestFulEntityBySummit(ResponseCodeBySummit.CODE_4007,null);
+			entity=new RestfulEntityBySummit(ResponseCodeBySummit.CODE_4007,null);
 		}
 		response.setCharacterEncoding(CommonConstant.UTF8);
 		response.setContentType(CommonConstant.CONTENT_TYPE);
