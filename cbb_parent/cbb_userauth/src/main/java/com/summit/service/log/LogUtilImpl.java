@@ -1,23 +1,25 @@
 package com.summit.service.log;
 
-import com.summit.domain.log.LogBean;
-import com.summit.repository.UserRepository;
-import com.summit.util.SummitTools;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.sql.DataSource;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
+
+import com.summit.common.entity.UserInfo;
+import com.summit.common.web.filter.UserContextHolder;
+import com.summit.domain.log.LogBean;
+import com.summit.repository.UserRepository;
+import com.summit.util.SummitTools;
 
 @Component
 @Service
@@ -39,6 +41,12 @@ public class LogUtilImpl implements ILogUtil {
 	 * 
 	 */
 	public  LogBean insertLog(HttpServletRequest request, String logType,String funName,String userName) {
+		if(userName==null || "".equals(userName)){
+			UserInfo userInfo=UserContextHolder.getUserInfo();
+			if(userInfo!=null){
+			   userName=userInfo.getUserName();
+			}
+		}
 		LogBean lg = null;
 		if(request !=null && logType!=null && logType.trim().length()>0 && funName!=null && funName.trim().length()>0){
 			String id = new SummitTools().getKey();
@@ -71,10 +79,6 @@ public class LogUtilImpl implements ILogUtil {
 		}
 		return lg;
 	}
-
-
-
-	
 	
 	/**
 	 * 
