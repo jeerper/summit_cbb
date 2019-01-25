@@ -1,9 +1,9 @@
 package com.summit.service.adcd;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import net.sf.json.JSONObject;
 
 import org.apache.commons.collections.map.LinkedMap;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +18,8 @@ import com.summit.domain.adcd.ADCDTreeBeanRowMapper;
 import com.summit.repository.UserRepository;
 import com.summit.util.Page;
 import com.summit.util.SummitTools;
+
+import net.sf.json.JSONObject;
 
 @Service
 @Transactional
@@ -37,18 +39,77 @@ public class ADCDService {
 	 * 查询adcd树
 	 * @return
 	 */
-	public List<ADCDTreeBean> queryAdcdTree() {
-		String sql = "SELECT ADCD,PADCD,ADNM,LEVEL  FROM AD_CD_B";
-		List<ADCDTreeBean> all = ur.queryAllCustom(sql, atrm);
-		List<ADCDTreeBean> list = new ArrayList<ADCDTreeBean>();
-		for (ADCDTreeBean adcdTreeBean : all) {
-			if(adcdTreeBean.getPadcd() == null){
-				adcdTreeBean.setOpen(true);
+	public JSONObject queryAdcdTree(String padcd) {
+		JSONObject jSONOTree=null;
+		LinkedMap linkedMap=new LinkedMap();
+		StringBuffer sql = new StringBuffer("SELECT ADCD, ADNM,PADCD, ADLEVEL FROM AD_CD_B where padcd=? ");
+		linkedMap.put(1, padcd);
+        try {
+			List<Object> rootList= ur.queryAllCustom(sql.toString(),linkedMap);
+			if(rootList.size()>0){
+				jSONOTree=(JSONObject)rootList.get(0);
+				List<JSONObject> list=null;
+				list=generateOrgMapToTree(null,jSONOTree.getString("ADCD"));
+	        	jSONOTree.put("children", list);
 			}
-			list.add(adcdTreeBean);
+			
+		} catch (Exception e1) {
+			e1.printStackTrace();
 		}
-		return list;
+		return jSONOTree;
 	}
+	
+   public List<JSONObject> generateOrgMapToTree(Map<String, List<Object>>  orgMaps, String pid) throws Exception {
+        if (null == orgMaps || orgMaps.size() == 0) {
+        	StringBuffer sql = new StringBuffer("SELECT a.ADCD, a.ADNM,a.PADCD, b.ADCD AS child_id, b.ADNM AS child_name,a.ADLEVEL as LEVELa ,b.ADLEVEL as LEVELb FROM AD_CD_B AS a  ");
+        			sql.append(" JOIN AD_CD_B AS b ON b.PADCD = a.ADCD ORDER BY  a.ADCD ASC,b.ADCD asc");
+        	
+        	List<Object> list= ur.queryAllCustom(sql.toString(),new LinkedMap());
+    		Map<String, List<Object>> map=new HashMap<String, List<Object>>();
+    		List<Object> childrenList=new ArrayList();;
+    		String adcd="";
+    		int i=0;
+    		for(Object s:list){
+    			i++;
+    			JSONObject JSONObject=(JSONObject)s;
+    			if(!"".equals(adcd) && !adcd.equals(JSONObject.getString("ADCD")) || i==list.size()-1){
+    				map.put(adcd, childrenList);
+    				childrenList=new ArrayList();
+    			}
+    			childrenList.add(JSONObject);
+    			adcd=JSONObject.getString("ADCD");
+    		}
+    		orgMaps=map;
+//            String json_list = JSONObject.toJSONString(list);
+//            orgMaps = (List<Map<String, Object>>) JSONObject.parse(json_list);
+        }
+        List<JSONObject> orgList = new ArrayList<>();
+        if (orgMaps != null && orgMaps.size() > 0) {
+        	List parenList=orgMaps.get(pid);
+        	if(parenList==null){
+        		return orgList;
+        	}
+            for (Object obj : parenList) {
+            	JSONObject jSONOTree=new JSONObject();
+            	JSONObject json=(JSONObject)obj;
+            	jSONOTree.put("adcd", json.getString("child_id"));
+            	jSONOTree.put("adnm", json.getString("child_name"));
+            	jSONOTree.put("padcd",pid);
+            	if(json.containsKey("LEVELb")){
+            	   jSONOTree.put("adlevel",json.getString("LEVELb"));
+            	}
+                List<JSONObject> children = generateOrgMapToTree(orgMaps, json.get("child_id").toString());
+                //将子结果集存入当前对象的children字段中
+                jSONOTree.put("children", children);
+                //添加当前对象到主结果集中
+                orgList.add(jSONOTree);
+                
+            }
+        }
+        return orgList;
+    }
+
+
 	/**
 	 * 根据adcd查询
 	 * @param adcd
