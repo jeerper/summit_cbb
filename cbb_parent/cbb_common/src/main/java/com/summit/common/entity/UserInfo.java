@@ -32,7 +32,7 @@ public class UserInfo implements Serializable {
     /**
      * 启用状态
      */
-    private int isEnabled;
+    private Integer isEnabled;
     /**
      * 最后一次更新时间
      */
@@ -106,11 +106,11 @@ public class UserInfo implements Serializable {
         this.phoneNumber = phoneNumber;
     }
 
-    public int getIsEnabled() {
+    public Integer getIsEnabled() {
         return isEnabled;
     }
 
-    public void setIsEnabled(int isEnabled) {
+    public void setIsEnabled(Integer isEnabled) {
         this.isEnabled = isEnabled;
     }
 
