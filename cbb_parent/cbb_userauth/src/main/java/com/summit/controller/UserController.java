@@ -19,7 +19,6 @@ import com.summit.common.entity.RestfulEntityBySummit;
 import com.summit.common.entity.UserInfo;
 import com.summit.common.redis.user.UserInfoCache;
 import com.summit.domain.log.LogBean;
-import com.summit.domain.user.UserBean;
 import com.summit.service.log.ILogUtil;
 import com.summit.service.user.UserService;
 import com.summit.util.SummitTools;
@@ -47,11 +46,11 @@ public class UserController {
 
     @PostMapping("/add")
     @ApiOperation(value = "新增用户", notes = "用于application/json格式")
-    public RestfulEntityBySummit<?> add(UserInfo userBean, HttpServletRequest request) {
+    public RestfulEntityBySummit<?> add(UserInfo userInfo, HttpServletRequest request) {
         LogBean logBean = new LogBean();
         try {
-            logBean = logUtil.insertLog(request, "1", "用户新增", userBean.getUserName());
-            return new RestfulEntityBySummit<>(us.add(userBean));
+            logBean = logUtil.insertLog(request, "1", "用户新增", userInfo.getUserName());
+            return new RestfulEntityBySummit<>(us.add(userInfo));
         } catch (Exception e) {
             e.printStackTrace();
             logBean.setActionFlag("0");
@@ -91,15 +90,15 @@ public class UserController {
 
     @ApiOperation(value = "修改用户", notes = "用于application/json格式")
     @PutMapping("/edit")
-    public RestfulEntityBySummit<?> edit(UserInfo userBean, HttpServletRequest request, String userName) {
+    public RestfulEntityBySummit<?> edit(UserInfo userInfo, HttpServletRequest request, String userName) {
         LogBean logBean = new LogBean();
         try {
             logBean = logUtil.insertLog(request, "1", "修改用户", userName);
-            if (st.stringEquals(SysConstants.SUPER_USERNAME, userBean.getUserName())) {
+            if (st.stringEquals(SysConstants.SUPER_USERNAME, userInfo.getUserName())) {
             	 return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_0000);
             } else {
-            	userInfoCache.setUserInfo(userBean.getUserName(),userBean);
-            	return new RestfulEntityBySummit<>(us.edit(userBean));
+            	userInfoCache.setUserInfo(userInfo.getUserName(),userInfo);
+            	return new RestfulEntityBySummit<>(us.edit(userInfo));
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -136,12 +135,12 @@ public class UserController {
             if (st.stringEquals(SysConstants.SUPER_USERNAME, userName)) {
                 return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_0000);
             }
-            UserBean ub = us.queryByUserName(userName);
+            UserInfo ub = us.queryByUserName(userName);
             if (ub == null) {
             	return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_4023);
             }
             ub.setPassword(null);
-            ub.setState(null);
+            //ub.setState(0);
             ub.setLastUpdateTime(null);
             return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_0000,ub);
         } catch (Exception e) {
@@ -155,14 +154,14 @@ public class UserController {
 
     @ApiOperation(value = "分页查询")
     @GetMapping("/queryByPage")
-    public RestfulEntityBySummit<?> queryByPage(Integer start, Integer limit, UserBean userBean, HttpServletRequest request,
+    public RestfulEntityBySummit<?> queryByPage(Integer start, Integer limit, UserInfo userInfo, HttpServletRequest request,
 										String userName) {
         LogBean logBean = new LogBean();
         try {
             logBean = logUtil.insertLog(request, "1", "用户管理分页查询", userName);
             start = (start == null) ? 1 : start;
             limit = (limit == null) ? SysConstants.PAGE_SIZE : limit;
-            return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_0000,us.queryByPage(start, limit, userBean));
+            return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_0000,us.queryByPage(start, limit, userInfo));
         } catch (Exception e) {
             e.printStackTrace();
             logBean.setActionFlag("0");
@@ -238,7 +237,7 @@ public class UserController {
         LogBean logBean = new LogBean();
         try {
             logBean = logUtil.insertLog(request, "1", "根据用户名查询用户权限信息", userName);
-            UserBean ub = us.queryByUserName(userName);
+            UserInfo ub = us.queryByUserName(userName);
             List<String> roleList = us.queryRoleByUserName(userName);
             List<String> funList = us.getFunByUserName(userName);
             UserInfo ui = new UserInfo();
@@ -254,7 +253,7 @@ public class UserController {
             	 return  new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_4023);
             }
             ub.setPassword(null);
-            ub.setState(null);
+            //ub.setState(null);
             ub.setLastUpdateTime(null);
             return  new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_0000,ui);
         } catch (Exception e) {

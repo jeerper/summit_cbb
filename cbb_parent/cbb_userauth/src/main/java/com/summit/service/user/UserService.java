@@ -1,25 +1,25 @@
 package com.summit.service.user;
 
-import com.summit.common.entity.ResponseCodeBySummit;
-import com.summit.common.entity.UserInfo;
-import com.summit.domain.user.UserBean;
-import com.summit.domain.user.UserBeanRowMapper;
-import com.summit.repository.UserRepository;
-import com.summit.util.Page;
-import com.summit.util.SummitTools;
-import com.summit.util.SummitTools.DateTimeType;
-import com.summit.util.SysConstants;
-import net.sf.json.JSONObject;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import com.summit.common.entity.ResponseCodeBySummit;
+import com.summit.common.entity.UserInfo;
+import com.summit.domain.user.UserInfoRowMapper;
+import com.summit.repository.UserRepository;
+import com.summit.util.Page;
+import com.summit.util.SummitTools;
+import com.summit.util.SummitTools.DateTimeType;
+import com.summit.util.SysConstants;
+
+import net.sf.json.JSONObject;
 
 @Service
 @Transactional
@@ -32,26 +32,26 @@ public class UserService {
 	@Autowired
 	public JdbcTemplate jdbcTemplate;
 	@Autowired
-	private UserBeanRowMapper ubr;
+	private UserInfoRowMapper ubr;
 
 
-	public ResponseCodeBySummit add(UserInfo userBean) {
+	public ResponseCodeBySummit add(UserInfo userInfo) {
         BCryptPasswordEncoder encoder =new BCryptPasswordEncoder();
 		String sql = "SELECT * FROM SYS_USER WHERE USERNAME = ?";
-		List<JSONObject> l = ur.queryAllCustom(sql, userBean.getUserName());
+		List<JSONObject> l = ur.queryAllCustom(sql, userInfo.getUserName());
 		if (st.collectionNotNull(l)) {
 			return ResponseCodeBySummit.CODE_4033;
 		}
 		sql = "INSERT INTO SYS_USER (USERNAME,NAME,PASSWORD,IS_ENABLED,EMAIL,PHONE_NUMBER,STATE,NOTE,LAST_UPDATE_TIME) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 		jdbcTemplate.update(sql,
-				userBean.getUserName(),
-				userBean.getName(),
-				encoder.encode(userBean.getPassword()),
-				userBean.getIsEnabled(),
-				userBean.getEmail(),
-				userBean.getPhoneNumber(),
+				userInfo.getUserName(),
+				userInfo.getName(),
+				encoder.encode(userInfo.getPassword()),
+				userInfo.getIsEnabled(),
+				userInfo.getEmail(),
+				userInfo.getPhoneNumber(),
 				1,
-				userBean.getNote(),
+				userInfo.getNote(),
 				st.DTFormat(DateTimeType.dateTime, new Date()));
 		return ResponseCodeBySummit.CODE_0000;
 	}
@@ -68,19 +68,19 @@ public class UserService {
 		return ResponseCodeBySummit.CODE_0000;
 	}
 
-	public ResponseCodeBySummit edit(UserInfo userBean) {
+	public ResponseCodeBySummit edit(UserInfo userInfo) {
 		String sql = "UPDATE SYS_USER SET NAME = ?, EMAIL = ?, PHONE_NUMBER =?, NOTE = ?, IS_ENABLED = ?, LAST_UPDATE_TIME = ? WHERE USERNAME = ? AND STATE = 1";
-		jdbcTemplate.update(sql, userBean.getName(), userBean.getEmail(),
-				userBean.getPhoneNumber(), userBean.getNote(), userBean
+		jdbcTemplate.update(sql, userInfo.getName(), userInfo.getEmail(),
+				userInfo.getPhoneNumber(), userInfo.getNote(), userInfo
 						.getIsEnabled(), st.DTFormat(DateTimeType.dateTime,
-						new Date()), userBean.getUserName());
+						new Date()), userInfo.getUserName());
 		return ResponseCodeBySummit.CODE_0000;
 	}
 
 	public ResponseCodeBySummit editPassword(String userName, String oldPassword,
 			String password, String repeatPassword) {
         BCryptPasswordEncoder encoder =new BCryptPasswordEncoder();
-		UserBean ub = queryByUserName(userName);
+        UserInfo ub = queryByUserName(userName);
 		
 		String sql = "UPDATE SYS_USER SET PASSWORD = ?, LAST_UPDATE_TIME = ? WHERE USERNAME = ? AND STATE = 1";
 		jdbcTemplate.update(sql, encoder.encode(password), st.DTFormat(DateTimeType.dateTime, new Date()), ub
@@ -88,33 +88,33 @@ public class UserService {
 		return ResponseCodeBySummit.CODE_0000;
 	}
 
-	public UserBean queryByUserName(String userName) {
+	public UserInfo queryByUserName(String userName) {
 		String sql = "SELECT USERNAME ,NAME ,PASSWORD ,IS_ENABLED ,EMAIL ,PHONE_NUMBER ,STATE ,NOTE ,LAST_UPDATE_TIME FROM SYS_USER WHERE STATE = 1 AND USERNAME = ?";
-		List<UserBean> l = ur.queryAllCustom(sql, ubr, userName);
+		List<UserInfo> l = ur.queryAllCustom(sql, ubr, userName);
 		if (st.collectionNotNull(l)) {
 			return l.get(0);
 		}
 		return null;
 	}
 
-	public Page<JSONObject> queryByPage(int start, int limit, UserBean userBean) {
+	public Page<JSONObject> queryByPage(int start, int limit, UserInfo userInfo) {
 		StringBuilder sb = new StringBuilder(
 				"SELECT USERNAME,NAME,IS_ENABLED,EMAIL,PHONE_NUMBER,STATE,NOTE,LAST_UPDATE_TIME FROM SYS_USER WHERE USERNAME <> '"
 						+ SysConstants.SUPER_USERNAME + "'");
-		if (st.stringNotNull(userBean.getName())) {
-			sb.append(" AND NAME LIKE '%").append(userBean.getName()).append(
+		if (st.stringNotNull(userInfo.getName())) {
+			sb.append(" AND NAME LIKE '%").append(userInfo.getName()).append(
 					"%'");
 		}
-		if (st.stringNotNull(userBean.getUserName())) {
-			sb.append(" AND USERNAME LIKE '%").append(userBean.getUserName())
+		if (st.stringNotNull(userInfo.getUserName())) {
+			sb.append(" AND USERNAME LIKE '%").append(userInfo.getUserName())
 					.append("%'");
 		}
-		if (userBean.getIsEnabled() != null) {
-			sb.append(" AND IS_ENABLED = ").append(userBean.getIsEnabled());
+		if (userInfo.getIsEnabled() != null) {
+			sb.append(" AND IS_ENABLED = ").append(userInfo.getIsEnabled());
 		}
 
-		if (userBean.getState() != null) {
-			sb.append(" AND STATE = ").append(userBean.getState());
+		if (Integer.valueOf(userInfo.getState()) != null) {
+			sb.append(" AND STATE = ").append(userInfo.getState());
 		}
 		return ur.queryByCustomPage(sb.toString(), start, limit);
 	}
