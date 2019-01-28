@@ -38,7 +38,7 @@ public class GatewayHeaderInterceptor implements RequestInterceptor {
         if (headerNames != null) {
             while (headerNames.hasMoreElements()) {
                 String name = headerNames.nextElement();
-                // 在调用方服务接到content-length 与实际传的 content-length 长度是不一致的。
+                // 在被调用方服务接到content-length 与实际传的 content-length 长度是不一致的。
                 // 所以导致了：feign.FeignException: status 400 reading,所以需要过滤掉该字段。
                 if (name.equals("content-length")) {
                     continue;
