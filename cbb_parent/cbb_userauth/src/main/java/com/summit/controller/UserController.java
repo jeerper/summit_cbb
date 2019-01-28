@@ -75,6 +75,10 @@ public class UserController {
             logBean = logUtil.insertLog(request, "1", "删除用户", userName);
             if(userNames.contains(",")){
             	for(String username:userNames.split(",")){
+            		//系统管路员用户不能删除
+            		if (st.stringEquals(SysConstants.SUPER_USERNAME, userName)) {
+            			continue;
+                    }
             		userInfoCache.deleteUserInfo(username);		
             	}
             }
@@ -94,12 +98,12 @@ public class UserController {
         LogBean logBean = new LogBean();
         try {
             logBean = logUtil.insertLog(request, "1", "修改用户", userName);
-            if (st.stringEquals(SysConstants.SUPER_USERNAME, userInfo.getUserName())) {
-            	 return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_0000);
-            } else {
+//            if (st.stringEquals(SysConstants.SUPER_USERNAME, userInfo.getUserName())) {
+//            	 return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_0000);
+//            } else {
             	userInfoCache.setUserInfo(userInfo.getUserName(),userInfo);
             	return new RestfulEntityBySummit<>(us.edit(userInfo));
-            }
+//            }
         } catch (Exception e) {
             e.printStackTrace();
             logBean.setActionFlag("0");
@@ -132,9 +136,9 @@ public class UserController {
         LogBean logBean = new LogBean();
         try {
             logBean = logUtil.insertLog(request, "1", "用户管理根据用户名查询用户", userName);
-            if (st.stringEquals(SysConstants.SUPER_USERNAME, userName)) {
-                return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_0000);
-            }
+//            if (st.stringEquals(SysConstants.SUPER_USERNAME, userName)) {
+//                return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_0000);
+//            }
             UserInfo ub = us.queryByUserName(userName);
             if (ub == null) {
             	return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_4023);
@@ -177,11 +181,11 @@ public class UserController {
         LogBean logBean = new LogBean();
         try {
             logBean = logUtil.insertLog(request, "1", "用户管理重置密码", userName);
-            if (st.stringEquals(SysConstants.SUPER_USERNAME, userName)) {
-            	return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_0000);
-            } else {
+//            if (st.stringEquals(SysConstants.SUPER_USERNAME, userName)) {
+//            	return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_0000);
+//            } else {
             	return new RestfulEntityBySummit<>(us.resetPassword(userName));
-            }
+//            }
         } catch (Exception e) {
             e.printStackTrace();
             logBean.setActionFlag("0");
@@ -218,11 +222,11 @@ public class UserController {
         LogBean logBean = new LogBean();
         try {
             logBean = logUtil.insertLog(request, "1", "用户管理授权", userName);
-            if (st.stringEquals(SysConstants.SUPER_USERNAME, userName)) {
-            	return  new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_0000);
-            } else {
+//            if (st.stringEquals(SysConstants.SUPER_USERNAME, userName)) {
+//            	return  new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_0000);
+//            } else {
             	return  new RestfulEntityBySummit<>(us.grantRole(userName,role));
-            }
+//            }
         } catch (Exception e) {
             logBean.setActionFlag("0");
             logBean.setErroInfo(e.toString());
