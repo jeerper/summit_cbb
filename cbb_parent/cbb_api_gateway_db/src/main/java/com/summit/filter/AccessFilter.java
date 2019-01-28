@@ -1,6 +1,5 @@
 package com.summit.filter;
 
-import cn.hutool.core.collection.CollectionUtil;
 import com.netflix.zuul.ZuulFilter;
 import com.netflix.zuul.context.RequestContext;
 import com.summit.common.constant.CommonConstant;

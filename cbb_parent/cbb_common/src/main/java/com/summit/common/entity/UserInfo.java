@@ -48,7 +48,7 @@ public class UserInfo implements Serializable {
     private String note;
 
     /**
-     * 权限标识集合
+     * 权限标识集合(对应sys_function表中的ID字段)
      */
     private String[] permissions;
 
