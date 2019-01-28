@@ -148,10 +148,12 @@ public class UserController {
             
             if(roleList!=null && roleList.size()>0){
             	String[] roleArray = new String[roleList.size()];
+            	roleList.toArray(roleArray);
                 ub.setRoles(roleArray);	
             }
             if(funList!=null && funList.size()>0){
             	String[] funArray = new String[funList.size()];
+            	funList.toArray(funArray);
             	ub.setPermissions(funArray);
             }
             ub.setPassword(null);
