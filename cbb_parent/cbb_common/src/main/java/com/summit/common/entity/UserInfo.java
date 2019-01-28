@@ -38,6 +38,11 @@ public class UserInfo implements Serializable {
      */
     private String lastUpdateTime;
     /**
+     * 判断是否删除
+     */
+    private int state;
+
+    /**
      * 备注
      */
     private String note;
@@ -52,6 +57,14 @@ public class UserInfo implements Serializable {
      */
     private String[] roles;
 
+
+    public int getState() {
+        return state;
+    }
+
+    public void setState(int state) {
+        this.state = state;
+    }
 
     public String getName() {
         return name;
