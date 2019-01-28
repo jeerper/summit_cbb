@@ -143,6 +143,17 @@ public class UserController {
             if (ub == null) {
             	return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_4023);
             }
+            List<String> roleList = us.queryRoleByUserName(userName);
+            List<String> funList = us.getFunByUserName(userName);
+            
+            if(roleList!=null && roleList.size()>0){
+            	String[] roleArray = new String[roleList.size()];
+                ub.setRoles(roleArray);	
+            }
+            if(funList!=null && funList.size()>0){
+            	String[] funArray = new String[funList.size()];
+            	ub.setPermissions(funArray);
+            }
             ub.setPassword(null);
             //ub.setState(0);
             ub.setLastUpdateTime(null);
@@ -242,24 +253,27 @@ public class UserController {
         try {
             logBean = logUtil.insertLog(request, "1", "根据用户名查询用户权限信息", userName);
             UserInfo ub = us.queryByUserName(userName);
-            List<String> roleList = us.queryRoleByUserName(userName);
-            List<String> funList = us.getFunByUserName(userName);
-            UserInfo ui = new UserInfo();
-            BeanUtils.copyProperties(ub, ui);
-            String[] tmpStrRole = new String[roleList.size()];
-            tmpStrRole = roleList.toArray(tmpStrRole);
-
-            String[] tmpStrFun = new String[funList.size()];
-            tmpStrFun = funList.toArray(tmpStrFun);
-            ui.setPermissions(tmpStrFun);
-            ui.setRoles(tmpStrRole);
-            if (ui == null) {
+            //UserInfo ui = new UserInfo();
+            //BeanUtils.copyProperties(ub, ui);
+            if (ub == null) {
             	 return  new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_4023);
             }
+            
+            List<String> roleList = us.queryRoleByUserName(userName);
+            //List<String> funList = us.getFunByUserName(userName);
+            
+            if(roleList!=null && roleList.size()>0){
+            	String[] roleArray = new String[roleList.size()];
+                ub.setRoles(roleArray);	
+            }
+//            if(funList!=null && funList.size()>0){
+//            	String[] funArray = new String[funList.size()];
+//            	ub.setPermissions(funArray);
+//            }
             ub.setPassword(null);
             //ub.setState(null);
             ub.setLastUpdateTime(null);
-            return  new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_0000,ui);
+            return  new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_0000,ub);
         } catch (Exception e) {
             e.printStackTrace();
             logBean.setActionFlag("0");

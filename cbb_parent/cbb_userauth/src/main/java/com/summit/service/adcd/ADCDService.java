@@ -35,11 +35,11 @@ public class ADCDService {
 	 * 查询adcd树
 	 * @return
 	 */
-	public JSONObject queryAdcdTree(String padcd) {
+	public JSONObject queryAdcdTree(String adcd) {
 		JSONObject jSONOTree=null;
 		LinkedMap linkedMap=new LinkedMap();
-		StringBuffer sql = new StringBuffer("SELECT ADCD, ADNM,PADCD, ADLEVEL FROM AD_CD_B where padcd=? ");
-		linkedMap.put(1, padcd);
+		StringBuffer sql = new StringBuffer("SELECT ADCD, ADNM,PADCD, ADLEVEL FROM AD_CD_B where adcd=? ");
+		linkedMap.put(1, adcd);
         try {
 			List<Object> rootList= ur.queryAllCustom(sql.toString(),linkedMap);
 			if(rootList.size()>0){
