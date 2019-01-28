@@ -1,9 +1,13 @@
-package com.summit.common.feign.interceptor;
+package com.summit.interceptor;
 
 
+import com.summit.common.constant.CommonConstant;
 import feign.RequestInterceptor;
 import feign.RequestTemplate;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
@@ -16,9 +20,17 @@ import java.util.Enumeration;
  * @author Administrator
  */
 @Slf4j
-public class FeignHeaderInterceptor implements RequestInterceptor {
+public class GatewayHeaderInterceptor implements RequestInterceptor {
     @Override
     public void apply(RequestTemplate requestTemplate) {
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null) {
+            if(authentication instanceof OAuth2Authentication){
+                requestTemplate.header(CommonConstant.USER_HEADER, authentication.getName());
+            }
+        }
+
         ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
         HttpServletRequest request = attributes.getRequest();
         Enumeration<String> headerNames = request.getHeaderNames();

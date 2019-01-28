@@ -13,5 +13,9 @@ public interface ServiceNameConstant {
      * 天气组件
      */
     String Weather_Service = "cbb-weather";
+    /**
+     * Demo组件
+     */
+    String Demo_Service = "cbb-demo";
 
 }

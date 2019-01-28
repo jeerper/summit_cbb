@@ -44,14 +44,15 @@ public class DemoController {
 		return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_9999,userInfo.getUserName());
 	}
 
-	@ApiOperation(value = "第个demo接口,有参数传递，返回失败代码")
+	@ApiOperation(value = "第三个demo接口,无参数传递，返回失败代码，返回用户名称")
 	@GetMapping(value = "/haveParamDemo")
-	public RestfulEntityBySummit haveParamDemo() {
+	public RestfulEntityBySummit<String> haveParamDemo() {
 
 		UserInfo userInfo = UserContextHolder.getUserInfo();
 
 		return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_9999,userInfo.getUserName());
 	}
+
 
 
 	@GetMapping(value = "/liuyuanss")
