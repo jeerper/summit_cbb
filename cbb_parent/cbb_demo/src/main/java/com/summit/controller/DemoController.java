@@ -1,5 +1,6 @@
 package com.summit.controller;
 
+import com.summit.common.api.userauth.RemoteUserAuthService;
 import com.summit.common.entity.ResponseCodeBySummit;
 import com.summit.common.entity.RestfulEntityBySummit;
 import com.summit.common.entity.UserInfo;
@@ -27,6 +28,8 @@ public class DemoController {
 
 	@Autowired
 	UserService userService;
+	@Autowired
+	RemoteUserAuthService remoteUserAuthService;
 
 
 
@@ -55,6 +58,13 @@ public class DemoController {
 
 		return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_9999,userInfo.getUserName());
 	}
+	@ApiOperation(value = "第四个demo接口,有参数传递，返回成功代码，返回用户信息")
+	@GetMapping(value = "/queryUserInfoByUserName")
+	public RestfulEntityBySummit<UserInfo> queryUserInfoByUserName(String userName) {
+		UserInfo userInfo=remoteUserAuthService.queryUserInfoByUserName(userName).getData();
+		return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_0000,userInfo);
+	}
+
 
 
 
