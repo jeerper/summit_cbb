@@ -23,20 +23,15 @@ public class FeignHeaderInterceptor implements RequestInterceptor {
         HttpServletRequest request = attributes.getRequest();
         Enumeration<String> headerNames = request.getHeaderNames();
 
-//        String userHeader = request.getHeader(CommonConstant.USER_HEADER);
-//        if (StrUtil.isNotBlank(userHeader)) {
-//            requestTemplate.header(CommonConstant.USER_HEADER, userHeader);
-//        }
-//        String roleHeader = request.getHeader(CommonConstant.ROLE_HEADER);
-//        if (StrUtil.isNotBlank(roleHeader)) {
-//            requestTemplate.header(CommonConstant.ROLE_HEADER, roleHeader);
-//        }
-
         if (headerNames != null) {
             while (headerNames.hasMoreElements()) {
                 String name = headerNames.nextElement();
+                // 在调用方服务接到content-length 与实际传的 content-length 长度是不一致的。
+                // 所以导致了：feign.FeignException: status 400 reading,所以需要过滤掉该字段。
+                if (name.equals("content-length")) {
+                    continue;
+                }
                 String values = request.getHeader(name);
-                log.debug("{}:{}", name, values);
                 requestTemplate.header(name, values);
             }
         }
