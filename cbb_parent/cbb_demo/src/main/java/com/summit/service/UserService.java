@@ -9,18 +9,21 @@ import java.util.List;
 
 @Service
 public class UserService {
-	@Autowired
+
+
+    @Autowired
     private DemoDao demoDao;
 
 
-    public List<User> getAllUser1(){
-		System.out.println(demoDao.getAllUser1());
-        return demoDao.getAllUser1();
+
+    public List<User> getAllUser1() {
+        System.out.println(demoDao.selectCount(null));
+        return demoDao.selectList(null);
     }
 
-    public List<User> getAllUser2(){
-		System.out.println(demoDao.getAllUser1());
-        return demoDao.getAllUser1();
+    public List<User> getAllUser2() {
+        System.out.println(demoDao.selectCount(null));
+        return demoDao.selectList(null);
     }
 
 }

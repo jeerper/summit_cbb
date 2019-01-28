@@ -45,7 +45,7 @@ public class DictionaryController {
     @ApiOperation(value = "第四个demo接口,无参数传递，返回失败代码，返回用户名称")
     @GetMapping(value = "/loghahaha")
     public RestfulEntityBySummit<UserInfo> loghahaha() {
-        return remoteUserAuthService.queryUserRoleByUserName("admin");
+        return remoteUserAuthService.queryUserInfoByUserName("admin");
     }
 
 }

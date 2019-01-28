@@ -20,7 +20,7 @@ public class User {
     @TableField(value = "PHONE_NUMBER")
     private String phoneNumber;
     @TableField(value = "IS_ENABLED")
-    private Integer isEnable;
+    private Integer isEnabled;
     @TableField(value = "LAST_UPDATE_TIME")
     private Date lastUpdateTime;
     @TableField(value = "STATE")
@@ -69,12 +69,12 @@ public class User {
         this.phoneNumber = phoneNumber;
     }
 
-    public Integer getIsEnable() {
-        return isEnable;
+    public Integer getIsEnabled() {
+        return isEnabled;
     }
 
-    public void setIsEnable(Integer isEnable) {
-        this.isEnable = isEnable;
+    public void setIsEnabled(Integer isEnabled) {
+        this.isEnabled = isEnabled;
     }
 
     public Date getLastUpdateTime() {
