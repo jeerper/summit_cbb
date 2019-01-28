@@ -19,7 +19,7 @@ public interface RemoteUserAuthService {
      * @param userName 用户名
      * @return RestFulEntityBySummit
      */
-    @GetMapping("/user/queryUserRoleByUserName")
-    RestfulEntityBySummit<UserInfo> queryUserRoleByUserName(@RequestParam("userName") String userName);
+    @GetMapping("/user/queryUserInfoByUserName")
+    RestfulEntityBySummit<UserInfo> queryUserInfoByUserName(@RequestParam("userName") String userName);
 
 }

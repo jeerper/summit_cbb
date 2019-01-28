@@ -42,7 +42,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
      */
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        RestfulEntityBySummit<UserInfo> userInfoRestFulEntity = remoteUserAuthService.queryUserRoleByUserName(username);
+        RestfulEntityBySummit<UserInfo> userInfoRestFulEntity = remoteUserAuthService.queryUserInfoByUserName(username);
 
         if (!userInfoRestFulEntity.getCode().equals(ResponseCodeBySummit.CODE_0000.name())) {
             throw new UsernameNotFoundException("用户不存在");
