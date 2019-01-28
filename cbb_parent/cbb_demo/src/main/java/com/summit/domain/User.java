@@ -7,86 +7,97 @@ import com.baomidou.mybatisplus.annotation.TableName;
 
 import java.util.Date;
 
-@TableName(value = "user")
+@TableName(value = "sys_user")
 public class User {
-	@TableId(value = "id", type = IdType.ID_WORKER_STR)
-	private String id;
-	@TableField(value = "name")
-	private String name;
-	@TableField(value = "createTime")
-	private Date createTime;
-	@TableField(value = "age")
-	private Integer age;
-	@TableField(value = "phone")
-	private String phone;
-	@TableField(value = "sex")
+    @TableId(value = "USERNAME", type = IdType.NONE)
+    private String userName;
+    @TableField(value = "NAME")
+    private String name;
+    @TableField(value = "PASSWORD")
+    private String password;
+    @TableField(value = "EMAIL")
+    private String email;
+    @TableField(value = "PHONE_NUMBER")
+    private String phoneNumber;
+    @TableField(value = "IS_ENABLED")
+    private Integer isEnable;
+    @TableField(value = "LAST_UPDATE_TIME")
+    private Date lastUpdateTime;
+    @TableField(value = "STATE")
+    private int state;
+    @TableField(value = "NOTE")
+    private String note;
 
-	private String sex;
 
-	@TableField(value = "email")
+    public String getUserName() {
+        return userName;
+    }
 
-	private String email;
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
 
-	public String getEmail() {
-		return email;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public void setEmail(String email) {
-		this.email = email;
-	}
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	public String getId() {
-		return id;
-	}
+    public String getPassword() {
+        return password;
+    }
 
-	public void setId(String id) {
-		this.id = id;
-	}
+    public void setPassword(String password) {
+        this.password = password;
+    }
 
-	public String getName() {
-		return name;
-	}
+    public String getEmail() {
+        return email;
+    }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    public void setEmail(String email) {
+        this.email = email;
+    }
 
-	public Date getCreateTime() {
-		return createTime;
-	}
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
 
-	public void setCreateTime(Date createTime) {
-		this.createTime = createTime;
-	}
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
 
-	public Integer getAge() {
-		return age;
-	}
+    public Integer getIsEnable() {
+        return isEnable;
+    }
 
-	public void setAge(Integer age) {
-		this.age = age;
-	}
+    public void setIsEnable(Integer isEnable) {
+        this.isEnable = isEnable;
+    }
 
-	public String getPhone() {
-		return phone;
-	}
+    public Date getLastUpdateTime() {
+        return lastUpdateTime;
+    }
 
-	public void setPhone(String phone) {
-		this.phone = phone;
-	}
+    public void setLastUpdateTime(Date lastUpdateTime) {
+        this.lastUpdateTime = lastUpdateTime;
+    }
 
-	public String getSex() {
-		return sex;
-	}
+    public int getState() {
+        return state;
+    }
 
-	public void setSex(String sex) {
-		this.sex = sex;
-	}
+    public void setState(int state) {
+        this.state = state;
+    }
 
-	@Override
-	public String toString() {
-		return "User [id=" + id + ", name=" + name + ", createTime=" + createTime + ", age=" + age + ", phone=" + phone
-				+ ", sex=" + sex + "]";
-	}
+    public String getNote() {
+        return note;
+    }
 
+    public void setNote(String note) {
+        this.note = note;
+    }
 }
