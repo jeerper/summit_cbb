@@ -1,19 +1,5 @@
 package com.summit.controller;
 
-import java.util.List;
-
-import javax.servlet.http.HttpServletRequest;
-
-import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
 import com.summit.common.entity.ResponseCodeBySummit;
 import com.summit.common.entity.RestfulEntityBySummit;
 import com.summit.common.entity.UserInfo;
@@ -23,10 +9,20 @@ import com.summit.service.log.ILogUtil;
 import com.summit.service.user.UserService;
 import com.summit.util.SummitTools;
 import com.summit.util.SysConstants;
-
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 @Api(description = "用户管理")
 @CrossOrigin(origins = "*", maxAge = 3600)
@@ -136,9 +132,6 @@ public class UserController {
         LogBean logBean = new LogBean();
         try {
             logBean = logUtil.insertLog(request, "1", "用户管理根据用户名查询用户", userName);
-//            if (st.stringEquals(SysConstants.SUPER_USERNAME, userName)) {
-//                return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_0000);
-//            }
             UserInfo ub = us.queryByUserName(userName);
             if (ub == null) {
             	return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_4023);
@@ -156,9 +149,6 @@ public class UserController {
             	funList.toArray(funArray);
             	ub.setPermissions(funArray);
             }
-            ub.setPassword(null);
-            //ub.setState(0);
-            ub.setLastUpdateTime(null);
             return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_0000,ub);
         } catch (Exception e) {
             e.printStackTrace();
