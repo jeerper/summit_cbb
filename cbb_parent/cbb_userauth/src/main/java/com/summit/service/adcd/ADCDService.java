@@ -13,8 +13,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.summit.domain.adcd.ADCDBean;
 import com.summit.domain.adcd.ADCDBeanRowMapper;
-import com.summit.domain.adcd.ADCDTreeBean;
-import com.summit.domain.adcd.ADCDTreeBeanRowMapper;
 import com.summit.repository.UserRepository;
 import com.summit.util.Page;
 import com.summit.util.SummitTools;
@@ -30,8 +28,6 @@ public class ADCDService {
 	public JdbcTemplate jdbcTemplate;
 	@Autowired
 	private SummitTools st;
-	@Autowired
-	private ADCDTreeBeanRowMapper atrm;
 	@Autowired
 	private ADCDBeanRowMapper atm;
 	/**
