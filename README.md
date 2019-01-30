@@ -146,7 +146,7 @@ mvn install
 - 并修改`application-dev.yml`配置文件中的:
     ``` yml
     spring:
-      redis: localhost --改为lcoalhost地址
+      redis: localhost --改为localhost地址
     eureka:
       client:
         serviceUrl:
