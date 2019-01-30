@@ -38,8 +38,15 @@ public class ADCDService {
 	public JSONObject queryAdcdTree(String adcd) {
 		JSONObject jSONOTree=null;
 		LinkedMap linkedMap=new LinkedMap();
-		StringBuffer sql = new StringBuffer("SELECT ADCD, ADNM,PADCD, ADLEVEL FROM AD_CD_B where adcd=? ");
-		linkedMap.put(1, adcd);
+		StringBuffer sql = new StringBuffer("SELECT ADCD, ADNM,PADCD, ADLEVEL FROM AD_CD_B where 1=1 ");
+		if(adcd==null || "".equals(adcd)){
+			sql.append(" and padcd is null");
+		}else{
+			sql.append(" and padcd =? ");
+			linkedMap.put(1, adcd);
+			
+		}
+		
         try {
 			List<Object> rootList= ur.queryAllCustom(sql.toString(),linkedMap);
 			if(rootList.size()>0){
