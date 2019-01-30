@@ -35,15 +35,15 @@ public class ADCDService {
 	 * 查询adcd树
 	 * @return
 	 */
-	public JSONObject queryAdcdTree(String adcd) {
+	public JSONObject queryAdcdTree(String padcd) {
 		JSONObject jSONOTree=null;
 		LinkedMap linkedMap=new LinkedMap();
 		StringBuffer sql = new StringBuffer("SELECT ADCD, ADNM,PADCD, ADLEVEL FROM AD_CD_B where 1=1 ");
-		if(adcd==null || "".equals(adcd)){
-			sql.append(" and padcd is null");
+		if(padcd==null || "".equals(padcd)){
+			sql.append(" and (padcd is null  or padcd='-1' )");
 		}else{
 			sql.append(" and padcd =? ");
-			linkedMap.put(1, adcd);
+			linkedMap.put(1, padcd);
 			
 		}
 		

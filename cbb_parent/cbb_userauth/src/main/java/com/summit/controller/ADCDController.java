@@ -47,14 +47,14 @@ public class ADCDController {
 	@ApiOperation(value = "查询行政区划树", notes = "用于application/json格式")
 	@RequestMapping(value = "/queryAdTree",method = RequestMethod.POST)
 	@ResponseBody
-	public Map<String, Object> queryTree(String adcd) {
+	public Map<String, Object> queryTree(String pid) {
 		HttpServletRequest request = ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest();
 		//UserContextHolder.getUserName();
 		LogBean logBean = new LogBean();
 		Map<String, Object> list = null;
 	     try {
 	           logBean = logUtil.insertLog(request, "1", "查询adcd树", "");
-	           list = st.success("", ds.queryAdcdTree(adcd));
+	           list = st.success("", ds.queryAdcdTree(pid));
 	     } catch (Exception e) {
 	            e.printStackTrace();
 	            logBean.setActionFlag("0");
