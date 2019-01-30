@@ -61,6 +61,9 @@
 	<logger name="org.thymeleaf" level="error"/>
 	<logger name="org.apache.juli" level="error"/>
 	<logger name="org.apache.catalina" level="error"/>
+	<logger name="springfox" level="error"/>
+	<logger name="io.lettuce" level="error"/>
+	<logger name="com.netflix.discovery" level="error"/>
 
 
 	<root level="debug">
