@@ -12,6 +12,8 @@ import com.summit.util.SysConstants;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+
+import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -158,6 +160,26 @@ public class UserController {
             return  new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_9999);
         }
     }
+    
+    @ApiOperation(value = "根据用户名查询所有菜单")
+    @GetMapping("/queryFunctionInfoByUserName")
+    public RestfulEntityBySummit<?> queryFunctionInfoByUserName(String userName, HttpServletRequest request) {
+        LogBean logBean = new LogBean();
+        try {
+            logBean = logUtil.insertLog(request, "1", "用户管理根据用户名查询菜单信息", userName);
+            List<JSONObject> funList=us.getFunInfoByUserName(userName);
+            if (funList == null) {
+            	return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_4023);
+            }
+            return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_0000,funList);
+        }catch (Exception e) {
+            e.printStackTrace();
+            logBean.setActionFlag("0");
+            logBean.setErroInfo(e.toString());
+            logUtil.updateLog(logBean, "1");
+            return  new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_9999);
+        }
+    }
 
     @ApiOperation(value = "分页查询")
     @GetMapping("/queryByPage")
@@ -198,7 +220,7 @@ public class UserController {
         }
     }
 
-    @ApiOperation(value = "根据用户名查询权限")
+    @ApiOperation(value = "根据用户名查询角色")
     @GetMapping("/queryRoleByUserName")
     public RestfulEntityBySummit<?> queryRoleByUserName(String userName, HttpServletRequest request) {
         LogBean logBean = new LogBean();
@@ -238,42 +260,4 @@ public class UserController {
         }
     }
 
-    @ApiOperation(value = "根据用户名查询用户权限信息")
-    @GetMapping("/queryUserRoleByUserName")
-    public RestfulEntityBySummit<?> queryUserRoleByUserName(String userName, HttpServletRequest request) {
-        LogBean logBean = new LogBean();
-        try {
-            logBean = logUtil.insertLog(request, "1", "根据用户名查询用户权限信息", userName);
-            UserInfo ub = us.queryByUserName(userName);
-            //UserInfo ui = new UserInfo();
-            //BeanUtils.copyProperties(ub, ui);
-            if (ub == null) {
-            	 return  new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_4023);
-            }
-            
-            List<String> roleList = us.queryRoleByUserName(userName);
-            //List<String> funList = us.getFunByUserName(userName);
-            
-            if(roleList!=null && roleList.size()>0){
-            	String[] roleArray = new String[roleList.size()];
-                ub.setRoles(roleArray);	
-            }
-//            if(funList!=null && funList.size()>0){
-//            	String[] funArray = new String[funList.size()];
-//            	ub.setPermissions(funArray);
-//            }
-            ub.setPassword(null);
-            //ub.setState(null);
-            ub.setLastUpdateTime(null);
-            return  new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_0000,ub);
-        } catch (Exception e) {
-            e.printStackTrace();
-            logBean.setActionFlag("0");
-            logBean.setErroInfo(e.toString());
-            logUtil.updateLog(logBean, "1");
-            return  new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_9999);
-        }
-
-
-    }
 }
