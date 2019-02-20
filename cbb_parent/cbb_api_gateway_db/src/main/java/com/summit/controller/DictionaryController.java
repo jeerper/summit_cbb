@@ -30,8 +30,8 @@ public class DictionaryController {
     @ApiOperation(value = "测试页面", notes = "asdsad")
     @RequestMapping(value = "/logPage", method = RequestMethod.GET)
     public RestfulEntityBySummit add() {
+        //网关需要通过SecurityContextHolder获取用户信息
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-
         return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_0000, "haha");
     }
 
