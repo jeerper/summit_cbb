@@ -1,6 +1,6 @@
 ##组件配置
 server:
-  port: "${WebServer_Port:45004}"
+  port: "${WebServer_Port:22225}"
 spring:
   application: 
     name: "cbb-weather"
