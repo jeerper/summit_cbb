@@ -60,7 +60,7 @@ public class DictionaryController {
 	@DeleteMapping("del")
 	@ResponseBody
 	public RestfulEntityBySummit<?> del(String codes, HttpServletRequest request ) {
-		Map<String, Object> res = new HashMap<String, Object>();
+		//Map<String, Object> res = new HashMap<String, Object>();
 		LogBean logBean = new LogBean();
 		try {
 			logBean = logUtil.insertLog(request,"1", "数据字典删除","");
@@ -80,7 +80,7 @@ public class DictionaryController {
 	@PutMapping("edit")
 	@ResponseBody
 	public RestfulEntityBySummit<?> edit(DictionaryBean dictionaryBean, HttpServletRequest request) {
-		Map<String, Object> res = new HashMap<String, Object>();
+		//Map<String, Object> res = new HashMap<String, Object>();
 		LogBean logBean = new LogBean();
 		try {
 			logBean = logUtil.insertLog(request,"1", "数据字典修改","");
@@ -100,7 +100,7 @@ public class DictionaryController {
 	@GetMapping("queryByCode")
 	@ResponseBody
 	public RestfulEntityBySummit<?> queryByCode(String code, HttpServletRequest request) {
-		Map<String, Object> res = new HashMap<String, Object>();
+		//Map<String, Object> res = new HashMap<String, Object>();
 		LogBean logBean = new LogBean();
 		try {
 			logBean = logUtil.insertLog(request,"1", "数据字典按照编码查询","");
@@ -120,7 +120,7 @@ public class DictionaryController {
 	@GetMapping("queryTree")
 	@ResponseBody
 	public RestfulEntityBySummit<?> queryTree(HttpServletRequest request) {
-		Map<String, Object> res = new HashMap<String, Object>();
+		//Map<String, Object> res = new HashMap<String, Object>();
 		LogBean logBean = new LogBean();
 		try {
 			logBean = logUtil.insertLog(request,"1", "数据字典查询全部数据","");
@@ -141,7 +141,7 @@ public class DictionaryController {
 	@ResponseBody
 	public RestfulEntityBySummit<?> queryByPage(Integer start, Integer limit,
 			String pId, HttpServletRequest request ) {
-		Page<DictionaryBean> res = new Page<DictionaryBean>();
+		//Page<DictionaryBean> res = new Page<DictionaryBean>();
 		LogBean logBean = new LogBean();
 		try {
 			logBean = logUtil.insertLog(request,"1", "数据字典分页查询", "");
@@ -163,7 +163,7 @@ public class DictionaryController {
 	@GetMapping("queryByPid")
 	@ResponseBody
 	public RestfulEntityBySummit<?> queryByPid(String pId, HttpServletRequest request) {
-		List<DictionaryBean> res = new ArrayList<DictionaryBean>();
+		//List<DictionaryBean> res = new ArrayList<DictionaryBean>();
 		LogBean logBean = new LogBean();
 		try {
 			logBean = logUtil.insertLog(request,"1", "数据字典按照父ID查询", "");
