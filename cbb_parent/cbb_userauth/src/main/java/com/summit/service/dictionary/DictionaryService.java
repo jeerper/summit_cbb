@@ -41,7 +41,7 @@ public class DictionaryService {
 		String sql = "SELECT * FROM SYS_DICTIONARY WHERE CODE = ?";
 		List<JSONObject> l = ur.queryAllCustom(sql, db.getCode());
 		if (st.collectionNotNull(l)) {
-			return ResponseCodeBySummit.CODE_4022;
+			return ResponseCodeBySummit.CODE_1001;
 			//return st.error("编码" + db.getCode() + "已存在！");
 		}
 		sql = "INSERT INTO SYS_DICTIONARY (CODE, PCODE, NAME, CKEY, NOTE) VALUES (?, ?, ?, ?, ?)";
