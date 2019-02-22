@@ -59,11 +59,11 @@ public class DictionaryController {
 	@ApiOperation(value = "数据字典删除")
 	@DeleteMapping("del")
 	@ResponseBody
-	public RestfulEntityBySummit<?> del(String codes, HttpServletRequest request ,String userName) {
+	public RestfulEntityBySummit<?> del(String codes, HttpServletRequest request ) {
 		Map<String, Object> res = new HashMap<String, Object>();
 		LogBean logBean = new LogBean();
 		try {
-			logBean = logUtil.insertLog(request,"1", "数据字典删除",userName);
+			logBean = logUtil.insertLog(request,"1", "数据字典删除","");
 			//res = dictionaryService.del(codes);
 			return new RestfulEntityBySummit<>(dictionaryService.del(codes));
 		} catch (Exception e) {
@@ -79,11 +79,11 @@ public class DictionaryController {
 	@ApiOperation(value = "数据字典修改")
 	@PutMapping("edit")
 	@ResponseBody
-	public RestfulEntityBySummit<?> edit(DictionaryBean dictionaryBean, HttpServletRequest request, String userName) {
+	public RestfulEntityBySummit<?> edit(DictionaryBean dictionaryBean, HttpServletRequest request) {
 		Map<String, Object> res = new HashMap<String, Object>();
 		LogBean logBean = new LogBean();
 		try {
-			logBean = logUtil.insertLog(request,"1", "数据字典修改",userName);
+			logBean = logUtil.insertLog(request,"1", "数据字典修改","");
 			return new RestfulEntityBySummit<>(dictionaryService.edit(dictionaryBean));
 			//res = dictionaryService.edit(dictionaryBean);
 		} catch (Exception e) {
@@ -99,11 +99,11 @@ public class DictionaryController {
 	@ApiOperation(value = "数据字典按照编码查询")
 	@GetMapping("queryByCode")
 	@ResponseBody
-	public RestfulEntityBySummit<?> queryByCode(String code, HttpServletRequest request, String userName) {
+	public RestfulEntityBySummit<?> queryByCode(String code, HttpServletRequest request) {
 		Map<String, Object> res = new HashMap<String, Object>();
 		LogBean logBean = new LogBean();
 		try {
-			logBean = logUtil.insertLog(request,"1", "数据字典按照编码查询",userName);
+			logBean = logUtil.insertLog(request,"1", "数据字典按照编码查询","");
 			//res = dictionaryService.queryByCode(code);
 			return new RestfulEntityBySummit<>(dictionaryService.queryByCode(code));
 		} catch (Exception e) {
@@ -119,11 +119,11 @@ public class DictionaryController {
 	@ApiOperation(value = "数据字典查询所有数据")
 	@GetMapping("queryTree")
 	@ResponseBody
-	public RestfulEntityBySummit<?> queryTree(HttpServletRequest request, String userName) {
+	public RestfulEntityBySummit<?> queryTree(HttpServletRequest request) {
 		Map<String, Object> res = new HashMap<String, Object>();
 		LogBean logBean = new LogBean();
 		try {
-			logBean = logUtil.insertLog(request,"1", "数据字典查询全部数据",userName);
+			logBean = logUtil.insertLog(request,"1", "数据字典查询全部数据","");
 			//res = dictionaryService.queryTree();
 			return new RestfulEntityBySummit<>(dictionaryService.queryTree());
 		} catch (Exception e) {
@@ -140,11 +140,11 @@ public class DictionaryController {
 	@GetMapping("queryByPage")
 	@ResponseBody
 	public RestfulEntityBySummit<?> queryByPage(Integer start, Integer limit,
-			String pId, HttpServletRequest request , String userName) {
+			String pId, HttpServletRequest request ) {
 		Page<DictionaryBean> res = new Page<DictionaryBean>();
 		LogBean logBean = new LogBean();
 		try {
-			logBean = logUtil.insertLog(request,"1", "数据字典分页查询", userName);
+			logBean = logUtil.insertLog(request,"1", "数据字典分页查询", "");
 			start = (start == null) ? 1 : start;
 			limit = (limit == null) ? SysConstants.PAGE_SIZE : limit;
 			//res = dictionaryService.queryByPage(start, limit, pId);
@@ -162,11 +162,11 @@ public class DictionaryController {
 	@ApiOperation(value = "数据字典按照父ID查询")
 	@GetMapping("queryByPid")
 	@ResponseBody
-	public RestfulEntityBySummit<?> queryByPid(String pId, HttpServletRequest request, String userName) {
+	public RestfulEntityBySummit<?> queryByPid(String pId, HttpServletRequest request) {
 		List<DictionaryBean> res = new ArrayList<DictionaryBean>();
 		LogBean logBean = new LogBean();
 		try {
-			logBean = logUtil.insertLog(request,"1", "数据字典按照父ID查询", userName);
+			logBean = logUtil.insertLog(request,"1", "数据字典按照父ID查询", "");
 			//res = dictionaryService.queryByPid(pId);
 			return new RestfulEntityBySummit<>(dictionaryService.queryByPid(pId));
 		} catch (Exception e) {
@@ -181,10 +181,10 @@ public class DictionaryController {
 	@ApiOperation(value = "初始化字典缓存加载")
 	@PostMapping("initSysDic")
 	@ResponseBody
-	public RestfulEntityBySummit<?> initSysDic(String userName, HttpServletRequest request) {
+	public RestfulEntityBySummit<?> initSysDic(HttpServletRequest request) {
 		LogBean logBean = new LogBean();
 		try {
-			logBean = logUtil.insertLog(request,"1", "初始化字典缓存加载", userName);
+			logBean = logUtil.insertLog(request,"1", "初始化字典缓存加载", "");
 			dictionaryService.initSysDic();
 			return new RestfulEntityBySummit<>("");
 		} catch (Exception e) {

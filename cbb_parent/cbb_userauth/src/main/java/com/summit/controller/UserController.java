@@ -67,14 +67,14 @@ public class UserController {
      */
     @ApiOperation(value = "删除用户信息")
     @DeleteMapping("/del")
-    public RestfulEntityBySummit<?> del(String userNames, HttpServletRequest request, String userName) {
+    public RestfulEntityBySummit<?> del(String userNames, HttpServletRequest request) {
         LogBean logBean = new LogBean();
         try {
-            logBean = logUtil.insertLog(request, "1", "删除用户", userName);
+            logBean = logUtil.insertLog(request, "1", "删除用户", "");
             if(userNames.contains(",")){
             	for(String username:userNames.split(",")){
             		//系统管路员用户不能删除
-            		if (st.stringEquals(SysConstants.SUPER_USERNAME, userName)) {
+            		if (st.stringEquals(SysConstants.SUPER_USERNAME, username)) {
             			continue;
                     }
             		userInfoCache.deleteUserInfo(username);		
@@ -92,10 +92,10 @@ public class UserController {
 
     @ApiOperation(value = "修改用户", notes = "用于application/json格式")
     @PutMapping("/edit")
-    public RestfulEntityBySummit<?> edit(UserInfo userInfo, HttpServletRequest request, String userName) {
+    public RestfulEntityBySummit<?> edit(UserInfo userInfo, HttpServletRequest request) {
         LogBean logBean = new LogBean();
         try {
-            logBean = logUtil.insertLog(request, "1", "修改用户", userName);
+            logBean = logUtil.insertLog(request, "1", "修改用户", "");
 //            if (st.stringEquals(SysConstants.SUPER_USERNAME, userInfo.getUserName())) {
 //            	 return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_0000);
 //            } else {
@@ -183,11 +183,10 @@ public class UserController {
 
     @ApiOperation(value = "分页查询")
     @GetMapping("/queryByPage")
-    public RestfulEntityBySummit<?> queryByPage(Integer start, Integer limit, UserInfo userInfo, HttpServletRequest request,
-										String userName) {
+    public RestfulEntityBySummit<?> queryByPage(Integer start, Integer limit, UserInfo userInfo, HttpServletRequest request) {
         LogBean logBean = new LogBean();
         try {
-            logBean = logUtil.insertLog(request, "1", "用户管理分页查询", userName);
+            logBean = logUtil.insertLog(request, "1", "用户管理分页查询", "");
             start = (start == null) ? 1 : start;
             limit = (limit == null) ? SysConstants.PAGE_SIZE : limit;
             return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_0000,us.queryByPage(start, limit, userInfo));
