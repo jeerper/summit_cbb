@@ -1,5 +1,7 @@
 package com.summit.controller;
 
+import com.summit.common.entity.ResponseCodeBySummit;
+import com.summit.common.entity.RestfulEntityBySummit;
 import com.summit.domain.log.LogBean;
 import com.summit.domain.role.RoleBean;
 import com.summit.service.function.FunctionService;
@@ -44,150 +46,166 @@ public class RoleController {
     @ApiOperation(value = "新增角色", notes = "用于application/json格式")
     @PostMapping("/add")
 	@ResponseBody
-	public Map<String, Object> add(RoleBean roleBean, HttpServletRequest request,String userName) {
-		Map<String, Object> res = new HashMap<String, Object>();
+	public RestfulEntityBySummit<?> add(RoleBean roleBean, HttpServletRequest request,String userName) {
+		//Map<String, Object> res = new HashMap<String, Object>();
 		LogBean logBean = new LogBean();
 		try {
 			logBean = logUtil.insertLog(request,"1", "角色管理新增",userName);
-			res = rs.add(roleBean);
+			return new RestfulEntityBySummit<>(rs.add(roleBean));
+			//res = rs.add(roleBean);
 		} catch (Exception e) {
 			e.printStackTrace();
 			logBean.setActionFlag("0");
 			logBean.setErroInfo(e.toString());
+			return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_9999);
 		}
-		logUtil.updateLog(logBean,"1");
-		return res;
+		//logUtil.updateLog(logBean,"1");
+		//return res;
 	}
 
 	@ApiOperation(value = "角色管理删除")
 	@DeleteMapping("del")
 	@ResponseBody
-	public Map<String, Object> del(String codes, HttpServletRequest request,String userName) {
-		Map<String, Object> res = new HashMap<String, Object>();
+	public RestfulEntityBySummit<?> del(String codes, HttpServletRequest request,String userName) {
+		//Map<String, Object> res = new HashMap<String, Object>();
 		LogBean logBean = new LogBean();
 		try {
 			logBean = logUtil.insertLog(request,"1", "角色管理删除",userName);
-			res = rs.del(codes);
+			//res = rs.del(codes);
+			return new RestfulEntityBySummit<>(rs.del(codes));
 		} catch (Exception e) {
 			e.printStackTrace();
 			logBean.setActionFlag("0");
 			logBean.setErroInfo(e.toString());
+			return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_9999);
 		}
-		logUtil.updateLog(logBean,"1");
-		return res;
+		//logUtil.updateLog(logBean,"1");
+		//return res;
 	}
 
 	@ApiOperation(value = "角色管理修改")
 	@PutMapping("edit")
 	@ResponseBody
-	public Map<String, Object> edit(RoleBean roleBean, HttpServletRequest request,String userName) {
-		Map<String, Object> res = new HashMap<String, Object>();
+	public RestfulEntityBySummit<?> edit(RoleBean roleBean, HttpServletRequest request,String userName) {
+		//Map<String, Object> res = new HashMap<String, Object>();
 		LogBean logBean = new LogBean();
 		try {
 			logBean = logUtil.insertLog(request,"1", "角色管理修改",userName);
-			res = rs.edit(roleBean);
+			//res = rs.edit(roleBean);
+			return new RestfulEntityBySummit<>(rs.edit(roleBean));
 		} catch (Exception e) {
 			e.printStackTrace();
 			logBean.setActionFlag("0");
 			logBean.setErroInfo(e.toString());
+		    return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_9999);
 		}
-		logUtil.updateLog(logBean,"1");
-		return res;
+		//logUtil.updateLog(logBean,"1");
+		//return res;
 	}
 
 	@ApiOperation(value = "角色管理按照编号查询")
 	@GetMapping("queryByCode")
 	@ResponseBody
-	public Map<String, Object> queryByCode(String code, HttpServletRequest request,String userName) {
-		Map<String, Object> res = new HashMap<String, Object>();
+	public RestfulEntityBySummit<?> queryByCode(String code, HttpServletRequest request,String userName) {
+		//Map<String, Object> res = new HashMap<String, Object>();
 		LogBean logBean = new LogBean();
 		try {
 			logBean = logUtil.insertLog(request,"1", "角色管理按照编号查询",userName);
-			res = rs.queryByCode(code);
+			//res = rs.queryByCode(code);
+			return new RestfulEntityBySummit<>(rs.queryByCode(code));
 		} catch (Exception e) {
 			e.printStackTrace();
 			logBean.setActionFlag("0");
 			logBean.setErroInfo(e.toString());
+			return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_9999);
 		}
-		logUtil.updateLog(logBean,"1");
-		return res;
+		//logUtil.updateLog(logBean,"1");
+		//return res;
 	}
 
 	@ApiOperation(value = "角色管理分页查询")
 	@GetMapping("queryByPage")
 	@ResponseBody
-	public Page<JSONObject> queryByPage(Integer start, Integer limit,
+	public RestfulEntityBySummit<?> queryByPage(Integer start, Integer limit,
 			RoleBean roleBean, HttpServletRequest request,String userName) {
-		Page<JSONObject> res = new Page<JSONObject>();
+		//Page<JSONObject> res = new Page<JSONObject>();
 		LogBean logBean = new LogBean();
 		try {
 			logBean = logUtil.insertLog(request,"1", "角色管理分页查询",userName);
 			start = (start == null) ? 1 : start;
 			limit = (limit == null) ? SysConstants.PAGE_SIZE : limit;
-			res = rs.queryByPage(start, limit, roleBean);
+			//res = rs.queryByPage(start, limit, roleBean);
+			return new RestfulEntityBySummit<>(rs.queryByPage(start, limit, roleBean));
 		} catch (Exception e) {
 			e.printStackTrace();
 			logBean.setActionFlag("0");
 			logBean.setErroInfo(e.toString());
+		    return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_9999);
 		}
-		logUtil.updateLog(logBean,"1");
-		return res;
+		//logUtil.updateLog(logBean,"1");
+		//return res;
 	}
 
 	@ApiOperation(value = "角色管理查询所有数据")
 	@GetMapping("queryAll")
 	@ResponseBody
-	public Page<JSONObject> queryAll(HttpServletRequest request,String userName) {
-		Page<JSONObject> res = new Page<JSONObject>();
+	public RestfulEntityBySummit<?> queryAll(HttpServletRequest request,String userName) {
+		//Page<JSONObject> res = new Page<JSONObject>();
 		LogBean logBean = new LogBean();
 		try {
 			logBean = logUtil.insertLog(request,"1", "查询所有数据",userName);
-			res = rs.queryAll();
+			//res = rs.queryAll();
+			return new RestfulEntityBySummit<>(rs.queryAll());
 		} catch (Exception e) {
 			e.printStackTrace();
 			logBean.setActionFlag("0");
 			logBean.setErroInfo(e.toString());
+			return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_9999);
 		}
-		logUtil.updateLog(logBean,"1");
-		return res;
+		//logUtil.updateLog(logBean,"1");
+		//return res;
 	}
 
 	@ApiOperation(value = "角色管理查询角色权限")
 	@GetMapping("getRoleFunInfo")
 	@ResponseBody
-	public Map<String, Object> getRoleFunInfo(String roleCode, HttpServletRequest request,String userName) {
-		Map<String, Object> res = new HashMap<String, Object>();
+	public RestfulEntityBySummit<?> getRoleFunInfo(String roleCode, HttpServletRequest request,String userName) {
+		//Map<String, Object> res = new HashMap<String, Object>();
 		Map<String, Object> m = new HashMap<String, Object>();
 		LogBean logBean = new LogBean();
 		try {
 			logBean = logUtil.insertLog(request,"1", "角色管理查询角色权限",userName);
 			m.put("treeNode", fs.queryAll(userName));
 			m.put("funId", rs.queryFunIdByRoleCode(roleCode));
-			res = st.success("", m);
+			//res = st.success("", m);
+			return new RestfulEntityBySummit<>(m);
 		} catch (Exception e) {
 			e.printStackTrace();
 			logBean.setActionFlag("0");
 			logBean.setErroInfo(e.toString());
+			return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_9999);
 		}
-		logUtil.updateLog(logBean,"1");
-		return res;
+		//logUtil.updateLog(logBean,"1");
+		//return res;
 	}
 
 	@ApiOperation(value = "角色管理角色授权")
 	@GetMapping("roleAuthorization")
 	@ResponseBody
-	public Map<String, Object> roleAuthorization(String roleCode, String funIds, HttpServletRequest request,String userName) {
+	public RestfulEntityBySummit<?> roleAuthorization(String roleCode, String funIds, HttpServletRequest request,String userName) {
 		Map<String, Object> res = new HashMap<String, Object>();
 		LogBean logBean = new LogBean();
 		try {
 			logBean = logUtil.insertLog(request,"1", "角色管理角色授权",userName);
-			res = rs.roleAuthorization(roleCode, funIds);
+			//res = rs.roleAuthorization(roleCode, funIds);
+			return new RestfulEntityBySummit<>(rs.roleAuthorization(roleCode, funIds));
 		} catch (Exception e) {
 			e.printStackTrace();
 			logBean.setActionFlag("0");
 			logBean.setErroInfo(e.toString());
+			return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_9999);
 		}
-		logUtil.updateLog(logBean,"1");
-		return res;
+		//logUtil.updateLog(logBean,"1");
+		//return res;
 	}
 }

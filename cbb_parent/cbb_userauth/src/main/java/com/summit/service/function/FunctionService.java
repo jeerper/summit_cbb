@@ -1,5 +1,6 @@
 package com.summit.service.function;
 
+import com.summit.common.entity.ResponseCodeBySummit;
 import com.summit.domain.function.FunctionBean;
 import com.summit.domain.function.FunctionBeanRowMapper;
 import com.summit.repository.UserRepository;
@@ -28,20 +29,20 @@ public class FunctionService {
 	@Autowired
 	private FunctionBeanRowMapper fbrm;
 
-	public Map<String, Object> add(FunctionBean fb) {
+	public ResponseCodeBySummit add(FunctionBean fb) {
 		String sql = "INSERT INTO SYS_FUNCTION (ID, PID, NAME, FDESC, IS_ENABLED, FURL, IMGULR, NOTE, SUPER_FUN) VALUES (?, ?, ?, ?, ?, ?, ?, ?,?)";
 		jdbcTemplate.update(sql, st.getKey(), fb.getPid(), fb.getName(), fb
 				.getFdesc(), fb.getIsEnabled(), fb.getFurl(), fb.getImgUlr(),
 				fb.getNote(), 0);
-		return st.success("");
+		return ResponseCodeBySummit.CODE_0000;
 	}
 
-	public Map<String, Object> del(String ids) {
+	public ResponseCodeBySummit del(String ids) {
 		ids = ids.replaceAll(",", "','");
 		String sql = "SELECT * FROM SYS_FUNCTION WHERE PID IN ('" + ids + "')";
 		List<FunctionBean> l = ur.queryAllCustom(sql, fbrm);
 		if (st.collectionNotNull(l)) {
-			return st.error("不能删除包含子节点的数据");
+			return ResponseCodeBySummit.CODE_9994;
 		}
 		sql = "DELETE FROM SYS_FUNCTION WHERE ID IN ('" + ids
 				+ "') AND SUPER_FUN <> 1";
@@ -49,15 +50,15 @@ public class FunctionService {
 
 		sql = "DELETE FROM SYS_ROLE_FUNCTION WHERE FUNCTION_ID IN ('" + ids + "')";
 		jdbcTemplate.update(sql);
-		return st.success("");
+		return ResponseCodeBySummit.CODE_0000;
 	}
 
-	public Map<String, Object> edit(FunctionBean fb) {
+	public ResponseCodeBySummit edit(FunctionBean fb) {
 		String sql = "UPDATE SYS_FUNCTION SET NAME = ?, FDESC = ?, IS_ENABLED = ?, FURL = ?, IMGULR = ?, NOTE = ? WHERE ID = ?";
 		jdbcTemplate.update(sql, fb.getName(), fb.getFdesc(), fb
 				.getIsEnabled(), fb.getFurl(), fb.getImgUlr(), fb.getNote(), fb
 				.getId());
-		return st.success("");
+		return ResponseCodeBySummit.CODE_0000;
 	}
 
 	private boolean isSuperUser(String userName) {

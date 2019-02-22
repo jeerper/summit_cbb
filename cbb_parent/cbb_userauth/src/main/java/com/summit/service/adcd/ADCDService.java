@@ -11,6 +11,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.summit.common.entity.ResponseCodeBySummit;
 import com.summit.domain.adcd.ADCDBean;
 import com.summit.domain.adcd.ADCDBeanRowMapper;
 import com.summit.repository.UserRepository;
@@ -118,7 +119,7 @@ public class ADCDService {
 	 * @param adcd
 	 * @return
 	 */
-	public Map<String, Object> queryByPId(JSONObject paramJson) {
+	public List<Object> queryByPId(JSONObject paramJson) {
 		StringBuffer sql =new StringBuffer( "SELECT * FROM AD_CD_B WHERE 1=1 ");
 		LinkedMap map = new LinkedMap();
 		if(paramJson!=null){
@@ -137,10 +138,10 @@ public class ADCDService {
 		List<Object> l;
 		try {
 			l = ur.queryAllCustom(sql.toString(), map);
-			return st.success("", l);
+			return l;
 		} catch (Exception e) {
 			e.printStackTrace();
-			return st.error("");
+			return null;
 		}
 		
 	}
@@ -150,14 +151,11 @@ public class ADCDService {
 	 * @param adcds
 	 * @return
 	 */
-	public Map<String, Object> queryByAdcds(String adcds) {
+	public List<ADCDBean> queryByAdcds(String adcds) {
 		adcds = adcds.replaceAll(",", "','");
 		String sql = "SELECT * FROM AD_CD_B WHERE ADCD IN ('"+ adcds + "') ";
 		List<ADCDBean> l = ur.queryAllCustom(sql, atm, null);
-		if (st.collectionIsNull(l)) {
-			return st.error("");
-		}
-		return st.success("", l);
+		return l;
 	}
 	/**
 	 * 
@@ -181,7 +179,7 @@ public class ADCDService {
 	 * @param 
 	 * @return
 	 */
-	public Map<String, Object> edit(ADCDBean ab) {
+	public ResponseCodeBySummit edit(ADCDBean ab) {
 		String sql = "UPDATE AD_CD_B SET  ADNM = ?, PADCD = ?, LEVEL = ? where ADCD = ?";
 		jdbcTemplate.update(
 				sql,
@@ -190,16 +188,16 @@ public class ADCDService {
 				ab.getLevel(),
 				ab.getAdcd()
 		);
-		return st.success("");
+		return ResponseCodeBySummit.CODE_0000;
 	}
 	/**
 	 * 新增
 	 */
-	public Map<String, Object> add(ADCDBean ab) {
+	public ResponseCodeBySummit add(ADCDBean ab) {
 		String hasadcd="select * from AD_CD_B where adcd='"+ab.getAdcd()+"'";
 		List l=ur.queryAllCustom(hasadcd);
 		if(l.size()>0){
-			return st.error(",重复的行政区划编码");
+			return ResponseCodeBySummit.CODE_9992;
 		}
 		String sql = "INSERT INTO AD_CD_B (ADCD, ADNM, PADCD,LEVEL) VALUES (?, ? ,?, ?)";
 		jdbcTemplate.update(
@@ -208,7 +206,7 @@ public class ADCDService {
 				ab.getAdnm(),
 				ab.getPadcd(),
 				ab.getLevel());
-		return st.success("");
+		return ResponseCodeBySummit.CODE_0000;
 	}
 
 
@@ -219,16 +217,16 @@ public class ADCDService {
 	 * @param ids
 	 * @return
 	 */
-	public Map<String, Object> del(String ids) {
+	public ResponseCodeBySummit del(String ids) {
 		ids = ids.replaceAll(",", "','");
 		String sql = "SELECT * FROM AD_CD_B WHERE PADCD IN ('" + ids + "')";
 		List<ADCDBean> l = ur.queryAllCustom(sql, atm);
 		if (st.collectionNotNull(l)) {
-			return st.error("不能删除包含子节点的数据");
+			return ResponseCodeBySummit.CODE_9994;
 		}
 		sql = "DELETE FROM AD_CD_B WHERE ADCD IN ('" + ids+ "') ";
 		jdbcTemplate.update(sql);
-		return st.success("");
+		return ResponseCodeBySummit.CODE_0000;
 	}
 
 

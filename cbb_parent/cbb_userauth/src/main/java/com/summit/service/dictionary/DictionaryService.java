@@ -1,5 +1,6 @@
 package com.summit.service.dictionary;
 
+import com.summit.common.entity.ResponseCodeBySummit;
 import com.summit.domain.dictionary.DictionaryBean;
 import com.summit.domain.dictionary.DictionaryBeanRowMapper;
 import com.summit.repository.UserRepository;
@@ -36,11 +37,12 @@ public class DictionaryService {
 	
 	private static Logger logger = LoggerFactory.getLogger(DictionaryService.class);
 
-	public Map<String, Object> add(DictionaryBean db) {
+	public ResponseCodeBySummit add(DictionaryBean db) {
 		String sql = "SELECT * FROM SYS_DICTIONARY WHERE CODE = ?";
 		List<JSONObject> l = ur.queryAllCustom(sql, db.getCode());
 		if (st.collectionNotNull(l)) {
-			return st.error("编码" + db.getCode() + "已存在！");
+			return ResponseCodeBySummit.CODE_4022;
+			//return st.error("编码" + db.getCode() + "已存在！");
 		}
 		sql = "INSERT INTO SYS_DICTIONARY (CODE, PCODE, NAME, CKEY, NOTE) VALUES (?, ?, ?, ?, ?)";
 		jdbcTemplate.update(sql, db.getCode(), db.getPcode(), db.getName(),
@@ -48,17 +50,17 @@ public class DictionaryService {
 //		SysDicMap.add(db);
 		//新增字典对象加入缓存
 		dictionaryCacheImpl.addDic(db);
-		return st.success("");
+		return ResponseCodeBySummit.CODE_0000;
 	}
 
-	public Map<String, Object> del(String codes) {
+	public ResponseCodeBySummit del(String codes) {
 		String codeArr[] = codes.split(",");
 		codes = codes.replaceAll(",", "','");
 		String sql = "SELECT * FROM SYS_DICTIONARY WHERE PCODE IN ('" + codes
 				+ "')";
 		List<DictionaryBean> l = ur.queryAllCustom(sql, dbrm);
 		if (st.collectionNotNull(l)) {
-			return st.error("不能删除包含子节点的数据");
+			return ResponseCodeBySummit.CODE_9994;
 		}
 		sql = "DELETE FROM SYS_DICTIONARY WHERE CODE IN ('" + codes + "')";
 		jdbcTemplate.update(sql);
@@ -66,25 +68,21 @@ public class DictionaryService {
 //			SysDicMap.reomve(code);
 			dictionaryCacheImpl.delDic(code);
 		}
-		return st.success("");
+		return ResponseCodeBySummit.CODE_0000;
 	}
 
-	public Map<String, Object> edit(DictionaryBean db) {
+	public ResponseCodeBySummit edit(DictionaryBean db) {
 		String sql = "UPDATE SYS_DICTIONARY SET NAME = ?, CKEY = ?, NOTE =? WHERE CODE = ?";
 		jdbcTemplate.update(sql, db.getName(), db.getCkey(), db.getNote(),
 				db.getCode());
 //		SysDicMap.update(db);
 		dictionaryCacheImpl.editDic(db);
-		return st.success("");
+		return ResponseCodeBySummit.CODE_0000;
 	}
 
-	public Map<String, Object> queryByCode(String code) {
+	public DictionaryBean queryByCode(String code) {
 //		DictionaryBean db = SysDicMap.getByCode(code);
-		DictionaryBean db=  dictionaryCacheImpl.queryByCode(code);
-		if (db == null) {
-			return st.error("");
-		}
-		return st.success("", db);
+		return  dictionaryCacheImpl.queryByCode(code);
 	}
 
 	public List<DictionaryBean> queryAll() {
@@ -92,8 +90,8 @@ public class DictionaryService {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public Map<String, Object> queryTree() {
-		return st.success("",  dictionaryCacheImpl.getAll());
+	public List<DictionaryBean> queryTree() {
+		return  dictionaryCacheImpl.getAll();
 	}
 
 	public Page<DictionaryBean> queryByPage(int start, int limit, String pId) {

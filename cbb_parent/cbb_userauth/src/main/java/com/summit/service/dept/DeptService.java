@@ -50,13 +50,10 @@ public class DeptService {
 	 * @param id
 	 * @return
 	 */
-	public Map<String, Object> queryById(String id) {
+	public DeptBean queryById(String id) {
 		String sql = "SELECT ID,PID,DEPTCODE,DEPTNAME,REMARK FROM SYS_DEPT WHERE id = ?";
 		List<DeptBean> l = ur.queryAllCustom(sql, atm, id);
-		if (st.collectionIsNull(l)) {
-			return st.error("");
-		}
-		return st.success("", l.get(0));
+		return l.get(0);
 	}
 
 	/**
@@ -81,7 +78,7 @@ public class DeptService {
 	 * @param 
 	 * @return
 	 */
-	public Map<String, Object> edit(DeptBean ab) {
+	public String edit(DeptBean ab) {
 		String sql = "UPDATE SYS_DEPT SET  pid = ?, DEPTCODE = ?, DEPTNAME = ?, REMARK = ? where id = ?";
 		jdbcTemplate.update(
 				sql,
@@ -91,16 +88,16 @@ public class DeptService {
 				ab.getRemark(),
 				ab.getId()
 		);
-		return st.success("");
+		return "";
 	}
 	/**
 	 * 新增
 	 */
-	public Map<String, Object> add(DeptBean ab) {
+	public String add(DeptBean ab) {
 		String hasadcd="select * from SYS_DEPT where DEPTCODE='"+ab.getDeptCode()+"'";
 		List l=ur.queryAllCustom(hasadcd);
 		if(l.size()>0){
-			return st.error(",重复的部门编码");
+			return "部门重复";
 		}
 		String sql = "INSERT INTO SYS_DEPT (ID, PID, DEPTCODE,DEPTNAME,REMARK) VALUES (?, ? ,?, ?,?)";
 		jdbcTemplate.update(
@@ -110,7 +107,7 @@ public class DeptService {
 				ab.getDeptCode(),
 				ab.getDeptName(),
 				ab.getRemark());
-		return st.success("");
+		return "";
 	}
 
 
@@ -121,16 +118,16 @@ public class DeptService {
 	 * @param ids
 	 * @return
 	 */
-	public Map<String, Object> del(String ids) {
+	public String del(String ids) {
 		ids = ids.replaceAll(",", "','");
 		String sql = "SELECT * FROM SYS_DEPT WHERE pid IN ('" + ids + "')";
 		List<DeptBean> l = ur.queryAllCustom(sql, atm);
 		if (st.collectionNotNull(l)) {
-			return st.error("不能删除包含子节点的数据");
+			return "不能删除包含子节点的数据";
 		}
 		sql = "DELETE FROM SYS_DEPT WHERE id IN ('" + ids+ "') ";
 		jdbcTemplate.update(sql);
-		return st.success("");
+		return "";
 	}
 
 
