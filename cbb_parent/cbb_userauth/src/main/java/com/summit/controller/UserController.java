@@ -7,6 +7,7 @@ import com.summit.common.redis.user.UserInfoCache;
 import com.summit.domain.log.LogBean;
 import com.summit.service.log.ILogUtil;
 import com.summit.service.user.UserService;
+import com.summit.util.Page;
 import com.summit.util.SummitTools;
 import com.summit.util.SysConstants;
 import io.swagger.annotations.Api;
@@ -183,19 +184,20 @@ public class UserController {
 
     @ApiOperation(value = "分页查询")
     @GetMapping("/queryByPage")
-    public RestfulEntityBySummit<?> queryByPage(Integer start, Integer limit, UserInfo userInfo, HttpServletRequest request) {
+    public RestfulEntityBySummit<Page<JSONObject>> queryByPage(Integer start, Integer limit, UserInfo userInfo, HttpServletRequest request) {
         LogBean logBean = new LogBean();
         try {
             logBean = logUtil.insertLog(request, "1", "用户管理分页查询", "");
             start = (start == null) ? 1 : start;
             limit = (limit == null) ? SysConstants.PAGE_SIZE : limit;
-            return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_0000,us.queryByPage(start, limit, userInfo));
+            Page<JSONObject> page=us.queryByPage(start, limit, userInfo);
+            return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_0000,page);
         } catch (Exception e) {
             e.printStackTrace();
             logBean.setActionFlag("0");
             logBean.setErroInfo(e.toString());
             logUtil.updateLog(logBean, "1");
-           return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_9999);
+           return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_9999,null);
         }
     }
 
