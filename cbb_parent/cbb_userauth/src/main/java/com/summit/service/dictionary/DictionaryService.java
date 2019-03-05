@@ -109,7 +109,8 @@ public class DictionaryService {
 	}
 	
 	public List<DictionaryBean> queryByPid(String pId){
-		return dictionaryCacheImpl.findChildList(pId);
+		List list=dictionaryCacheImpl.findChildList(pId);
+		return list;
 	}
 	
 	/**

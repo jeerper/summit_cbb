@@ -1,5 +1,6 @@
 package com.summit.controller;
 
+import com.alibaba.fastjson.JSONArray;
 import com.summit.common.entity.ResponseCodeBySummit;
 import com.summit.common.entity.RestfulEntityBySummit;
 import com.summit.domain.dictionary.DictionaryBean;
@@ -105,7 +106,9 @@ public class DictionaryController {
 		try {
 			logBean = logUtil.insertLog(request,"1", "数据字典按照编码查询","");
 			//res = dictionaryService.queryByCode(code);
-			return new RestfulEntityBySummit<>(dictionaryService.queryByCode(code));
+			JSONArray jsonArray = new JSONArray();
+	        jsonArray.add(dictionaryService.queryByCode(code));
+			return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_0000,jsonArray);
 		} catch (Exception e) {
 			e.printStackTrace();
 			logBean.setActionFlag("0");
@@ -125,7 +128,9 @@ public class DictionaryController {
 		try {
 			logBean = logUtil.insertLog(request,"1", "数据字典查询全部数据","");
 			//res = dictionaryService.queryTree();
-			return new RestfulEntityBySummit<>(dictionaryService.queryTree());
+			JSONArray jsonArray = new JSONArray();
+	        jsonArray.add(dictionaryService.queryTree());
+			return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_0000,jsonArray);
 		} catch (Exception e) {
 			e.printStackTrace();
 			logBean.setActionFlag("0");
@@ -148,7 +153,7 @@ public class DictionaryController {
 			start = (start == null) ? 1 : start;
 			limit = (limit == null) ? SysConstants.PAGE_SIZE : limit;
 			//res = dictionaryService.queryByPage(start, limit, pId);
-			return new RestfulEntityBySummit<>(dictionaryService.queryByPage(start, limit, pId));
+			return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_0000,dictionaryService.queryByPage(start, limit, pId));
 		} catch (Exception e) {
 			e.printStackTrace();
 			logBean.setActionFlag("0");
@@ -168,7 +173,10 @@ public class DictionaryController {
 		try {
 			logBean = logUtil.insertLog(request,"1", "数据字典按照父ID查询", "");
 			//res = dictionaryService.queryByPid(pId);
-			return new RestfulEntityBySummit<>(dictionaryService.queryByPid(pId));
+			List <DictionaryBean> list=dictionaryService.queryByPid(pId);
+			JSONArray jsonArray = new JSONArray();
+	        jsonArray.add(list);
+			return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_0000,jsonArray);
 		} catch (Exception e) {
 			e.printStackTrace();
 			logBean.setActionFlag("0");
@@ -186,7 +194,7 @@ public class DictionaryController {
 		try {
 			logBean = logUtil.insertLog(request,"1", "初始化字典缓存加载", "");
 			dictionaryService.initSysDic();
-			return new RestfulEntityBySummit<>("");
+			return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_0000);
 		} catch (Exception e) {
 			e.printStackTrace();
 			logBean.setActionFlag("0");
