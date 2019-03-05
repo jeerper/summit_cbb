@@ -156,8 +156,10 @@ public class UserController {
             	funList.toArray(funArray);
             	ub.setPermissions(funArray);
             }
-            logger.debug("数据查询成功！"+ub);
-            return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_0000,ub);
+           
+            RestfulEntityBySummit<?> info=new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_0000,ub);
+            logger.debug("数据查询成功！"+info); 
+            return info;
         } catch (Exception e) {
         	logger.debug("数据查询失败1！" +e.toString());
             e.printStackTrace();
