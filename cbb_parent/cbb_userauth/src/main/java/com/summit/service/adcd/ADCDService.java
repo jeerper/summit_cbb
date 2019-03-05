@@ -6,12 +6,15 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.collections.map.LinkedMap;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.summit.common.entity.ResponseCodeBySummit;
+import com.summit.controller.UserController;
 import com.summit.domain.adcd.ADCDBean;
 import com.summit.domain.adcd.ADCDBeanRowMapper;
 import com.summit.repository.UserRepository;
@@ -23,6 +26,7 @@ import net.sf.json.JSONObject;
 @Service
 @Transactional
 public class ADCDService {
+	private static final Logger logger = LoggerFactory.getLogger(ADCDService.class);
 	@Autowired
 	private UserRepository ur;
 	@Autowired
@@ -52,8 +56,10 @@ public class ADCDService {
 			List<Object> rootList= ur.queryAllCustom(sql.toString(),linkedMap);
 			if(rootList.size()>0){
 				jSONOTree=(JSONObject)rootList.get(0);
+				logger.debug("jSONOTree.getString: "+jSONOTree.getString("ADCD"));
 				List<JSONObject> list=null;
 				list=generateOrgMapToTree(null,jSONOTree.getString("ADCD"));
+				logger.debug("list: "+list.size());
 	        	jSONOTree.put("children", list);
 			}
 			
@@ -67,7 +73,7 @@ public class ADCDService {
         if (null == orgMaps || orgMaps.size() == 0) {
         	StringBuffer sql = new StringBuffer("SELECT a.ADCD, a.ADNM,a.PADCD, b.ADCD AS child_id, b.ADNM AS child_name,a.ADLEVEL as LEVELa ,b.ADLEVEL as LEVELb FROM AD_CD_B AS a  ");
         			sql.append(" JOIN AD_CD_B AS b ON b.PADCD = a.ADCD ORDER BY  a.ADCD ASC,b.ADCD asc");
-        	
+        	logger.debug(sql.toString());
         	List<Object> list= ur.queryAllCustom(sql.toString(),new LinkedMap());
     		Map<String, List<Object>> map=new HashMap<String, List<Object>>();
     		List<Object> childrenList=new ArrayList();;
