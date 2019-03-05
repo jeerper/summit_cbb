@@ -167,7 +167,7 @@ public class DictionaryController {
 	@ApiOperation(value = "数据字典按照父ID查询")
 	@GetMapping("queryByPid")
 	@ResponseBody
-	public RestfulEntityBySummit<?> queryByPid(String pId, HttpServletRequest request) {
+	public RestfulEntityBySummit<JSONArray> queryByPid(String pId, HttpServletRequest request) {
 		//List<DictionaryBean> res = new ArrayList<DictionaryBean>();
 		LogBean logBean = new LogBean();
 		try {
@@ -181,7 +181,7 @@ public class DictionaryController {
 			e.printStackTrace();
 			logBean.setActionFlag("0");
 			logBean.setErroInfo(e.toString());
-			return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_9999);
+			return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_9999,null);
 		}
 		//logUtil.updateLog(logBean,"1");
 		//return res;
