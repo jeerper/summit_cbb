@@ -13,9 +13,9 @@ import com.summit.util.SysConstants;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
-import com.alibaba.fastjson.JSONArray;
 import net.sf.json.JSONObject;
 
+import org.json.JSONArray;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -156,7 +156,7 @@ public class UserController {
             	ub.setPermissions(funArray);
             }
             JSONArray jsonArray = new JSONArray();
-            jsonArray.add(ub);
+            jsonArray.put(ub);
             RestfulEntityBySummit<?> info=new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_0000,jsonArray);
             logger.debug("数据查询成功！"+info.getCode()+"==="+info.getData()); 
             return info;
@@ -183,7 +183,7 @@ public class UserController {
             	return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_4023);
             }
             JSONArray jsonArray = new JSONArray();
-            jsonArray.add(funList);
+            jsonArray.put(funList);
             return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_0000,jsonArray);
         }catch (Exception e) {
             e.printStackTrace();
@@ -204,7 +204,7 @@ public class UserController {
             limit = (limit == null) ? SysConstants.PAGE_SIZE : limit;
             Page<JSONObject> page=us.queryByPage(start, limit, userInfo);
             JSONArray jsonArray = new JSONArray();
-            jsonArray.add(page);
+            jsonArray.put(page);
             return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_0000,jsonArray);
         } catch (Exception e) {
             e.printStackTrace();
@@ -246,7 +246,7 @@ public class UserController {
 //            	return  new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_0000);
 //            } else {
             JSONArray jsonArray = new JSONArray();
-            jsonArray.add(list);
+            jsonArray.put(list);
             return  new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_0000,jsonArray);
 //            }
         } catch (Exception e) {
