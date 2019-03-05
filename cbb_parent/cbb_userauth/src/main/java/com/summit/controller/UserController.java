@@ -156,7 +156,7 @@ public class UserController {
             	funList.toArray(funArray);
             	ub.setPermissions(funArray);
             }
-            logger.debug("数据查询成功！");
+            logger.debug("数据查询成功！"+ub);
             return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_0000,ub);
         } catch (Exception e) {
         	logger.debug("数据查询失败1！" +e.toString());
@@ -165,7 +165,8 @@ public class UserController {
             logBean.setActionFlag("0");
             logBean.setErroInfo(e.toString());
             logUtil.updateLog(logBean, "1");
-            return  new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_9999);
+            //return  new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_9999);
+            return  new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_9993);
         }
     }
     
