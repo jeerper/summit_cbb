@@ -158,7 +158,7 @@ public class UserController {
             }
            
             RestfulEntityBySummit<?> info=new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_0000,ub);
-            logger.debug("数据查询成功！"+info); 
+            logger.debug("数据查询成功！"+info.toString()); 
             return info;
         } catch (Exception e) {
         	logger.debug("数据查询失败1！" +e.toString());
