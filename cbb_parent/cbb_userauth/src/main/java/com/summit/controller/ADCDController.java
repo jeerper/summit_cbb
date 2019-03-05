@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
+import com.alibaba.fastjson.JSONArray;
 import com.summit.common.entity.ResponseCodeBySummit;
 import com.summit.common.entity.RestfulEntityBySummit;
 import com.summit.domain.adcd.ADCDBean;
@@ -92,7 +93,9 @@ public class ADCDController {
 			json.put("padcd", padcd);
 			json.put("level", level);
 			//list = ds.queryByPId(json);
-			return new RestfulEntityBySummit<>(ds.queryByPId(json));
+		    JSONArray jsonArray = new JSONArray();
+            jsonArray.add(ds.queryByPId(json));
+			return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_0000,jsonArray);
 		} catch (Exception e) {
 			e.printStackTrace();
 			logBean.setActionFlag("0");

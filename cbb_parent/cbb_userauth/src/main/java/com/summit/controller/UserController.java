@@ -182,9 +182,9 @@ public class UserController {
             if (funList == null) {
             	return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_4023);
             }
-            JSONArray jsonArray = new JSONArray();
-            jsonArray.put(funList);
-            return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_0000,jsonArray);
+            //JSONArray jsonArray = new JSONArray();
+            //jsonArray.put(funList);
+            return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_0000,funList);
         }catch (Exception e) {
             e.printStackTrace();
             logBean.setActionFlag("0");
@@ -203,9 +203,9 @@ public class UserController {
             start = (start == null) ? 1 : start;
             limit = (limit == null) ? SysConstants.PAGE_SIZE : limit;
             Page<JSONObject> page=us.queryByPage(start, limit, userInfo);
-            JSONArray jsonArray = new JSONArray();
-            jsonArray.put(page);
-            return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_0000,jsonArray);
+            //JSONArray jsonArray = new JSONArray();
+            //jsonArray.put(page);
+            return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_0000,page);
         } catch (Exception e) {
             e.printStackTrace();
             logBean.setActionFlag("0");
@@ -245,9 +245,9 @@ public class UserController {
 //            if (st.stringEquals(SysConstants.SUPER_USERNAME, userName)) {
 //            	return  new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_0000);
 //            } else {
-            JSONArray jsonArray = new JSONArray();
-            jsonArray.put(list);
-            return  new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_0000,jsonArray);
+            //JSONArray jsonArray = new JSONArray();
+           // jsonArray.put(list);
+            return  new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_0000,list);
 //            }
         } catch (Exception e) {
             e.printStackTrace();
