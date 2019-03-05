@@ -6,6 +6,8 @@ import javax.servlet.http.HttpServletRequest;
 
 import net.sf.json.JSONObject;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -36,6 +38,7 @@ import io.swagger.annotations.ApiOperation;
 @Controller
 @RequestMapping("adcd")
 public class ADCDController {
+	private static final Logger logger = LoggerFactory.getLogger(ADCDController.class);
 	@Autowired
 	private ADCDService ds;
 	@Autowired
@@ -57,11 +60,14 @@ public class ADCDController {
 	     try {
 	           logBean = logUtil.insertLog(request, "1", "查询adcd树", "");
 	           //list = st.success("", ds.queryAdcdTree(pid));
-	           return new RestfulEntityBySummit<>(ds.queryAdcdTree(pid));
+	           RestfulEntityBySummit<?> info=new RestfulEntityBySummit<>(ds.queryAdcdTree(pid));
+	           logger.debug("数据查询成功！"+info.getCode()+"==="+info.getData()); 
+	           return info;
 	     } catch (Exception e) {
 	            e.printStackTrace();
 	            logBean.setActionFlag("0");
 	            logBean.setErroInfo(e.toString());
+	            logger.debug("数据查询失败！"+e.toString()); 
 	            return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_9999);
 	     }
 	    // logUtil.updateLog(logBean, "1");
