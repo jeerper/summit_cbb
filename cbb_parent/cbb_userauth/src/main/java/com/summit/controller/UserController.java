@@ -6,6 +6,7 @@ import com.summit.common.entity.UserInfo;
 import com.summit.common.redis.user.UserInfoCache;
 import com.summit.domain.log.LogBean;
 import com.summit.service.log.ILogUtil;
+import com.summit.service.log.LogUtilImpl;
 import com.summit.service.user.UserService;
 import com.summit.util.Page;
 import com.summit.util.SummitTools;
@@ -15,6 +16,9 @@ import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 
 import net.sf.json.JSONObject;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -33,7 +37,7 @@ import java.util.List;
 @RequestMapping("/user")
 @Slf4j
 public class UserController {
-
+	private static final Logger logger = LoggerFactory.getLogger(UserController.class);
     @Autowired
     ILogUtil logUtil;
     @Autowired
@@ -152,9 +156,12 @@ public class UserController {
             	funList.toArray(funArray);
             	ub.setPermissions(funArray);
             }
+            logger.debug("数据查询成功！");
             return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_0000,ub);
         } catch (Exception e) {
+        	logger.debug("数据查询失败1！" +e.toString());
             e.printStackTrace();
+            logger.debug("数据查询失败2！" +e.toString());
             logBean.setActionFlag("0");
             logBean.setErroInfo(e.toString());
             logUtil.updateLog(logBean, "1");
