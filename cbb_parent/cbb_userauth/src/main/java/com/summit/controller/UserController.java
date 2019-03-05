@@ -6,7 +6,6 @@ import com.summit.common.entity.UserInfo;
 import com.summit.common.redis.user.UserInfoCache;
 import com.summit.domain.log.LogBean;
 import com.summit.service.log.ILogUtil;
-import com.summit.service.log.LogUtilImpl;
 import com.summit.service.user.UserService;
 import com.summit.util.Page;
 import com.summit.util.SummitTools;
@@ -14,7 +13,7 @@ import com.summit.util.SysConstants;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
-
+import com.alibaba.fastjson.JSONArray;
 import net.sf.json.JSONObject;
 
 import org.slf4j.Logger;
@@ -156,8 +155,9 @@ public class UserController {
             	funList.toArray(funArray);
             	ub.setPermissions(funArray);
             }
-           
-            RestfulEntityBySummit<?> info=new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_0000,ub);
+            JSONArray jsonArray = new JSONArray();
+            jsonArray.add(ub);
+            RestfulEntityBySummit<?> info=new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_0000,jsonArray);
             logger.debug("数据查询成功！"+info.getCode()+"==="+info.getData()); 
             return info;
         } catch (Exception e) {
@@ -182,7 +182,9 @@ public class UserController {
             if (funList == null) {
             	return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_4023);
             }
-            return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_0000,funList);
+            JSONArray jsonArray = new JSONArray();
+            jsonArray.add(funList);
+            return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_0000,jsonArray);
         }catch (Exception e) {
             e.printStackTrace();
             logBean.setActionFlag("0");
@@ -194,14 +196,16 @@ public class UserController {
 
     @ApiOperation(value = "分页查询")
     @GetMapping("/queryByPage")
-    public RestfulEntityBySummit<Page<JSONObject>> queryByPage(Integer start, Integer limit, UserInfo userInfo, HttpServletRequest request) {
+    public RestfulEntityBySummit<?> queryByPage(Integer start, Integer limit, UserInfo userInfo, HttpServletRequest request) {
         LogBean logBean = new LogBean();
         try {
             logBean = logUtil.insertLog(request, "1", "用户管理分页查询", "");
             start = (start == null) ? 1 : start;
             limit = (limit == null) ? SysConstants.PAGE_SIZE : limit;
             Page<JSONObject> page=us.queryByPage(start, limit, userInfo);
-            return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_0000,page);
+            JSONArray jsonArray = new JSONArray();
+            jsonArray.add(page);
+            return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_0000,jsonArray);
         } catch (Exception e) {
             e.printStackTrace();
             logBean.setActionFlag("0");
@@ -241,7 +245,9 @@ public class UserController {
 //            if (st.stringEquals(SysConstants.SUPER_USERNAME, userName)) {
 //            	return  new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_0000);
 //            } else {
-            return  new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_0000,list);
+            JSONArray jsonArray = new JSONArray();
+            jsonArray.add(list);
+            return  new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_0000,jsonArray);
 //            }
         } catch (Exception e) {
             e.printStackTrace();
