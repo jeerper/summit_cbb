@@ -155,9 +155,9 @@ public class UserController {
             	funList.toArray(funArray);
             	ub.setPermissions(funArray);
             }
-            JSONArray jsonArray = new JSONArray();
-            jsonArray.put(ub);
-            RestfulEntityBySummit<?> info=new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_0000,jsonArray);
+//            JSONArray jsonArray = new JSONArray();
+//            jsonArray.put(ub);
+            RestfulEntityBySummit<?> info=new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_0000,ub);
             logger.debug("数据查询成功！"+info.getCode()+"==="+info.getData()); 
             return info;
         } catch (Exception e) {
