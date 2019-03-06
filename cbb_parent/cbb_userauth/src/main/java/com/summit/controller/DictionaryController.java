@@ -1,5 +1,6 @@
 package com.summit.controller;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.summit.common.entity.ResponseCodeBySummit;
 import com.summit.common.entity.RestfulEntityBySummit;
@@ -174,8 +175,7 @@ public class DictionaryController {
 			logBean = logUtil.insertLog(request,"1", "数据字典按照父ID查询", "");
 			//res = dictionaryService.queryByPid(pId);
 			List <DictionaryBean> list=dictionaryService.queryByPid(pId);
-			JSONArray jsonArray = new JSONArray();
-	        jsonArray.add(list);
+			JSONArray jsonArray= JSONArray.parseArray(JSON.toJSONString(list));
 			return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_0000,jsonArray);
 		} catch (Exception e) {
 			e.printStackTrace();
