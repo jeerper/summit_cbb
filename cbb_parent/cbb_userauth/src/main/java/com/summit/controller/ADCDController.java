@@ -1,5 +1,6 @@
 package com.summit.controller;
 
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -84,7 +85,7 @@ public class ADCDController {
 	@ApiOperation(value = "根据特定条件查询[padcd,level]")
 	@RequestMapping(value = "/queryByPadcd",method = RequestMethod.GET)
 	@ResponseBody
-	public RestfulEntityBySummit<?> queryByPadcd(String padcd,String level) {
+	public RestfulEntityBySummit<List<Object>> queryByPadcd(String padcd,String level) {
 		HttpServletRequest request = ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest();
 		LogBean logBean = logUtil.insertLog(request,"1", "根据特定条件查询","");
 		//Map<String, Object> list = null;
@@ -93,14 +94,14 @@ public class ADCDController {
 			json.put("padcd", padcd);
 			json.put("level", level);
 			//list = ds.queryByPId(json);
-		    JSONArray jsonArray = new JSONArray();
-            jsonArray.add(ds.queryByPId(json));
-			return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_0000,jsonArray);
+		    //JSONArray jsonArray = new JSONArray();
+            //jsonArray.add(ds.queryByPId(json));
+			return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_0000,ds.queryByPId(json));
 		} catch (Exception e) {
 			e.printStackTrace();
 			logBean.setActionFlag("0");
 			logBean.setErroInfo(e.toString());
-			return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_9999);
+			return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_9999,null);
 		}
 		//logUtil.updateLog(logBean,"1");
 		//return list;
@@ -109,16 +110,17 @@ public class ADCDController {
 	@ApiOperation(value = "根据编码查询不分页")
 	@RequestMapping(value = "/queryByAdcds",method = RequestMethod.GET)
 	@ResponseBody
-	public RestfulEntityBySummit<?> queryByAdcds(String adcds) {
+	public RestfulEntityBySummit<List<ADCDBean>> queryByAdcds(String adcds) {
 		HttpServletRequest request = ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest();
 		LogBean logBean = logUtil.insertLog(request,"1", "根据adcds查询","");
 		try {
-			return new RestfulEntityBySummit<>(ds.queryByAdcds(adcds));
+			List<ADCDBean> list=ds.queryByAdcds(adcds);
+			return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_0000,list);
 		} catch (Exception e) {
 			e.printStackTrace();
 			logBean.setActionFlag("0");
 			logBean.setErroInfo(e.toString());
-			return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_9999);
+			return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_9999,null);
 		}
 		//logUtil.updateLog(logBean,"1");
 		//return list;
@@ -126,18 +128,18 @@ public class ADCDController {
 	@ApiOperation(value = "根据父节点查询分页")
 	@RequestMapping(value = "/queryByPadcdPage",method = RequestMethod.GET)
 	@ResponseBody
-	public RestfulEntityBySummit<?> queryByPage(int start, int limit, String padcd) {
+	public RestfulEntityBySummit<Page<JSONObject>> queryByPage(int start, int limit, String padcd) {
 		HttpServletRequest request = ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest();
 		LogBean logBean = logUtil.insertLog(request,"1", "根据PADCD查询分页","");
 		Page<JSONObject> list = null;
 		try {
-			//list = ds.queryByPage(start, limit, padcd);
-			return new RestfulEntityBySummit<>(ds.queryByPage(start, limit, padcd));
+			list = ds.queryByPage(start, limit, padcd);
+			return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_0000,list);
 		} catch (Exception e) {
 			e.printStackTrace();
 			logBean.setActionFlag("0");
 			logBean.setErroInfo(e.toString());
-			return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_9999);
+			return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_9999,null);
 		}
 		//logUtil.updateLog(logBean,"1");
 		

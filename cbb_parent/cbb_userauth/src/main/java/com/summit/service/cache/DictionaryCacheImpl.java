@@ -78,11 +78,14 @@ public class DictionaryCacheImpl extends CacheImpl implements DictionaryCacheInf
 	public  List<DictionaryBean> findChildList(String code) {
 		List<DictionaryBean>  all = (List<DictionaryBean>)getCacheElement(SysConstants.DICTIONARY, "dictionaryAll");
 		List<DictionaryBean> list = new ArrayList<DictionaryBean>();
-		for (DictionaryBean sysDictionary : all) {
-			if (code.equals(sysDictionary.getPcode())) {
-				list.add(sysDictionary.clone());
-			}
+		if(all!=null && all.size()>0){
+			for (DictionaryBean sysDictionary : all) {
+				if (code.equals(sysDictionary.getPcode())) {
+					list.add(sysDictionary.clone());
+				}
+			}	
 		}
+		
 		return list;
 	}
 	

@@ -1,6 +1,5 @@
 package com.summit.controller;
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.summit.common.entity.ResponseCodeBySummit;
 import com.summit.common.entity.RestfulEntityBySummit;
@@ -24,10 +23,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+
 
 @Api(description = "数据字典")
 @Controller
@@ -168,15 +165,15 @@ public class DictionaryController {
 	@ApiOperation(value = "数据字典按照父ID查询")
 	@GetMapping("queryByPid")
 	@ResponseBody
-	public RestfulEntityBySummit<JSONArray> queryByPid(String pId, HttpServletRequest request) {
+	public RestfulEntityBySummit<List <DictionaryBean>> queryByPid(String pId, HttpServletRequest request) {
 		//List<DictionaryBean> res = new ArrayList<DictionaryBean>();
 		LogBean logBean = new LogBean();
 		try {
 			logBean = logUtil.insertLog(request,"1", "数据字典按照父ID查询", "");
 			//res = dictionaryService.queryByPid(pId);
 			List <DictionaryBean> list=dictionaryService.queryByPid(pId);
-			JSONArray jsonArray= JSONArray.parseArray(JSON.toJSONString(list));
-			return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_0000,jsonArray);
+			//JSONArray jsonArray= JSONArray.parseArray(JSON.toJSONString(list));
+			return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_0000,list);
 		} catch (Exception e) {
 			e.printStackTrace();
 			logBean.setActionFlag("0");

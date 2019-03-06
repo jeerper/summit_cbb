@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
@@ -195,17 +196,37 @@ public class UserController {
     }
 
     @ApiOperation(value = "分页查询")
-    @GetMapping("/queryByPage")
-    public RestfulEntityBySummit<?> queryByPage(Integer start, Integer limit, UserInfo userInfo, HttpServletRequest request) {
+    @PostMapping("/queryByPage")
+    public RestfulEntityBySummit<?> queryByPage(
+    		@RequestParam(value = "page") int page,
+            @RequestParam(value ="pageSize") int pageSize,
+            @RequestParam(value = "name",required = false) String name,
+            @RequestParam(value = "userName",required = false) String userName,
+            @RequestParam(value = "isEnabled",required = false) String isEnabled,
+            @RequestParam(value = "state",required = false) String state,HttpServletRequest request) {
         LogBean logBean = new LogBean();
         try {
             logBean = logUtil.insertLog(request, "1", "用户管理分页查询", "");
-            start = (start == null) ? 1 : start;
-            limit = (limit == null) ? SysConstants.PAGE_SIZE : limit;
-            Page<JSONObject> page=us.queryByPage(start, limit, userInfo);
+            page = (page == 0) ? 1 : page;
+            pageSize = (pageSize == 0) ? SysConstants.PAGE_SIZE : pageSize;
+            
+            JSONObject paramJson = new JSONObject();
+            if(!st.stringIsNull(name)){
+                paramJson.put("name",name);
+            }
+            if(!st.stringIsNull(userName)){
+                paramJson.put("userName",userName);
+            }
+            if(!st.stringIsNull(isEnabled)){
+                paramJson.put("isEnabled",isEnabled);
+            }
+            if(!st.stringIsNull(state)){
+                paramJson.put("state",state);
+            }
+            Page<JSONObject> pageList=us.queryByPage(page, pageSize, paramJson);
             //JSONArray jsonArray = new JSONArray();
             //jsonArray.put(page);
-            return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_0000,page);
+            return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_0000,pageList);
         } catch (Exception e) {
             e.printStackTrace();
             logBean.setActionFlag("0");

@@ -97,25 +97,23 @@ public class UserService {
 		return null;
 	}
 
-	public Page<JSONObject> queryByPage(int start, int limit, UserInfo userInfo) {
+	public Page<JSONObject> queryByPage(int start, int limit, JSONObject paramJson) {
 		StringBuilder sb = new StringBuilder(
 				"SELECT USERNAME,NAME,IS_ENABLED,EMAIL,PHONE_NUMBER,STATE,NOTE,LAST_UPDATE_TIME FROM SYS_USER WHERE USERNAME <> '"
 						+ SysConstants.SUPER_USERNAME + "'");
-		if (st.stringNotNull(userInfo.getName())) {
-			sb.append(" AND NAME LIKE '%").append(userInfo.getName()).append(
-					"%'");
+		if (paramJson.containsKey("name")) {
+			sb.append(" AND NAME LIKE '%"+paramJson.get("name")+"%'");
 		}
-		if (st.stringNotNull(userInfo.getUserName())) {
-			sb.append(" AND USERNAME LIKE '%").append(userInfo.getUserName())
-					.append("%'");
+		if (paramJson.containsKey("userName")) {
+			sb.append(" AND USERNAME LIKE '%"+paramJson.get("userName")+"%'");
 		}
-		if (userInfo.getIsEnabled() != null) {
-			sb.append(" AND IS_ENABLED = ").append(userInfo.getIsEnabled());
+		if (paramJson.containsKey("isEnabled")) {
+			sb.append(" AND IS_ENABLED = '"+paramJson.get("isEnabled")+"'");
 		}
-
-		if (Integer.valueOf(userInfo.getState()) != null) {
-			sb.append(" AND STATE = ").append(userInfo.getState());
+		if (paramJson.containsKey("state")) {
+			sb.append(" AND STATE = '"+paramJson.get("state")+"'");
 		}
+		
 		return ur.queryByCustomPage(sb.toString(), start, limit);
 	}
 

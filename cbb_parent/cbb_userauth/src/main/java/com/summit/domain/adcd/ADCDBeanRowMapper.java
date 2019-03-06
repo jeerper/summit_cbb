@@ -21,7 +21,7 @@ public class ADCDBeanRowMapper implements RowMapper<ADCDBean> {
 				rmu.resultSetGetString(rs, "ADCD"),
 				rmu.resultSetGetString(rs, "ADNM"),
 				rmu.resultSetGetString(rs, "PADCD"),
-				rmu.resultSetGetString(rs, "LEVEL")
+				rmu.resultSetGetString(rs, "ADLEVEL")
 				);
 	}
 
