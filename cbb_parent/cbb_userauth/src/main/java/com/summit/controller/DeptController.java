@@ -4,12 +4,13 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-import net.sf.json.JSONObject;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -18,11 +19,8 @@ import com.summit.common.entity.ResponseCodeBySummit;
 import com.summit.common.entity.RestfulEntityBySummit;
 import com.summit.domain.dept.DeptBean;
 import com.summit.domain.log.LogBean;
-import com.summit.service.adcd.ADCDService;
 import com.summit.service.dept.DeptService;
 import com.summit.service.log.ILogUtil;
-import com.summit.util.Page;
-import com.summit.util.SummitTools;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -37,10 +35,9 @@ import io.swagger.annotations.ApiOperation;
 @Controller
 @RequestMapping("dept")
 public class DeptController {
+	private static final Logger logger = LoggerFactory.getLogger(DeptController.class);
 	@Autowired
 	private DeptService ds;
-	@Autowired
-	private SummitTools st;
 	@Autowired
 	ILogUtil logUtil;
 	/**
@@ -58,9 +55,11 @@ public class DeptController {
 	     try {
 	           logBean = logUtil.insertLog(request, "1", "查询部门树", "");
 	           //list = ds.queryDeptTree();
-	           return new RestfulEntityBySummit<>(ds.queryDeptTree());
+	           return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_0000,ds.queryDeptTree());
 	     } catch (Exception e) {
-	            e.printStackTrace();
+	    	    logger.error("用户分页查询失败：", e);
+	    	    logUtil.updateLog(logBean, "1");
+	            //e.printStackTrace();
 	            logBean.setActionFlag("0");
 	            logBean.setErroInfo(e.toString());
 	            return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_9999);
@@ -77,16 +76,17 @@ public class DeptController {
 	@ApiOperation(value = "根据id查询分页")
 	@RequestMapping(value = "/queryByIdPage",method = RequestMethod.POST)
 	@ResponseBody
-	public RestfulEntityBySummit<?> queryById(String id) {
+	public RestfulEntityBySummit<?> queryById(@RequestParam(value = "id") String id) {
 		HttpServletRequest request = ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest();
 		LogBean logBean = logUtil.insertLog(request,"1", "根据id查询分页","");
-		Map<String, Object> list = null;
 		try {
-			return new RestfulEntityBySummit<>(ds.queryById(id));
+			return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_0000,ds.queryById(id));
 		} catch (Exception e) {
-			e.printStackTrace();
+			//e.printStackTrace();
+			logger.error("查询失败：", e);
 			logBean.setActionFlag("0");
 			logBean.setErroInfo(e.toString());
+			logUtil.updateLog(logBean,"1");
 			return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_9999);
 		}
 		//logUtil.updateLog(logBean,"1");
@@ -97,17 +97,22 @@ public class DeptController {
 	@ApiOperation(value = "根据pid查询分页")
 	@RequestMapping(value = "/queryByPidPage",method = RequestMethod.POST)
 	@ResponseBody
-	public RestfulEntityBySummit<?> queryByPage(int start, int limit, String pid) {
+	public RestfulEntityBySummit<?> queryByPage(
+			@RequestParam(value = "page") int page,
+            @RequestParam(value ="pageSize") int pageSize,
+            @RequestParam(value = "pid",required = false) String pid) {
 		HttpServletRequest request = ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest();
 		LogBean logBean = logUtil.insertLog(request,"1", "根据pid查询分页","");
 		//Page<JSONObject> list = null;
 		try {
 			///list = ds.queryByPage(start, limit, pid);
-			return new RestfulEntityBySummit<>(ds.queryByPage(start, limit, pid));
+			return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_0000,ds.queryByPage(page, pageSize, pid));
 		} catch (Exception e) {
-			e.printStackTrace();
+			//e.printStackTrace();
+			logger.error("查询失败：", e);
 			logBean.setActionFlag("0");
 			logBean.setErroInfo(e.toString());
+			logUtil.updateLog(logBean,"1");
 			return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_9999);
 		}
 		//logUtil.updateLog(logBean,"1");
@@ -128,9 +133,11 @@ public class DeptController {
 			//list = ds.add(deptBean);
 			return new RestfulEntityBySummit<>(ds.add(deptBean));
 		} catch (Exception e) {
-			e.printStackTrace();
+			//e.printStackTrace();
+			logger.error("操作失败：", e);
 			logBean.setActionFlag("0");
 			logBean.setErroInfo(e.toString());
+			logUtil.updateLog(logBean,"1");
 			return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_9999);
 		}
 		//logUtil.updateLog(logBean,"1");
@@ -152,9 +159,11 @@ public class DeptController {
 			//list = ds.edit(deptBean);
 			return new RestfulEntityBySummit<>(ds.edit(deptBean));
 		} catch (Exception e) {
-			e.printStackTrace();
+			//e.printStackTrace();
+			logger.error("操作失败：", e);
 			logBean.setActionFlag("0");
 			logBean.setErroInfo(e.toString());
+			logUtil.updateLog(logBean,"1");
 			return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_9999);
 		}
 		//logUtil.updateLog(logBean,"1");
@@ -167,7 +176,7 @@ public class DeptController {
 	@ApiOperation(value = "部门删除")
 	@RequestMapping(value = "/del",method = RequestMethod.GET)
 	@ResponseBody
-	public RestfulEntityBySummit<?> del(String ids) {
+	public RestfulEntityBySummit<?> del(@RequestParam(value = "ids") String ids) {
 		HttpServletRequest request = ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest();
 		LogBean logBean = logUtil.insertLog(request,"1", "部门删除","");
 		Map<String, Object> list = null;
@@ -182,9 +191,11 @@ public class DeptController {
 			}
 			
 		} catch (Exception e) {
-			e.printStackTrace();
+			//e.printStackTrace();
+			logger.error("操作失败：", e);
 			logBean.setActionFlag("0");
 			logBean.setErroInfo(e.toString());
+			logUtil.updateLog(logBean,"1");
 			return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_9999);
 		}
 		//logUtil.updateLog(logBean,"1");

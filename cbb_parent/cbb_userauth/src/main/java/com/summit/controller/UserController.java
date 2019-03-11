@@ -55,7 +55,8 @@ public class UserController {
             logBean = logUtil.insertLog(request, "1", "用户新增", userInfo.getUserName());
             return new RestfulEntityBySummit<>(us.add(userInfo));
         } catch (Exception e) {
-            e.printStackTrace();
+            //e.printStackTrace();
+            logger.error("新增用户失败", e);
             logBean.setActionFlag("0");
             logBean.setErroInfo(e.toString());
             logUtil.updateLog(logBean, "1");
@@ -87,7 +88,8 @@ public class UserController {
             }
             return new RestfulEntityBySummit<>(us.del(userNames));
         } catch (Exception e) {
-            e.printStackTrace();
+            //e.printStackTrace();
+            logger.error("删除用户信息", e);
             logBean.setActionFlag("0");
             logBean.setErroInfo(e.toString());
             logUtil.updateLog(logBean, "1");
@@ -108,10 +110,11 @@ public class UserController {
             	return new RestfulEntityBySummit<>(us.edit(userInfo));
 //            }
         } catch (Exception e) {
-            e.printStackTrace();
+            //e.printStackTrace();
             logBean.setActionFlag("0");
             logBean.setErroInfo(e.toString());
             logUtil.updateLog(logBean, "1");
+            logger.error("修改用户失败:", e);
             return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_9999);
         }
     }
@@ -125,10 +128,11 @@ public class UserController {
             logBean = logUtil.insertLog(request, "1", "修改密码", userName);
            return  new RestfulEntityBySummit<>(us.editPassword(userName,oldPassword, password, repeatPassword));
         } catch (Exception e) {
-            e.printStackTrace();
+            //e.printStackTrace();
             logBean.setActionFlag("0");
             logBean.setErroInfo(e.toString());
             logUtil.updateLog(logBean, "1");
+            logger.error("修改密码失败:", e);
             return  new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_9999);
         }
     }
@@ -159,15 +163,16 @@ public class UserController {
 //            JSONArray jsonArray = new JSONArray();
 //            jsonArray.put(ub);
             RestfulEntityBySummit<?> info=new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_0000,ub);
-            logger.debug("数据查询成功！"+info.getCode()+"==="+info.getData()); 
+            //logger.debug("数据查询成功！"+info.getCode()+"==="+info.getData()); 
             return info;
         } catch (Exception e) {
-        	logger.debug("数据查询失败1！" +e.toString());
-            e.printStackTrace();
-            logger.debug("数据查询失败2！" +e.toString());
+        	//logger.debug("数据查询失败1！" +e.toString());
+            //e.printStackTrace();
+            //logger.debug("数据查询失败2！" +e.toString());
             logBean.setActionFlag("0");
             logBean.setErroInfo(e.toString());
             logUtil.updateLog(logBean, "1");
+            logger.error("根据用户名查询用户信息失败：", e);
             //return  new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_9999);
             return  new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_9993);
         }
@@ -187,10 +192,11 @@ public class UserController {
             //jsonArray.put(funList);
             return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_0000,funList);
         }catch (Exception e) {
-            e.printStackTrace();
+            //e.printStackTrace();
             logBean.setActionFlag("0");
             logBean.setErroInfo(e.toString());
             logUtil.updateLog(logBean, "1");
+            logger.error("根据用户名查询所有菜单失败：", e);
             return  new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_9999);
         }
     }
@@ -228,10 +234,11 @@ public class UserController {
             //jsonArray.put(page);
             return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_0000,pageList);
         } catch (Exception e) {
-            e.printStackTrace();
+            //e.printStackTrace();
             logBean.setActionFlag("0");
             logBean.setErroInfo(e.toString());
             logUtil.updateLog(logBean, "1");
+            logger.error("用户分页查询失败：", e);
            return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_9999,null);
         }
     }
@@ -248,10 +255,11 @@ public class UserController {
             	return new RestfulEntityBySummit<>(us.resetPassword(userName));
 //            }
         } catch (Exception e) {
-            e.printStackTrace();
+            //e.printStackTrace();
             logBean.setActionFlag("0");
             logBean.setErroInfo(e.toString());
             logUtil.updateLog(logBean, "1");
+            logger.error("重置密码失败：", e);
             return  new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_9999);
         }
     }
@@ -271,10 +279,11 @@ public class UserController {
             return  new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_0000,list);
 //            }
         } catch (Exception e) {
-            e.printStackTrace();
+            //e.printStackTrace();
             logBean.setActionFlag("0");
             logBean.setErroInfo(e.toString());
-            logUtil.updateLog(logBean, "1");     
+            logUtil.updateLog(logBean, "1"); 
+            logger.error("根据用户名查询角色失败：", e);
             return  new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_9999);
         }
     }
@@ -294,6 +303,7 @@ public class UserController {
             logBean.setActionFlag("0");
             logBean.setErroInfo(e.toString());
             logUtil.updateLog(logBean, "1");
+            logger.error("授权权限失败：", e);
             return  new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_9999);
         }
     }

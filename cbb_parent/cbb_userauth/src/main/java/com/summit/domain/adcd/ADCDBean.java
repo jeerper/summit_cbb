@@ -22,36 +22,29 @@ public class ADCDBean  implements Serializable, TreeNodeClass<JSONObject> {
 		super();
 		this.adcd = adcd;
 		this.adnm = adnm;
-		padcd = padcd;
-		level = level;
+		this.padcd = padcd;
+		this.level = level;
 	}
 
 	public Boolean getChecked() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 	public Boolean getLeaf() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 	public JSONObject getNodeData() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 	public String getNodeId() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 	public String getNodePid() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 	public String getNodeText() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 	public Boolean getOpen() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
