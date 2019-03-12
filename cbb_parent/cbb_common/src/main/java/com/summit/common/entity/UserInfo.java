@@ -2,6 +2,8 @@ package com.summit.common.entity;
 
 import java.io.Serializable;
 
+import io.swagger.annotations.ApiModelProperty;
+
 /**
  * 用户基本信息接口实体
  */
@@ -12,14 +14,17 @@ public class UserInfo implements Serializable {
     /**
      * 用户昵称
      */
+    @ApiModelProperty(value="name",required=true)
     private String name;
     /**
      * 账户名称
      */
+    @ApiModelProperty(value="userName",required=true)
     private String userName;
     /**
      * 账户密码
      */
+    @ApiModelProperty(value="password",required=true)
     private String password;
     /**
      * 邮箱
@@ -36,10 +41,12 @@ public class UserInfo implements Serializable {
     /**
      * 最后一次更新时间
      */
+    @ApiModelProperty(hidden = true)
     private String lastUpdateTime;
     /**
      * 判断是否删除
      */
+    @ApiModelProperty(hidden = true)
     private int state;
 
     /**
@@ -50,11 +57,13 @@ public class UserInfo implements Serializable {
     /**
      * 权限标识集合(对应sys_function表中的ID字段)
      */
+    @ApiModelProperty(hidden = true)
     private String[] permissions;
 
     /**
      * 角色集合
      */
+    @ApiModelProperty(hidden = true)
     private String[] roles;
 
 
