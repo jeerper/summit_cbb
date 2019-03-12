@@ -235,7 +235,7 @@ mvn install
 
     授权成功后，会出现锁子闭合的图标，即表示接口允许访问，如下图:
 
-    ![授权成功](doc/Auth-success.png)
+    ![授权成功](doc/AuthSuccess.png)
 
     <font color=black size=5px>此时就可以测试接口了!</font>
     <br>
@@ -244,13 +244,13 @@ mvn install
 
    加解密方式如下图：
 
-   ![password字段加密和解密方法](doc/AES-decode-encode.png)
+   ![password字段加密和解密方法](doc/AESDecodeEncode.png)
 
 ## 最后
 
   平台最终发布的对外接口URL请以网关swagger提供的为准，所以前端和测试同学，在使用的时候只需要通过网关来访问所需要的接口即可。例如下图：
 
-  ![测试接口的url](doc/test-api.png)
+  ![测试接口的url](doc/TestApi.png)
   
   后端同学请注意，网关在对外提供各个服务组件的rest接口时，都会给不同的服务组件追加URL访问前缀，例如`/api/userauth/user/queryUserRoleByUserName`，实际上该组件的真实接口是`/user/queryUserRoleByUserName`,所以各个服务组件的开发同学，不用刻意的给你的rest接口加访问前缀，<font color=black size=5px>不用担心和其他组件的接口冲突。</font>
 
