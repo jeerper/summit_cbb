@@ -41,7 +41,7 @@ public class FunctionController {
 	@Autowired
 	ILogUtil logUtil;
 
-	@ApiOperation(value = "新增功能", notes = "用于application/json格式")
+	@ApiOperation(value = "新增功能",  notes = "上级功能(pid),功能名称(name),功能排序(fdesc)都是必输项")
 	@PostMapping("/add")
 	@ResponseBody
 	public RestfulEntityBySummit<?> add(FunctionBean functionBean, HttpServletRequest request) {
@@ -85,7 +85,7 @@ public class FunctionController {
 		//return res;
 	}
 
-	@ApiOperation(value = "功能管理修改")
+	@ApiOperation(value = "功能管理修改" ,notes = "上级功能(pid),功能名称(name),功能排序(fdesc)都是必输项")
 	@PutMapping("edit")
 	@ResponseBody
 	public RestfulEntityBySummit<?> edit(FunctionBean functionBean, HttpServletRequest request) {

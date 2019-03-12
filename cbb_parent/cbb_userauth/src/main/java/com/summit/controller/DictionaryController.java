@@ -40,7 +40,7 @@ public class DictionaryController {
 	@Autowired
 	ILogUtil logUtil;
 
-	@ApiOperation(value = "新增数据字典", notes = "用于application/json格式")
+	@ApiOperation(value = "新增数据字典", notes = "编码(code),名称(name)都是必输项")
     @PostMapping
 	@ResponseBody
 	public  RestfulEntityBySummit<?> add(DictionaryBean dictionaryBean, HttpServletRequest request) {
@@ -86,7 +86,7 @@ public class DictionaryController {
 		//return res;
 	}
 
-	@ApiOperation(value = "数据字典修改")
+	@ApiOperation(value = "数据字典修改", notes = "编码(code),名称(name)都是必输项")
 	@PutMapping("edit")
 	@ResponseBody
 	public RestfulEntityBySummit<?> edit(DictionaryBean dictionaryBean, HttpServletRequest request) {
@@ -188,7 +188,7 @@ public class DictionaryController {
 			@RequestParam(value = "pId") String pId, HttpServletRequest request) {
 		//List<DictionaryBean> res = new ArrayList<DictionaryBean>();
 		LogBean logBean = new LogBean();
-		 MsgBean mb = new MsgBean();
+		MsgBean mb = new MsgBean();
 		try {
 			logBean = logUtil.insertLog(request,"1", "数据字典按照父ID查询", "");
 			//res = dictionaryService.queryByPid(pId);

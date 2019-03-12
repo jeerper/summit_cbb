@@ -1,20 +1,22 @@
 package com.summit.domain.dictionary;
 
-import com.summit.util.SummitTools.ZTreeNodeClass;
-
 import java.io.Serializable;
 
-public class DictionaryBean implements Serializable, ZTreeNodeClass<Object> {
+import io.swagger.annotations.ApiModelProperty;
+
+public class DictionaryBean implements Serializable {
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 15451645L;
+	@ApiModelProperty(value="code",required=true)
 	private String code;
 	private String pcode;
+	@ApiModelProperty(value="name",required=true)
 	private String name;
 	private String ckey;
 	private String note;
-	private boolean open = false;
+	
 	
 	public DictionaryBean() {
 		super();
@@ -76,36 +78,17 @@ public class DictionaryBean implements Serializable, ZTreeNodeClass<Object> {
 				this.note);
 	}
 
-	public Boolean getChecked() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
+	
 	public String getId() {
 		// TODO Auto-generated method stub
 		return code;
 	}
 
-	public Boolean getNocheck() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public Object getNodeData() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public Boolean getOpen() {
-		return this.open;
-	}
-
+	
 	public String getpId() {
 		// TODO Auto-generated method stub
 		return pcode;
 	}
 	
-	public void setOpen(boolean open) {
-		this.open = open;
-	}
+	
 }

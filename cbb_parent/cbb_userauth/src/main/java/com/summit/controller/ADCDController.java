@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -154,10 +155,10 @@ public class ADCDController {
 	/**
 	 * 新增
 	 */
-	@ApiOperation(value = "行政区划新增")
+	@ApiOperation(value = "行政区划新增",notes="编码(ADCD),行政区划名称(ADNM),padcd(父节点)都是必输项")
 	@RequestMapping(value = "/add",method = RequestMethod.POST)
 	@ResponseBody
-	public RestfulEntityBySummit<?> add(ADCDBean adcdBean) {
+	public RestfulEntityBySummit<?> add( ADCDBean adcdBean) {
 		HttpServletRequest request = ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest();
 		LogBean logBean = logUtil.insertLog(request,"1", "行政区划新增","");
 		try {
@@ -179,10 +180,9 @@ public class ADCDController {
 	/**
 	 * 编辑保存
 	 */
-	@ApiOperation(value = "行政区划编辑")
+	@ApiOperation(value = "行政区划编辑",notes="编码(ADCD),行政区划名称(ADNM),padcd(父节点)都是必输项")
 	@RequestMapping(value = "/edit",method = RequestMethod.POST)
-	@ResponseBody
-	public RestfulEntityBySummit<?> edit(ADCDBean adcdBean) {
+	public RestfulEntityBySummit<?> edit(@RequestBody ADCDBean adcdBean) {
 		HttpServletRequest request = ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest();
 		LogBean logBean = logUtil.insertLog(request,"1", "行政区划编辑","");
 		//Map<String, Object> list = null;
@@ -207,7 +207,7 @@ public class ADCDController {
 	@ApiOperation(value = "行政区划删除")
 	@RequestMapping(value = "/del",method = RequestMethod.DELETE)
 	@ResponseBody
-	public RestfulEntityBySummit<?> del(String ids) {
+	public RestfulEntityBySummit<?> del(@RequestParam(value = "ids") String ids) {
 		HttpServletRequest request = ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest();
 		LogBean logBean = logUtil.insertLog(request,"1", "行政区划删除","");
 		Map<String, Object> list = null;

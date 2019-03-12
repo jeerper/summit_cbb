@@ -2,6 +2,8 @@ package com.summit.domain.role;
 
 import java.io.Serializable;
 
+import io.swagger.annotations.ApiModelProperty;
+
 
 public class RoleBean implements Serializable{
 
@@ -10,6 +12,7 @@ public class RoleBean implements Serializable{
 	 */
 	private static final long serialVersionUID = 1L;
 	private String code;
+	@ApiModelProperty(value="name",required=true)
 	private String name;
 	private String note;
 

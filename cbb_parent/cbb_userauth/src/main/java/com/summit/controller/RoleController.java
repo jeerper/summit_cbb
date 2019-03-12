@@ -45,7 +45,7 @@ public class RoleController {
 	@Autowired
 	ILogUtil logUtil;
 
-    @ApiOperation(value = "新增角色", notes = "用于application/json格式")
+    @ApiOperation(value = "新增角色", notes = "角色名称(name)都是必输项")
     @PostMapping("/add")
 	@ResponseBody
 	public RestfulEntityBySummit<?> add(RoleBean roleBean, HttpServletRequest request) {
@@ -91,7 +91,7 @@ public class RoleController {
 		//return res;
 	}
 
-	@ApiOperation(value = "角色管理修改")
+	@ApiOperation(value = "角色管理修改", notes = "角色名称(name)都是必输项")
 	@PutMapping("edit")
 	@ResponseBody
 	public RestfulEntityBySummit<?> edit(RoleBean roleBean, HttpServletRequest request) {
