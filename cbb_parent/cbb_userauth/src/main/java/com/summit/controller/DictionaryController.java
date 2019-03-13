@@ -12,7 +12,9 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -41,9 +43,8 @@ public class DictionaryController {
 	ILogUtil logUtil;
 
 	@ApiOperation(value = "新增数据字典", notes = "编码(code),名称(name)都是必输项")
-    @PostMapping
-	@ResponseBody
-	public  RestfulEntityBySummit<?> add(DictionaryBean dictionaryBean, HttpServletRequest request) {
+    @PostMapping(value = "/add")
+	public  RestfulEntityBySummit<?> add(@RequestBody DictionaryBean dictionaryBean, HttpServletRequest request) {
 		//Map<String, Object> res = new HashMap<String, Object>();
 		LogBean logBean = new LogBean();
 		try {
@@ -88,8 +89,7 @@ public class DictionaryController {
 
 	@ApiOperation(value = "数据字典修改", notes = "编码(code),名称(name)都是必输项")
 	@PutMapping("edit")
-	@ResponseBody
-	public RestfulEntityBySummit<?> edit(DictionaryBean dictionaryBean, HttpServletRequest request) {
+	public RestfulEntityBySummit<?> edit(@RequestBody DictionaryBean dictionaryBean, HttpServletRequest request) {
 		//Map<String, Object> res = new HashMap<String, Object>();
 		LogBean logBean = new LogBean();
 		try {

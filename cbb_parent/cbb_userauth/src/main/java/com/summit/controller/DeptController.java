@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -96,7 +97,6 @@ public class DeptController {
 	
 	@ApiOperation(value = "根据pid查询分页")
 	@RequestMapping(value = "/queryByPidPage",method = RequestMethod.POST)
-	@ResponseBody
 	public RestfulEntityBySummit<?> queryByPage(
 			@RequestParam(value = "page") int page,
             @RequestParam(value ="pageSize") int pageSize,
@@ -124,8 +124,7 @@ public class DeptController {
 	 */
 	@ApiOperation(value = "部门新增",notes="编码(deptCode),部门名称(deptName),上级部门(pid)都是必输项,没有上级部门为pid='-1'")
 	@RequestMapping(value = "/add",method = RequestMethod.POST)
-	@ResponseBody
-	public RestfulEntityBySummit<?> add(DeptBean deptBean) {
+	public RestfulEntityBySummit<?> add(@RequestBody  DeptBean deptBean) {
 		HttpServletRequest request = ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest();
 		LogBean logBean = logUtil.insertLog(request,"1", "部门新增","");
 		//Map<String, Object> list = null;
@@ -150,8 +149,7 @@ public class DeptController {
 	 */
 	@ApiOperation(value = "部门编辑",notes="id,编码(deptCode),部门名称(deptName),上级部门(pid)都是必输项,没有上级部门为pid='-1'")
 	@RequestMapping(value = "/edit",method = RequestMethod.POST)
-	@ResponseBody
-	public RestfulEntityBySummit<?> edit(DeptBean deptBean) {
+	public RestfulEntityBySummit<?> edit(@RequestBody DeptBean deptBean) {
 		HttpServletRequest request = ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest();
 		LogBean logBean = logUtil.insertLog(request,"1", "部门编辑","");
 		Map<String, Object> list = null;

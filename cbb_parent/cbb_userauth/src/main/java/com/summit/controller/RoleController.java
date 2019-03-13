@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -47,8 +48,7 @@ public class RoleController {
 
     @ApiOperation(value = "新增角色", notes = "角色名称(name)都是必输项")
     @PostMapping("/add")
-	@ResponseBody
-	public RestfulEntityBySummit<?> add(RoleBean roleBean, HttpServletRequest request) {
+	public RestfulEntityBySummit<?> add(@RequestBody RoleBean roleBean, HttpServletRequest request) {
 		//Map<String, Object> res = new HashMap<String, Object>();
 		LogBean logBean = new LogBean();
 		try {
@@ -93,8 +93,7 @@ public class RoleController {
 
 	@ApiOperation(value = "角色管理修改", notes = "code,角色名称(name)都是必输项")
 	@PutMapping("edit")
-	@ResponseBody
-	public RestfulEntityBySummit<?> edit(RoleBean roleBean, HttpServletRequest request) {
+	public RestfulEntityBySummit<?> edit(@RequestBody RoleBean roleBean, HttpServletRequest request) {
 		//Map<String, Object> res = new HashMap<String, Object>();
 		LogBean logBean = new LogBean();
 		try {

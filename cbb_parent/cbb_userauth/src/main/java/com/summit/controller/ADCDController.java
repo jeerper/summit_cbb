@@ -157,8 +157,7 @@ public class ADCDController {
 	 */
 	@ApiOperation(value = "行政区划新增",notes="编码(ADCD),行政区划名称(ADNM),padcd(父节点)都是必输项")
 	@RequestMapping(value = "/add",method = RequestMethod.POST)
-	@ResponseBody
-	public RestfulEntityBySummit<?> add( ADCDBean adcdBean) {
+	public RestfulEntityBySummit<?> add(@RequestBody ADCDBean adcdBean) {
 		HttpServletRequest request = ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest();
 		LogBean logBean = logUtil.insertLog(request,"1", "行政区划新增","");
 		try {
