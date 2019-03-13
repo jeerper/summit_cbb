@@ -27,6 +27,7 @@ eureka:
   server:
     #注册中心自我保护
     enable-self-preservation: false
+    eviction-interval-timer-in-ms: 5000
   instance:
     #使用IP注册服务
     prefer-ip-address: true
