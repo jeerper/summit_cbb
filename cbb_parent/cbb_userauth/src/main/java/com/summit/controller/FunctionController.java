@@ -85,7 +85,7 @@ public class FunctionController {
 		//return res;
 	}
 
-	@ApiOperation(value = "功能管理修改" ,notes = "上级功能(pid),功能名称(name),功能排序(fdesc)都是必输项")
+	@ApiOperation(value = "功能管理修改" ,notes = "id,上级功能(pid),功能名称(name),功能排序(fdesc)都是必输项")
 	@PutMapping("edit")
 	@ResponseBody
 	public RestfulEntityBySummit<?> edit(FunctionBean functionBean, HttpServletRequest request) {

@@ -103,7 +103,7 @@ public class DeptService {
 		String sql = "INSERT INTO SYS_DEPT (ID, PID, DEPTCODE,DEPTNAME,REMARK) VALUES (?, ? ,?, ?,?)";
 		jdbcTemplate.update(
 				sql,
-				ab.getId(),
+				st.getKey(),
 				ab.getPid(),
 				ab.getDeptCode(),
 				ab.getDeptName(),

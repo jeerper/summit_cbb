@@ -91,7 +91,7 @@ public class RoleController {
 		//return res;
 	}
 
-	@ApiOperation(value = "角色管理修改", notes = "角色名称(name)都是必输项")
+	@ApiOperation(value = "角色管理修改", notes = "code,角色名称(name)都是必输项")
 	@PutMapping("edit")
 	@ResponseBody
 	public RestfulEntityBySummit<?> edit(RoleBean roleBean, HttpServletRequest request) {

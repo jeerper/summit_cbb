@@ -148,7 +148,7 @@ public class DeptController {
 	/**
 	 * 编辑保存
 	 */
-	@ApiOperation(value = "部门编辑")
+	@ApiOperation(value = "部门编辑",notes="id,编码(deptCode),部门名称(deptName),上级部门(pid)都是必输项,没有上级部门为pid='-1'")
 	@RequestMapping(value = "/edit",method = RequestMethod.POST)
 	@ResponseBody
 	public RestfulEntityBySummit<?> edit(DeptBean deptBean) {
