@@ -2,20 +2,20 @@ package com.summit.domain.dept;
 
 import java.io.Serializable;
 
-import com.summit.util.SummitTools.TreeNodeClass;
-
-import net.sf.json.JSONObject;
+import io.swagger.annotations.ApiModelProperty;
 
 
-public class DeptBean  implements Serializable, TreeNodeClass<JSONObject> {
+public class DeptBean  implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
 	private String id;
+	@ApiModelProperty(value="pid",required=true)
 	private String pid;
+	@ApiModelProperty(value="deptCode",required=true)
 	private String deptCode;
+	@ApiModelProperty(value="deptName",required=true)
 	private String deptName;
 	private String remark;
-	private boolean open = false;
 	public DeptBean() {
 		super();
 	}
@@ -29,30 +29,7 @@ public class DeptBean  implements Serializable, TreeNodeClass<JSONObject> {
 		this.remark = remark;
 	}
 
-	public Boolean getChecked() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	public Boolean getLeaf() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	public JSONObject getNodeData() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	public String getNodeId() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	public String getNodePid() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	public String getNodeText() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+	
 
 	public String getId() {
 		return id;
@@ -94,13 +71,7 @@ public class DeptBean  implements Serializable, TreeNodeClass<JSONObject> {
 		this.remark = remark;
 	}
 
-	public Boolean getOpen() {
-		return this.open;
-	}
-
-	public void setOpen(boolean open) {
-		this.open = open;
-	}
+	
 	public static long getSerialversionuid() {
 		return serialVersionUID;
 	}

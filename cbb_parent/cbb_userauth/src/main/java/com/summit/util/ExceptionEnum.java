@@ -235,11 +235,11 @@ public enum ExceptionEnum implements IExceptionEnum {
 		return this.message;
 	}
 
-	public void setCode(String code) {
+	public void setCode(String code){
 		this.code = code;
 	}
 
-	public void setMessage(String message) {
+	public void setMessage(String message){
 		this.message = message;
 	}
 

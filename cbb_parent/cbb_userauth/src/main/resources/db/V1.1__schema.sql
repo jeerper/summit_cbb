@@ -85,7 +85,6 @@ CREATE TABLE `sys_user_role` (
   PRIMARY KEY (`ID`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-DROP TABLE IF EXISTS `wf_sys_log`;
 CREATE TABLE `wf_sys_log` (
   `id` varchar(40) NOT NULL COMMENT '主键',
   `userName` varchar(100) DEFAULT NULL COMMENT '登录用户名',

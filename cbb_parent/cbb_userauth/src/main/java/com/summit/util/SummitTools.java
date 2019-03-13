@@ -35,13 +35,13 @@ import java.util.regex.Pattern;
 @Component
 public class SummitTools {
 	private static final Logger log = LoggerFactory.getLogger(SummitTools.class);
-	private static SimpleDateFormat yearFormat = new SimpleDateFormat("yyyy");
+	private  SimpleDateFormat yearFormat = new SimpleDateFormat("yyyy");
 	private static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 	private static SimpleDateFormat date1Format = new SimpleDateFormat("yyyyMMdd");
 	private static SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
 	private static SimpleDateFormat dateTimeFormat = new SimpleDateFormat(
 			"yyyy-MM-dd HH:mm:ss");
-	private static SimpleDateFormat dateTimeFormat1 = new SimpleDateFormat(
+	private static  SimpleDateFormat dateTimeFormat1 = new SimpleDateFormat(
 			"yyyy/MM/dd HH:mm:ss");
 	private static SimpleDateFormat dateTimeNFormat = new SimpleDateFormat(
 			"yyyy-MM-dd HH:mm:ss.SSS");
@@ -122,7 +122,7 @@ public class SummitTools {
 	 * @return
 	 * @throws ParseException
 	 */
-	public static synchronized Date DTParse(DateTimeType dateTimeType, String source)
+	public  synchronized Date DTParse(DateTimeType dateTimeType, String source)
 			throws ParseException {
 		switch (dateTimeType) {
 		case year:
@@ -151,7 +151,7 @@ public class SummitTools {
 	 * @param date
 	 * @return
 	 */
-	public static synchronized String DTFormat(DateTimeType dateTimeType, Date date) {
+	public  synchronized String DTFormat(DateTimeType dateTimeType, Date date) {
 		switch (dateTimeType) {
 		case year:
 			return yearFormat.format(date);
@@ -282,7 +282,7 @@ public class SummitTools {
 	 * @time 2014-12-12 上午10:51:29
 	 * 
 	 */
-	public boolean stringIsNull(String s) {
+	public static boolean stringIsNull(String s) {
 		if (s == null || s.isEmpty()) {
 			return true;
 		}

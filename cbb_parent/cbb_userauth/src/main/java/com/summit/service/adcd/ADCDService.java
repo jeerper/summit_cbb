@@ -6,12 +6,15 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.collections.map.LinkedMap;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.summit.common.entity.ResponseCodeBySummit;
+import com.summit.controller.UserController;
 import com.summit.domain.adcd.ADCDBean;
 import com.summit.domain.adcd.ADCDBeanRowMapper;
 import com.summit.repository.UserRepository;
@@ -23,6 +26,7 @@ import net.sf.json.JSONObject;
 @Service
 @Transactional
 public class ADCDService {
+	private static final Logger logger = LoggerFactory.getLogger(ADCDService.class);
 	@Autowired
 	private UserRepository ur;
 	@Autowired
@@ -52,8 +56,10 @@ public class ADCDService {
 			List<Object> rootList= ur.queryAllCustom(sql.toString(),linkedMap);
 			if(rootList.size()>0){
 				jSONOTree=(JSONObject)rootList.get(0);
+				logger.debug("jSONOTree.getString: "+jSONOTree.getString("ADCD"));
 				List<JSONObject> list=null;
 				list=generateOrgMapToTree(null,jSONOTree.getString("ADCD"));
+				logger.debug("list: "+list.size());
 	        	jSONOTree.put("children", list);
 			}
 			
@@ -67,7 +73,7 @@ public class ADCDService {
         if (null == orgMaps || orgMaps.size() == 0) {
         	StringBuffer sql = new StringBuffer("SELECT a.ADCD, a.ADNM,a.PADCD, b.ADCD AS child_id, b.ADNM AS child_name,a.ADLEVEL as LEVELa ,b.ADLEVEL as LEVELb FROM AD_CD_B AS a  ");
         			sql.append(" JOIN AD_CD_B AS b ON b.PADCD = a.ADCD ORDER BY  a.ADCD ASC,b.ADCD asc");
-        	
+        	logger.debug(sql.toString());
         	List<Object> list= ur.queryAllCustom(sql.toString(),new LinkedMap());
     		Map<String, List<Object>> map=new HashMap<String, List<Object>>();
     		List<Object> childrenList=new ArrayList();;
@@ -130,7 +136,7 @@ public class ADCDService {
                 index++;
 			}
 			if(paramJson.containsKey("level")){
-				sql.append(" and  level = ?");
+				sql.append(" and  ADLEVEL = ?");
 				map.put(index, paramJson.get("level") );
                 index++;
 			}
@@ -180,7 +186,7 @@ public class ADCDService {
 	 * @return
 	 */
 	public ResponseCodeBySummit edit(ADCDBean ab) {
-		String sql = "UPDATE AD_CD_B SET  ADNM = ?, PADCD = ?, LEVEL = ? where ADCD = ?";
+		String sql = "UPDATE AD_CD_B SET  ADNM = ?, PADCD = ?, ADLEVEL = ? where ADCD = ?";
 		jdbcTemplate.update(
 				sql,
 				ab.getAdnm(),
@@ -197,9 +203,9 @@ public class ADCDService {
 		String hasadcd="select * from AD_CD_B where adcd='"+ab.getAdcd()+"'";
 		List l=ur.queryAllCustom(hasadcd);
 		if(l.size()>0){
-			return ResponseCodeBySummit.CODE_9992;
+			return ResponseCodeBySummit.CODE_4033;
 		}
-		String sql = "INSERT INTO AD_CD_B (ADCD, ADNM, PADCD,LEVEL) VALUES (?, ? ,?, ?)";
+		String sql = "INSERT INTO AD_CD_B (ADCD, ADNM, PADCD,ADLEVEL) VALUES (?, ? ,?, ?)";
 		jdbcTemplate.update(
 				sql,
 				ab.getAdcd(),
@@ -222,7 +228,7 @@ public class ADCDService {
 		String sql = "SELECT * FROM AD_CD_B WHERE PADCD IN ('" + ids + "')";
 		List<ADCDBean> l = ur.queryAllCustom(sql, atm);
 		if (st.collectionNotNull(l)) {
-			return ResponseCodeBySummit.CODE_9994;
+			return ResponseCodeBySummit.CODE_9981;
 		}
 		sql = "DELETE FROM AD_CD_B WHERE ADCD IN ('" + ids+ "') ";
 		jdbcTemplate.update(sql);

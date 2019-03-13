@@ -35,13 +35,13 @@ public class DictionaryService {
 	@Autowired
 	private DictionaryCacheImpl dictionaryCacheImpl;
 	
-	private static Logger logger = LoggerFactory.getLogger(DictionaryService.class);
+	//private static Logger logger = LoggerFactory.getLogger(DictionaryService.class);
 
 	public ResponseCodeBySummit add(DictionaryBean db) {
 		String sql = "SELECT * FROM SYS_DICTIONARY WHERE CODE = ?";
 		List<JSONObject> l = ur.queryAllCustom(sql, db.getCode());
 		if (st.collectionNotNull(l)) {
-			return ResponseCodeBySummit.CODE_1001;
+			return ResponseCodeBySummit.CODE_4033;
 			//return st.error("编码" + db.getCode() + "已存在！");
 		}
 		sql = "INSERT INTO SYS_DICTIONARY (CODE, PCODE, NAME, CKEY, NOTE) VALUES (?, ?, ?, ?, ?)";
@@ -60,7 +60,7 @@ public class DictionaryService {
 				+ "')";
 		List<DictionaryBean> l = ur.queryAllCustom(sql, dbrm);
 		if (st.collectionNotNull(l)) {
-			return ResponseCodeBySummit.CODE_9994;
+			return ResponseCodeBySummit.CODE_9981;
 		}
 		sql = "DELETE FROM SYS_DICTIONARY WHERE CODE IN ('" + codes + "')";
 		jdbcTemplate.update(sql);
@@ -109,7 +109,8 @@ public class DictionaryService {
 	}
 	
 	public List<DictionaryBean> queryByPid(String pId){
-		return dictionaryCacheImpl.findChildList(pId);
+		List list=dictionaryCacheImpl.findChildList(pId);
+		return list;
 	}
 	
 	/**
@@ -121,7 +122,7 @@ public class DictionaryService {
 			dictionaryCacheImpl.setCacheElement(SysConstants.DICTIONARY, dictionaryBean.getCode(), dictionaryBean);
 		}
 		dictionaryCacheImpl.setCacheElement(SysConstants.DICTIONARY, "dictionaryAll", all);
-		logger.info("Dictionary Initialized...");
+		//logger.info("Dictionary Initialized...");
 	}
 	
 	

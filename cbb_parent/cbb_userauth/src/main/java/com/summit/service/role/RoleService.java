@@ -64,11 +64,11 @@ public class RoleService {
 		return  l.get(0);
 	}
 
-	public Page<JSONObject> queryByPage(int start, int limit, RoleBean rb) {
+	public Page<JSONObject> queryByPage(int start, int limit, String name) {
 		StringBuilder sb = new StringBuilder(
 				"SELECT * FROM SYS_ROLE WHERE 1 = 1");
-		if (st.stringNotNull(rb.getName())) {
-			sb.append(" AND NAME LIKE '%").append(rb.getName()).append("%'");
+		if (st.stringNotNull(name)) {
+			sb.append(" AND NAME LIKE '%").append(name).append("%'");
 		}
 		return ur.queryByCustomPage(sb.toString(), start, limit);
 	}
