@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
@@ -33,7 +34,7 @@ import io.swagger.annotations.ApiOperation;
  *
  */
 @Api(description = "部门管理")
-@Controller
+@RestController  /* @Controller + @ResponseBody*/
 @RequestMapping("dept")
 public class DeptController {
 	private static final Logger logger = LoggerFactory.getLogger(DeptController.class);
@@ -47,7 +48,6 @@ public class DeptController {
 	 */
 	@ApiOperation(value = "查询部门树", notes = "用于application/json格式")
 	@RequestMapping(value = "/queryTree",method = RequestMethod.POST)
-	@ResponseBody
 	public RestfulEntityBySummit<?> queryTree() {
 		HttpServletRequest request = ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest();
 		//UserContextHolder.getUserName();
@@ -76,7 +76,6 @@ public class DeptController {
 	 */
 	@ApiOperation(value = "根据id查询分页")
 	@RequestMapping(value = "/queryByIdPage",method = RequestMethod.POST)
-	@ResponseBody
 	public RestfulEntityBySummit<?> queryById(@RequestParam(value = "id") String id) {
 		HttpServletRequest request = ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest();
 		LogBean logBean = logUtil.insertLog(request,"1", "根据id查询分页","");
@@ -173,7 +172,6 @@ public class DeptController {
 	 */
 	@ApiOperation(value = "部门删除")
 	@RequestMapping(value = "/del",method = RequestMethod.GET)
-	@ResponseBody
 	public RestfulEntityBySummit<?> del(@RequestParam(value = "ids") String ids) {
 		HttpServletRequest request = ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest();
 		LogBean logBean = logUtil.insertLog(request,"1", "部门删除","");

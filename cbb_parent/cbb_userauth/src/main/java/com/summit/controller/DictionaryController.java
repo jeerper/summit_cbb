@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.alibaba.fastjson.JSONArray;
 import com.summit.common.entity.ResponseCodeBySummit;
@@ -33,7 +34,7 @@ import io.swagger.annotations.ApiOperation;
 
 
 @Api(description = "数据字典")
-@Controller
+@RestController
 @RequestMapping("dictionary")
 public class DictionaryController {
 	private static final Logger logger = LoggerFactory.getLogger(DictionaryController.class);
@@ -66,7 +67,6 @@ public class DictionaryController {
 
 	@ApiOperation(value = "数据字典删除")
 	@DeleteMapping("del")
-	@ResponseBody
 	public RestfulEntityBySummit<?> del(
 			@RequestParam(value = "codes") String codes, HttpServletRequest request ) {
 		//Map<String, Object> res = new HashMap<String, Object>();
@@ -110,7 +110,6 @@ public class DictionaryController {
 
 	@ApiOperation(value = "数据字典按照编码查询")
 	@GetMapping("queryByCode")
-	@ResponseBody
 	public RestfulEntityBySummit<?> queryByCode(@RequestParam(value = "code")  String code, HttpServletRequest request) {
 		//Map<String, Object> res = new HashMap<String, Object>();
 		LogBean logBean = new LogBean();
@@ -134,7 +133,6 @@ public class DictionaryController {
 
 	@ApiOperation(value = "数据字典查询所有数据")
 	@GetMapping("queryTree")
-	@ResponseBody
 	public RestfulEntityBySummit<?> queryTree(HttpServletRequest request) {
 		//Map<String, Object> res = new HashMap<String, Object>();
 		LogBean logBean = new LogBean();
@@ -158,7 +156,6 @@ public class DictionaryController {
 
 	@ApiOperation(value = "数据字典分页查询")
 	@GetMapping("queryByPage")
-	@ResponseBody
 	public RestfulEntityBySummit<?> queryByPage(
 			@RequestParam(value = "page") int page,
             @RequestParam(value ="pageSize") int pageSize,
@@ -183,7 +180,6 @@ public class DictionaryController {
 	
 	@ApiOperation(value = "数据字典按照父ID查询")
 	@GetMapping("queryByPid")
-	@ResponseBody
 	public MsgBean queryByPid(
 			@RequestParam(value = "pId") String pId, HttpServletRequest request) {
 		//List<DictionaryBean> res = new ArrayList<DictionaryBean>();
@@ -216,7 +212,6 @@ public class DictionaryController {
 	}
 	@ApiOperation(value = "初始化字典缓存加载")
 	@PostMapping("initSysDic")
-	@ResponseBody
 	public RestfulEntityBySummit<?> initSysDic(HttpServletRequest request) {
 		LogBean logBean = new LogBean();
 		try {

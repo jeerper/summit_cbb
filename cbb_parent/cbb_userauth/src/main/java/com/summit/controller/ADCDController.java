@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
@@ -36,7 +37,7 @@ import net.sf.json.JSONObject;
  *
  */
 @Api(description = "行政区划管理")
-@Controller
+@RestController
 @RequestMapping("adcd")
 public class ADCDController {
 	private static final Logger logger = LoggerFactory.getLogger(ADCDController.class);
@@ -51,7 +52,6 @@ public class ADCDController {
 	 */
 	@ApiOperation(value = "查询行政区划树", notes = "用于application/json格式")
 	@RequestMapping(value = "/queryAdTree",method = RequestMethod.POST)
-	@ResponseBody
 	public RestfulEntityBySummit<?> queryTree(String pid) {
 		HttpServletRequest request = ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest();
 		//UserContextHolder.getUserName();
@@ -82,7 +82,6 @@ public class ADCDController {
 	 */
 	@ApiOperation(value = "根据特定条件查询[padcd,level]")
 	@RequestMapping(value = "/queryByPadcd",method = RequestMethod.GET)
-	@ResponseBody
 	public RestfulEntityBySummit<List<Object>> queryByPadcd(String padcd,String level) {
 		HttpServletRequest request = ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest();
 		LogBean logBean = logUtil.insertLog(request,"1", "根据特定条件查询","");
@@ -108,7 +107,6 @@ public class ADCDController {
 	
 	@ApiOperation(value = "根据编码查询不分页")
 	@RequestMapping(value = "/queryByAdcds",method = RequestMethod.GET)
-	@ResponseBody
 	public RestfulEntityBySummit<List<ADCDBean>> queryByAdcds(
             @RequestParam(value = "adcds") String adcds) {
 		HttpServletRequest request = ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest();
@@ -129,7 +127,6 @@ public class ADCDController {
 	}
 	@ApiOperation(value = "根据父节点查询分页")
 	@RequestMapping(value = "/queryByPadcdPage",method = RequestMethod.GET)
-	@ResponseBody
 	public RestfulEntityBySummit<Page<JSONObject>> queryByPage(
 			@RequestParam(value = "page") int page,
             @RequestParam(value ="pageSize") int pageSize,
@@ -205,7 +202,6 @@ public class ADCDController {
 	 */
 	@ApiOperation(value = "行政区划删除")
 	@RequestMapping(value = "/del",method = RequestMethod.DELETE)
-	@ResponseBody
 	public RestfulEntityBySummit<?> del(@RequestParam(value = "ids") String ids) {
 		HttpServletRequest request = ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest();
 		LogBean logBean = logUtil.insertLog(request,"1", "行政区划删除","");
