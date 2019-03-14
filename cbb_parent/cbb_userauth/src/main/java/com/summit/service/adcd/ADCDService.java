@@ -76,7 +76,7 @@ public class ADCDService {
         	querySql.append(" JOIN AD_CD_B AS b ON b.PADCD = a.ADCD ORDER BY  a.ADCD ASC,b.ADCD asc");
         	logger.debug(querySql.toString());
         	logger.debug("0:");
-        	List<JSONObject> list = ur.queryAllCustom(querySql.toString(), "");
+        	List<JSONObject> list = ur.queryAllCustom(querySql.toString());
         	logger.debug("1:"+list.size());
     		Map<String, List<Object>> map=new HashMap<String, List<Object>>();
     		List<Object> childrenList=new ArrayList();;
