@@ -47,7 +47,7 @@ public class DeptController {
 	 */
 	//@ApiOperation(value = "查询部门树", notes = "用于application/json格式")
 	@RequestMapping(value = "/queryTree",method = RequestMethod.POST)
-	public RestfulEntityBySummit<?> queryTree() {
+	public RestfulEntityBySummit<?> queryTree(String pid) {
 		HttpServletRequest request = ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest();
 		//UserContextHolder.getUserName();
 		LogBean logBean = new LogBean();
@@ -55,7 +55,7 @@ public class DeptController {
 	     try {
 	           logBean = logUtil.insertLog(request, "1", "查询部门树", "");
 	           //list = ds.queryDeptTree();
-	           return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_0000,ds.queryDeptTree());
+	           return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_0000,ds.queryDeptTree(pid));
 	     } catch (Exception e) {
 	    	    logger.error("用户分页查询失败：", e);
 	    	    logUtil.updateLog(logBean, "1");
@@ -123,6 +123,8 @@ public class DeptController {
 		
 		//return list;
 	}
+	
+	
 	
 	/**
 	 * 新增

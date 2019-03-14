@@ -1,9 +1,13 @@
 package com.summit.service.dept;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.collections.map.LinkedMap;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
@@ -13,6 +17,7 @@ import com.summit.common.entity.ResponseCodeBySummit;
 import com.summit.domain.dept.DeptBean;
 import com.summit.domain.dept.DeptBeanRowMapper;
 import com.summit.repository.UserRepository;
+import com.summit.service.adcd.ADCDService;
 import com.summit.util.Page;
 import com.summit.util.SummitTools;
 
@@ -21,6 +26,7 @@ import net.sf.json.JSONObject;
 @Service
 @Transactional
 public class DeptService {
+	private static final Logger logger = LoggerFactory.getLogger(DeptService.class);
 	@Autowired
 	private UserRepository ur;
 	@Autowired
@@ -34,18 +40,85 @@ public class DeptService {
 	 * 查询部门树
 	 * @return
 	 */
-	public List<DeptBean> queryDeptTree() {
-		String sql = "SELECT ID,PID,DEPTCODE,DEPTNAME,REMARK FROM SYS_DEPT";
-		List<DeptBean> all = ur.queryAllCustom(sql,atm);
-		List<DeptBean> list = new ArrayList<DeptBean>();
-//		for (DeptBean deptBean : all) {
-//			if(deptBean.getPid() == null){
-//				deptBean.setOpen(true);
-//			}
-//			list.add(deptBean);
-//		}
-		return all;
+	public JSONObject queryDeptTree(String pid) {
+		JSONObject jSONOTree=null;
+		LinkedMap linkedMap=new LinkedMap();
+		StringBuffer sql = new StringBuffer("SELECT ID,PID,DEPTCODE,DEPTNAME,REMARK FROM SYS_DEPT  where 1=1");
+		if(pid==null || "".equals(pid)){
+			sql.append(" and (pid is null  or pid='-1' )");
+		}else{
+			sql.append(" and PID =? ");
+			linkedMap.put(1, pid);
+			
+		}
+		try {
+			List<Object> rootList= ur.queryAllCustom(sql.toString(),linkedMap);
+			if(rootList.size()>0){
+				jSONOTree=(JSONObject)rootList.get(0);
+				logger.debug("jSONOTree.getString: "+jSONOTree.getString("ID"));
+				List<JSONObject> list=null;
+				list=generateOrgMapToTree(null,jSONOTree.getString("ID"));
+				logger.debug("list: "+list.size());
+	        	jSONOTree.put("children", list);
+			}
+			
+		} catch (Exception e1) {
+			e1.printStackTrace();
+		}
+		return jSONOTree;
 	}
+	
+   public List<JSONObject> generateOrgMapToTree(Map<String, List<Object>>  orgMaps, String pid) throws Exception {
+        if (null == orgMaps || orgMaps.size() == 0) {
+        	StringBuffer sql = new StringBuffer("SELECT dept.*,fdept.DEPTCODE as pdeptCode,fdept.DEPTNAME as pdeptName FROM SYS_DEPT dept left join SYS_DEPT fdept on dept.pid=fdept.DEPTCODE  ");
+        	sql.append(" where dept.pid='"+pid+"' ");
+        	sql.append(" ORDER BY  dept.id asc ");
+        	logger.debug(sql.toString());
+        	List<Object> list= ur.queryAllCustom(sql.toString(),new LinkedMap());
+    		Map<String, List<Object>> map=new HashMap<String, List<Object>>();
+    		List<Object> childrenList=new ArrayList();;
+    		String id="";
+    		int i=0;
+    		for(Object s:list){
+    			i++;
+    			JSONObject JSONObject=(JSONObject)s;
+    			logger.debug(JSONObject.getString("ID"));
+    			if(!"".equals(id) && !id.equals(JSONObject.getString("ID")) || i==list.size()-1){
+    				map.put(id, childrenList);
+    				childrenList=new ArrayList();
+    			}
+    			childrenList.add(JSONObject);
+    			id=JSONObject.getString("ID");
+    		}
+    		orgMaps=map;
+//            String json_list = JSONObject.toJSONString(list);
+//            orgMaps = (List<Map<String, Object>>) JSONObject.parse(json_list);
+        }
+        List<JSONObject> orgList = new ArrayList<>();
+        logger.debug(" 数据:"+orgMaps.size());
+        if (orgMaps != null && orgMaps.size() > 0) {
+        	List parenList=orgMaps.get(pid);
+        	if(parenList==null){
+        		return orgList;
+        	}
+            for (Object obj : parenList) {
+            	JSONObject jSONOTree=new JSONObject();
+            	JSONObject json=(JSONObject)obj;
+            	jSONOTree.put("deptcode", json.getString("DEPTCODE"));
+            	jSONOTree.put("deptname", json.getString("DEPTNAME"));
+            	jSONOTree.put("pid",pid);
+            	jSONOTree.put("id", json.getString("ID"));
+                List<JSONObject> children = generateOrgMapToTree(orgMaps, json.get("ID").toString());
+                //将子结果集存入当前对象的children字段中
+                jSONOTree.put("children", children);
+                //添加当前对象到主结果集中
+                orgList.add(jSONOTree);
+                
+            }
+        }
+        return orgList;
+    }
+
 	/**
 	 * 根据id查询
 	 * @param id

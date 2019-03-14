@@ -75,6 +75,7 @@ public class ADCDService {
         			sql.append(" JOIN AD_CD_B AS b ON b.PADCD = a.ADCD ORDER BY  a.ADCD ASC,b.ADCD asc");
         	logger.debug(sql.toString());
         	List<Object> list= ur.queryAllCustom(sql.toString(),new LinkedMap());
+        	logger.debug("1:"+list.size());
     		Map<String, List<Object>> map=new HashMap<String, List<Object>>();
     		List<Object> childrenList=new ArrayList();;
     		String adcd="";
@@ -93,12 +94,14 @@ public class ADCDService {
 //            String json_list = JSONObject.toJSONString(list);
 //            orgMaps = (List<Map<String, Object>>) JSONObject.parse(json_list);
         }
+        logger.debug("2:"+orgMaps.size());
         List<JSONObject> orgList = new ArrayList<>();
         if (orgMaps != null && orgMaps.size() > 0) {
         	List parenList=orgMaps.get(pid);
         	if(parenList==null){
         		return orgList;
         	}
+        	logger.debug("3:"+parenList.size());
             for (Object obj : parenList) {
             	JSONObject jSONOTree=new JSONObject();
             	JSONObject json=(JSONObject)obj;
@@ -115,6 +118,7 @@ public class ADCDService {
                 orgList.add(jSONOTree);
                 
             }
+            logger.debug("4:"+orgList.size());
         }
         return orgList;
     }
