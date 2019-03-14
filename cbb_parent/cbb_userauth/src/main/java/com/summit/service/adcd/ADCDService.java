@@ -76,22 +76,20 @@ public class ADCDService {
         	querySql.append(" JOIN AD_CD_B AS b ON b.PADCD = a.ADCD ORDER BY  a.ADCD ASC,b.ADCD asc");
         	logger.debug(querySql.toString());
         	logger.debug("0:");
-        	LinkedMap linkedMap=new LinkedMap();
-        	List<Object> list= ur.queryAllCustom(querySql.toString(),linkedMap);
+        	List<JSONObject> list = ur.queryAllCustom(querySql.toString(), "");
         	logger.debug("1:"+list.size());
     		Map<String, List<Object>> map=new HashMap<String, List<Object>>();
     		List<Object> childrenList=new ArrayList();;
     		String adcd="";
     		int i=0;
-    		for(Object s:list){
+    		for(JSONObject jSONObject:list){
     			i++;
-    			JSONObject JSONObject=(JSONObject)s;
-    			if(!"".equals(adcd) && !adcd.equals(JSONObject.getString("ADCD")) || i==list.size()-1){
+    			if(!"".equals(adcd) && !adcd.equals(jSONObject.getString("ADCD")) || i==list.size()-1){
     				map.put(adcd, childrenList);
     				childrenList=new ArrayList();
     			}
-    			childrenList.add(JSONObject);
-    			adcd=JSONObject.getString("ADCD");
+    			childrenList.add(jSONObject);
+    			adcd=jSONObject.getString("ADCD");
     		}
     		orgMaps=map;
 //            String json_list = JSONObject.toJSONString(list);
