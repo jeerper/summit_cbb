@@ -34,15 +34,14 @@ public class SummitAuthenticationProvider extends DaoAuthenticationProvider {
         }
 
         String presentedPassword = authentication.getCredentials().toString();
-
+        String decodePassword="";
         try {
-            presentedPassword = decryptAES(presentedPassword, key).trim();
+            decodePassword = decryptAES(presentedPassword, key).trim();
         } catch (Exception e) {
             LOGGER.error("密码解密失败:{}", presentedPassword);
         }
 
-
-        if (!getPasswordEncoder().matches(presentedPassword, userDetails.getPassword())) {
+        if (!getPasswordEncoder().matches(decodePassword, userDetails.getPassword())) {
             LOGGER.debug("Authentication failed: password does not match stored value");
 
             throw new BadCredentialsException(messages.getMessage(
