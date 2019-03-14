@@ -2,8 +2,8 @@ package com.summit.service.dept;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
+import org.apache.commons.collections.map.LinkedMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
@@ -65,13 +65,31 @@ public class DeptService {
 	 * @param pId
 	 * @return
 	 */
-	public Page<JSONObject> queryByPage(int start, int limit, String pid) {
-		String sql = "SELECT * FROM SYS_DEPT WHERE pid = ?";
-		//if("".equals(padcd))padcd ="root";
-		Page<JSONObject> rs = ur.queryByCustomPage(sql, start, limit, pid);
+	public Page<JSONObject> queryByPage(int start, int limit, JSONObject paramJson) {
+		StringBuffer sql = new StringBuffer("SELECT dept.*,fdept.DEPTCODE as pdeptCode,fdept.DEPTNAME as pdeptName FROM SYS_DEPT dept left join SYS_DEPT fdept on dept.pid=fdept.DEPTCODE where 1=1 ");
+		LinkedMap map = new LinkedMap();
+        Integer index = 1;
+        if(paramJson!=null && !paramJson.isEmpty()){
+        	if(paramJson.containsKey("pid")   && !st.stringNotNull(paramJson.getString("pid")) ){
+        		sql.append(" and dept.pid = ? ");
+        		map.put(index,paramJson.get("pid") );
+        		index++;
+        	}
+        	if(paramJson.containsKey("deptcode")   && !st.stringNotNull(paramJson.getString("deptcode")) ){
+        		sql.append(" and dept.deptcode like ? ");
+        		map.put(index,"%" + paramJson.get("deptcode") + "%");
+        		index++;
+        	}
+        	if(paramJson.containsKey("deptname")   && !st.stringNotNull(paramJson.getString("deptname")) ){
+        		sql.append(" and dept.deptname like ? ");
+        		map.put(index,"%" + paramJson.get("deptname") + "%");
+        		index++;
+        	}
+        }
+		Page<JSONObject> rs = ur.queryByCustomPage(sql.toString(), start, limit, map);
 		return rs;
 	}
-
+	
 
 	/**
 	 * 
