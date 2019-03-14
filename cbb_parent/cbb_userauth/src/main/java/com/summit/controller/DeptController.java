@@ -8,10 +8,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
@@ -32,7 +34,7 @@ import io.swagger.annotations.ApiOperation;
  *
  */
 @Api(description = "部门管理")
-@Controller
+@RestController  /* @Controller + @ResponseBody*/
 @RequestMapping("dept")
 public class DeptController {
 	private static final Logger logger = LoggerFactory.getLogger(DeptController.class);
@@ -46,7 +48,6 @@ public class DeptController {
 	 */
 	@ApiOperation(value = "查询部门树", notes = "用于application/json格式")
 	@RequestMapping(value = "/queryTree",method = RequestMethod.POST)
-	@ResponseBody
 	public RestfulEntityBySummit<?> queryTree() {
 		HttpServletRequest request = ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest();
 		//UserContextHolder.getUserName();
@@ -75,7 +76,6 @@ public class DeptController {
 	 */
 	@ApiOperation(value = "根据id查询分页")
 	@RequestMapping(value = "/queryByIdPage",method = RequestMethod.POST)
-	@ResponseBody
 	public RestfulEntityBySummit<?> queryById(@RequestParam(value = "id") String id) {
 		HttpServletRequest request = ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest();
 		LogBean logBean = logUtil.insertLog(request,"1", "根据id查询分页","");
@@ -96,11 +96,10 @@ public class DeptController {
 	
 	@ApiOperation(value = "根据pid查询分页")
 	@RequestMapping(value = "/queryByPidPage",method = RequestMethod.POST)
-	@ResponseBody
 	public RestfulEntityBySummit<?> queryByPage(
 			@RequestParam(value = "page") int page,
             @RequestParam(value ="pageSize") int pageSize,
-            @RequestParam(value = "pid",required = false) String pid) {
+            @RequestParam(value = "pid") String pid) {
 		HttpServletRequest request = ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest();
 		LogBean logBean = logUtil.insertLog(request,"1", "根据pid查询分页","");
 		//Page<JSONObject> list = null;
@@ -122,10 +121,9 @@ public class DeptController {
 	/**
 	 * 新增
 	 */
-	@ApiOperation(value = "部门新增")
+	@ApiOperation(value = "部门新增",notes="编码(deptCode),部门名称(deptName),上级部门(pid)都是必输项,没有上级部门为pid='-1'")
 	@RequestMapping(value = "/add",method = RequestMethod.POST)
-	@ResponseBody
-	public RestfulEntityBySummit<?> add(DeptBean deptBean) {
+	public RestfulEntityBySummit<?> add(@RequestBody  DeptBean deptBean) {
 		HttpServletRequest request = ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest();
 		LogBean logBean = logUtil.insertLog(request,"1", "部门新增","");
 		//Map<String, Object> list = null;
@@ -148,10 +146,9 @@ public class DeptController {
 	/**
 	 * 编辑保存
 	 */
-	@ApiOperation(value = "部门编辑")
+	@ApiOperation(value = "部门编辑",notes="id,编码(deptCode),部门名称(deptName),上级部门(pid)都是必输项,没有上级部门为pid='-1'")
 	@RequestMapping(value = "/edit",method = RequestMethod.POST)
-	@ResponseBody
-	public RestfulEntityBySummit<?> edit(DeptBean deptBean) {
+	public RestfulEntityBySummit<?> edit(@RequestBody DeptBean deptBean) {
 		HttpServletRequest request = ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest();
 		LogBean logBean = logUtil.insertLog(request,"1", "部门编辑","");
 		Map<String, Object> list = null;
@@ -175,21 +172,13 @@ public class DeptController {
 	 */
 	@ApiOperation(value = "部门删除")
 	@RequestMapping(value = "/del",method = RequestMethod.GET)
-	@ResponseBody
 	public RestfulEntityBySummit<?> del(@RequestParam(value = "ids") String ids) {
 		HttpServletRequest request = ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest();
 		LogBean logBean = logUtil.insertLog(request,"1", "部门删除","");
 		Map<String, Object> list = null;
 		try {
 			//list = ds.del(ids);
-			String message=ds.del(ids);
-			if(message!=null && message.length()>0){
-				
-				return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_9994);
-			}else{
-				return new RestfulEntityBySummit<>(ds.del(ids));	
-			}
-			
+			return new RestfulEntityBySummit<>(ds.del(ids));
 		} catch (Exception e) {
 			//e.printStackTrace();
 			logger.error("操作失败：", e);

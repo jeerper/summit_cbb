@@ -13,9 +13,11 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.summit.common.entity.ResponseCodeBySummit;
 import com.summit.common.entity.RestfulEntityBySummit;
@@ -31,7 +33,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 
 @Api(description = "功能管理")
-@Controller
+@RestController
 @RequestMapping("function")
 public class FunctionController {
 	private static final Logger logger = LoggerFactory.getLogger(FunctionController.class);
@@ -41,10 +43,9 @@ public class FunctionController {
 	@Autowired
 	ILogUtil logUtil;
 
-	@ApiOperation(value = "新增功能", notes = "用于application/json格式")
+	@ApiOperation(value = "新增功能",  notes = "上级功能(pid),功能名称(name),功能排序(fdesc)都是必输项")
 	@PostMapping("/add")
-	@ResponseBody
-	public RestfulEntityBySummit<?> add(FunctionBean functionBean, HttpServletRequest request) {
+	public RestfulEntityBySummit<?> add(@RequestBody FunctionBean functionBean, HttpServletRequest request) {
 		//Map<String, Object> res = new HashMap<String, Object>();
 		LogBean logBean = new LogBean();
 		try {
@@ -64,7 +65,6 @@ public class FunctionController {
 
 	@ApiOperation(value = "功能管理删除")
 	@DeleteMapping("del")
-	@ResponseBody
 	public RestfulEntityBySummit<?> del(
 			@RequestParam(value = "ids") String ids, HttpServletRequest request) {
 		//Map<String, Object> res = new HashMap<String, Object>();
@@ -85,10 +85,9 @@ public class FunctionController {
 		//return res;
 	}
 
-	@ApiOperation(value = "功能管理修改")
+	@ApiOperation(value = "功能管理修改" ,notes = "id,上级功能(pid),功能名称(name),功能排序(fdesc)都是必输项")
 	@PutMapping("edit")
-	@ResponseBody
-	public RestfulEntityBySummit<?> edit(FunctionBean functionBean, HttpServletRequest request) {
+	public RestfulEntityBySummit<?> edit(@RequestBody FunctionBean functionBean, HttpServletRequest request) {
 		Map<String, Object> res = new HashMap<String, Object>();
 		LogBean logBean = new LogBean();
 		try {
@@ -109,7 +108,6 @@ public class FunctionController {
 
 	@ApiOperation(value = "功能管理根据ID查询")
 	@GetMapping("queryById")
-	@ResponseBody
 	public RestfulEntityBySummit<?> queryById(
 			@RequestParam(value = "id")  String id,  HttpServletRequest request) {
 		//Map<String, Object> res = new HashMap<String, Object>();
@@ -137,7 +135,6 @@ public class FunctionController {
 
 	@ApiOperation(value = "功能管理查询树形图")
 	@GetMapping("queryTree")
-	@ResponseBody
 	public RestfulEntityBySummit<?> queryTree(HttpServletRequest request) {
 		LogBean logBean = new LogBean();
 		//Map<String, Object> res = new HashMap<String, Object>();
@@ -164,7 +161,6 @@ public class FunctionController {
 
 	@ApiOperation(value = "功能管理分页查询")
 	@GetMapping("queryByPage")
-	@ResponseBody
 	public RestfulEntityBySummit<?> queryByPage(
 			@RequestParam(value = "page") int page,
             @RequestParam(value ="pageSize") int pageSize,

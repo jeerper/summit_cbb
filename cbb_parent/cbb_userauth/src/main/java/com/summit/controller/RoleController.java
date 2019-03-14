@@ -13,9 +13,11 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.summit.common.entity.ResponseCodeBySummit;
 import com.summit.common.entity.RestfulEntityBySummit;
@@ -33,7 +35,7 @@ import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 
 @Api(description = "角色管理")
-@Controller
+@RestController
 @RequestMapping("role")
 @Slf4j
 public class RoleController {
@@ -45,10 +47,9 @@ public class RoleController {
 	@Autowired
 	ILogUtil logUtil;
 
-    @ApiOperation(value = "新增角色", notes = "用于application/json格式")
+    @ApiOperation(value = "新增角色", notes = "角色名称(name)都是必输项")
     @PostMapping("/add")
-	@ResponseBody
-	public RestfulEntityBySummit<?> add(RoleBean roleBean, HttpServletRequest request) {
+	public RestfulEntityBySummit<?> add(@RequestBody RoleBean roleBean, HttpServletRequest request) {
 		//Map<String, Object> res = new HashMap<String, Object>();
 		LogBean logBean = new LogBean();
 		try {
@@ -70,7 +71,6 @@ public class RoleController {
 
 	@ApiOperation(value = "角色管理删除")
 	@DeleteMapping("del")
-	@ResponseBody
 	public RestfulEntityBySummit<?> del(
 			@RequestParam(value = "codes") String codes,HttpServletRequest request) {
 		//Map<String, Object> res = new HashMap<String, Object>();
@@ -91,10 +91,9 @@ public class RoleController {
 		//return res;
 	}
 
-	@ApiOperation(value = "角色管理修改")
+	@ApiOperation(value = "角色管理修改", notes = "code,角色名称(name)都是必输项")
 	@PutMapping("edit")
-	@ResponseBody
-	public RestfulEntityBySummit<?> edit(RoleBean roleBean, HttpServletRequest request) {
+	public RestfulEntityBySummit<?> edit(@RequestBody RoleBean roleBean, HttpServletRequest request) {
 		//Map<String, Object> res = new HashMap<String, Object>();
 		LogBean logBean = new LogBean();
 		try {
@@ -115,7 +114,6 @@ public class RoleController {
 
 	@ApiOperation(value = "角色管理按照编号查询")
 	@GetMapping("queryByCode")
-	@ResponseBody
 	public RestfulEntityBySummit<?> queryByCode(
 			@RequestParam(value = "code") String code, HttpServletRequest request) {
 		//Map<String, Object> res = new HashMap<String, Object>();
@@ -138,7 +136,6 @@ public class RoleController {
 
 	@ApiOperation(value = "角色管理分页查询")
 	@GetMapping("queryByPage")
-	@ResponseBody
 	public RestfulEntityBySummit<?> queryByPage(
 			@RequestParam(value = "page") int page,
             @RequestParam(value ="pageSize") int pageSize,
@@ -163,7 +160,6 @@ public class RoleController {
 
 	@ApiOperation(value = "角色管理查询所有数据")
 	@GetMapping("queryAll")
-	@ResponseBody
 	public RestfulEntityBySummit<?> queryAll(HttpServletRequest request) {
 		//Page<JSONObject> res = new Page<JSONObject>();
 		LogBean logBean = new LogBean();
@@ -185,7 +181,6 @@ public class RoleController {
 
 	@ApiOperation(value = "角色管理查询角色权限")
 	@GetMapping("getRoleFunInfo")
-	@ResponseBody
 	public RestfulEntityBySummit<?> getRoleFunInfo(
 		@RequestParam(value = "roleCode") String roleCode, HttpServletRequest request) {
 		//Map<String, Object> res = new HashMap<String, Object>();
@@ -216,7 +211,6 @@ public class RoleController {
 
 	@ApiOperation(value = "角色管理角色授权")
 	@GetMapping("roleAuthorization")
-	@ResponseBody
 	public RestfulEntityBySummit<?> roleAuthorization(
 			@RequestParam(value = "roleCode") String roleCode,
 			@RequestParam(value = "funIds") String funIds, HttpServletRequest request) {

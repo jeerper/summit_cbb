@@ -9,6 +9,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.summit.common.entity.ResponseCodeBySummit;
 import com.summit.domain.dept.DeptBean;
 import com.summit.domain.dept.DeptBeanRowMapper;
 import com.summit.repository.UserRepository;
@@ -37,13 +38,13 @@ public class DeptService {
 		String sql = "SELECT ID,PID,DEPTCODE,DEPTNAME,REMARK FROM SYS_DEPT";
 		List<DeptBean> all = ur.queryAllCustom(sql,atm);
 		List<DeptBean> list = new ArrayList<DeptBean>();
-		for (DeptBean deptBean : all) {
-			if(deptBean.getPid() == null){
-				deptBean.setOpen(true);
-			}
-			list.add(deptBean);
-		}
-		return list;
+//		for (DeptBean deptBean : all) {
+//			if(deptBean.getPid() == null){
+//				deptBean.setOpen(true);
+//			}
+//			list.add(deptBean);
+//		}
+		return all;
 	}
 	/**
 	 * 根据id查询
@@ -93,21 +94,21 @@ public class DeptService {
 	/**
 	 * 新增
 	 */
-	public String add(DeptBean ab) {
+	public ResponseCodeBySummit add(DeptBean ab) {
 		String hasadcd="select * from SYS_DEPT where DEPTCODE='"+ab.getDeptCode()+"'";
 		List l=ur.queryAllCustom(hasadcd);
 		if(l.size()>0){
-			return "部门重复";
+			return ResponseCodeBySummit.CODE_4033;
 		}
 		String sql = "INSERT INTO SYS_DEPT (ID, PID, DEPTCODE,DEPTNAME,REMARK) VALUES (?, ? ,?, ?,?)";
 		jdbcTemplate.update(
 				sql,
-				ab.getId(),
+				st.getKey(),
 				ab.getPid(),
 				ab.getDeptCode(),
 				ab.getDeptName(),
 				ab.getRemark());
-		return "";
+		return ResponseCodeBySummit.CODE_0000;
 	}
 
 
@@ -118,16 +119,16 @@ public class DeptService {
 	 * @param ids
 	 * @return
 	 */
-	public String del(String ids) {
+	public ResponseCodeBySummit del(String ids) {
 		ids = ids.replaceAll(",", "','");
 		String sql = "SELECT * FROM SYS_DEPT WHERE pid IN ('" + ids + "')";
 		List<DeptBean> l = ur.queryAllCustom(sql, atm);
 		if (st.collectionNotNull(l)) {
-			return "不能删除包含子节点的数据";
+			return ResponseCodeBySummit.CODE_9981;
 		}
 		sql = "DELETE FROM SYS_DEPT WHERE id IN ('" + ids+ "') ";
 		jdbcTemplate.update(sql);
-		return "";
+		return ResponseCodeBySummit.CODE_0000;
 	}
 
 

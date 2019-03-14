@@ -2,16 +2,16 @@ package com.summit.domain.adcd;
 
 import java.io.Serializable;
 
-import com.summit.util.SummitTools.TreeNodeClass;
-
-import net.sf.json.JSONObject;
+import io.swagger.annotations.ApiModelProperty;
 
 
-public class ADCDBean  implements Serializable, TreeNodeClass<JSONObject> {
+public class ADCDBean  implements Serializable {
 	private static final long serialVersionUID = 1L;
-	
+	@ApiModelProperty(value="adcd",required=true)
 	private String adcd;
+	@ApiModelProperty(value="adnm",required=true)
 	private String adnm;
+	@ApiModelProperty(value="padcd",required=true)
 	private String padcd;
 	private String level;
 	public ADCDBean() {
@@ -24,28 +24,6 @@ public class ADCDBean  implements Serializable, TreeNodeClass<JSONObject> {
 		this.adnm = adnm;
 		this.padcd = padcd;
 		this.level = level;
-	}
-
-	public Boolean getChecked() {
-		return null;
-	}
-	public Boolean getLeaf() {
-		return null;
-	}
-	public JSONObject getNodeData() {
-		return null;
-	}
-	public String getNodeId() {
-		return null;
-	}
-	public String getNodePid() {
-		return null;
-	}
-	public String getNodeText() {
-		return null;
-	}
-	public Boolean getOpen() {
-		return null;
 	}
 
 	public String getAdcd() {

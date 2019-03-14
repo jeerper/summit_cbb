@@ -136,7 +136,7 @@ public class ADCDService {
                 index++;
 			}
 			if(paramJson.containsKey("level")){
-				sql.append(" and  level = ?");
+				sql.append(" and  ADLEVEL = ?");
 				map.put(index, paramJson.get("level") );
                 index++;
 			}
@@ -186,7 +186,7 @@ public class ADCDService {
 	 * @return
 	 */
 	public ResponseCodeBySummit edit(ADCDBean ab) {
-		String sql = "UPDATE AD_CD_B SET  ADNM = ?, PADCD = ?, LEVEL = ? where ADCD = ?";
+		String sql = "UPDATE AD_CD_B SET  ADNM = ?, PADCD = ?, ADLEVEL = ? where ADCD = ?";
 		jdbcTemplate.update(
 				sql,
 				ab.getAdnm(),
@@ -203,9 +203,9 @@ public class ADCDService {
 		String hasadcd="select * from AD_CD_B where adcd='"+ab.getAdcd()+"'";
 		List l=ur.queryAllCustom(hasadcd);
 		if(l.size()>0){
-			return ResponseCodeBySummit.CODE_9992;
+			return ResponseCodeBySummit.CODE_4033;
 		}
-		String sql = "INSERT INTO AD_CD_B (ADCD, ADNM, PADCD,LEVEL) VALUES (?, ? ,?, ?)";
+		String sql = "INSERT INTO AD_CD_B (ADCD, ADNM, PADCD,ADLEVEL) VALUES (?, ? ,?, ?)";
 		jdbcTemplate.update(
 				sql,
 				ab.getAdcd(),
@@ -228,7 +228,7 @@ public class ADCDService {
 		String sql = "SELECT * FROM AD_CD_B WHERE PADCD IN ('" + ids + "')";
 		List<ADCDBean> l = ur.queryAllCustom(sql, atm);
 		if (st.collectionNotNull(l)) {
-			return ResponseCodeBySummit.CODE_9994;
+			return ResponseCodeBySummit.CODE_9981;
 		}
 		sql = "DELETE FROM AD_CD_B WHERE ADCD IN ('" + ids+ "') ";
 		jdbcTemplate.update(sql);

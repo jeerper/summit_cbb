@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -48,8 +49,8 @@ public class UserController {
     UserInfoCache userInfoCache;
 
     @PostMapping("/add")
-    @ApiOperation(value = "新增用户", notes = "用于application/json格式")
-    public RestfulEntityBySummit<?> add(UserInfo userInfo, HttpServletRequest request) {
+    @ApiOperation(value = "新增用户",  notes = "昵称(name)，用户名(userName),密码(password)都是必输项")
+    public RestfulEntityBySummit<?> add(@RequestBody UserInfo userInfo, HttpServletRequest request) {
         LogBean logBean = new LogBean();
         try {
             logBean = logUtil.insertLog(request, "1", "用户新增", userInfo.getUserName());
@@ -73,7 +74,8 @@ public class UserController {
      */
     @ApiOperation(value = "删除用户信息")
     @DeleteMapping("/del")
-    public RestfulEntityBySummit<?> del(String userNames, HttpServletRequest request) {
+    public RestfulEntityBySummit<?> del(
+    		@RequestParam(value = "userNames") String userNames, HttpServletRequest request) {
         LogBean logBean = new LogBean();
         try {
             logBean = logUtil.insertLog(request, "1", "删除用户", "");
@@ -97,9 +99,9 @@ public class UserController {
         }
     }
 
-    @ApiOperation(value = "修改用户", notes = "用于application/json格式")
+    @ApiOperation(value = "修改用户",  notes = "昵称(name)，用户名(userName),密码(password)都是必输项")
     @PutMapping("/edit")
-    public RestfulEntityBySummit<?> edit(UserInfo userInfo, HttpServletRequest request) {
+    public RestfulEntityBySummit<?> edit(@RequestBody UserInfo userInfo, HttpServletRequest request) {
         LogBean logBean = new LogBean();
         try {
             logBean = logUtil.insertLog(request, "1", "修改用户", "");
@@ -121,8 +123,12 @@ public class UserController {
 
     @ApiOperation(value = "修改密码")
     @PutMapping("/editPassword")
-    public RestfulEntityBySummit<?> editPassword(String oldPassword, String password, String repeatPassword,
-                                            HttpServletRequest request, String userName) {
+    public RestfulEntityBySummit<?> editPassword(
+    		@RequestParam(value = "oldPassword")  String oldPassword,
+    		@RequestParam(value = "password")  String password, 
+    		@RequestParam(value = "repeatPassword")  String repeatPassword,
+    		@RequestParam(value = "userName")  String userName,
+            HttpServletRequest request) {
         LogBean logBean = new LogBean();
         try {
             logBean = logUtil.insertLog(request, "1", "修改密码", userName);
@@ -139,7 +145,8 @@ public class UserController {
 
     @ApiOperation(value = "根据用户名查询用户信息")
     @GetMapping("/queryUserInfoByUserName")
-    public RestfulEntityBySummit<?> queryUserInfoByUserName(String userName, HttpServletRequest request) {
+    public RestfulEntityBySummit<?> queryUserInfoByUserName(
+    		@RequestParam(value = "userName")  String userName, HttpServletRequest request) {
         LogBean logBean = new LogBean();
         try {
             logBean = logUtil.insertLog(request, "1", "用户管理根据用户名查询用户", userName);
@@ -180,7 +187,8 @@ public class UserController {
     
     @ApiOperation(value = "根据用户名查询所有菜单")
     @GetMapping("/queryFunctionInfoByUserName")
-    public RestfulEntityBySummit<?> queryFunctionInfoByUserName(String userName, HttpServletRequest request) {
+    public RestfulEntityBySummit<?> queryFunctionInfoByUserName(
+    		@RequestParam(value = "userName")  String userName, HttpServletRequest request) {
         LogBean logBean = new LogBean();
         try {
             logBean = logUtil.insertLog(request, "1", "用户管理根据用户名查询菜单信息", userName);
@@ -245,7 +253,8 @@ public class UserController {
 
     @ApiOperation(value = "重置密码")
     @PutMapping("/resetPassword")
-    public RestfulEntityBySummit<?> resetPassword(String userName, HttpServletRequest request) {
+    public RestfulEntityBySummit<?> resetPassword(
+    		@RequestParam(value = "userName") String userName, HttpServletRequest request) {
         LogBean logBean = new LogBean();
         try {
             logBean = logUtil.insertLog(request, "1", "用户管理重置密码", userName);
@@ -266,7 +275,8 @@ public class UserController {
 
     @ApiOperation(value = "根据用户名查询角色")
     @GetMapping("/queryRoleByUserName")
-    public RestfulEntityBySummit<?> queryRoleByUserName(String userName, HttpServletRequest request) {
+    public RestfulEntityBySummit<?> queryRoleByUserName(
+    		@RequestParam(value = "userName") String userName, HttpServletRequest request) {
         LogBean logBean = new LogBean();
         try {
         	List<String> list=us.queryRoleByUserName(userName);
@@ -290,7 +300,9 @@ public class UserController {
 
     @ApiOperation(value = "授权权限")
     @PutMapping("/grantRole")
-    public RestfulEntityBySummit<?>  grantRole(String userName, String role, HttpServletRequest request) {
+    public RestfulEntityBySummit<?>  grantRole(
+    		@RequestParam(value = "userName") String userName,
+    		@RequestParam(value = "role") String role, HttpServletRequest request) {
         LogBean logBean = new LogBean();
         try {
             logBean = logUtil.insertLog(request, "1", "用户管理授权", userName);

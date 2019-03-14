@@ -42,7 +42,7 @@ public class FunctionService {
 		String sql = "SELECT * FROM SYS_FUNCTION WHERE PID IN ('" + ids + "')";
 		List<FunctionBean> l = ur.queryAllCustom(sql, fbrm);
 		if (st.collectionNotNull(l)) {
-			return ResponseCodeBySummit.CODE_9994;
+			return ResponseCodeBySummit.CODE_9981;
 		}
 		sql = "DELETE FROM SYS_FUNCTION WHERE ID IN ('" + ids
 				+ "') AND SUPER_FUN <> 1";
@@ -103,21 +103,21 @@ public class FunctionService {
 		return ur.queryByCustomPage(sql, start, limit, pId);
 	}
 
-	public String getFunByUserName(String userName) {
-		List<TreeNode<JSONObject>> tn;
-		String sql;
-		if (isSuperUser(userName)) {
-			sql = "SELECT * FROM SYS_FUNCTION WHERE IS_ENABLED = '1' ORDER BY FDESC";
-		} else {
-			sql = "SELECT DISTINCT SF.* FROM SYS_USER_ROLE SUR INNER JOIN SYS_ROLE_FUNCTION SRF ON ( SUR.ROLE_CODE = SRF.ROLE_CODE ) INNER JOIN SYS_FUNCTION SF ON (SRF.FUNCTION_ID = SF.ID) WHERE SF.IS_ENABLED = '1' AND SF.SUPER_FUN = 0 AND SUR.USERNAME = ? ORDER BY FDESC";
-		}
-		if (st.stringEquals(userName, SysConstants.SUPER_USERNAME)) {
-			tn = st.creatTreeNode(ur.queryAllCustom(sql, fbrm), null);
-		} else {
-			tn = st.creatTreeNode(ur.queryAllCustom(sql, fbrm, userName), null);
-		}
-		return JSONArray.fromObject(tn).toString();
-	}
+//	public String getFunByUserName(String userName) {
+//		List<TreeNode<JSONObject>> tn;
+//		String sql;
+//		if (isSuperUser(userName)) {
+//			sql = "SELECT * FROM SYS_FUNCTION WHERE IS_ENABLED = '1' ORDER BY FDESC";
+//		} else {
+//			sql = "SELECT DISTINCT SF.* FROM SYS_USER_ROLE SUR INNER JOIN SYS_ROLE_FUNCTION SRF ON ( SUR.ROLE_CODE = SRF.ROLE_CODE ) INNER JOIN SYS_FUNCTION SF ON (SRF.FUNCTION_ID = SF.ID) WHERE SF.IS_ENABLED = '1' AND SF.SUPER_FUN = 0 AND SUR.USERNAME = ? ORDER BY FDESC";
+//		}
+//		if (st.stringEquals(userName, SysConstants.SUPER_USERNAME)) {
+//			tn = st.creatTreeNode(ur.queryAllCustom(sql, fbrm), null);
+//		} else {
+//			tn = st.creatTreeNode(ur.queryAllCustom(sql, fbrm, userName), null);
+//		}
+//		return JSONArray.fromObject(tn).toString();
+//	}
 
 	public Map<String, Collection<String>> getResourceMap() {
 		Map<String, Collection<String>> resourceMap = new HashMap<String, Collection<String>>();

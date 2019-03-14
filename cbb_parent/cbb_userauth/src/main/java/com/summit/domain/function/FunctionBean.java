@@ -1,23 +1,25 @@
 package com.summit.domain.function;
 
-import com.summit.util.SummitTools.TreeNodeClass;
-import net.sf.json.JSONObject;
-
 import java.io.Serializable;
+
+import io.swagger.annotations.ApiModelProperty;
+import net.sf.json.JSONObject;
 /**
  * 功能基本属性
  * @author Administrator
  *
  */
-public class FunctionBean implements Serializable, TreeNodeClass<JSONObject> {
-	/**
-	 * 
-	 */
+public class FunctionBean implements Serializable {
+	
 	private static final long serialVersionUID = 1L;
 	private String id;
+	@ApiModelProperty(value="pid",required=true)
 	private String pid;
+	@ApiModelProperty(value="name",required=true)
 	private String name;
+	@ApiModelProperty(value="fdesc",required=true)
 	private Integer fdesc;
+	@ApiModelProperty(hidden = true)
 	private Integer isEnabled;
 	private String furl;
 	private String imgUlr;
@@ -109,13 +111,7 @@ public class FunctionBean implements Serializable, TreeNodeClass<JSONObject> {
 		this.note = note;
 	}
 
-	public Boolean getChecked() {
-		return null;
-	}
-
-	public Boolean getLeaf() {
-		return null;
-	}
+	
 
 	public JSONObject getNodeData() {
 		JSONObject jo = new JSONObject();
@@ -127,21 +123,6 @@ public class FunctionBean implements Serializable, TreeNodeClass<JSONObject> {
 		return jo;
 	}
 
-	public String getNodeId() {
-		return id;
-	}
-
-	public String getNodePid() {
-		return pid;
-	}
-
-	public String getNodeText() {
-		return name;
-	}
-
-	public Boolean getOpen() {
-		return true;
-	}
 
 	public String getSuperfun() {
 		return superfun;
