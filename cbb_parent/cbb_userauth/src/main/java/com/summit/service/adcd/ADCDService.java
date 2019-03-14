@@ -74,7 +74,9 @@ public class ADCDService {
         	StringBuffer sql = new StringBuffer("SELECT a.ADCD, a.ADNM,a.PADCD, b.ADCD AS child_id, b.ADNM AS child_name,a.ADLEVEL as LEVELa ,b.ADLEVEL as LEVELb FROM AD_CD_B AS a  ");
         			sql.append(" JOIN AD_CD_B AS b ON b.PADCD = a.ADCD ORDER BY  a.ADCD ASC,b.ADCD asc");
         	logger.debug(sql.toString());
-        	List<Object> list= ur.queryAllCustom(sql.toString(),new LinkedMap());
+        	logger.debug("0:");
+        	LinkedMap linkedMap=new LinkedMap();
+        	List<Object> list= ur.queryAllCustom(sql.toString(),linkedMap);
         	logger.debug("1:"+list.size());
     		Map<String, List<Object>> map=new HashMap<String, List<Object>>();
     		List<Object> childrenList=new ArrayList();;
