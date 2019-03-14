@@ -66,17 +66,18 @@ public class ADCDService {
 		} catch (Exception e1) {
 			e1.printStackTrace();
 		}
+        logger.debug("jSONOTree: "+jSONOTree.size());
 		return jSONOTree;
 	}
 	
    public List<JSONObject> generateOrgMapToTree(Map<String, List<Object>>  orgMaps, String pid) throws Exception {
         if (null == orgMaps || orgMaps.size() == 0) {
-        	StringBuffer sql = new StringBuffer("SELECT a.ADCD, a.ADNM,a.PADCD, b.ADCD AS child_id, b.ADNM AS child_name,a.ADLEVEL as LEVELa ,b.ADLEVEL as LEVELb FROM AD_CD_B AS a  ");
-        			sql.append(" JOIN AD_CD_B AS b ON b.PADCD = a.ADCD ORDER BY  a.ADCD ASC,b.ADCD asc");
-        	logger.debug(sql.toString());
+        	StringBuffer querySql = new StringBuffer("SELECT a.ADCD, a.ADNM,a.PADCD, b.ADCD AS child_id, b.ADNM AS child_name,a.ADLEVEL as LEVELa ,b.ADLEVEL as LEVELb FROM AD_CD_B AS a  ");
+        	querySql.append(" JOIN AD_CD_B AS b ON b.PADCD = a.ADCD ORDER BY  a.ADCD ASC,b.ADCD asc");
+        	logger.debug(querySql.toString());
         	logger.debug("0:");
         	LinkedMap linkedMap=new LinkedMap();
-        	List<Object> list= ur.queryAllCustom(sql.toString(),linkedMap);
+        	List<Object> list= ur.queryAllCustom(querySql.toString(),linkedMap);
         	logger.debug("1:"+list.size());
     		Map<String, List<Object>> map=new HashMap<String, List<Object>>();
     		List<Object> childrenList=new ArrayList();;
@@ -122,6 +123,7 @@ public class ADCDService {
             }
             logger.debug("4:"+orgList.size());
         }
+        logger.debug("5:"+orgList.size());
         return orgList;
     }
 
