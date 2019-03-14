@@ -66,7 +66,7 @@ public class ADCDService {
 		} catch (Exception e1) {
 			e1.printStackTrace();
 		}
-        logger.debug("jSONOTree: "+jSONOTree.size());
+        System.out.println(jSONOTree);
 		return jSONOTree;
 	}
 	
