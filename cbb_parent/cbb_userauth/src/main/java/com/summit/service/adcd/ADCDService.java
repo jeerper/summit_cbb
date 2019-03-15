@@ -13,6 +13,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.alibaba.fastjson.JSONArray;
 import com.summit.common.entity.ResponseCodeBySummit;
 import com.summit.controller.UserController;
 import com.summit.domain.adcd.ADCDBean;
@@ -71,18 +72,19 @@ public class ADCDService {
 	}
 	
    public List<JSONObject> generateOrgMapToTree(Map<String, List<Object>>  orgMaps, String pid) throws Exception {
-        if (null == orgMaps || orgMaps.size() == 0) {
-        	StringBuffer querySql = new StringBuffer("SELECT a.ADCD, a.ADNM,a.PADCD, b.ADCD AS child_id, b.ADNM AS child_name,a.ADLEVEL as LEVELa ,b.ADLEVEL as LEVELb FROM AD_CD_B AS a  ");
+        if (null == orgMaps || orgMaps.size() == 0) {//a.ADLEVEL as LEVELa ,b.ADLEVEL as LEVELb
+        	StringBuffer querySql = new StringBuffer("SELECT a.ADCD, a.ADNM,a.PADCD, b.ADCD AS CHILD_ID, b.ADNM AS CHILD_NAME FROM AD_CD_B AS a  ");
         	querySql.append(" JOIN AD_CD_B AS b ON b.PADCD = a.ADCD ORDER BY  a.ADCD ASC,b.ADCD asc");
         	logger.debug(querySql.toString());
         	logger.debug("0:");
-        	List<JSONObject> list = ur.queryAllCustom(querySql.toString());
+        	JSONArray list = ur.queryAllCustomJsonArray(querySql.toString(),null);
         	logger.debug("1:"+list.size());
     		Map<String, List<Object>> map=new HashMap<String, List<Object>>();
     		List<Object> childrenList=new ArrayList();;
     		String adcd="";
     		int i=0;
-    		for(JSONObject jSONObject:list){
+    		for(Object o:list){
+    			JSONObject jSONObject=(JSONObject)o;
     			i++;
     			if(!"".equals(adcd) && !adcd.equals(jSONObject.getString("ADCD")) || i==list.size()-1){
     				map.put(adcd, childrenList);
@@ -106,13 +108,14 @@ public class ADCDService {
             for (Object obj : parenList) {
             	JSONObject jSONOTree=new JSONObject();
             	JSONObject json=(JSONObject)obj;
-            	jSONOTree.put("adcd", json.getString("child_id"));
-            	jSONOTree.put("adnm", json.getString("child_name"));
+            	System.out.println(json);
+            	jSONOTree.put("adcd", json.getString("CHILD_ID"));
+            	jSONOTree.put("adnm", json.getString("CHILD_NAME"));
             	jSONOTree.put("padcd",pid);
             	if(json.containsKey("LEVELb")){
             	   jSONOTree.put("adlevel",json.getString("LEVELb"));
             	}
-                List<JSONObject> children = generateOrgMapToTree(orgMaps, json.get("child_id").toString());
+                List<JSONObject> children = generateOrgMapToTree(orgMaps, json.get("CHILD_ID").toString());
                 //将子结果集存入当前对象的children字段中
                 jSONOTree.put("children", children);
                 //添加当前对象到主结果集中
