@@ -65,13 +65,14 @@ public class DeptService {
 		} catch (Exception e1) {
 			e1.printStackTrace();
 		}
+		logger.debug("jSONOTree0: "+jSONOTree);
 		return jSONOTree;
 	}
 	
    public List<JSONObject> generateOrgMapToTree(Map<String, List<Object>>  orgMaps, String pid) throws Exception {
         if (null == orgMaps || orgMaps.size() == 0) {
         	StringBuffer sql = new StringBuffer("SELECT dept.*,fdept.DEPTCODE as pdeptCode,fdept.DEPTNAME as pdeptName FROM SYS_DEPT dept left join SYS_DEPT fdept on dept.pid=fdept.DEPTCODE  ");
-        	sql.append(" where dept.pid='"+pid+"' ");
+        	//sql.append(" where dept.pid='"+pid+"' ");
         	sql.append(" ORDER BY  dept.id asc ");
         	logger.debug(sql.toString());
         	List<Object> list= ur.queryAllCustom(sql.toString(),new LinkedMap());
@@ -116,6 +117,7 @@ public class DeptService {
                 
             }
         }
+        
         return orgList;
     }
 
