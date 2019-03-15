@@ -2,6 +2,7 @@ package com.summit.controller;
 
 import java.util.List;
 
+import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 
 import org.slf4j.Logger;
@@ -18,6 +19,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import com.alibaba.fastjson.JSONArray;
 import com.summit.common.entity.ResponseCodeBySummit;
@@ -107,6 +110,29 @@ public class DictionaryController {
 		//logUtil.updateLog(logBean,"1");
 		//return res;
 	}
+	
+	@ApiOperation(value = "查询数据字典树")
+	@RequestMapping(value = "/queryTree",method = RequestMethod.POST)
+	public RestfulEntityBySummit<?> queryTree(String pid) {
+		HttpServletRequest request = ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest();
+		//UserContextHolder.getUserName();
+		LogBean logBean = new LogBean();
+		//Map<String, Object> list = null;
+	     try {
+	           logBean = logUtil.insertLog(request, "1", "数据字典树", "");
+	           //list = ds.queryDeptTree();
+	           return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_0000,dictionaryService.queryTree(pid));
+	     } catch (Exception e) {
+	    	    logger.error("查询数据字典树失败：", e);
+	    	    logUtil.updateLog(logBean, "1");
+	            //e.printStackTrace();
+	            logBean.setActionFlag("0");
+	            logBean.setErroInfo(e.toString());
+	            return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_9999);
+	     }
+	    // logUtil.updateLog(logBean, "1");
+		//return list;
+	}
 
 	@ApiOperation(value = "数据字典按照编码查询")
 	@GetMapping("queryByCode")
@@ -140,7 +166,7 @@ public class DictionaryController {
 			logBean = logUtil.insertLog(request,"1", "数据字典查询全部数据","");
 			//res = dictionaryService.queryTree();
 			JSONArray jsonArray = new JSONArray();
-	        jsonArray.add(dictionaryService.queryTree());
+	        jsonArray.add(dictionaryService.queryAll());
 			return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_0000,jsonArray);
 		} catch (Exception e) {
 			//e.printStackTrace();
@@ -198,6 +224,7 @@ public class DictionaryController {
                 mb.setMessage("数据查询成功!");
                 mb.setData(jsonArray);
             }
+			logger.info("查询成功");
 		} catch (Exception e) {
 			//e.printStackTrace();
 			logger.error("查询失败", e);
@@ -212,18 +239,20 @@ public class DictionaryController {
 	}
 	@ApiOperation(value = "初始化字典缓存加载")
 	@PostMapping("initSysDic")
-	public RestfulEntityBySummit<?> initSysDic(HttpServletRequest request) {
-		LogBean logBean = new LogBean();
+	@PostConstruct
+	public RestfulEntityBySummit<?> initSysDic() {
+		//LogBean logBean = new LogBean();
 		try {
-			logBean = logUtil.insertLog(request,"1", "初始化字典缓存加载", "");
+			//logBean = logUtil.insertLog(request,"1", "初始化字典缓存加载", "");
 			dictionaryService.initSysDic();
+			logger.info("初始化字典缓存加载");
 			return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_0000);
 		} catch (Exception e) {
 			//e.printStackTrace();
 			logger.error("查询失败", e);
-			logBean.setActionFlag("0");
-			logBean.setErroInfo(e.toString());
-			logUtil.updateLog(logBean,"1");
+			//logBean.setActionFlag("0");
+			//logBean.setErroInfo(e.toString());
+			//logUtil.updateLog(logBean,"1");
 			return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_9999);
 		}
 	}
