@@ -17,7 +17,6 @@ import com.summit.common.entity.ResponseCodeBySummit;
 import com.summit.domain.dept.DeptBean;
 import com.summit.domain.dept.DeptBeanRowMapper;
 import com.summit.repository.UserRepository;
-import com.summit.service.adcd.ADCDService;
 import com.summit.util.Page;
 import com.summit.util.SummitTools;
 
@@ -51,52 +50,62 @@ public class DeptService {
 			linkedMap.put(1, pid);
 			
 		}
+		List<Object> rootList=null;
 		try {
-			List<Object> rootList= ur.queryAllCustom(sql.toString(),linkedMap);
-			if(rootList.size()>0){
-				jSONOTree=(JSONObject)rootList.get(0);
-				logger.debug("jSONOTree.getString: "+jSONOTree.getString("ID"));
-				List<JSONObject> list=null;
-				list=generateOrgMapToTree(null,jSONOTree.getString("ID"));
-				logger.debug("list: "+list.size());
-	        	jSONOTree.put("children", list);
-			}
-			
+			rootList=ur.queryAllCustom(sql.toString(),linkedMap);
 		} catch (Exception e1) {
 			e1.printStackTrace();
+			return null;
 		}
-		logger.debug("jSONOTree0: "+jSONOTree);
+		if(rootList.size()>0){
+			jSONOTree=(JSONObject)rootList.get(0);
+			//logger.debug("jSONOTree.getString: "+jSONOTree.getString("ID"));
+			List<JSONObject> list=null;
+			list=generateOrgMapToTree(null,jSONOTree.getString("ID"));
+			//logger.debug("list: "+list.size());
+        	jSONOTree.put("children", list);
+		}
+		//logger.debug("jSONOTree0: "+jSONOTree);
 		return jSONOTree;
 	}
 	
-   public List<JSONObject> generateOrgMapToTree(Map<String, List<Object>>  orgMaps, String pid) throws Exception {
+   public List<JSONObject> generateOrgMapToTree(Map<String, List<Object>>  orgMaps, String pid) {
         if (null == orgMaps || orgMaps.size() == 0) {
-        	StringBuffer sql = new StringBuffer("SELECT dept.*,fdept.DEPTCODE as pdeptCode,fdept.DEPTNAME as pdeptName FROM SYS_DEPT dept left join SYS_DEPT fdept on dept.pid=fdept.DEPTCODE  ");
-        	//sql.append(" where dept.pid='"+pid+"' ");
-        	sql.append(" ORDER BY  dept.id asc ");
-        	logger.debug(sql.toString());
-        	List<Object> list= ur.queryAllCustom(sql.toString(),new LinkedMap());
+        	StringBuffer sql = new StringBuffer("SELECT DEPT.ID,DEPT.DEPTNAME,DEPT.PID,FDEPT.ID AS CHILD_ID,FDEPT.CODE AS CHILD_CODE,FDEPT.DEPTNAME AS CHILD_NAME ");
+        	sql.append(" ,FDEPT.DEPTCODE AS FDEPTCODE FROM SYS_DEPT DEPT INNER JOIN SYS_DEPT FDEPT ON FDEPT.PID= DEPT.ID  ");
+        	sql.append(" ORDER BY  DEPT.ID ASC,FDEPT.ID ASC ");
+        	//logger.debug(sql.toString());
+        	List<Object> list= null;
+        	try {
+				list=ur.queryAllCustom(sql.toString(),new LinkedMap());
+			} catch (Exception e) {
+				e.printStackTrace();
+				return null;
+			}
     		Map<String, List<Object>> map=new HashMap<String, List<Object>>();
     		List<Object> childrenList=new ArrayList();;
     		String id="";
     		int i=0;
     		for(Object s:list){
-    			i++;
     			JSONObject JSONObject=(JSONObject)s;
-    			logger.debug(JSONObject.getString("ID"));
-    			if(!"".equals(id) && !id.equals(JSONObject.getString("ID")) || i==list.size()-1){
+    			//logger.debug(JSONObject.getString("ID"));
+    			if((!"".equals(id) && !id.equals(JSONObject.getString("ID"))) ){
     				map.put(id, childrenList);
     				childrenList=new ArrayList();
     			}
     			childrenList.add(JSONObject);
+    			if(i==list.size()-1){
+    				map.put(id, childrenList);
+    			}
     			id=JSONObject.getString("ID");
+    			i++;
     		}
     		orgMaps=map;
 //            String json_list = JSONObject.toJSONString(list);
 //            orgMaps = (List<Map<String, Object>>) JSONObject.parse(json_list);
         }
         List<JSONObject> orgList = new ArrayList<>();
-        logger.debug(" 数据:"+orgMaps.size());
+        //logger.debug(" 数据:"+orgMaps.size()+"   pid:"+pid);
         if (orgMaps != null && orgMaps.size() > 0) {
         	List parenList=orgMaps.get(pid);
         	if(parenList==null){
@@ -105,11 +114,13 @@ public class DeptService {
             for (Object obj : parenList) {
             	JSONObject jSONOTree=new JSONObject();
             	JSONObject json=(JSONObject)obj;
-            	jSONOTree.put("deptcode", json.getString("DEPTCODE"));
-            	jSONOTree.put("deptname", json.getString("DEPTNAME"));
-            	jSONOTree.put("pid",pid);
-            	jSONOTree.put("id", json.getString("ID"));
-                List<JSONObject> children = generateOrgMapToTree(orgMaps, json.get("ID").toString());
+            	jSONOTree.put("DEPTID", json.getString("CHILD_ID"));
+            	jSONOTree.put("DEPTCODE", json.getString("CHILD_CODE"));
+            	jSONOTree.put("DEPTNAME", json.getString("CHILD_NAME"));
+            	jSONOTree.put("PCODE", json.getString("FDEPTCODE"));
+            	jSONOTree.put("PID",pid);
+            	//jSONOTree.put("id", json.getString("ID"));
+                List<JSONObject> children = generateOrgMapToTree(orgMaps, json.get("CHILD_ID").toString());
                 //将子结果集存入当前对象的children字段中
                 jSONOTree.put("children", children);
                 //添加当前对象到主结果集中

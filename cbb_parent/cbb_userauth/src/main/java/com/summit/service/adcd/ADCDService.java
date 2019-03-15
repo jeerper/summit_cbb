@@ -91,12 +91,15 @@ public class ADCDService {
     		int i=0;
     		for(Object o:list){
     			JSONObject jSONObject=(JSONObject)o;
-    			i++;
-    			if(!"".equals(adcd) && !adcd.equals(jSONObject.getString("ADCD")) || i==list.size()-1){
+    			if(!"".equals(adcd) && !adcd.equals(jSONObject.getString("ADCD"))){
     				map.put(adcd, childrenList);
     				childrenList=new ArrayList();
     			}
     			childrenList.add(jSONObject);
+    			if(i==list.size()-1){
+    				map.put(adcd, childrenList);
+    			}
+    			i++;
     			adcd=jSONObject.getString("ADCD");
     		}
     		orgMaps=map;
