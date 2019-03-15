@@ -7,11 +7,12 @@ spring:
     name: "cbb-api-gateway-db"
   flyway:
     # 如果启动的时候需要flyway管理sql脚本的话，将enabled设置为true
-    enabled: false
+    enabled: true
     baseline-on-migrate: true
     locations: classpath:db
     encoding: UTF-8
-
+    # 验证错误时 是否自动清除数据库 高危操作!
+    clean-on-validation-error: true
 
 zuul:
   ignoredServices: '*'
