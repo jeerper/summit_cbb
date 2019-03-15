@@ -117,8 +117,6 @@ INSERT INTO `ad_cd_b` VALUES ('659002000000', '阿拉尔市', '659000000000', nu
 INSERT INTO `ad_cd_b` VALUES ('659003000000', '图木舒克市', '659000000000', null);
 INSERT INTO `ad_cd_b` VALUES ('659004000000', '五家渠市', '659000000000', null);
 
-INSERT INTO `oauth_client_details` VALUES ('summit', null, '$2a$10$MkTZ3tYIaUy5tRuBl1/QJuasFwpkeWAKoiRacLQhbJDzgZ1a5wQwy', 'server', 'password,refresh_token', null, null, null, null, null, 'true');
-
 INSERT INTO `sys_dept` VALUES ('1', null, '人事部', null, '');
 INSERT INTO `sys_dept` VALUES ('2', null, '财务部', null, '');
 
