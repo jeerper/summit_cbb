@@ -47,7 +47,7 @@ public class UserService {
 				userInfo.getUserName(),
 				userInfo.getName(),
 				encoder.encode(userInfo.getPassword()),
-				0,
+				1,
 				userInfo.getEmail(),
 				userInfo.getPhoneNumber(),
 				1,
