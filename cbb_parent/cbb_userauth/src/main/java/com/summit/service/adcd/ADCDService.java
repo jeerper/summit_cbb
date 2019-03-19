@@ -58,17 +58,16 @@ public class ADCDService {
 		} catch (Exception e1) {
 			e1.printStackTrace();
 		}
-        logger.debug("0-0");
+        
         if(rootList.size()>0){
-        	 logger.debug("0-1");
 			jSONOTree=(JSONObject)rootList.get(0);
-			logger.debug(" jSONOTree.getString: "+jSONOTree.getString("ADCD"));
+			//logger.debug(" jSONOTree.getString: "+jSONOTree.getString("ADCD"));
 			List<JSONObject> list=generateOrgMapToTree(null,jSONOTree.getString("ADCD"));
-			logger.debug("list: "+list.size());
+			//logger.debug("list: "+list.size());
         	jSONOTree.put("children", list);
 		}
-        logger.debug("0-2");
-        logger.debug("jSONOTree0: "+jSONOTree);
+        //logger.debug("0-2");
+        //logger.debug("jSONOTree0: "+jSONOTree);
 		return jSONOTree;
 	}
 	

@@ -4,12 +4,17 @@ import com.summit.common.entity.ResponseCodeBySummit;
 import com.summit.domain.function.FunctionBean;
 import com.summit.domain.function.FunctionBeanRowMapper;
 import com.summit.repository.UserRepository;
+import com.summit.service.adcd.ADCDService;
 import com.summit.util.Page;
 import com.summit.util.SummitTools;
 import com.summit.util.SysConstants;
 import com.summit.util.TreeNode;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
+
+import org.apache.commons.collections.map.LinkedMap;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
@@ -20,6 +25,7 @@ import java.util.*;
 @Service
 @Transactional
 public class FunctionService {
+	private static final Logger logger = LoggerFactory.getLogger(FunctionService.class);
 	@Autowired
 	private UserRepository ur;
 	@Autowired
@@ -28,6 +34,110 @@ public class FunctionService {
 	private SummitTools st;
 	@Autowired
 	private FunctionBeanRowMapper fbrm;
+	
+	/**
+	 * 
+	 * 查询菜单树
+	 * @return
+	 */
+	public JSONObject queryFunTree(String padcd) {
+		JSONObject jSONOTree=null;
+		LinkedMap linkedMap=new LinkedMap();
+		StringBuffer sql = new StringBuffer("SELECT * from  sys_function fun where 1=1 ");
+		if(padcd==null || "".equals(padcd)){
+			sql.append(" and (pid is null  or pid='-1' )");
+		}else{
+			sql.append(" and pid =? ");
+			linkedMap.put(1, padcd);
+		}
+		List<Object> rootList= null;
+        try {
+			rootList= ur.queryAllCustom(sql.toString(),linkedMap);
+		} catch (Exception e1) {
+			e1.printStackTrace();
+		}
+        
+        if(rootList.size()>0){
+			jSONOTree=(JSONObject)rootList.get(0);
+			//logger.debug(" jSONOTree.getString: "+jSONOTree.getString("ADCD"));
+			List<JSONObject> list=generateOrgMapToTree(null,jSONOTree.getString("ID"));
+			//logger.debug("list: "+list.size());
+        	jSONOTree.put("CHILDREN", list);
+		}
+        //logger.debug("0-2");
+        //logger.debug("jSONOTree0: "+jSONOTree);
+		return jSONOTree;
+	}
+	
+   public List<JSONObject> generateOrgMapToTree(Map<String, List<Object>>  orgMaps, String pid)  {
+        if (null == orgMaps || orgMaps.size() == 0) {//a.ADLEVEL as LEVELa ,b.ADLEVEL as LEVELb
+        	StringBuffer querySql = new StringBuffer(" SELECT A.ID, A.NAME,A.PID, B.ID AS CHILD_ID, B.NAME AS CHILD_NAME,B.FDESC,B.FURL,B.IMGULR,B.NOTE, B.SUPER_FUN FROM SYS_FUNCTION AS A ");
+        	querySql.append("  JOIN SYS_FUNCTION AS B ON B.PID = A.ID ");
+        	// querySql.append("  where a.id!='root' ");
+        	querySql.append("   ORDER BY  a.id asc  ");
+        	com.alibaba.fastjson.JSONArray list=null;
+			try {
+				list = ur.queryAllCustomJsonArray(querySql.toString(),null);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+        	//logger.debug("1:"+list.size());
+    		Map<String, List<Object>> map=new HashMap<String, List<Object>>();
+    		List<Object> childrenList=new ArrayList();;
+    		String adcd="";
+    		int i=0;
+    		for(Object o:list){
+    			JSONObject jSONObject=(JSONObject)o;
+    			if(!"".equals(adcd) && !adcd.equals(jSONObject.getString("ID"))){
+    				map.put(adcd, childrenList);
+    				childrenList=new ArrayList();
+    			}
+    			childrenList.add(jSONObject);
+    			if(i==list.size()-1){
+    				map.put(adcd, childrenList);
+    			}
+    			i++;
+    			adcd=jSONObject.getString("ID");
+    		}
+    		orgMaps=map;
+//            String json_list = JSONObject.toJSONString(list);
+//            orgMaps = (List<Map<String, Object>>) JSONObject.parse(json_list);
+        }
+        logger.debug("2:"+orgMaps.size());
+        List<JSONObject> orgList = new ArrayList<>();
+        if (orgMaps != null && orgMaps.size() > 0) {
+        	List parenList=orgMaps.get(pid);
+        	if(parenList==null){
+        		return orgList;
+        	}
+        	logger.debug("3:"+parenList.size());
+        	int i=0;
+            for (Object obj : parenList) {
+            	logger.debug("3-1:"+i);
+            	JSONObject jSONOTree=new JSONObject();
+            	JSONObject json=(JSONObject)obj;
+            	System.out.println(json);
+            	jSONOTree.put("ID", json.getString("CHILD_ID"));
+            	jSONOTree.put("NAME", json.getString("CHILD_NAME"));
+            	jSONOTree.put("FDESC",json.getString("FDESC"));
+            	jSONOTree.put("FURL",json.getString("FURL"));
+            	jSONOTree.put("IMGULR",json.getString("IMGULR"));
+            	jSONOTree.put("NOTE",json.getString("SUPER_FUN"));
+            	
+                List<JSONObject> children = generateOrgMapToTree(orgMaps, json.get("CHILD_ID").toString());
+                //将子结果集存入当前对象的children字段中
+                jSONOTree.put("children", children);
+                //添加当前对象到主结果集中
+                orgList.add(jSONOTree);
+                i++;
+            }
+            logger.debug("4:"+orgList.size());
+        }
+        logger.debug("5:"+orgList.size());
+        return orgList;
+    }
+
+
 
 	public ResponseCodeBySummit add(FunctionBean fb) {
 		String sql = "INSERT INTO SYS_FUNCTION (ID, PID, NAME, FDESC, IS_ENABLED, FURL, IMGULR, NOTE, SUPER_FUN) VALUES (?, ?, ?, ?, ?, ?, ?, ?,?)";

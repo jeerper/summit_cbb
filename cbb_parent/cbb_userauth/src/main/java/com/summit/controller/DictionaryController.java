@@ -158,13 +158,12 @@ public class DictionaryController {
 	}
 
 	@ApiOperation(value = "数据字典查询所有数据")
-	@GetMapping("queryTree")
-	public RestfulEntityBySummit<?> queryTree(HttpServletRequest request) {
+	@GetMapping("queryAll")
+	public RestfulEntityBySummit<?> queryAll(HttpServletRequest request) {
 		//Map<String, Object> res = new HashMap<String, Object>();
 		LogBean logBean = new LogBean();
 		try {
 			logBean = logUtil.insertLog(request,"1", "数据字典查询全部数据","");
-			//res = dictionaryService.queryTree();
 			JSONArray jsonArray = new JSONArray();
 	        jsonArray.add(dictionaryService.queryAll());
 			return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_0000,jsonArray);
