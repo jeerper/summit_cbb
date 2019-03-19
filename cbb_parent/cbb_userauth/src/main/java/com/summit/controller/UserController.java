@@ -210,7 +210,7 @@ public class UserController {
     }
 
     @ApiOperation(value = "分页查询")
-    @PostMapping("/queryByPage")
+    @GetMapping("/queryByPage")
     public RestfulEntityBySummit<?> queryByPage(
     		@RequestParam(value = "page") int page,
             @RequestParam(value ="pageSize") int pageSize,

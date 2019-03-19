@@ -46,7 +46,7 @@ public class DeptController {
 	 * @return
 	 */
 	@ApiOperation(value = "查询部门树")
-	@RequestMapping(value = "/queryTree",method = RequestMethod.POST)
+	@RequestMapping(value = "/queryTree",method = RequestMethod.GET)
 	public RestfulEntityBySummit<?> queryTree(String pid) {
 		HttpServletRequest request = ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest();
 		//UserContextHolder.getUserName();
@@ -74,7 +74,7 @@ public class DeptController {
 	 * 
 	 */
 	@ApiOperation(value = "根据id查询")
-	@RequestMapping(value = "/queryById",method = RequestMethod.POST)
+	@RequestMapping(value = "/queryById",method = RequestMethod.GET)
 	public RestfulEntityBySummit<?> queryById(@RequestParam(value = "id") String id) {
 		HttpServletRequest request = ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest();
 		LogBean logBean = logUtil.insertLog(request,"1", "根据id查询分页","");
@@ -94,7 +94,7 @@ public class DeptController {
 	}
 	
 	@ApiOperation(value = "根据pid查询分页")
-	@RequestMapping(value = "/queryByPidPage",method = RequestMethod.POST)
+	@RequestMapping(value = "/queryByPidPage",method = RequestMethod.GET)
 	public RestfulEntityBySummit<?> queryByPage(
 			@RequestParam(value = "page") int page,
             @RequestParam(value ="pageSize") int pageSize,
@@ -179,7 +179,7 @@ public class DeptController {
 	 * 删除
 	 */
 	@ApiOperation(value = "部门删除")
-	@RequestMapping(value = "/del",method = RequestMethod.GET)
+	@RequestMapping(value = "/del",method = RequestMethod.DELETE)
 	public RestfulEntityBySummit<?> del(@RequestParam(value = "ids") String ids) {
 		HttpServletRequest request = ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest();
 		LogBean logBean = logUtil.insertLog(request,"1", "部门删除","");

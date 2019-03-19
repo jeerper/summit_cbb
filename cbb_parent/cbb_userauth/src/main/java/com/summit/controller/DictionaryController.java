@@ -112,7 +112,7 @@ public class DictionaryController {
 	}
 	
 	@ApiOperation(value = "查询数据字典树")
-	@RequestMapping(value = "/queryTree",method = RequestMethod.POST)
+	@RequestMapping(value = "/queryTree",method = RequestMethod.GET)
 	public RestfulEntityBySummit<?> queryTree(String pid) {
 		HttpServletRequest request = ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest();
 		//UserContextHolder.getUserName();
@@ -238,7 +238,7 @@ public class DictionaryController {
 		//return res;
 	}
 	@ApiOperation(value = "初始化字典缓存加载")
-	@PostMapping("initSysDic")
+	@GetMapping("initSysDic")
 	@PostConstruct
 	public RestfulEntityBySummit<?> initSysDic() {
 		//LogBean logBean = new LogBean();
