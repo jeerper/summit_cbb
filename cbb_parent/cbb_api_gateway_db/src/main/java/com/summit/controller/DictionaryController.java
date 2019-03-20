@@ -5,15 +5,20 @@ import com.summit.common.api.userauth.RemoteUserAuthService;
 import com.summit.common.entity.ResponseCodeBySummit;
 import com.summit.common.entity.RestfulEntityBySummit;
 import com.summit.common.entity.UserInfo;
+import com.summit.model.user.FileUploadInfo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 
 @Api(description = "路由管理")
@@ -47,5 +52,13 @@ public class DictionaryController {
     public RestfulEntityBySummit<UserInfo> loghahaha() {
         return remoteUserAuthService.queryUserInfoByUserName("admin");
     }
+
+    @ApiOperation(value = "文件上传测试接口")
+    @PostMapping(value = "/loghahaha", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    public RestfulEntityBySummit fileUpload(@ApiParam(value ="文件上传对象",allowMultiple = true)MultipartFile[] uploadFile, FileUploadInfo fileUploadInfo) {
+
+        return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_0000, "haha");
+    }
+
 
 }
