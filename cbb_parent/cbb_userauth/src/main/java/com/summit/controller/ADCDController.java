@@ -69,7 +69,7 @@ public class ADCDController {
 	            logBean.setActionFlag("0");
 	            logBean.setErroInfo(e.toString());
 	            logger.error("数据查询失败！", e);
-	            return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_9999);
+	            return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_9999,"");
 	     }
 	    // logUtil.updateLog(logBean, "1");
 		
