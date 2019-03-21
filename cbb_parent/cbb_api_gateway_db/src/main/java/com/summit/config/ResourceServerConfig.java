@@ -33,6 +33,7 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
         //允许使用iframe 嵌套，避免swagger-ui 不被加载的问题
         http.headers().frameOptions().disable();
         http.csrf().disable();
+        http.cors();
         http.authorizeRequests()
                 .antMatchers(HttpMethod.OPTIONS).permitAll()
                 .antMatchers(WebSecurityConfigurer.AUTH_WHITELIST).permitAll()
