@@ -48,14 +48,8 @@ public class DynamicRouteLocator extends DiscoveryClientRouteLocator {
 
         LinkedHashMap<String, ZuulProperties.ZuulRoute> routesMap = new LinkedHashMap<>();
 
-        //读取properties中的路由配置
-        log.debug("加载配置文件中的路由信息");
-        for (ZuulProperties.ZuulRoute route : this.properties.getRoutes().values()) {
-            routesMap.put(route.getPath(), route);
-        }
-
-        log.debug("加载注册中心中的路由信息");
-        routesMap.putAll(locateRoutesFromRegisterCenter());
+        log.debug("加载配置文件和注册中心的路由信息");
+        routesMap.putAll(locateRoutesFromYmlAndRegisterCenter());
 
         log.debug("加载数据库中的路由信息");
         routesMap.putAll(locateRoutesFromDb());
@@ -78,12 +72,18 @@ public class DynamicRouteLocator extends DiscoveryClientRouteLocator {
     }
 
     /**
-     * 加载注册中心中的路由信息
+     * 加载配置文件和注册中心的路由信息
      *
      * @return
      */
-    private Map<String, ZuulProperties.ZuulRoute> locateRoutesFromRegisterCenter() {
+    private Map<String, ZuulProperties.ZuulRoute> locateRoutesFromYmlAndRegisterCenter() {
         Map<String, ZuulProperties.ZuulRoute> routesMap = new LinkedHashMap<>();
+        //读取properties中的路由配置
+
+        for (ZuulProperties.ZuulRoute route : this.properties.getRoutes().values()) {
+            routesMap.put(route.getPath(), route);
+        }
+        //读取注册中心的路由信息
         if (this.discovery != null) {
             Map<String, ZuulProperties.ZuulRoute> staticServices = new LinkedHashMap<>();
             for (ZuulProperties.ZuulRoute route : routesMap.values()) {
