@@ -73,7 +73,7 @@ public class DemoController {
 		return "liuyuan";
 	}
 
-	@RequestMapping("/testDemo1")
+	@GetMapping("/testDemo1")
 	public String demo1(HttpServletRequest request) {
 		System.out.println("进入此方法");
 		//测试是否能取到请求头中的token
@@ -85,7 +85,7 @@ public class DemoController {
 		 return userService.getAllUser1().toString();
 	}
 
-	@RequestMapping("/testDemo2")
+	@GetMapping("/testDemo2")
 	public String demo2() {
 		return userService.getAllUser2().toString();
 	}
