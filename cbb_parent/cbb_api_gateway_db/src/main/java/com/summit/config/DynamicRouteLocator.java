@@ -165,6 +165,5 @@ public class DynamicRouteLocator extends DiscoveryClientRouteLocator {
     @Override
     public void refresh() {
         doRefresh();
-        log.debug("刷新");
     }
 }
