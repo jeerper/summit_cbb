@@ -19,6 +19,7 @@ fileStoragePath="/home/cbb_store_server_file_storage"
 #java后台启动程序包装模板
 java_service_wrapper_template_path="${fileStoragePath}/java_service_wrapper_template"
 
+echo "`ifconfig ens192 | grep "inet 1" | awk '{print $2}'`"
 
 #性能监控控制台账号
 spring_boot_admin_username="ucp"
