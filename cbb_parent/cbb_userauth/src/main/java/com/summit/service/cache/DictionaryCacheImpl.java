@@ -77,7 +77,7 @@ public class DictionaryCacheImpl extends CacheImpl implements DictionaryCacheInf
 	@SuppressWarnings("unchecked")
 	public  List<DictionaryBean> findChildList(String code) {
 		List<DictionaryBean>  all = (List<DictionaryBean>)getCacheElement(SysConstants.DICTIONARY, "dictionaryAll");
-		if(code!=null && "".equals(code)){
+		if(code!=null && !"".equals(code)){
 			List<DictionaryBean> list = new ArrayList<DictionaryBean>();
 			if(all!=null && all.size()>0){
 				for (DictionaryBean sysDictionary : all) {
