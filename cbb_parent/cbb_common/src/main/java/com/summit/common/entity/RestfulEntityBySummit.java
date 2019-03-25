@@ -43,6 +43,21 @@ public class RestfulEntityBySummit<T> implements Serializable {
     }
 
     /**
+     *
+     * @param data
+     * @param msg
+     */
+    public RestfulEntityBySummit(T data, String msg) {
+        this.data = data;
+        this.msg = msg;
+        this.code=getCode();
+    }
+    public RestfulEntityBySummit(T data, String msg,String code) {
+        this.data = data;
+        this.msg = msg;
+        this.code=code;
+    }
+    /**
      * 自定义响应消息
      *
      * @param responseCodeBySummit 状态码枚举
