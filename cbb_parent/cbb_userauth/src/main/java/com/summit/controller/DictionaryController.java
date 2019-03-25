@@ -128,7 +128,7 @@ public class DictionaryController {
 	            //e.printStackTrace();
 	            logBean.setActionFlag("0");
 	            logBean.setErroInfo(e.toString());
-	            return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_9999);
+	            return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_9999,null);
 	     }
 	    // logUtil.updateLog(logBean, "1");
 		//return list;

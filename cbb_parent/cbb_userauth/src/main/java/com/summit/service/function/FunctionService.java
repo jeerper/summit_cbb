@@ -61,11 +61,11 @@ public class FunctionService {
 			jSONOTree=(JSONObject)rootList.get(0);
 			//logger.debug(" jSONOTree.getString: "+jSONOTree.getString("ADCD"));
 			List<JSONObject> list=generateOrgMapToTree(null,jSONOTree.getString("ID"));
-			//logger.debug("list: "+list.size());
+			logger.debug("list: "+list.size());
         	jSONOTree.put("CHILDREN", list);
 		}
-        //logger.debug("0-2");
-        //logger.debug("jSONOTree0: "+jSONOTree);
+        logger.debug("0-2");
+        logger.debug("jSONOTree0: "+jSONOTree);
 		return jSONOTree;
 	}
 	
@@ -73,7 +73,7 @@ public class FunctionService {
         if (null == orgMaps || orgMaps.size() == 0) {//a.ADLEVEL as LEVELa ,b.ADLEVEL as LEVELb
         	StringBuffer querySql = new StringBuffer(" SELECT A.ID, A.NAME,A.PID, B.ID AS CHILD_ID, B.NAME AS CHILD_NAME,B.FDESC,B.FURL,B.IMGULR,B.NOTE, B.SUPER_FUN FROM SYS_FUNCTION AS A ");
         	querySql.append("  JOIN SYS_FUNCTION AS B ON B.PID = A.ID ");
-        	// querySql.append("  where a.id!='root' ");
+        	querySql.append("  where a.id!='root' ");
         	querySql.append("   ORDER BY  a.id asc  ");
         	com.alibaba.fastjson.JSONArray list=null;
 			try {
@@ -81,7 +81,7 @@ public class FunctionService {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-        	//logger.debug("1:"+list.size());
+        	logger.debug("1:"+list.size());
     		Map<String, List<Object>> map=new HashMap<String, List<Object>>();
     		List<Object> childrenList=new ArrayList();;
     		String adcd="";

@@ -157,7 +157,7 @@ public class DictionaryService {
 	
    public List<JSONObject> generateOrgMapToTree(Map<String, List<Object>>  orgMaps, String pid)  {
         if (null == orgMaps || orgMaps.size() == 0) {
-        	StringBuffer sql=new StringBuffer("SELECT A.CODE, A.NAME,A.PCODE, B.CODE AS CHILD_ID, B.NAME AS CHILD_NAME FROM SYS_DICTIONARY  AS A ");  
+        	StringBuffer sql=new StringBuffer("SELECT A.CODE, A.NAME,A.PCODE, B.CODE AS CHILD_ID, B.NAME AS CHILD_NAME,b.CKEY  FROM SYS_DICTIONARY  AS A ");  
             sql.append(" JOIN SYS_DICTIONARY AS B ON B.PCODE = A.CODE ORDER BY  A.CODE ASC,b.CKEY asc ");
         	
         	JSONArray list=null;
@@ -198,6 +198,7 @@ public class DictionaryService {
             	System.out.println(json);
             	jSONOTree.put("CODE", json.getString("CHILD_ID"));
             	jSONOTree.put("NAME", json.getString("CHILD_NAME"));
+            	jSONOTree.put("CKEY", json.getString("CKEY"));
             	jSONOTree.put("PCODE",pid);
                 List<JSONObject> children = generateOrgMapToTree(orgMaps, json.get("CHILD_ID").toString());
                 //将子结果集存入当前对象的children字段中
