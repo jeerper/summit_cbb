@@ -205,36 +205,37 @@ public class DictionaryController {
 	
 	@ApiOperation(value = "数据字典按照父ID查询")
 	@GetMapping("queryByPid")
-	public MsgBean queryByPid(
+	public RestfulEntityBySummit<List <DictionaryBean>> queryByPid(
 			@RequestParam(value = "pId") String pId, HttpServletRequest request) {
 		//List<DictionaryBean> res = new ArrayList<DictionaryBean>();
 		LogBean logBean = new LogBean();
-		MsgBean mb = new MsgBean();
+		//MsgBean mb = new MsgBean();
 		try {
 			logBean = logUtil.insertLog(request,"1", "数据字典按照父ID查询", "");
 			//res = dictionaryService.queryByPid(pId);
 			List <DictionaryBean> list=dictionaryService.queryByPid(pId);
 			//JSONArray jsonArray= JSONArray.parseArray(JSON.toJSONString(list));
-			//return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_0000,list);
-			if(null != list){
-                JSONArray jsonArray = new JSONArray();
-                jsonArray.add(list);
-                mb.setCode("CODE_0000");
-                mb.setMessage("数据查询成功!");
-                mb.setData(jsonArray);
-            }
 			logger.info("查询成功");
+			return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_0000,list);
+//			if(null != list){
+//                JSONArray jsonArray = new JSONArray();
+//                jsonArray.add(list);
+//                mb.setCode("CODE_0000");
+//                mb.setMessage("数据查询成功!");
+//                mb.setData(jsonArray);
+//            }
+			
 		} catch (Exception e) {
 			//e.printStackTrace();
 			logger.error("查询失败", e);
 			logBean.setActionFlag("0");
 			logBean.setErroInfo(e.toString());
 			logUtil.updateLog(logBean,"1");
-			//return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_9999,null);
+			return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_9999,null);
 		}
-		return mb;
+		//return mb;
 		//logUtil.updateLog(logBean,"1");
-		//return res;
+		// return null;
 	}
 	@ApiOperation(value = "初始化字典缓存加载")
 	@GetMapping("initSysDic")
