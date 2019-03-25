@@ -13,6 +13,8 @@
     </parent>
 
     <properties>
+        <!--公共组件common包发布版本号-->
+        <cbb.common.version>1.0.1.RELEASE</cbb.common.version>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
         <maven.compiler.compilerVersion>1.8</maven.compiler.compilerVersion>
@@ -37,7 +39,7 @@
             <dependency>
                 <groupId>com.summit</groupId>
                 <artifactId>cbb_common</artifactId>
-                <version>${project.version}</version>
+                <version>${cbb.common.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.springframework.cloud</groupId>
@@ -219,4 +221,27 @@
         <module>cbb_api_gateway_db</module>
         <module>cbb_userauth</module>
     </modules>
+
+    <repositories>
+        <repository>
+            <id>summit</id>
+            <name>summit</name>
+            <url>http://192.168.140.212/repository/summit-group/</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
+    <distributionManagement>
+        <repository>
+            <id>summit</id>
+            <name>summit</name>
+            <url>http://192.168.140.212/repository/summit-maven/</url>
+        </repository>
+    </distributionManagement>
+
+
 </project>
