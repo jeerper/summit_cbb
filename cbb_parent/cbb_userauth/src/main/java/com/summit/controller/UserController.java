@@ -14,8 +14,6 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import net.sf.json.JSONObject;
-
-import org.json.JSONArray;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,14 +52,14 @@ public class UserController {
         LogBean logBean = new LogBean();
         try {
             logBean = logUtil.insertLog(request, "1", "用户新增", userInfo.getUserName());
-            return new RestfulEntityBySummit<>(us.add(userInfo),"");
+            return new RestfulEntityBySummit<>(us.add(userInfo));
         } catch (Exception e) {
             //e.printStackTrace();
             logger.error("新增用户失败", e);
             logBean.setActionFlag("0");
             logBean.setErroInfo(e.toString());
             logUtil.updateLog(logBean, "1");
-            return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_9999,"");
+            return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_9999);
         }
     }
 
@@ -88,14 +86,14 @@ public class UserController {
             		userInfoCache.deleteUserInfo(username);		
             	}
             }
-            return new RestfulEntityBySummit<>(us.del(userNames),"");
+            return new RestfulEntityBySummit<>(us.del(userNames));
         } catch (Exception e) {
             //e.printStackTrace();
             logger.error("删除用户信息", e);
             logBean.setActionFlag("0");
             logBean.setErroInfo(e.toString());
             logUtil.updateLog(logBean, "1");
-            return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_9999,"");
+            return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_9999);
         }
     }
 
@@ -109,7 +107,7 @@ public class UserController {
 //            	 return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_0000);
 //            } else {
             	userInfoCache.setUserInfo(userInfo.getUserName(),userInfo);
-            	return new RestfulEntityBySummit<>(us.edit(userInfo),"");
+            	return new RestfulEntityBySummit<>(us.edit(userInfo));
 //            }
         } catch (Exception e) {
             //e.printStackTrace();
@@ -117,7 +115,7 @@ public class UserController {
             logBean.setErroInfo(e.toString());
             logUtil.updateLog(logBean, "1");
             logger.error("修改用户失败:", e);
-            return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_9999,"");
+            return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_9999);
         }
     }
 
@@ -132,14 +130,14 @@ public class UserController {
         LogBean logBean = new LogBean();
         try {
             logBean = logUtil.insertLog(request, "1", "修改密码", userName);
-           return  new RestfulEntityBySummit<>(us.editPassword(userName,oldPassword, password, repeatPassword),"");
+           return  new RestfulEntityBySummit<>(us.editPassword(userName,oldPassword, password, repeatPassword));
         } catch (Exception e) {
             //e.printStackTrace();
             logBean.setActionFlag("0");
             logBean.setErroInfo(e.toString());
             logUtil.updateLog(logBean, "1");
             logger.error("修改密码失败:", e);
-            return  new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_9999,"");
+            return  new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_9999);
         }
     }
 
@@ -152,7 +150,7 @@ public class UserController {
             logBean = logUtil.insertLog(request, "1", "用户管理根据用户名查询用户", userName);
             UserInfo ub = us.queryByUserName(userName);
             if (ub == null) {
-            	return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_4023,"");
+            	return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_4023);
             }
             List<String> roleList = us.queryRoleByUserName(userName);
             List<String> funList = us.getFunByUserName(userName);
@@ -181,7 +179,7 @@ public class UserController {
             logUtil.updateLog(logBean, "1");
             logger.error("根据用户名查询用户信息失败：", e);
             //return  new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_9999);
-            return  new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_9993,"");
+            return  new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_9993);
         }
     }
     
@@ -205,7 +203,7 @@ public class UserController {
             logBean.setErroInfo(e.toString());
             logUtil.updateLog(logBean, "1");
             logger.error("根据用户名查询所有菜单失败：", e);
-            return  new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_9999,"");
+            return  new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_9999);
         }
     }
 
@@ -247,7 +245,7 @@ public class UserController {
             logBean.setErroInfo(e.toString());
             logUtil.updateLog(logBean, "1");
             logger.error("用户分页查询失败：", e);
-           return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_9999,"");
+           return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_9999);
         }
     }
 
@@ -261,7 +259,7 @@ public class UserController {
 //            if (st.stringEquals(SysConstants.SUPER_USERNAME, userName)) {
 //            	return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_0000);
 //            } else {
-            	return new RestfulEntityBySummit<>(us.resetPassword(userName),"");
+            	return new RestfulEntityBySummit<>(us.resetPassword(userName));
 //            }
         } catch (Exception e) {
             //e.printStackTrace();
@@ -269,7 +267,7 @@ public class UserController {
             logBean.setErroInfo(e.toString());
             logUtil.updateLog(logBean, "1");
             logger.error("重置密码失败：", e);
-            return  new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_9999,"");
+            return  new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_9999);
         }
     }
 
@@ -294,7 +292,7 @@ public class UserController {
             logBean.setErroInfo(e.toString());
             logUtil.updateLog(logBean, "1"); 
             logger.error("根据用户名查询角色失败：", e);
-            return  new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_9999,"");
+            return  new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_9999);
         }
     }
 
@@ -316,7 +314,7 @@ public class UserController {
             logBean.setErroInfo(e.toString());
             logUtil.updateLog(logBean, "1");
             logger.error("授权权限失败：", e);
-            return  new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_9999,"");
+            return  new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_9999);
         }
     }
 

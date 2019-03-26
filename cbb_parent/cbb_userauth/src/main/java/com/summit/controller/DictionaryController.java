@@ -1,14 +1,18 @@
 package com.summit.controller;
 
-import java.util.List;
-
-import javax.annotation.PostConstruct;
-import javax.servlet.http.HttpServletRequest;
-
+import com.alibaba.fastjson.JSONArray;
+import com.summit.common.entity.ResponseCodeBySummit;
+import com.summit.common.entity.RestfulEntityBySummit;
+import com.summit.domain.dictionary.DictionaryBean;
+import com.summit.domain.log.LogBean;
+import com.summit.service.dictionary.DictionaryService;
+import com.summit.service.log.ILogUtil;
+import com.summit.util.SysConstants;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -17,23 +21,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
-import com.alibaba.fastjson.JSONArray;
-import com.summit.common.entity.ResponseCodeBySummit;
-import com.summit.common.entity.RestfulEntityBySummit;
-import com.summit.domain.dictionary.DictionaryBean;
-import com.summit.domain.log.LogBean;
-import com.summit.service.dictionary.DictionaryService;
-import com.summit.service.log.ILogUtil;
-import com.summit.util.MsgBean;
-import com.summit.util.SysConstants;
-
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import javax.annotation.PostConstruct;
+import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 
 @Api(description = "数据字典")
@@ -128,7 +122,7 @@ public class DictionaryController {
 	            //e.printStackTrace();
 	            logBean.setActionFlag("0");
 	            logBean.setErroInfo(e.toString());
-	            return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_9999,null);
+	            return new RestfulEntityBySummit(ResponseCodeBySummit.CODE_9999);
 	     }
 	    // logUtil.updateLog(logBean, "1");
 		//return list;
@@ -231,7 +225,7 @@ public class DictionaryController {
 			logBean.setActionFlag("0");
 			logBean.setErroInfo(e.toString());
 			logUtil.updateLog(logBean,"1");
-			return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_9999,null);
+			return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_9999);
 		}
 		//return mb;
 		//logUtil.updateLog(logBean,"1");

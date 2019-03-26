@@ -36,9 +36,9 @@ public class SummitResourceAuthExceptionEntryPoint implements AuthenticationEntr
 		Throwable cause = authException.getCause();
 		RestfulEntityBySummit entity;
 		if(cause instanceof InvalidTokenException) {
-			entity=new RestfulEntityBySummit(ResponseCodeBySummit.CODE_4008,null);
+			entity=new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_4008);
 		}else{
-			entity=new RestfulEntityBySummit(ResponseCodeBySummit.CODE_4007,null);
+			entity=new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_4007);
 		}
 		response.setCharacterEncoding(CommonConstant.UTF8);
 		response.setContentType(CommonConstant.CONTENT_TYPE);
