@@ -57,5 +57,5 @@ cp -rf backend.jar ${fileStoragePath}/${projectName}/bin
 cp -rf lib ${fileStoragePath}/${projectName}/bin/
 cp -rf config ${fileStoragePath}/${projectName}/bin/
 
-#推送组件信息到组件货架上
+echo "推送组件信息到组件货架上"
 curl -X POST "http://${Registry_Center_IP}:43000/component/pushComponentInfo" -H "accept: */*" -H "Content-Type: application/json;charset=UTF-8" -d "{ \"description\": \"${component_description}\", \"name\": \"${component_name}\", \"tag\": \"${component_tag}\"}"
