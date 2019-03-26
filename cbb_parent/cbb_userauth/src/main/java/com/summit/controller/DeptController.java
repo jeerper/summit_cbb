@@ -7,12 +7,10 @@ import javax.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -26,6 +24,7 @@ import com.summit.service.log.ILogUtil;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import net.sf.json.JSONObject;
 
 /**
  * 
@@ -46,9 +45,9 @@ public class DeptController {
 	 * 查询部门树
 	 * @return
 	 */
-	@ApiOperation(value = "查询部门树", notes = "用于application/json格式")
-	@RequestMapping(value = "/queryTree",method = RequestMethod.POST)
-	public RestfulEntityBySummit<?> queryTree() {
+	@ApiOperation(value = "查询部门树")
+	@RequestMapping(value = "/queryTree",method = RequestMethod.GET)
+	public RestfulEntityBySummit<?> queryTree(String pid) {
 		HttpServletRequest request = ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest();
 		//UserContextHolder.getUserName();
 		LogBean logBean = new LogBean();
@@ -56,9 +55,9 @@ public class DeptController {
 	     try {
 	           logBean = logUtil.insertLog(request, "1", "查询部门树", "");
 	           //list = ds.queryDeptTree();
-	           return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_0000,ds.queryDeptTree());
+	           return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_0000,ds.queryDeptTree(pid));
 	     } catch (Exception e) {
-	    	    logger.error("用户分页查询失败：", e);
+	    	    logger.error("查询部门树失败：", e);
 	    	    logUtil.updateLog(logBean, "1");
 	            //e.printStackTrace();
 	            logBean.setActionFlag("0");
@@ -74,8 +73,8 @@ public class DeptController {
 	 * 根据id查询（分页）
 	 * 
 	 */
-	@ApiOperation(value = "根据id查询分页")
-	@RequestMapping(value = "/queryByIdPage",method = RequestMethod.POST)
+	@ApiOperation(value = "根据id查询")
+	@RequestMapping(value = "/queryById",method = RequestMethod.GET)
 	public RestfulEntityBySummit<?> queryById(@RequestParam(value = "id") String id) {
 		HttpServletRequest request = ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest();
 		LogBean logBean = logUtil.insertLog(request,"1", "根据id查询分页","");
@@ -95,17 +94,23 @@ public class DeptController {
 	}
 	
 	@ApiOperation(value = "根据pid查询分页")
-	@RequestMapping(value = "/queryByPidPage",method = RequestMethod.POST)
+	@RequestMapping(value = "/queryByPidPage",method = RequestMethod.GET)
 	public RestfulEntityBySummit<?> queryByPage(
 			@RequestParam(value = "page") int page,
             @RequestParam(value ="pageSize") int pageSize,
-            @RequestParam(value = "pid") String pid) {
+            @RequestParam(value = "pid",required = false) String pid,
+            @RequestParam(value = "deptcode",required = false) String deptcode,
+            @RequestParam(value = "deptname",required = false) String deptname) {
 		HttpServletRequest request = ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest();
 		LogBean logBean = logUtil.insertLog(request,"1", "根据pid查询分页","");
 		//Page<JSONObject> list = null;
 		try {
+			JSONObject paramJson = new JSONObject();
+			 paramJson.put("pid",pid);
+			 paramJson.put("deptcode",deptcode);
+			 paramJson.put("deptname",deptname);
 			///list = ds.queryByPage(start, limit, pid);
-			return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_0000,ds.queryByPage(page, pageSize, pid));
+			return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_0000,ds.queryByPage(page, pageSize, paramJson));
 		} catch (Exception e) {
 			//e.printStackTrace();
 			logger.error("查询失败：", e);
@@ -118,6 +123,9 @@ public class DeptController {
 		
 		//return list;
 	}
+	
+	
+	
 	/**
 	 * 新增
 	 */
@@ -171,7 +179,7 @@ public class DeptController {
 	 * 删除
 	 */
 	@ApiOperation(value = "部门删除")
-	@RequestMapping(value = "/del",method = RequestMethod.GET)
+	@RequestMapping(value = "/del",method = RequestMethod.DELETE)
 	public RestfulEntityBySummit<?> del(@RequestParam(value = "ids") String ids) {
 		HttpServletRequest request = ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest();
 		LogBean logBean = logUtil.insertLog(request,"1", "部门删除","");

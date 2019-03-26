@@ -20,6 +20,7 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.support.JdbcDaoSupport;
 import org.springframework.stereotype.Repository;
 
+import com.alibaba.fastjson.JSONArray;
 import com.summit.domain.user.UserDaoRowMapper;
 import com.summit.util.Page;
 import com.summit.util.SysConstants;
@@ -61,6 +62,66 @@ public class UserRepository extends JdbcDaoSupport {
 	}
 
 
+	
+	public JSONArray queryAllCustomJsonArray(String sql, LinkedMap linkedMap) throws Exception {
+		JSONArray array = null;
+		DataSource ds = getJdbcTemplate().getDataSource();
+		Connection conn = null;
+		PreparedStatement pstmt = null;
+		try {
+			conn = ds.getConnection();
+			pstmt = conn.prepareStatement(sql, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+			if(null != linkedMap && linkedMap.size() > 0){
+				try {
+					for (Iterator iterator = linkedMap.keySet().iterator(); iterator.hasNext();) {
+						Object object = (Object) iterator.next();
+						//pstmt.setString(1, json.get(object).toString());
+						pstmt.setObject(Integer.valueOf(object.toString()), linkedMap.get(object));
+					}
+				} catch (Exception e3) {
+					// TODO Auto-generated catch block
+					throw e3;
+				}
+			}
+
+			ResultSet rs = pstmt.executeQuery();//得到ResultSet
+			ResultSetMetaData rsd = rs.getMetaData();
+			if(rsd.getColumnCount() > 0){
+				array = new JSONArray();
+				String[] columnArray = new String[rsd.getColumnCount()];
+				for(int i = 0; i < rsd.getColumnCount(); i++) {
+					columnArray[i] = rsd.getColumnName(i + 1);
+				}
+				while(rs.next()){
+					JSONObject o = new JSONObject();
+					for (int j = 0; j < columnArray.length; j++) {
+						o.put(columnArray[j], rs.getObject(columnArray[j]));
+					}
+					array.add(o);
+				}
+			}
+		} catch (Exception e) {
+			throw e;
+		} finally {
+			if(pstmt != null && !pstmt.isClosed()){
+				try {
+					pstmt.close();
+					if (conn != null && !conn.isClosed()) {
+						try {
+							conn.close();
+						} catch (Exception e2) {
+							throw e2;
+						}
+					}
+				} catch (Exception e1) {
+					throw e1;
+				}
+			}
+		}
+		return array;
+	}
+
+	
 	public Page<JSONObject> queryByCustomPage(String sql, int start,
 			int pageSize, Object... args) {
 		return queryByCustomPage(sql, userDaoRowMapper, start, pageSize, args);

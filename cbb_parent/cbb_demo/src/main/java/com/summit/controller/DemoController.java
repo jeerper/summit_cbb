@@ -47,7 +47,7 @@ public class DemoController {
 	public RestfulEntityBySummit twoDemo() {
 		UserInfo userInfo = UserContextHolder.getUserInfo();
 
-		return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_9999,userInfo.getUserName());
+		return new RestfulEntityBySummit<String>(ResponseCodeBySummit.CODE_9999,userInfo.getUserName());
 	}
 
 	@ApiOperation(value = "第三个demo接口,无参数传递，返回失败代码，返回用户名称")
@@ -56,7 +56,7 @@ public class DemoController {
 
 		UserInfo userInfo = UserContextHolder.getUserInfo();
 
-		return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_9999,userInfo.getUserName());
+		return new RestfulEntityBySummit<String>(ResponseCodeBySummit.CODE_9999,userInfo.getUserName());
 	}
 	@ApiOperation(value = "第四个demo接口,有参数传递，返回成功代码，返回用户信息")
 	@GetMapping(value = "/queryUserInfoByUserName")
@@ -73,7 +73,7 @@ public class DemoController {
 		return "liuyuan";
 	}
 
-	@RequestMapping("/testDemo1")
+	@GetMapping("/testDemo1")
 	public String demo1(HttpServletRequest request) {
 		System.out.println("进入此方法");
 		//测试是否能取到请求头中的token
@@ -85,7 +85,7 @@ public class DemoController {
 		 return userService.getAllUser1().toString();
 	}
 
-	@RequestMapping("/testDemo2")
+	@GetMapping("/testDemo2")
 	public String demo2() {
 		return userService.getAllUser2().toString();
 	}

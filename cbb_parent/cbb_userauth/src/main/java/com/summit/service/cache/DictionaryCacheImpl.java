@@ -77,16 +77,19 @@ public class DictionaryCacheImpl extends CacheImpl implements DictionaryCacheInf
 	@SuppressWarnings("unchecked")
 	public  List<DictionaryBean> findChildList(String code) {
 		List<DictionaryBean>  all = (List<DictionaryBean>)getCacheElement(SysConstants.DICTIONARY, "dictionaryAll");
-		List<DictionaryBean> list = new ArrayList<DictionaryBean>();
-		if(all!=null && all.size()>0){
-			for (DictionaryBean sysDictionary : all) {
-				if (code.equals(sysDictionary.getPcode())) {
-					list.add(sysDictionary.clone());
-				}
+		if(code!=null && !"".equals(code)){
+			List<DictionaryBean> list = new ArrayList<DictionaryBean>();
+			if(all!=null && all.size()>0){
+				for (DictionaryBean sysDictionary : all) {
+					if (code.equals(sysDictionary.getPcode())) {
+						list.add(sysDictionary.clone());
+					}
+				}	
 			}	
+			return list;
+		}else{
+			return all;
 		}
-		
-		return list;
 	}
 	
 	/**
@@ -161,16 +164,7 @@ public class DictionaryCacheImpl extends CacheImpl implements DictionaryCacheInf
 	 */
 	@SuppressWarnings("unchecked")
 	public List<DictionaryBean> getAll(){
-		List<DictionaryBean>   all = (List<DictionaryBean>)getCacheElement(SysConstants.DICTIONARY, "dictionaryAll");
-//		List<DictionaryBean> list = new ArrayList<DictionaryBean>();
-//		for (DictionaryBean db : all) {
-//			DictionaryBean dbBean = db.clone();
-////			if(dbBean.getPcode() == null){
-////				dbBean.setOpen(true);
-////			}
-//			list.add(dbBean);
-//		}
-		return all;
+		return (List<DictionaryBean>)getCacheElement(SysConstants.DICTIONARY, "dictionaryAll");
 	}
 	
 	/**

@@ -7,30 +7,22 @@ spring:
     name: "cbb-api-gateway-db"
   flyway:
     # 如果启动的时候需要flyway管理sql脚本的话，将enabled设置为true
-    enabled: false
+    enabled: true
     baseline-on-migrate: true
     locations: classpath:db
     encoding: UTF-8
+    # 验证错误时 是否自动清除数据库 高危操作!
+    clean-on-validation-error: true
 
+mybatis-plus:
+  mapper-locations: classpath*:**/dao/mapper/*.xml
+  config-location: classpath:mybatis-config.xml
 
 zuul:
-  ignoredServices: '*'
-  routes:
-    cbb_userauth:
-      path: /api/userauth/**
-      serviceId: cbb-userauth
-    cbb_weather:
-      path: /api/weather/**
-      serviceId: cbb-weather
-    cbb_demo:
-      path: /api/demo/**
-      serviceId: cbb-demo
-    ppnetwork:
-      path: /api/ppnetwork/**
-      serviceId: ppnetwork
-    web_service_skeleton:
-      path: /api/webserviceskeleton/**
-      serviceId: web-service-skeleton
+  ignoredServices:
+    - 'cbb-api-gateway-db'
+    - 'cbb-register-center'
+  prefix: /api
 
 #当zuul.routes的配置用指定url进行路由时,是zuul.host.connect-timeout-millis,zuul.host.socket-timeout-millis这两个配生效，
 #当zuul.routes的配置用serviceId进行路由时,是ribbon.ReadTimeout,ribbon.SocketTimeout生效。

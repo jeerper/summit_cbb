@@ -1,23 +1,5 @@
 package com.summit.controller;
 
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
-
 import com.summit.common.entity.ResponseCodeBySummit;
 import com.summit.common.entity.RestfulEntityBySummit;
 import com.summit.domain.adcd.ADCDBean;
@@ -25,10 +7,24 @@ import com.summit.domain.log.LogBean;
 import com.summit.service.adcd.ADCDService;
 import com.summit.service.log.ILogUtil;
 import com.summit.util.Page;
-
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import net.sf.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 
@@ -51,7 +47,7 @@ public class ADCDController {
 	 * @return
 	 */
 	@ApiOperation(value = "查询行政区划树", notes = "用于application/json格式")
-	@RequestMapping(value = "/queryAdTree",method = RequestMethod.POST)
+	@GetMapping(value = "/queryAdTree")
 	public RestfulEntityBySummit<?> queryTree(String pid) {
 		HttpServletRequest request = ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest();
 		//UserContextHolder.getUserName();
@@ -99,7 +95,7 @@ public class ADCDController {
 			logBean.setActionFlag("0");
 			logBean.setErroInfo(e.toString());
 			 logger.error("数据查询失败！", e);
-			return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_9999,null);
+			return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_9999);
 		}
 		//logUtil.updateLog(logBean,"1");
 		//return list;
@@ -120,7 +116,7 @@ public class ADCDController {
 			logBean.setErroInfo(e.toString());
 			logUtil.updateLog(logBean,"1");
 			 logger.error("数据查询失败！", e);
-			return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_9999,null);
+			return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_9999);
 		}
 		//logUtil.updateLog(logBean,"1");
 		//return list;
@@ -143,7 +139,7 @@ public class ADCDController {
 			logBean.setErroInfo(e.toString());
 			logUtil.updateLog(logBean,"1");
 			logger.error("数据查询失败！", e);
-			return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_9999,null);
+			return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_9999);
 		}
 		//logUtil.updateLog(logBean,"1");
 		

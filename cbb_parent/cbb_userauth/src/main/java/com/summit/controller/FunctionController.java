@@ -133,20 +133,20 @@ public class FunctionController {
 		//return res;
 	}
 
-	@ApiOperation(value = "功能管理查询树形图")
+	@ApiOperation(value = "功能管理查询树形结构")
 	@GetMapping("queryTree")
-	public RestfulEntityBySummit<?> queryTree(HttpServletRequest request) {
+	public RestfulEntityBySummit<?> queryTree(@RequestParam(value = "pid" ,required = false)  String pid, HttpServletRequest request) {
 		LogBean logBean = new LogBean();
 		//Map<String, Object> res = new HashMap<String, Object>();
 		try {
-			logBean = logUtil.insertLog(request,"1", "功能管理查询树形图","");
+			logBean = logUtil.insertLog(request,"1", "功能管理查询树形","");
 			//res = st.success("", fs.queryAll(userName));
-			String userName="";
-			UserInfo userInfo=UserContextHolder.getUserInfo();
-			if(userInfo!=null){
-				userName=userInfo.getUserName();
-			}
-			return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_0000,fs.queryAll(userName));
+//			String userName="";
+//			UserInfo userInfo=UserContextHolder.getUserInfo();
+//			if(userInfo!=null){
+//				userName=userInfo.getUserName();
+//			}
+			return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_0000,fs.queryFunTree(pid));
 		} catch (Exception e) {
 			//e.printStackTrace();
 			logger.error("查询失败！", e);

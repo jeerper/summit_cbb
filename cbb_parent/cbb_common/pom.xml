@@ -8,6 +8,7 @@
     </parent>
     <artifactId>cbb_common</artifactId>
     <packaging>jar</packaging>
+    <version>${cbb.common.version}</version>
     <dependencies>
         <dependency>
             <groupId>org.projectlombok</groupId>

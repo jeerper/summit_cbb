@@ -13,18 +13,18 @@
     </parent>
 
     <properties>
+        <!--公共组件common包发布版本号-->
+        <cbb.common.version>1.0.3.RELEASE</cbb.common.version>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
         <maven.compiler.compilerVersion>1.8</maven.compiler.compilerVersion>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <elasticsearch.version>6.2.2</elasticsearch.version>
         <elasticsearch-sql.version>6.2.2.0</elasticsearch-sql.version>
         <spring-cloud.version>Finchley.SR2</spring-cloud.version>
         <spring-boot-admin.version>2.0.4</spring-boot-admin.version>
-        <mybatis-plus.version>3.0.6</mybatis-plus.version>
+        <mybatis-plus.version>3.1.0</mybatis-plus.version>
         <javassist.version>3.24.0-GA</javassist.version>
         <logstash-logback-encoder.version>5.2</logstash-logback-encoder.version>
         <springfox-swagger.version>2.9.2</springfox-swagger.version>
@@ -39,7 +39,7 @@
             <dependency>
                 <groupId>com.summit</groupId>
                 <artifactId>cbb_common</artifactId>
-                <version>${project.version}</version>
+                <version>${cbb.common.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.springframework.cloud</groupId>
@@ -112,6 +112,23 @@
         </resources>
 
         <plugins>
+            <!-- 要将源码上传到Nexus，需要加入这个插件 -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <configuration>
+                    <attach>true</attach>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-resources-plugin</artifactId>
@@ -221,4 +238,27 @@
         <module>cbb_api_gateway_db</module>
         <module>cbb_userauth</module>
     </modules>
+
+    <repositories>
+        <repository>
+            <id>summit</id>
+            <name>summit</name>
+            <url>http://192.168.140.212/repository/summit-group/</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
+    <distributionManagement>
+        <repository>
+            <id>summit</id>
+            <name>summit</name>
+            <url>http://192.168.140.212/repository/summit-maven/</url>
+        </repository>
+    </distributionManagement>
+
+
 </project>

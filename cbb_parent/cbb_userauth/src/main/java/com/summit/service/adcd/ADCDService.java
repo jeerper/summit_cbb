@@ -13,6 +13,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.alibaba.fastjson.JSONArray;
 import com.summit.common.entity.ResponseCodeBySummit;
 import com.summit.controller.UserController;
 import com.summit.domain.adcd.ADCDBean;
@@ -51,71 +52,89 @@ public class ADCDService {
 			linkedMap.put(1, padcd);
 			
 		}
-		
+		List<Object> rootList= null;
         try {
-			List<Object> rootList= ur.queryAllCustom(sql.toString(),linkedMap);
-			if(rootList.size()>0){
-				jSONOTree=(JSONObject)rootList.get(0);
-				logger.debug("jSONOTree.getString: "+jSONOTree.getString("ADCD"));
-				List<JSONObject> list=null;
-				list=generateOrgMapToTree(null,jSONOTree.getString("ADCD"));
-				logger.debug("list: "+list.size());
-	        	jSONOTree.put("children", list);
-			}
-			
+			rootList= ur.queryAllCustom(sql.toString(),linkedMap);
 		} catch (Exception e1) {
 			e1.printStackTrace();
 		}
+        
+        if(rootList.size()>0){
+			jSONOTree=(JSONObject)rootList.get(0);
+			//logger.debug(" jSONOTree.getString: "+jSONOTree.getString("ADCD"));
+			List<JSONObject> list=generateOrgMapToTree(null,jSONOTree.getString("ADCD"));
+			//logger.debug("list: "+list.size());
+        	jSONOTree.put("children", list);
+		}
+        //logger.debug("0-2");
+        //logger.debug("jSONOTree0: "+jSONOTree);
 		return jSONOTree;
 	}
 	
-   public List<JSONObject> generateOrgMapToTree(Map<String, List<Object>>  orgMaps, String pid) throws Exception {
-        if (null == orgMaps || orgMaps.size() == 0) {
-        	StringBuffer sql = new StringBuffer("SELECT a.ADCD, a.ADNM,a.PADCD, b.ADCD AS child_id, b.ADNM AS child_name,a.ADLEVEL as LEVELa ,b.ADLEVEL as LEVELb FROM AD_CD_B AS a  ");
-        			sql.append(" JOIN AD_CD_B AS b ON b.PADCD = a.ADCD ORDER BY  a.ADCD ASC,b.ADCD asc");
-        	logger.debug(sql.toString());
-        	List<Object> list= ur.queryAllCustom(sql.toString(),new LinkedMap());
+   public List<JSONObject> generateOrgMapToTree(Map<String, List<Object>>  orgMaps, String pid)  {
+        if (null == orgMaps || orgMaps.size() == 0) {//a.ADLEVEL as LEVELa ,b.ADLEVEL as LEVELb
+        	StringBuffer querySql = new StringBuffer("SELECT a.ADCD, a.ADNM,a.PADCD, b.ADCD AS CHILD_ID, b.ADNM AS CHILD_NAME FROM AD_CD_B AS a  ");
+        	querySql.append(" JOIN AD_CD_B AS b ON b.PADCD = a.ADCD ORDER BY  a.ADCD ASC,b.ADCD asc");
+        	logger.debug("sql:"+querySql.toString());
+        	logger.debug("0:");
+        	JSONArray list=null;
+			try {
+				list = ur.queryAllCustomJsonArray(querySql.toString(),null);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+        	logger.debug("1:"+list.size());
     		Map<String, List<Object>> map=new HashMap<String, List<Object>>();
     		List<Object> childrenList=new ArrayList();;
     		String adcd="";
     		int i=0;
-    		for(Object s:list){
-    			i++;
-    			JSONObject JSONObject=(JSONObject)s;
-    			if(!"".equals(adcd) && !adcd.equals(JSONObject.getString("ADCD")) || i==list.size()-1){
+    		for(Object o:list){
+    			JSONObject jSONObject=(JSONObject)o;
+    			if(!"".equals(adcd) && !adcd.equals(jSONObject.getString("ADCD"))){
     				map.put(adcd, childrenList);
     				childrenList=new ArrayList();
     			}
-    			childrenList.add(JSONObject);
-    			adcd=JSONObject.getString("ADCD");
+    			childrenList.add(jSONObject);
+    			if(i==list.size()-1){
+    				map.put(adcd, childrenList);
+    			}
+    			i++;
+    			adcd=jSONObject.getString("ADCD");
     		}
     		orgMaps=map;
 //            String json_list = JSONObject.toJSONString(list);
 //            orgMaps = (List<Map<String, Object>>) JSONObject.parse(json_list);
         }
+        logger.debug("2:"+orgMaps.size());
         List<JSONObject> orgList = new ArrayList<>();
         if (orgMaps != null && orgMaps.size() > 0) {
         	List parenList=orgMaps.get(pid);
         	if(parenList==null){
         		return orgList;
         	}
+        	logger.debug("3:"+parenList.size());
+        	int i=0;
             for (Object obj : parenList) {
+            	logger.debug("3-1:"+i);
             	JSONObject jSONOTree=new JSONObject();
             	JSONObject json=(JSONObject)obj;
-            	jSONOTree.put("adcd", json.getString("child_id"));
-            	jSONOTree.put("adnm", json.getString("child_name"));
+            	System.out.println(json);
+            	jSONOTree.put("adcd", json.getString("CHILD_ID"));
+            	jSONOTree.put("adnm", json.getString("CHILD_NAME"));
             	jSONOTree.put("padcd",pid);
             	if(json.containsKey("LEVELb")){
             	   jSONOTree.put("adlevel",json.getString("LEVELb"));
             	}
-                List<JSONObject> children = generateOrgMapToTree(orgMaps, json.get("child_id").toString());
+                List<JSONObject> children = generateOrgMapToTree(orgMaps, json.get("CHILD_ID").toString());
                 //将子结果集存入当前对象的children字段中
                 jSONOTree.put("children", children);
                 //添加当前对象到主结果集中
                 orgList.add(jSONOTree);
-                
+                i++;
             }
+            logger.debug("4:"+orgList.size());
         }
+        logger.debug("5:"+orgList.size());
         return orgList;
     }
 

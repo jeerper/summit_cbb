@@ -14,8 +14,6 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import net.sf.json.JSONObject;
-
-import org.json.JSONArray;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -210,7 +208,7 @@ public class UserController {
     }
 
     @ApiOperation(value = "分页查询")
-    @PostMapping("/queryByPage")
+    @GetMapping("/queryByPage")
     public RestfulEntityBySummit<?> queryByPage(
     		@RequestParam(value = "page") int page,
             @RequestParam(value ="pageSize") int pageSize,
@@ -247,7 +245,7 @@ public class UserController {
             logBean.setErroInfo(e.toString());
             logUtil.updateLog(logBean, "1");
             logger.error("用户分页查询失败：", e);
-           return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_9999,null);
+           return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_9999);
         }
     }
 
@@ -309,7 +307,7 @@ public class UserController {
 //            if (st.stringEquals(SysConstants.SUPER_USERNAME, userName)) {
 //            	return  new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_0000);
 //            } else {
-            	return  new RestfulEntityBySummit<>(us.grantRole(userName,role));
+            	return  new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_0000,us.grantRole(userName,role));
 //            }
         } catch (Exception e) {
             logBean.setActionFlag("0");

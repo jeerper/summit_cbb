@@ -142,7 +142,7 @@ mvn install
     ``` yml
     spring:
       application:
-        name: "cbb-demo" --此处用应用程序开发模板作为例子
+        name: "cbb-demo" -- 分隔符必须用'-'
     ```
 
 - 并修改`application-dev.yml`配置文件中的:
@@ -186,8 +186,11 @@ mvn install
     ``` yml
     spring:
       application:
-        name: "cbb-demo-test" --此处用应用程序开发模板作为例子(不能与服务器平台中已经运行的组件应用程序重名)
+        -- 建议name的命名格式为 你的名字的全拼+应用的名称, 例如：
+        name: "liuyuan-cbb-demo" -- 分隔符必须用'-' (不能与服务器平台中已经运行的组件应用程序重名)
+        
     ```
+    
     <font color=red size=5px>注意：</font>上图的组件应用程序名称不能与服务器平台中已经运行的组件应用程序重名，一旦重名，平台会认为是同一个组件的多个实例，网关在调用组件接口时，Ribbon负载均衡器会根据负载均衡算法，自动路由到相同的应用程序名称的组件的其中一个，造成<font color=red size=5px>从网关过来的请求无法到达你本地开发机</font>的问题。
 
 - 运行自己组件的`MainAction.java`文件即可。
@@ -198,16 +201,17 @@ mvn install
       密码:Summit2018
      ```
 
+    <font color=red size=5px>注意：</font>因为注册中心发现组件有30秒左右的延时，所以你需要稍等一会才能在界面中看到你的组件，才可以在网关Swagger中访问到你的组件。
+
 - 当出现如下状态，有红框处的组件状态，<font color=green size=5px>all up</font> 则表示组件运行正常:
 
   ![SpringBootAdmin监控](doc/Swagger-test-ui-cloud.png)
 
-- 各个组件启动完成后访问<http://192.168.140.155:45001/swagger-ui.html>,这个界面来进行接口调试，并在下图红框中切换各个组件，调试各个组件的接口，如下图所示：
+- 你的组件启动完成后访问<http://192.168.140.155:45001/swagger-ui.html>,这个界面来进行接口调试，并在下图红框中切换各个组件，调试各个组件的接口，如下图所示：
 
   ![Swagger接口调试界面](doc/Swagger-test-ui.png)
-   <font color=red size=5px>注意：</font>由于网关动态路由组件的<font color=red size=5px>配置接口暂未开发</font>，所以如果大家有新开发的组件，要注册到网关Swagger接口中，请联系<font color=red size=5px>刘源</font>来进行网关路由配置。
 
-- 或者可以访问你正在开发组件的swagger界面进行调试，在自己组件开发可以不用登陆，因为已经绕过了网关。
+- 或者可以访问你正在开发组件的swagger界面进行调试，在自己组件开发可以不用登陆，因为已经绕过了网关。<font color=red size=5px>但是无法获取当前登录的用户信息</font>
 
 ## 测试接口
 
@@ -278,6 +282,7 @@ mvn install
 |CODE_9996|请求的数据格式不正确|
 |CODE_9997|更新数据失败，所更新的数据不存在|
 |CODE_9998|删除数据失败，所删除的数据不存在|
+|CODE_9981|删除数据失败，所删除的数据存在子集|
 |CODE_9989|上传文件失败|
 |CODE_9988|上传文件不能为空|
 |CODE_9987|上传文件失败，文件最大不能超过10M|
@@ -298,6 +303,5 @@ mvn install
 |CODE_4029|角色删除验证，该角色存在以下相应的资源|
 |CODE_4030|操作失败，操作的对象不存在！|
 |CODE_4031|删除失败，不能删除admin用户！|
-|CODE_4032|登录失败，登陆的用户不存在！|
 |CODE_4033|新增失败，操作对象重复！|
 |CODE_1001|保存测站普查表失败！|
