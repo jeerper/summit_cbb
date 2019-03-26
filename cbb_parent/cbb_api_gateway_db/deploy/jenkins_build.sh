@@ -1,8 +1,8 @@
 #!/bin/sh -l
 #项目名称
-projectName="liuyuan"
+projectName="cbb_api_gateway_db"
 #组件名称
-component_name="APIliuyuan"
+component_name="API网关组件"
 #组件描述
 component_description="哈哈"
 #组件标签
