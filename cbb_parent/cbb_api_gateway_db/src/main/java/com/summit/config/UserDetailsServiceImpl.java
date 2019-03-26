@@ -29,10 +29,10 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     private static final Logger logger = LoggerFactory.getLogger(UserDetailsServiceImpl.class);
     @Autowired
+    UserInfoCache userInfoCache;
+    @Autowired
     private RemoteUserAuthService remoteUserAuthService;
 
-    @Autowired
-    UserInfoCache userInfoCache;
     /**
      * 通过用户名查找用户
      *
@@ -49,7 +49,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         }
         UserInfo userInfo = userInfoRestFulEntity.getData();
 
-        userInfoCache.setUserInfo(userInfo.getUserName(),userInfo);
+        userInfoCache.setUserInfo(userInfo.getUserName(), userInfo);
 
         UserBean user = new UserBean();
         user.setUserName(userInfo.getUserName());
@@ -58,9 +58,11 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         user.setIsEnabled(userInfo.getIsEnabled());
         user.setRoles(userInfo.getRoles());
         user.setPermissions(userInfo.getPermissions());
-        List<GrantedAuthority> authorities = AuthorityUtils.createAuthorityList(user.getRoles());
-//        authorities.add(new SimpleGrantedAuthority("ROLE_DEFAULT"));
-        user.setAuthorities(authorities);
+        if (userInfo.getRoles() != null && userInfo.getRoles().length > 0) {
+            List<GrantedAuthority> authorities = AuthorityUtils.createAuthorityList(user.getRoles());
+            //authorities.add(new SimpleGrantedAuthority("ROLE_DEFAULT"));
+            user.setAuthorities(authorities);
+        }
         return user;
     }
 }
