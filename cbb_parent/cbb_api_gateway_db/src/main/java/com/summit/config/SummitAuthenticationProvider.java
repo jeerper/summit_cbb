@@ -30,7 +30,7 @@ public class SummitAuthenticationProvider extends DaoAuthenticationProvider {
 
             throw new BadCredentialsException(messages.getMessage(
                     "AbstractUserDetailsAuthenticationProvider.badCredentials",
-                    "Bad credentials"));
+                    "用户没有提供密码相关凭证"));
         }
 
         String presentedPassword = authentication.getCredentials().toString();
@@ -42,11 +42,10 @@ public class SummitAuthenticationProvider extends DaoAuthenticationProvider {
         }
 
         if (!getPasswordEncoder().matches(decodePassword, userDetails.getPassword())) {
-            LOGGER.debug("Authentication failed: password does not match stored value");
-
+            LOGGER.debug("用户输入的密码和数据库中的密码不匹配");
             throw new BadCredentialsException(messages.getMessage(
                     "AbstractUserDetailsAuthenticationProvider.badCredentials",
-                    "Bad credentials"));
+                    "用户名或密码错误"));
         }
     }
     private static String decryptAES(String data, String pass) throws Exception {
