@@ -13,9 +13,11 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.TypeReference;
 import com.summit.common.entity.ResponseCodeBySummit;
-import com.summit.controller.UserController;
+import com.summit.common.entity.UserInfo;
 import com.summit.domain.adcd.ADCDBean;
 import com.summit.domain.adcd.ADCDBeanRowMapper;
 import com.summit.repository.UserRepository;
@@ -23,6 +25,7 @@ import com.summit.util.Page;
 import com.summit.util.SummitTools;
 
 import net.sf.json.JSONObject;
+
 
 @Service
 @Transactional
@@ -41,8 +44,7 @@ public class ADCDService {
 	 * 查询adcd树
 	 * @return
 	 */
-	public JSONObject queryAdcdTree(String padcd) {
-		JSONObject jSONOTree=null;
+	public ADCDBean queryAdcdTree(String padcd) {
 		LinkedMap linkedMap=new LinkedMap();
 		StringBuffer sql = new StringBuffer("SELECT ADCD, ADNM,PADCD, ADLEVEL FROM AD_CD_B where 1=1 ");
 		if(padcd==null || "".equals(padcd)){
@@ -58,20 +60,29 @@ public class ADCDService {
 		} catch (Exception e1) {
 			e1.printStackTrace();
 		}
-        
+        ADCDBean ADCDBeanTree =null;
         if(rootList.size()>0){
-			jSONOTree=(JSONObject)rootList.get(0);
+        	String jsonTree=((JSONObject)rootList.get(0)).toString();
+			ADCDBeanTree = JSON.parseObject(jsonTree, new TypeReference<ADCDBean>() {});
+			
 			//logger.debug(" jSONOTree.getString: "+jSONOTree.getString("ADCD"));
-			List<JSONObject> list=generateOrgMapToTree(null,jSONOTree.getString("ADCD"));
+			List<ADCDBean> list=generateOrgMapToTree(null,ADCDBeanTree.getAdcd());
 			//logger.debug("list: "+list.size());
-        	jSONOTree.put("children", list);
+			if(list!=null && list.size()>0){
+				ADCDBeanTree.setChildren(list);
+			}
+        	//System.out.println(jSONOTree);
+        	// ADCDBeanTree = JSON.parseObject(jSONOTree.toString(), new TypeReference<ADCDBean>() {});
+        	//System.out.println(ADCDBeanTree);
+        	  
 		}
+        
         //logger.debug("0-2");
         //logger.debug("jSONOTree0: "+jSONOTree);
-		return jSONOTree;
+		return ADCDBeanTree;
 	}
 	
-   public List<JSONObject> generateOrgMapToTree(Map<String, List<Object>>  orgMaps, String pid)  {
+   public List<ADCDBean> generateOrgMapToTree(Map<String, List<Object>>  orgMaps, String pid)  {
         if (null == orgMaps || orgMaps.size() == 0) {//a.ADLEVEL as LEVELa ,b.ADLEVEL as LEVELb
         	StringBuffer querySql = new StringBuffer("SELECT a.ADCD, a.ADNM,a.PADCD, b.ADCD AS CHILD_ID, b.ADNM AS CHILD_NAME FROM AD_CD_B AS a  ");
         	querySql.append(" JOIN AD_CD_B AS b ON b.PADCD = a.ADCD ORDER BY  a.ADCD ASC,b.ADCD asc");
@@ -106,7 +117,7 @@ public class ADCDService {
 //            orgMaps = (List<Map<String, Object>>) JSONObject.parse(json_list);
         }
         logger.debug("2:"+orgMaps.size());
-        List<JSONObject> orgList = new ArrayList<>();
+        List<ADCDBean> orgList = new ArrayList<>();
         if (orgMaps != null && orgMaps.size() > 0) {
         	List parenList=orgMaps.get(pid);
         	if(parenList==null){
@@ -115,21 +126,33 @@ public class ADCDService {
         	logger.debug("3:"+parenList.size());
         	int i=0;
             for (Object obj : parenList) {
-            	logger.debug("3-1:"+i);
-            	JSONObject jSONOTree=new JSONObject();
+            	// logger.debug("3-1:"+i);
+            	ADCDBean adcdBean=new ADCDBean();
+            	// JSONObject jSONOTree=new JSONObject();
             	JSONObject json=(JSONObject)obj;
             	System.out.println(json);
-            	jSONOTree.put("adcd", json.getString("CHILD_ID"));
-            	jSONOTree.put("adnm", json.getString("CHILD_NAME"));
-            	jSONOTree.put("padcd",pid);
+            	adcdBean.setAdcd(json.getString("CHILD_ID"));
+            	adcdBean.setAdnm(json.getString("CHILD_NAME"));
+            	adcdBean.setPadcd(pid);
             	if(json.containsKey("LEVELb")){
-            	   jSONOTree.put("adlevel",json.getString("LEVELb"));
-            	}
-                List<JSONObject> children = generateOrgMapToTree(orgMaps, json.get("CHILD_ID").toString());
+            		adcdBean.setLevel(json.getString("LEVELb"));
+             	}
+            	
+//            	jSONOTree.put("ADCD", json.getString("CHILD_ID"));
+//            	jSONOTree.put("ADNM", json.getString("CHILD_NAME"));
+//            	jSONOTree.put("PADCD",pid);
+//            	if(json.containsKey("LEVELb")){
+//            	   jSONOTree.put("LEVEL",json.getString("LEVELb"));
+//            	}
+              //  List<JSONObject> children = generateOrgMapToTree(orgMaps, json.get("CHILD_ID").toString());
+            	 List<ADCDBean> children = generateOrgMapToTree(orgMaps, json.get("CHILD_ID").toString());
                 //将子结果集存入当前对象的children字段中
-                jSONOTree.put("children", children);
+                if(children!=null && children.size()>0){
+                  // jSONOTree.put("CHILDREN", children);
+                	adcdBean.setChildren(children);
+                }
                 //添加当前对象到主结果集中
-                orgList.add(jSONOTree);
+                orgList.add(adcdBean);
                 i++;
             }
             logger.debug("4:"+orgList.size());
@@ -144,7 +167,7 @@ public class ADCDService {
 	 * @param adcd
 	 * @return
 	 */
-	public List<Object> queryByPId(JSONObject paramJson) {
+	public List<ADCDBean> queryByPId(JSONObject paramJson)throws Exception{
 		StringBuffer sql =new StringBuffer( "SELECT * FROM AD_CD_B WHERE 1=1 ");
 		LinkedMap map = new LinkedMap();
 		if(paramJson!=null){
@@ -160,12 +183,12 @@ public class ADCDService {
                 index++;
 			}
 		}
-		List<Object> l;
-		try {
-			l = ur.queryAllCustom(sql.toString(), map);
-			return l;
-		} catch (Exception e) {
-			e.printStackTrace();
+		List<Object> l=ur.queryAllCustom(sql.toString(), map);
+		if(l!=null){
+			 ArrayList<ADCDBean> adCDBeans = JSON.parseObject(l.toString(), new TypeReference<ArrayList<ADCDBean>>() {});
+			 return adCDBeans;
+				
+		}else{
 			return null;
 		}
 		
@@ -190,11 +213,19 @@ public class ADCDService {
 	 * @param pId
 	 * @return
 	 */
-	public Page<JSONObject> queryByPage(int start, int limit, String padcd) {
+	public Page<ADCDBean> queryByPage(int start, int limit, String padcd) {
 		String sql = "SELECT * FROM AD_CD_B WHERE PADCD = ?";
 		//if("".equals(padcd))padcd ="root";
 		Page<JSONObject> rs = ur.queryByCustomPage(sql, start, limit, padcd);
-		return rs;
+		
+		Page<ADCDBean> pageADCDBeanInfo=new Page<ADCDBean>();
+		if(rs!=null){
+			 ArrayList<ADCDBean> students = JSON.parseObject(rs.getContent().toString(), new TypeReference<ArrayList<ADCDBean>>() {});
+			 pageADCDBeanInfo.setContent(students);
+			 pageADCDBeanInfo.setTotalElements(rs.getTotalElements());
+			 return pageADCDBeanInfo;
+		}
+		return null;
 	}
 
 

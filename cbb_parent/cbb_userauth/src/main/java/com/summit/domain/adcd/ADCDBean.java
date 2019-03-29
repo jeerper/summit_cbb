@@ -1,6 +1,7 @@
 package com.summit.domain.adcd;
 
 import java.io.Serializable;
+import java.util.List;
 
 import io.swagger.annotations.ApiModelProperty;
 
@@ -13,7 +14,11 @@ public class ADCDBean  implements Serializable {
 	private String adnm;
 	@ApiModelProperty(value="padcd",required=true)
 	private String padcd;
+	
 	private String level;
+	
+	private List<ADCDBean> children;
+	
 	public ADCDBean() {
 		super();
 	}
@@ -56,6 +61,15 @@ public class ADCDBean  implements Serializable {
 
 	public void setLevel(String level) {
 		this.level = level;
+	}
+
+	
+	public List<ADCDBean> getChildren() {
+		return children;
+	}
+
+	public void setChildren(List<ADCDBean> children) {
+		this.children = children;
 	}
 
 	public static long getSerialversionuid() {

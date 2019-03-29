@@ -1,6 +1,7 @@
 package com.summit.domain.dept;
 
 import java.io.Serializable;
+import java.util.List;
 
 import io.swagger.annotations.ApiModelProperty;
 
@@ -16,6 +17,7 @@ public class DeptBean  implements Serializable {
 	@ApiModelProperty(value="deptName",required=true)
 	private String deptName;
 	private String remark;
+	private List<DeptBean> children;
 	public DeptBean() {
 		super();
 	}
@@ -71,10 +73,12 @@ public class DeptBean  implements Serializable {
 		this.remark = remark;
 	}
 
-	
-	public static long getSerialversionuid() {
-		return serialVersionUID;
+	public List<DeptBean> getChildren() {
+		return children;
 	}
-	
+
+	public void setChildren(List<DeptBean> children) {
+		this.children = children;
+	}
 	
 }

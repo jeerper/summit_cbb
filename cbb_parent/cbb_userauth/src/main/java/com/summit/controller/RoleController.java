@@ -55,7 +55,7 @@ public class RoleController {
 		try {
 			
 			logBean = logUtil.insertLog(request,"1", "角色管理新增","");
-			return new RestfulEntityBySummit<>(rs.add(roleBean));
+			return new RestfulEntityBySummit<String>(rs.add(roleBean),null);
 			//res = rs.add(roleBean);
 		} catch (Exception e) {
 			//e.printStackTrace();
@@ -63,7 +63,7 @@ public class RoleController {
 			logBean.setActionFlag("0");
 			logBean.setErroInfo(e.toString());
 			logUtil.updateLog(logBean,"1");
-			return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_9999);
+			return new RestfulEntityBySummit<String>(ResponseCodeBySummit.CODE_9999,null);
 		}
 		//logUtil.updateLog(logBean,"1");
 		//return res;
@@ -78,14 +78,14 @@ public class RoleController {
 		try {
 			logBean = logUtil.insertLog(request,"1", "角色管理删除","");
 			//res = rs.del(codes);
-			return new RestfulEntityBySummit<>(rs.del(codes));
+			return new RestfulEntityBySummit<String>(rs.del(codes),null);
 		} catch (Exception e) {
 			//e.printStackTrace();
 			logger.error("操作失败！", e);
 			logBean.setActionFlag("0");
 			logBean.setErroInfo(e.toString());
 			logUtil.updateLog(logBean,"1");
-			return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_9999);
+			return new RestfulEntityBySummit<String>(ResponseCodeBySummit.CODE_9999,null);
 		}
 		//logUtil.updateLog(logBean,"1");
 		//return res;
@@ -99,14 +99,14 @@ public class RoleController {
 		try {
 			logBean = logUtil.insertLog(request,"1", "角色管理修改","");
 			//res = rs.edit(roleBean);
-			return new RestfulEntityBySummit<>(rs.edit(roleBean));
+			return new RestfulEntityBySummit<String>(rs.edit(roleBean),null);
 		} catch (Exception e) {
 			//e.printStackTrace();
 			logger.error("操作失败！", e);
 			logBean.setActionFlag("0");
 			logBean.setErroInfo(e.toString());
 			logUtil.updateLog(logBean,"1");
-		    return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_9999);
+		    return new RestfulEntityBySummit<String>(ResponseCodeBySummit.CODE_9999,null);
 		}
 		//logUtil.updateLog(logBean,"1");
 		//return res;
@@ -128,7 +128,7 @@ public class RoleController {
 			logBean.setActionFlag("0");
 			logBean.setErroInfo(e.toString());
 			logUtil.updateLog(logBean,"1");
-			return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_9999);
+			return new RestfulEntityBySummit<String>(ResponseCodeBySummit.CODE_9999,null);
 		}
 		//logUtil.updateLog(logBean,"1");
 		//return res;
@@ -152,7 +152,7 @@ public class RoleController {
 			logBean.setActionFlag("0");
 			logBean.setErroInfo(e.toString());
 			logUtil.updateLog(logBean,"1");
-		    return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_9999);
+		    return new RestfulEntityBySummit<String>(ResponseCodeBySummit.CODE_9999,null);
 		}
 		//logUtil.updateLog(logBean,"1");
 		//return res;
@@ -173,7 +173,7 @@ public class RoleController {
 			logBean.setActionFlag("0");
 			logBean.setErroInfo(e.toString());
 			logUtil.updateLog(logBean,"1");
-			return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_9999);
+			return new RestfulEntityBySummit<String>(ResponseCodeBySummit.CODE_9999,null);
 		}
 		//logUtil.updateLog(logBean,"1");
 		//return res;
@@ -203,7 +203,7 @@ public class RoleController {
 			logBean.setActionFlag("0");
 			logBean.setErroInfo(e.toString());
 			logUtil.updateLog(logBean,"1");
-			return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_9999);
+			return new RestfulEntityBySummit<String>(ResponseCodeBySummit.CODE_9999,null);
 		}
 		//logUtil.updateLog(logBean,"1");
 		//return res;
@@ -226,7 +226,7 @@ public class RoleController {
 			logBean.setActionFlag("0");
 			logBean.setErroInfo(e.toString());
 			logUtil.updateLog(logBean,"1");
-			return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_9999);
+			return new RestfulEntityBySummit<String>(ResponseCodeBySummit.CODE_9999,null);
 		}
 		//logUtil.updateLog(logBean,"1");
 		//return res;
