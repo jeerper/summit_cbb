@@ -10,8 +10,11 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.TypeReference;
 import com.summit.common.entity.ResponseCodeBySummit;
 import com.summit.common.entity.UserInfo;
+import com.summit.domain.function.FunctionBean;
 import com.summit.domain.user.UserInfoRowMapper;
 import com.summit.repository.UserRepository;
 import com.summit.util.Page;
@@ -97,7 +100,7 @@ public class UserService {
 		return null;
 	}
 
-	public Page<JSONObject> queryByPage(int start, int limit, JSONObject paramJson) {
+	public Page<UserInfo> queryByPage(int start, int limit, JSONObject paramJson) {
 		StringBuilder sb = new StringBuilder(
 				"SELECT USERNAME,NAME,IS_ENABLED,EMAIL,PHONE_NUMBER,STATE,NOTE,LAST_UPDATE_TIME FROM SYS_USER WHERE USERNAME <> '"
 						+ SysConstants.SUPER_USERNAME + "'");
@@ -113,8 +116,16 @@ public class UserService {
 		if (paramJson.containsKey("state")) {
 			sb.append(" AND STATE = '"+paramJson.get("state")+"'");
 		}
+		Page<UserInfo> pageUserInfo=new Page<UserInfo>();
+		Page <JSONObject> page= ur.queryByCustomPage(sb.toString(), start, limit);
+		if(page!=null){
+			 ArrayList<UserInfo> students = JSON.parseObject(page.getContent().toString(), new TypeReference<ArrayList<UserInfo>>() {});
+			 pageUserInfo.setContent(students);
+			 pageUserInfo.setTotalElements(page.getTotalElements());
+			 return pageUserInfo;
+		}
 		
-		return ur.queryByCustomPage(sb.toString(), start, limit);
+		return null;
 	}
 
 	public ResponseCodeBySummit resetPassword(String userNames) {
@@ -169,8 +180,13 @@ public class UserService {
 		return list;
 	}
 
-	public List<JSONObject> getFunInfoByUserName(String userName){
+	public List<FunctionBean> getFunInfoByUserName(String userName){
 		String sql = "SELECT  SF.* FROM SYS_USER_ROLE SUR INNER JOIN SYS_ROLE_FUNCTION SRF ON ( SUR.ROLE_CODE = SRF.ROLE_CODE ) INNER JOIN SYS_FUNCTION SF ON (SRF.FUNCTION_ID = SF.ID) WHERE SF.IS_ENABLED = '1' AND SF.SUPER_FUN = 0 AND SUR.USERNAME = ? ORDER BY FDESC";
-		return ur.queryAllCustom(sql, userName);
+		List list= ur.queryAllCustom(sql, userName);
+		if(list!=null){
+			 ArrayList<FunctionBean> functionBeans = JSON.parseObject(list.toString(), new TypeReference<ArrayList<FunctionBean>>() {});
+			 return functionBeans;
+		}
+		return list;
 	}
 }

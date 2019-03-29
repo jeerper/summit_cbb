@@ -50,14 +50,14 @@ public class FunctionController {
 		LogBean logBean = new LogBean();
 		try {
 			logBean = logUtil.insertLog(request,"1", "功能管理新增","");
-			return new RestfulEntityBySummit<>(fs.add(functionBean));
+			return new RestfulEntityBySummit<String>(fs.add(functionBean),null);
 		} catch (Exception e) {
 			//e.printStackTrace();
 			logger.error("操作失败！", e);
 			logBean.setActionFlag("0");
 			logBean.setErroInfo(e.toString());
 			logUtil.updateLog(logBean,"1");
-			return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_9999);
+			return new RestfulEntityBySummit<String>(ResponseCodeBySummit.CODE_9999,null);
 		}
 		//logUtil.updateLog(logBean,"1");
 		//return res;
@@ -71,7 +71,7 @@ public class FunctionController {
 		LogBean logBean = new LogBean();
 		try {
 			logBean = logUtil.insertLog(request,"1", "功能管理删除","");
-			return new RestfulEntityBySummit<>(fs.del(ids));
+			return new RestfulEntityBySummit<String>(fs.del(ids),null);
 			//res = fs.del(ids);
 		} catch (Exception e) {
 			//e.printStackTrace();
@@ -79,7 +79,7 @@ public class FunctionController {
 			logBean.setActionFlag("0");
 			logBean.setErroInfo(e.toString());
 			logUtil.updateLog(logBean,"1");
-			return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_9999);
+			return new RestfulEntityBySummit<String>(ResponseCodeBySummit.CODE_9999,null);
 		}
 		//logUtil.updateLog(logBean,"1");
 		//return res;
@@ -93,14 +93,14 @@ public class FunctionController {
 		try {
 			logBean = logUtil.insertLog(request,"1", "功能管理修改","");
 			//res = fs.edit(functionBean);
-			return new RestfulEntityBySummit<>(fs.edit(functionBean));
+			return new RestfulEntityBySummit<String>(fs.edit(functionBean),null);
 		} catch (Exception e) {
 			//e.printStackTrace();
 			logger.error("操作失败！", e);
 			logBean.setActionFlag("0");
 			logBean.setErroInfo(e.toString());
 			logUtil.updateLog(logBean,"1");
-			return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_9999);
+			return new RestfulEntityBySummit<String>(ResponseCodeBySummit.CODE_9999,null);
 		}
 		//logUtil.updateLog(logBean,"1");
 		//return res;
@@ -127,7 +127,7 @@ public class FunctionController {
 			logBean.setActionFlag("0");
 			logBean.setErroInfo(e.toString());
 			logUtil.updateLog(logBean,"1");
-			return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_9999);
+			return new RestfulEntityBySummit<String>(ResponseCodeBySummit.CODE_9999,null);
 		}
 		//logUtil.updateLog(logBean,"1");
 		//return res;
@@ -153,7 +153,7 @@ public class FunctionController {
 			logBean.setActionFlag("0");
 			logBean.setErroInfo(e.toString());
 			logUtil.updateLog(logBean,"1");
-			return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_9999);
+			return new RestfulEntityBySummit<String>(ResponseCodeBySummit.CODE_9999,null);
 		}
 		//logUtil.updateLog(logBean,"1");
 		//return res;
@@ -182,7 +182,7 @@ public class FunctionController {
 			logBean.setActionFlag("0");
 			logBean.setErroInfo(e.toString());
 			logUtil.updateLog(logBean,"1");
-			return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_9999);
+			return new RestfulEntityBySummit<String>(ResponseCodeBySummit.CODE_9999,null);
 		}
 		//logUtil.updateLog(logBean,"1");
 		//return res;

@@ -13,7 +13,10 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.TypeReference;
 import com.summit.common.entity.ResponseCodeBySummit;
+import com.summit.domain.adcd.ADCDBean;
 import com.summit.domain.dept.DeptBean;
 import com.summit.domain.dept.DeptBeanRowMapper;
 import com.summit.repository.UserRepository;
@@ -38,9 +41,11 @@ public class DeptService {
 	 * 
 	 * 查询部门树
 	 * @return
+	 * @throws Exception 
 	 */
-	public JSONObject queryDeptTree(String pid) {
-		JSONObject jSONOTree=null;
+	public DeptBean queryDeptTree(String pid) throws Exception {
+		//JSONObject jSONOTree=null;
+		//DeptBean deptBean=null;
 		LinkedMap linkedMap=new LinkedMap();
 		StringBuffer sql = new StringBuffer("SELECT ID,PID,DEPTCODE,DEPTNAME,REMARK FROM SYS_DEPT  where 1=1");
 		if(pid==null || "".equals(pid)){
@@ -50,38 +55,27 @@ public class DeptService {
 			linkedMap.put(1, pid);
 			
 		}
-		List<Object> rootList=null;
-		try {
-			rootList=ur.queryAllCustom(sql.toString(),linkedMap);
-		} catch (Exception e1) {
-			e1.printStackTrace();
-			return null;
-		}
+		List<Object> rootList=ur.queryAllCustom(sql.toString(),linkedMap);
 		if(rootList.size()>0){
-			jSONOTree=(JSONObject)rootList.get(0);
+			String jsonTree=((JSONObject)rootList.get(0)).toString();
+			DeptBean deptBeaneanTree = JSON.parseObject(jsonTree, new TypeReference<DeptBean>() {});
 			//logger.debug("jSONOTree.getString: "+jSONOTree.getString("ID"));
-			List<JSONObject> list=null;
-			list=generateOrgMapToTree(null,jSONOTree.getString("ID"));
+			List<DeptBean> children=generateOrgMapToTree(null,deptBeaneanTree.getId());
 			//logger.debug("list: "+list.size());
-        	jSONOTree.put("children", list);
+			deptBeaneanTree.setChildren(children);
+			return deptBeaneanTree;
 		}
 		//logger.debug("jSONOTree0: "+jSONOTree);
-		return jSONOTree;
+		return null;
 	}
 	
-   public List<JSONObject> generateOrgMapToTree(Map<String, List<Object>>  orgMaps, String pid) {
+   public List<DeptBean> generateOrgMapToTree(Map<String, List<Object>>  orgMaps, String pid) throws Exception {
         if (null == orgMaps || orgMaps.size() == 0) {
-        	StringBuffer sql = new StringBuffer("SELECT DEPT.ID,DEPT.DEPTNAME,DEPT.PID,FDEPT.ID AS CHILD_ID,FDEPT.CODE AS CHILD_CODE,FDEPT.DEPTNAME AS CHILD_NAME ");
+        	StringBuffer sql = new StringBuffer("SELECT DEPT.ID,DEPT.DEPTNAME,DEPT.PID,FDEPT.ID AS CHILD_ID,FDEPT.DEPTCODE AS CHILD_CODE,FDEPT.DEPTNAME AS CHILD_NAME ");
         	sql.append(" ,FDEPT.DEPTCODE AS FDEPTCODE FROM SYS_DEPT DEPT INNER JOIN SYS_DEPT FDEPT ON FDEPT.PID= DEPT.ID  ");
         	sql.append(" ORDER BY  DEPT.ID ASC,FDEPT.ID ASC ");
         	//logger.debug(sql.toString());
-        	List<Object> list= null;
-        	try {
-				list=ur.queryAllCustom(sql.toString(),new LinkedMap());
-			} catch (Exception e) {
-				e.printStackTrace();
-				return null;
-			}
+        	List<Object> list=ur.queryAllCustom(sql.toString(),new LinkedMap());
     		Map<String, List<Object>> map=new HashMap<String, List<Object>>();
     		List<Object> childrenList=new ArrayList();;
     		String id="";
@@ -104,27 +98,27 @@ public class DeptService {
 //            String json_list = JSONObject.toJSONString(list);
 //            orgMaps = (List<Map<String, Object>>) JSONObject.parse(json_list);
         }
-        List<JSONObject> orgList = new ArrayList<>();
+        List<DeptBean> orgList = new ArrayList<>();
         //logger.debug(" 数据:"+orgMaps.size()+"   pid:"+pid);
         if (orgMaps != null && orgMaps.size() > 0) {
         	List parenList=orgMaps.get(pid);
         	if(parenList==null){
         		return orgList;
         	}
+        	DeptBean deptBean=null;
             for (Object obj : parenList) {
-            	JSONObject jSONOTree=new JSONObject();
+            	deptBean=new DeptBean();
             	JSONObject json=(JSONObject)obj;
-            	jSONOTree.put("DEPTID", json.getString("CHILD_ID"));
-            	jSONOTree.put("DEPTCODE", json.getString("CHILD_CODE"));
-            	jSONOTree.put("DEPTNAME", json.getString("CHILD_NAME"));
-            	jSONOTree.put("PCODE", json.getString("FDEPTCODE"));
-            	jSONOTree.put("PID",pid);
+            	deptBean.setId(json.getString("CHILD_ID"));
+            	deptBean.setDeptCode(json.getString("CHILD_CODE"));
+            	deptBean.setDeptName(json.getString("CHILD_NAME"));
+            	deptBean.setPid(pid);
             	//jSONOTree.put("id", json.getString("ID"));
-                List<JSONObject> children = generateOrgMapToTree(orgMaps, json.get("CHILD_ID").toString());
+                List<DeptBean> children = generateOrgMapToTree(orgMaps, json.get("CHILD_ID").toString());
                 //将子结果集存入当前对象的children字段中
-                jSONOTree.put("children", children);
+                deptBean.setChildren(children);
                 //添加当前对象到主结果集中
-                orgList.add(jSONOTree);
+                orgList.add(deptBean);
                 
             }
         }
@@ -151,7 +145,7 @@ public class DeptService {
 	 * @param pId
 	 * @return
 	 */
-	public Page<JSONObject> queryByPage(int start, int limit, JSONObject paramJson) {
+	public Page<DeptBean> queryByPage(int start, int limit, JSONObject paramJson) {
 		StringBuffer sql = new StringBuffer("SELECT dept.*,fdept.DEPTCODE as pdeptCode,fdept.DEPTNAME as pdeptName FROM SYS_DEPT dept left join SYS_DEPT fdept on dept.pid=fdept.DEPTCODE where 1=1 ");
 		LinkedMap map = new LinkedMap();
         Integer index = 1;
@@ -173,7 +167,14 @@ public class DeptService {
         	}
         }
 		Page<JSONObject> rs = ur.queryByCustomPage(sql.toString(), start, limit, map);
-		return rs;
+		if(rs!=null){
+			 Page<DeptBean> pageDeptBeanInfo=new Page<DeptBean>();
+			 ArrayList<DeptBean> students = JSON.parseObject(rs.getContent().toString(), new TypeReference<ArrayList<DeptBean>>() {});
+			 pageDeptBeanInfo.setContent(students);
+			 pageDeptBeanInfo.setTotalElements(rs.getTotalElements());
+			 return pageDeptBeanInfo;
+		}
+		return null;
 	}
 	
 
@@ -183,7 +184,7 @@ public class DeptService {
 	 * @param 
 	 * @return
 	 */
-	public String edit(DeptBean ab) {
+	public ResponseCodeBySummit edit(DeptBean ab) {
 		String sql = "UPDATE SYS_DEPT SET  pid = ?, DEPTCODE = ?, DEPTNAME = ?, REMARK = ? where id = ?";
 		jdbcTemplate.update(
 				sql,
@@ -193,7 +194,7 @@ public class DeptService {
 				ab.getRemark(),
 				ab.getId()
 		);
-		return "";
+		return ResponseCodeBySummit.CODE_0000;
 	}
 	/**
 	 * 新增

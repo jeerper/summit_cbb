@@ -4,16 +4,20 @@ import com.summit.common.entity.ResponseCodeBySummit;
 import com.summit.common.entity.RestfulEntityBySummit;
 import com.summit.common.entity.UserInfo;
 import com.summit.common.redis.user.UserInfoCache;
+import com.summit.domain.function.FunctionBean;
 import com.summit.domain.log.LogBean;
 import com.summit.service.log.ILogUtil;
 import com.summit.service.user.UserService;
 import com.summit.util.Page;
 import com.summit.util.SummitTools;
 import com.summit.util.SysConstants;
+
+import io.netty.util.internal.StringUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import net.sf.json.JSONObject;
+import org.json.JSONArray;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,18 +52,21 @@ public class UserController {
 
     @PostMapping("/add")
     @ApiOperation(value = "新增用户",  notes = "昵称(name)，用户名(userName),密码(password)都是必输项")
-    public RestfulEntityBySummit<?> add(@RequestBody UserInfo userInfo, HttpServletRequest request) {
+    public RestfulEntityBySummit<String> add(@RequestBody UserInfo userInfo, HttpServletRequest request) {
         LogBean logBean = new LogBean();
         try {
             logBean = logUtil.insertLog(request, "1", "用户新增", userInfo.getUserName());
-            return new RestfulEntityBySummit<>(us.add(userInfo));
+            if(StringUtil.isNullOrEmpty( userInfo.getName()) || StringUtil.isNullOrEmpty(userInfo.getUserName()) || StringUtil.isNullOrEmpty(userInfo.getPassword())){
+                return new RestfulEntityBySummit<String>(ResponseCodeBySummit.CODE_9986,null);
+            }
+            return new RestfulEntityBySummit<String>(us.add(userInfo),null);
         } catch (Exception e) {
             //e.printStackTrace();
             logger.error("新增用户失败", e);
             logBean.setActionFlag("0");
             logBean.setErroInfo(e.toString());
             logUtil.updateLog(logBean, "1");
-            return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_9999);
+            return new RestfulEntityBySummit<String>(ResponseCodeBySummit.CODE_9999,null);
         }
     }
 
@@ -72,7 +79,7 @@ public class UserController {
      */
     @ApiOperation(value = "删除用户信息")
     @DeleteMapping("/del")
-    public RestfulEntityBySummit<?> del(
+    public RestfulEntityBySummit<String> del(
     		@RequestParam(value = "userNames") String userNames, HttpServletRequest request) {
         LogBean logBean = new LogBean();
         try {
@@ -86,20 +93,20 @@ public class UserController {
             		userInfoCache.deleteUserInfo(username);		
             	}
             }
-            return new RestfulEntityBySummit<>(us.del(userNames));
+            return new RestfulEntityBySummit<String>(us.del(userNames),null);
         } catch (Exception e) {
             //e.printStackTrace();
             logger.error("删除用户信息", e);
             logBean.setActionFlag("0");
             logBean.setErroInfo(e.toString());
             logUtil.updateLog(logBean, "1");
-            return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_9999);
+            return new RestfulEntityBySummit<String>(ResponseCodeBySummit.CODE_9999,null);
         }
     }
 
     @ApiOperation(value = "修改用户",  notes = "昵称(name)，用户名(userName),密码(password)都是必输项")
     @PutMapping("/edit")
-    public RestfulEntityBySummit<?> edit(@RequestBody UserInfo userInfo, HttpServletRequest request) {
+    public RestfulEntityBySummit<String> edit(@RequestBody UserInfo userInfo, HttpServletRequest request) {
         LogBean logBean = new LogBean();
         try {
             logBean = logUtil.insertLog(request, "1", "修改用户", "");
@@ -107,7 +114,7 @@ public class UserController {
 //            	 return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_0000);
 //            } else {
             	userInfoCache.setUserInfo(userInfo.getUserName(),userInfo);
-            	return new RestfulEntityBySummit<>(us.edit(userInfo));
+            	return new RestfulEntityBySummit<String>(us.edit(userInfo),null);
 //            }
         } catch (Exception e) {
             //e.printStackTrace();
@@ -115,13 +122,13 @@ public class UserController {
             logBean.setErroInfo(e.toString());
             logUtil.updateLog(logBean, "1");
             logger.error("修改用户失败:", e);
-            return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_9999);
+            return new RestfulEntityBySummit<String>(ResponseCodeBySummit.CODE_9999,null);
         }
     }
 
     @ApiOperation(value = "修改密码")
     @PutMapping("/editPassword")
-    public RestfulEntityBySummit<?> editPassword(
+    public RestfulEntityBySummit<String> editPassword(
     		@RequestParam(value = "oldPassword")  String oldPassword,
     		@RequestParam(value = "password")  String password, 
     		@RequestParam(value = "repeatPassword")  String repeatPassword,
@@ -130,27 +137,27 @@ public class UserController {
         LogBean logBean = new LogBean();
         try {
             logBean = logUtil.insertLog(request, "1", "修改密码", userName);
-           return  new RestfulEntityBySummit<>(us.editPassword(userName,oldPassword, password, repeatPassword));
+           return  new RestfulEntityBySummit<String>(us.editPassword(userName,oldPassword, password, repeatPassword),null);
         } catch (Exception e) {
             //e.printStackTrace();
             logBean.setActionFlag("0");
             logBean.setErroInfo(e.toString());
             logUtil.updateLog(logBean, "1");
             logger.error("修改密码失败:", e);
-            return  new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_9999);
+            return  new RestfulEntityBySummit<String>(ResponseCodeBySummit.CODE_9999,null);
         }
     }
 
     @ApiOperation(value = "根据用户名查询用户信息")
     @GetMapping("/queryUserInfoByUserName")
-    public RestfulEntityBySummit<?> queryUserInfoByUserName(
+    public RestfulEntityBySummit<UserInfo> queryUserInfoByUserName(
     		@RequestParam(value = "userName")  String userName, HttpServletRequest request) {
         LogBean logBean = new LogBean();
         try {
             logBean = logUtil.insertLog(request, "1", "用户管理根据用户名查询用户", userName);
             UserInfo ub = us.queryByUserName(userName);
             if (ub == null) {
-            	return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_4023);
+            	return new RestfulEntityBySummit<UserInfo>(ResponseCodeBySummit.CODE_4023,null);
             }
             List<String> roleList = us.queryRoleByUserName(userName);
             List<String> funList = us.getFunByUserName(userName);
@@ -167,9 +174,9 @@ public class UserController {
             }
 //            JSONArray jsonArray = new JSONArray();
 //            jsonArray.put(ub);
-            RestfulEntityBySummit<?> info=new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_0000,ub);
+            return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_0000,ub);
             //logger.debug("数据查询成功！"+info.getCode()+"==="+info.getData()); 
-            return info;
+           
         } catch (Exception e) {
         	//logger.debug("数据查询失败1！" +e.toString());
             //e.printStackTrace();
@@ -179,20 +186,20 @@ public class UserController {
             logUtil.updateLog(logBean, "1");
             logger.error("根据用户名查询用户信息失败：", e);
             //return  new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_9999);
-            return  new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_9993);
+            return  new RestfulEntityBySummit<UserInfo>(ResponseCodeBySummit.CODE_9993,null);
         }
     }
     
     @ApiOperation(value = "根据用户名查询所有菜单")
     @GetMapping("/queryFunctionInfoByUserName")
-    public RestfulEntityBySummit<?> queryFunctionInfoByUserName(
+    public RestfulEntityBySummit<List<FunctionBean>> queryFunctionInfoByUserName(
     		@RequestParam(value = "userName")  String userName, HttpServletRequest request) {
         LogBean logBean = new LogBean();
         try {
             logBean = logUtil.insertLog(request, "1", "用户管理根据用户名查询菜单信息", userName);
-            List<JSONObject> funList=us.getFunInfoByUserName(userName);
+            List<FunctionBean> funList=us.getFunInfoByUserName(userName);
             if (funList == null) {
-            	return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_4023);
+            	return new RestfulEntityBySummit<List<FunctionBean>>(ResponseCodeBySummit.CODE_4023,null);
             }
             //JSONArray jsonArray = new JSONArray();
             //jsonArray.put(funList);
@@ -203,13 +210,13 @@ public class UserController {
             logBean.setErroInfo(e.toString());
             logUtil.updateLog(logBean, "1");
             logger.error("根据用户名查询所有菜单失败：", e);
-            return  new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_9999);
+            return  new RestfulEntityBySummit<List<FunctionBean>>(ResponseCodeBySummit.CODE_9999,null);
         }
     }
 
     @ApiOperation(value = "分页查询")
     @GetMapping("/queryByPage")
-    public RestfulEntityBySummit<?> queryByPage(
+    public RestfulEntityBySummit<Page<UserInfo>> queryByPage(
     		@RequestParam(value = "page") int page,
             @RequestParam(value ="pageSize") int pageSize,
             @RequestParam(value = "name",required = false) String name,
@@ -235,7 +242,8 @@ public class UserController {
             if(!st.stringIsNull(state)){
                 paramJson.put("state",state);
             }
-            Page<JSONObject> pageList=us.queryByPage(page, pageSize, paramJson);
+            Page<UserInfo> pageList=us.queryByPage(page, pageSize, paramJson);
+            
             //JSONArray jsonArray = new JSONArray();
             //jsonArray.put(page);
             return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_0000,pageList);
@@ -245,13 +253,13 @@ public class UserController {
             logBean.setErroInfo(e.toString());
             logUtil.updateLog(logBean, "1");
             logger.error("用户分页查询失败：", e);
-           return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_9999);
+           return new RestfulEntityBySummit<Page<UserInfo>>(ResponseCodeBySummit.CODE_9999,null);
         }
     }
 
     @ApiOperation(value = "重置密码")
     @PutMapping("/resetPassword")
-    public RestfulEntityBySummit<?> resetPassword(
+    public RestfulEntityBySummit<String> resetPassword(
     		@RequestParam(value = "userName") String userName, HttpServletRequest request) {
         LogBean logBean = new LogBean();
         try {
@@ -259,7 +267,7 @@ public class UserController {
 //            if (st.stringEquals(SysConstants.SUPER_USERNAME, userName)) {
 //            	return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_0000);
 //            } else {
-            	return new RestfulEntityBySummit<>(us.resetPassword(userName));
+            	return new RestfulEntityBySummit<String>(us.resetPassword(userName),null);
 //            }
         } catch (Exception e) {
             //e.printStackTrace();
@@ -267,13 +275,13 @@ public class UserController {
             logBean.setErroInfo(e.toString());
             logUtil.updateLog(logBean, "1");
             logger.error("重置密码失败：", e);
-            return  new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_9999);
+            return  new RestfulEntityBySummit<String>(ResponseCodeBySummit.CODE_9999,null);
         }
     }
 
     @ApiOperation(value = "根据用户名查询角色")
     @GetMapping("/queryRoleByUserName")
-    public RestfulEntityBySummit<?> queryRoleByUserName(
+    public RestfulEntityBySummit<List<String>> queryRoleByUserName(
     		@RequestParam(value = "userName") String userName, HttpServletRequest request) {
         LogBean logBean = new LogBean();
         try {
@@ -292,13 +300,13 @@ public class UserController {
             logBean.setErroInfo(e.toString());
             logUtil.updateLog(logBean, "1"); 
             logger.error("根据用户名查询角色失败：", e);
-            return  new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_9999);
+            return  new RestfulEntityBySummit<List<String>>(ResponseCodeBySummit.CODE_9999,null);
         }
     }
 
     @ApiOperation(value = "授权权限")
     @PutMapping("/grantRole")
-    public RestfulEntityBySummit<?>  grantRole(
+    public RestfulEntityBySummit<String>  grantRole(
     		@RequestParam(value = "userName") String userName,
     		@RequestParam(value = "role") String role, HttpServletRequest request) {
         LogBean logBean = new LogBean();
@@ -307,14 +315,14 @@ public class UserController {
 //            if (st.stringEquals(SysConstants.SUPER_USERNAME, userName)) {
 //            	return  new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_0000);
 //            } else {
-            	return  new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_0000,us.grantRole(userName,role));
+            	return  new RestfulEntityBySummit<String>(us.grantRole(userName,role),null);
 //            }
         } catch (Exception e) {
             logBean.setActionFlag("0");
             logBean.setErroInfo(e.toString());
             logUtil.updateLog(logBean, "1");
             logger.error("授权权限失败：", e);
-            return  new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_9999);
+            return  new RestfulEntityBySummit<String>(ResponseCodeBySummit.CODE_9999,null);
         }
     }
 

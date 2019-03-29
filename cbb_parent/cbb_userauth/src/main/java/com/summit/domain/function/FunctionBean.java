@@ -12,21 +12,26 @@ import net.sf.json.JSONObject;
 public class FunctionBean implements Serializable {
 	
 	private static final long serialVersionUID = 1L;
+	@ApiModelProperty(value="主键id",name="id")
 	private String id;
-	@ApiModelProperty(value="pid",required=true)
+	@ApiModelProperty(value="父级菜单id",name="pid",required=true)
 	private String pid;
-	@ApiModelProperty(value="name",required=true)
+	@ApiModelProperty(value="菜单名称",name="name",required=true)
 	private String name;
-	@ApiModelProperty(value="fdesc",required=true)
+	@ApiModelProperty(value="排序",name="fdesc",required=true)
 	private Integer fdesc;
 	@ApiModelProperty(hidden = true)
 	private Integer isEnabled;
+	@ApiModelProperty(value="路径地址",name="furl")
 	private String furl;
+	@ApiModelProperty(value="图片路径",name="imgUlr")
 	private String imgUlr;
+	@ApiModelProperty(value="备注",name="note")
 	private String note;
 	/**
 	 * 超级功能
 	 */
+	@ApiModelProperty(value="超级功能",name="superfun")
 	private String superfun;
 
 	public FunctionBean() {
@@ -109,18 +114,6 @@ public class FunctionBean implements Serializable {
 
 	public void setNote(String note) {
 		this.note = note;
-	}
-
-	
-
-	public JSONObject getNodeData() {
-		JSONObject jo = new JSONObject();
-		jo.put("fdesc", fdesc);
-		jo.put("isEnabled", isEnabled);
-		jo.put("furl", furl);
-		jo.put("imgUlr", imgUlr);
-		jo.put("note", note);
-		return jo;
 	}
 
 
