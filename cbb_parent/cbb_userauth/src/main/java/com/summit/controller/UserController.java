@@ -186,6 +186,10 @@ public class UserController {
         LogBean logBean = new LogBean();
         try {
             logBean = logUtil.insertLog(request, "1", "用户管理根据用户名查询菜单信息", userName);
+            UserInfo ub = us.queryByUserName(userName);
+            if (ub == null) {
+            	return new RestfulEntityBySummit<List<FunctionBean>>(ResponseCodeBySummit.CODE_4023,null);
+            }
             List<FunctionBean> funList=us.getFunInfoByUserName(userName);
             if (funList == null) {
             	return new RestfulEntityBySummit<List<FunctionBean>>(ResponseCodeBySummit.CODE_4023,null);
@@ -266,6 +270,10 @@ public class UserController {
     		@RequestParam(value = "userName") String userName, HttpServletRequest request) {
         LogBean logBean = new LogBean();
         try {
+        	UserInfo ub = us.queryByUserName(userName);
+            if (ub == null) {
+            	return new RestfulEntityBySummit<List<String>>(ResponseCodeBySummit.CODE_4023,null);
+            }
         	List<String> list=us.queryRoleByUserName(userName);
             logBean = logUtil.insertLog(request, "1", "用户管理查询用户角色", userName);
             return  new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_0000,list);
@@ -287,6 +295,10 @@ public class UserController {
         LogBean logBean = new LogBean();
         try {
             logBean = logUtil.insertLog(request, "1", "用户管理授权", userName);
+            UserInfo ub = us.queryByUserName(userName);
+            if (ub == null) {
+            	return new RestfulEntityBySummit<String>(ResponseCodeBySummit.CODE_4023,null);
+            }
             return  new RestfulEntityBySummit<String>(us.grantRole(userName,role),null);
         } catch (Exception e) {
             logBean.setActionFlag("0");
