@@ -162,7 +162,7 @@ public class DeptController {
 	public RestfulEntityBySummit<String> edit(@RequestBody DeptBean deptBean) {
 		HttpServletRequest request = ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest();
 		LogBean logBean = logUtil.insertLog(request,"1", "部门编辑","");
-		Map<String, Object> list = null;
+		//Map<String, Object> list = null;
 		try {
 			//list = ds.edit(deptBean);
 			return new RestfulEntityBySummit<String>(ds.edit(deptBean),null);

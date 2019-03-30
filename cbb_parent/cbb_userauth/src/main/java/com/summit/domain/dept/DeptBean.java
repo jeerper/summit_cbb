@@ -10,13 +10,15 @@ public class DeptBean  implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
 	private String id;
-	@ApiModelProperty(value="pid",required=true)
+	@ApiModelProperty(value="上级部门id",name="pid",required=true)
 	private String pid;
-	@ApiModelProperty(value="deptCode",required=true)
+	@ApiModelProperty(value="部门编码",name="deptCode",required=true)
 	private String deptCode;
-	@ApiModelProperty(value="deptName",required=true)
+	@ApiModelProperty(value="部门名称",name="deptName",required=true)
 	private String deptName;
+	@ApiModelProperty(value="备注",name="remark")
 	private String remark;
+	@ApiModelProperty(value="下级部门",name="children")
 	private List<DeptBean> children;
 	public DeptBean() {
 		super();

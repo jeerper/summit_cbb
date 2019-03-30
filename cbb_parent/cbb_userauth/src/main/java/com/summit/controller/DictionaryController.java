@@ -27,6 +27,7 @@ import com.summit.domain.dictionary.DictionaryBean;
 import com.summit.domain.log.LogBean;
 import com.summit.service.dictionary.DictionaryService;
 import com.summit.service.log.ILogUtil;
+import com.summit.util.Page;
 import com.summit.util.SysConstants;
 
 import io.swagger.annotations.Api;
@@ -46,14 +47,12 @@ public class DictionaryController {
 	@ApiOperation(value = "新增数据字典", notes = "编码(code),名称(name)都是必输项")
     @PostMapping(value = "/add")
 	public  RestfulEntityBySummit<String> add(@RequestBody DictionaryBean dictionaryBean, HttpServletRequest request) {
-		//Map<String, Object> res = new HashMap<String, Object>();
 		LogBean logBean = new LogBean();
 		try {
 			logBean = logUtil.insertLog(request,"1", "数据字典新增","");
 			//res = dictionaryService.add(dictionaryBean);
 			return new RestfulEntityBySummit<String>(dictionaryService.add(dictionaryBean),null);
 		} catch (Exception e) {
-			//e.printStackTrace();
 			logger.error("操作失败", e);
 			logBean.setActionFlag("0");
 			logBean.setErroInfo(e.toString());
@@ -61,94 +60,75 @@ public class DictionaryController {
 			return new RestfulEntityBySummit<String>(ResponseCodeBySummit.CODE_9999,null);
 			
 		}
-		//logUtil.updateLog(logBean,"1");
-		//return res;
 	}
 
 	@ApiOperation(value = "数据字典删除")
 	@DeleteMapping("del")
 	public RestfulEntityBySummit<String> del(
 			@RequestParam(value = "codes") String codes, HttpServletRequest request ) {
-		//Map<String, Object> res = new HashMap<String, Object>();
 		LogBean logBean = new LogBean();
 		try {
 			logBean = logUtil.insertLog(request,"1", "数据字典删除","");
-			//res = dictionaryService.del(codes);
 			return new RestfulEntityBySummit<String>(dictionaryService.del(codes),null);
 		} catch (Exception e) {
-			//e.printStackTrace();
 			logger.error("操作失败", e);
 			logBean.setActionFlag("0");
 			logBean.setErroInfo(e.toString());
 			logUtil.updateLog(logBean,"1");
 			return new RestfulEntityBySummit<String>(ResponseCodeBySummit.CODE_9999,null);
 		}
-		//logUtil.updateLog(logBean,"1");
-		//return res;
 	}
 
 	@ApiOperation(value = "数据字典修改", notes = "编码(code),名称(name)都是必输项")
 	@PutMapping("edit")
-	public RestfulEntityBySummit<?> edit(@RequestBody DictionaryBean dictionaryBean, HttpServletRequest request) {
-		//Map<String, Object> res = new HashMap<String, Object>();
+	public RestfulEntityBySummit<String> edit(@RequestBody DictionaryBean dictionaryBean, HttpServletRequest request) {
 		LogBean logBean = new LogBean();
 		try {
 			logBean = logUtil.insertLog(request,"1", "数据字典修改","");
 			return new RestfulEntityBySummit<String>(dictionaryService.edit(dictionaryBean),null);
-			//res = dictionaryService.edit(dictionaryBean);
 		} catch (Exception e) {
-			//e.printStackTrace();
 			logger.error("操作失败", e);
 			logBean.setActionFlag("0");
 			logBean.setErroInfo(e.toString());
 			logUtil.updateLog(logBean,"1");
 			return new RestfulEntityBySummit<String>(ResponseCodeBySummit.CODE_9999,null);
 		}
-		//logUtil.updateLog(logBean,"1");
-		//return res;
 	}
 	
 	@ApiOperation(value = "查询数据字典树")
 	@RequestMapping(value = "/queryTree",method = RequestMethod.GET)
-	public RestfulEntityBySummit<?> queryTree(String pid) {
+	public RestfulEntityBySummit<DictionaryBean> queryTree(String pid) {
 		HttpServletRequest request = ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest();
-		//UserContextHolder.getUserName();
+		
 		LogBean logBean = new LogBean();
-		//Map<String, Object> list = null;
 	     try {
 	           logBean = logUtil.insertLog(request, "1", "数据字典树", "");
-	           //list = ds.queryDeptTree();
 	           return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_0000,dictionaryService.queryTree(pid));
 	     } catch (Exception e) {
 	    	    logger.error("查询数据字典树失败：", e);
 	    	    logUtil.updateLog(logBean, "1");
-	            //e.printStackTrace();
 	            logBean.setActionFlag("0");
 	            logBean.setErroInfo(e.toString());
-	            return new RestfulEntityBySummit<String>(ResponseCodeBySummit.CODE_9999,null);
+	            return new RestfulEntityBySummit<DictionaryBean>(ResponseCodeBySummit.CODE_9999,null);
 	     }
-	    // logUtil.updateLog(logBean, "1");
-		//return list;
 	}
 
 	@ApiOperation(value = "数据字典按照编码查询")
 	@GetMapping("queryByCode")
-	public RestfulEntityBySummit<?> queryByCode(@RequestParam(value = "code")  String code, HttpServletRequest request) {
+	public RestfulEntityBySummit<DictionaryBean> queryByCode(@RequestParam(value = "code")  String code, HttpServletRequest request) {
 		//Map<String, Object> res = new HashMap<String, Object>();
 		LogBean logBean = new LogBean();
 		try {
 			logBean = logUtil.insertLog(request,"1", "数据字典按照编码查询","");
 			//res = dictionaryService.queryByCode(code);
-			JSONArray jsonArray = new JSONArray();
-	        jsonArray.add(dictionaryService.queryByCode(code));
-			return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_0000,jsonArray);
+			return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_0000,dictionaryService.queryByCode(code));
 		} catch (Exception e) {
 			//e.printStackTrace();
 			logger.error("查询失败", e);
 			logBean.setActionFlag("0");
 			logBean.setErroInfo(e.toString());
 			logUtil.updateLog(logBean,"1");
-			return new RestfulEntityBySummit<String>(ResponseCodeBySummit.CODE_9999,null);
+			return new RestfulEntityBySummit<DictionaryBean>(ResponseCodeBySummit.CODE_9999,null);
 		}
 		//logUtil.updateLog(logBean,"1");
 		//return res;
@@ -156,21 +136,19 @@ public class DictionaryController {
 
 	@ApiOperation(value = "数据字典查询所有数据")
 	@GetMapping("queryAll")
-	public RestfulEntityBySummit<?> queryAll(HttpServletRequest request) {
+	public RestfulEntityBySummit<List<DictionaryBean>> queryAll(HttpServletRequest request) {
 		//Map<String, Object> res = new HashMap<String, Object>();
 		LogBean logBean = new LogBean();
 		try {
 			logBean = logUtil.insertLog(request,"1", "数据字典查询全部数据","");
-			JSONArray jsonArray = new JSONArray();
-	        jsonArray.add(dictionaryService.queryAll());
-			return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_0000,jsonArray);
+			return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_0000,dictionaryService.queryAll());
 		} catch (Exception e) {
 			//e.printStackTrace();
 			logger.error("查询失败", e);
 			logBean.setActionFlag("0");
 			logBean.setErroInfo(e.toString());
 			logUtil.updateLog(logBean,"1");
-			return new RestfulEntityBySummit<String>(ResponseCodeBySummit.CODE_9999,null);
+			return new RestfulEntityBySummit<List<DictionaryBean>>(ResponseCodeBySummit.CODE_9999,null);
 		}
 		//logUtil.updateLog(logBean,"1");
 		//return res;
@@ -178,7 +156,7 @@ public class DictionaryController {
 
 	@ApiOperation(value = "数据字典分页查询")
 	@GetMapping("queryByPage")
-	public RestfulEntityBySummit<?> queryByPage(
+	public RestfulEntityBySummit<Page<DictionaryBean>> queryByPage(
 			@RequestParam(value = "page") int page,
             @RequestParam(value ="pageSize") int pageSize,
             @RequestParam(value = "pId",required = false) String pId, HttpServletRequest request ) {
@@ -188,7 +166,6 @@ public class DictionaryController {
 			logBean = logUtil.insertLog(request,"1", "数据字典分页查询", "");
 			page = (page == 0) ? 1 : page;
             pageSize = (pageSize == 0) ? SysConstants.PAGE_SIZE : pageSize;
-			//res = dictionaryService.queryByPage(start, limit, pId);
 			return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_0000,dictionaryService.queryByPage(page, pageSize, pId));
 		} catch (Exception e) {
 			//e.printStackTrace();
@@ -196,7 +173,7 @@ public class DictionaryController {
 			logBean.setActionFlag("0");
 			logBean.setErroInfo(e.toString());
 			logUtil.updateLog(logBean,"1");
-			return new RestfulEntityBySummit<String>(ResponseCodeBySummit.CODE_9999,null);
+			return new RestfulEntityBySummit<Page<DictionaryBean>>(ResponseCodeBySummit.CODE_9999,null);
 		}
 	}
 	

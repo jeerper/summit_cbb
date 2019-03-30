@@ -1,6 +1,9 @@
 package com.summit.service.role;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.TypeReference;
 import com.summit.common.entity.ResponseCodeBySummit;
+import com.summit.domain.function.FunctionBean;
 import com.summit.domain.role.RoleBean;
 import com.summit.domain.role.RoleBeanRowMapper;
 import com.summit.repository.UserRepository;
@@ -64,19 +67,26 @@ public class RoleService {
 		return  l.get(0);
 	}
 
-	public Page<JSONObject> queryByPage(int start, int limit, String name) {
+	public Page<RoleBean> queryByPage(int start, int limit, String name) {
 		StringBuilder sb = new StringBuilder(
 				"SELECT * FROM SYS_ROLE WHERE 1 = 1");
 		if (st.stringNotNull(name)) {
 			sb.append(" AND NAME LIKE '%").append(name).append("%'");
 		}
-		return ur.queryByCustomPage(sb.toString(), start, limit);
+		Page<JSONObject> rs = ur.queryByCustomPage(sb.toString(), start, limit);
+		if(rs!=null){
+			 Page<RoleBean> pageRoleBeanInfo=new Page<RoleBean>();
+			 ArrayList<RoleBean> students = JSON.parseObject(rs.getContent().toString(), new TypeReference<ArrayList<RoleBean>>() {});
+			 pageRoleBeanInfo.setContent(students);
+			 pageRoleBeanInfo.setTotalElements(rs.getTotalElements());
+			 return pageRoleBeanInfo;
+		}
+		return null;
 	}
 
-	public Page<JSONObject> queryAll() {
+	public List<RoleBean> queryAll() {
 		String sql = "SELECT * FROM SYS_ROLE";
-		List<JSONObject> l = ur.queryAllCustom(sql);
-		return new Page<JSONObject>(l, l.size());
+		return ur.queryAllCustom(sql, rbrm);
 	}
 
 	public List<String> queryFunIdByRoleCode(String roleCode) {

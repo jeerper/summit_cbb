@@ -1,6 +1,7 @@
 package com.summit.controller;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -8,7 +9,6 @@ import javax.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.summit.common.entity.ResponseCodeBySummit;
@@ -27,7 +26,7 @@ import com.summit.domain.function.FunctionBean;
 import com.summit.domain.log.LogBean;
 import com.summit.service.function.FunctionService;
 import com.summit.service.log.ILogUtil;
-import com.summit.util.SysConstants;
+import com.summit.util.Page;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -45,27 +44,23 @@ public class FunctionController {
 
 	@ApiOperation(value = "新增功能",  notes = "上级功能(pid),功能名称(name),功能排序(fdesc)都是必输项")
 	@PostMapping("/add")
-	public RestfulEntityBySummit<?> add(@RequestBody FunctionBean functionBean, HttpServletRequest request) {
-		//Map<String, Object> res = new HashMap<String, Object>();
+	public RestfulEntityBySummit<String> add(@RequestBody FunctionBean functionBean, HttpServletRequest request) {
 		LogBean logBean = new LogBean();
 		try {
 			logBean = logUtil.insertLog(request,"1", "功能管理新增","");
 			return new RestfulEntityBySummit<String>(fs.add(functionBean),null);
 		} catch (Exception e) {
-			//e.printStackTrace();
 			logger.error("操作失败！", e);
 			logBean.setActionFlag("0");
 			logBean.setErroInfo(e.toString());
 			logUtil.updateLog(logBean,"1");
 			return new RestfulEntityBySummit<String>(ResponseCodeBySummit.CODE_9999,null);
 		}
-		//logUtil.updateLog(logBean,"1");
-		//return res;
 	}
 
 	@ApiOperation(value = "功能管理删除")
 	@DeleteMapping("del")
-	public RestfulEntityBySummit<?> del(
+	public RestfulEntityBySummit<String> del(
 			@RequestParam(value = "ids") String ids, HttpServletRequest request) {
 		//Map<String, Object> res = new HashMap<String, Object>();
 		LogBean logBean = new LogBean();
@@ -87,8 +82,7 @@ public class FunctionController {
 
 	@ApiOperation(value = "功能管理修改" ,notes = "id,上级功能(pid),功能名称(name),功能排序(fdesc)都是必输项")
 	@PutMapping("edit")
-	public RestfulEntityBySummit<?> edit(@RequestBody FunctionBean functionBean, HttpServletRequest request) {
-		Map<String, Object> res = new HashMap<String, Object>();
+	public RestfulEntityBySummit<String> edit(@RequestBody FunctionBean functionBean, HttpServletRequest request) {
 		LogBean logBean = new LogBean();
 		try {
 			logBean = logUtil.insertLog(request,"1", "功能管理修改","");
@@ -102,19 +96,16 @@ public class FunctionController {
 			logUtil.updateLog(logBean,"1");
 			return new RestfulEntityBySummit<String>(ResponseCodeBySummit.CODE_9999,null);
 		}
-		//logUtil.updateLog(logBean,"1");
-		//return res;
 	}
 
 	@ApiOperation(value = "功能管理根据ID查询")
 	@GetMapping("queryById")
-	public RestfulEntityBySummit<?> queryById(
+	public RestfulEntityBySummit<List<FunctionBean>> queryById(
 			@RequestParam(value = "id")  String id,  HttpServletRequest request) {
 		//Map<String, Object> res = new HashMap<String, Object>();
 		LogBean logBean = new LogBean();
 		try {
 			logBean = logUtil.insertLog(request,"1", "功能管理根据ID查询","");
-			//res = fs.queryById(id,"");
 			String userName="";
 			UserInfo userInfo=UserContextHolder.getUserInfo();
 			if(userInfo!=null){
@@ -127,15 +118,13 @@ public class FunctionController {
 			logBean.setActionFlag("0");
 			logBean.setErroInfo(e.toString());
 			logUtil.updateLog(logBean,"1");
-			return new RestfulEntityBySummit<String>(ResponseCodeBySummit.CODE_9999,null);
+			return new RestfulEntityBySummit<List<FunctionBean>>(ResponseCodeBySummit.CODE_9999,null);
 		}
-		//logUtil.updateLog(logBean,"1");
-		//return res;
 	}
 
 	@ApiOperation(value = "功能管理查询树形结构")
 	@GetMapping("queryTree")
-	public RestfulEntityBySummit<?> queryTree(@RequestParam(value = "pid" ,required = false)  String pid, HttpServletRequest request) {
+	public RestfulEntityBySummit<FunctionBean> queryTree(@RequestParam(value = "pid" ,required = false)  String pid, HttpServletRequest request) {
 		LogBean logBean = new LogBean();
 		//Map<String, Object> res = new HashMap<String, Object>();
 		try {
@@ -153,7 +142,7 @@ public class FunctionController {
 			logBean.setActionFlag("0");
 			logBean.setErroInfo(e.toString());
 			logUtil.updateLog(logBean,"1");
-			return new RestfulEntityBySummit<String>(ResponseCodeBySummit.CODE_9999,null);
+			return new RestfulEntityBySummit<FunctionBean>(ResponseCodeBySummit.CODE_9999,null);
 		}
 		//logUtil.updateLog(logBean,"1");
 		//return res;
@@ -161,7 +150,7 @@ public class FunctionController {
 
 	@ApiOperation(value = "功能管理分页查询")
 	@GetMapping("queryByPage")
-	public RestfulEntityBySummit<?> queryByPage(
+	public RestfulEntityBySummit<Page<FunctionBean>> queryByPage(
 			@RequestParam(value = "page") int page,
             @RequestParam(value ="pageSize") int pageSize,
             @RequestParam(value = "pId",required = false) String pId,HttpServletRequest request) {
@@ -182,9 +171,7 @@ public class FunctionController {
 			logBean.setActionFlag("0");
 			logBean.setErroInfo(e.toString());
 			logUtil.updateLog(logBean,"1");
-			return new RestfulEntityBySummit<String>(ResponseCodeBySummit.CODE_9999,null);
+			return new RestfulEntityBySummit<Page<FunctionBean>>(ResponseCodeBySummit.CODE_9999,null);
 		}
-		//logUtil.updateLog(logBean,"1");
-		//return res;
 	}
 }

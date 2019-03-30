@@ -1,9 +1,9 @@
 package com.summit.domain.function;
 
 import java.io.Serializable;
+import java.util.List;
 
 import io.swagger.annotations.ApiModelProperty;
-import net.sf.json.JSONObject;
 /**
  * 功能基本属性
  * @author Administrator
@@ -33,7 +33,10 @@ public class FunctionBean implements Serializable {
 	 */
 	@ApiModelProperty(value="超级功能",name="superfun")
 	private String superfun;
-
+	
+	@ApiModelProperty(value="功能子集",name="children")
+	private List<FunctionBean> children;
+	
 	public FunctionBean() {
 		super();
 	}
@@ -123,5 +126,13 @@ public class FunctionBean implements Serializable {
 
 	public void setSuperfun(String superfun) {
 		this.superfun = superfun;
+	}
+
+	public List<FunctionBean> getChildren() {
+		return children;
+	}
+
+	public void setChildren(List<FunctionBean> children) {
+		this.children = children;
 	}
 }

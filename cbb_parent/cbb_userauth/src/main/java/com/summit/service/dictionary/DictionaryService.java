@@ -1,7 +1,10 @@
 package com.summit.service.dictionary;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.TypeReference;
 import com.summit.common.entity.ResponseCodeBySummit;
+import com.summit.domain.dept.DeptBean;
 import com.summit.domain.dictionary.DictionaryBean;
 import com.summit.domain.dictionary.DictionaryBeanRowMapper;
 import com.summit.repository.UserRepository;
@@ -89,40 +92,7 @@ public class DictionaryService {
 		return  dictionaryCacheImpl.queryByCode(code);
 	}
 	
-	/**
-	 * 
-	 * 查询树
-	 * @return
-	 */
-	public JSONObject queryDeptTree(String pid) {
-		JSONObject jSONOTree=null;
-		LinkedMap linkedMap=new LinkedMap();
-		StringBuffer sql = new StringBuffer("SELECT ID,PID,DEPTCODE,DEPTNAME,REMARK FROM SYS_DEPT  where 1=1");
-		if(pid==null || "".equals(pid)){
-			sql.append(" and (pid is null  or pid='-1' )");
-		}else{
-			sql.append(" and PID =? ");
-			linkedMap.put(1, pid);
-			
-		}
-		List<Object> rootList=null;
-		try {
-			rootList=ur.queryAllCustom(sql.toString(),linkedMap);
-		} catch (Exception e1) {
-			e1.printStackTrace();
-			return null;
-		}
-		if(rootList.size()>0){
-			jSONOTree=(JSONObject)rootList.get(0);
-			//logger.debug("jSONOTree.getString: "+jSONOTree.getString("ID"));
-			List<JSONObject> list=null;
-			list=generateOrgMapToTree(null,jSONOTree.getString("ID"));
-			//logger.debug("list: "+list.size());
-        	jSONOTree.put("children", list);
-		}
-		//logger.debug("jSONOTree0: "+jSONOTree);
-		return jSONOTree;
-	}
+
 	
 
 	public List<DictionaryBean> queryAll() {
@@ -130,8 +100,7 @@ public class DictionaryService {
 	}
 	
 	
-	public JSONObject queryTree(String padcd) {
-		JSONObject jSONOTree=null;
+	public DictionaryBean queryTree(String padcd) throws Exception{
 		LinkedMap linkedMap=new LinkedMap();
 		StringBuffer sql = new StringBuffer("SELECT CODE,NAME,PCODE FROM SYS_DICTIONARY where 1=1 ");
 		if(padcd==null || "".equals(padcd)){
@@ -141,21 +110,18 @@ public class DictionaryService {
 			linkedMap.put(1, padcd);
 			
 		}
-		List<Object> rootList= null;
-        try {
-			rootList= ur.queryAllCustom(sql.toString(),linkedMap);
-		} catch (Exception e1) {
-			e1.printStackTrace();
+		List<Object> rootList=ur.queryAllCustom(sql.toString(),linkedMap);
+		if(rootList.size()>0){
+			String jsonTree=((JSONObject)rootList.get(0)).toString();
+			DictionaryBean deptBeaneanTree = JSON.parseObject(jsonTree, new TypeReference<DictionaryBean>() {});
+			List<DictionaryBean> list=generateOrgMapToTree(null,deptBeaneanTree.getCode());
+			deptBeaneanTree.setChildren( list);
+        	return deptBeaneanTree;
 		}
-        if(rootList!=null && rootList.size()>0){
-			jSONOTree=(JSONObject)rootList.get(0);
-			List<JSONObject> list=generateOrgMapToTree(null,jSONOTree.getString("CODE"));
-        	jSONOTree.put("children", list);
-		}
-		return jSONOTree;
+		return null;
 	}
 	
-   public List<JSONObject> generateOrgMapToTree(Map<String, List<Object>>  orgMaps, String pid)  {
+   public List<DictionaryBean> generateOrgMapToTree(Map<String, List<Object>>  orgMaps, String pid)  {
         if (null == orgMaps || orgMaps.size() == 0) {
         	StringBuffer sql=new StringBuffer("SELECT A.CODE, A.NAME,A.PCODE, B.CODE AS CHILD_ID, B.NAME AS CHILD_NAME,b.CKEY  FROM SYS_DICTIONARY  AS A ");  
             sql.append(" JOIN SYS_DICTIONARY AS B ON B.PCODE = A.CODE ORDER BY  A.CODE ASC,b.CKEY asc ");
@@ -177,34 +143,34 @@ public class DictionaryService {
     				childrenList=new ArrayList();
     			}
     			childrenList.add(jSONObject);
+    			adcd=jSONObject.getString("CODE");
     			if(i==list.size()-1){
     				map.put(adcd, childrenList);
     			}
     			i++;
-    			adcd=jSONObject.getString("CODE");
     		}
     		orgMaps=map;
         }
-        List<JSONObject> orgList = new ArrayList<>();
+        List<DictionaryBean> orgList = new ArrayList<>();
         if (orgMaps != null && orgMaps.size() > 0) {
         	List parenList=orgMaps.get(pid);
         	if(parenList==null){
         		return orgList;
         	}
-        	
+        	DictionaryBean dictionaryBean=null;
             for (Object obj : parenList) {
-            	JSONObject jSONOTree=new JSONObject();
             	JSONObject json=(JSONObject)obj;
-            	System.out.println(json);
-            	jSONOTree.put("CODE", json.getString("CHILD_ID"));
-            	jSONOTree.put("NAME", json.getString("CHILD_NAME"));
-            	jSONOTree.put("CKEY", json.getString("CKEY"));
-            	jSONOTree.put("PCODE",pid);
-                List<JSONObject> children = generateOrgMapToTree(orgMaps, json.get("CHILD_ID").toString());
+            	dictionaryBean=new DictionaryBean();
+            	
+            	dictionaryBean.setCode(json.getString("CHILD_ID"));
+            	dictionaryBean.setName(json.getString("CHILD_NAME"));
+            	dictionaryBean.setCkey(json.getString("CKEY"));
+            	dictionaryBean.setPcode(pid);
+                List<DictionaryBean> children = generateOrgMapToTree(orgMaps, json.get("CHILD_ID").toString());
                 //将子结果集存入当前对象的children字段中
-                jSONOTree.put("children", children);
+                dictionaryBean.setChildren(children);
                 //添加当前对象到主结果集中
-                orgList.add(jSONOTree);
+                orgList.add(dictionaryBean);
             }
         }
         return orgList;

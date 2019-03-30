@@ -110,12 +110,8 @@ public class UserController {
         LogBean logBean = new LogBean();
         try {
             logBean = logUtil.insertLog(request, "1", "修改用户", "");
-//            if (st.stringEquals(SysConstants.SUPER_USERNAME, userInfo.getUserName())) {
-//            	 return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_0000);
-//            } else {
             	userInfoCache.setUserInfo(userInfo.getUserName(),userInfo);
             	return new RestfulEntityBySummit<String>(us.edit(userInfo),null);
-//            }
         } catch (Exception e) {
             //e.printStackTrace();
             logBean.setActionFlag("0");
@@ -172,20 +168,13 @@ public class UserController {
             	funList.toArray(funArray);
             	ub.setPermissions(funArray);
             }
-//            JSONArray jsonArray = new JSONArray();
-//            jsonArray.put(ub);
             return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_0000,ub);
-            //logger.debug("数据查询成功！"+info.getCode()+"==="+info.getData()); 
            
         } catch (Exception e) {
-        	//logger.debug("数据查询失败1！" +e.toString());
-            //e.printStackTrace();
-            //logger.debug("数据查询失败2！" +e.toString());
             logBean.setActionFlag("0");
             logBean.setErroInfo(e.toString());
             logUtil.updateLog(logBean, "1");
             logger.error("根据用户名查询用户信息失败：", e);
-            //return  new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_9999);
             return  new RestfulEntityBySummit<UserInfo>(ResponseCodeBySummit.CODE_9993,null);
         }
     }
@@ -201,8 +190,6 @@ public class UserController {
             if (funList == null) {
             	return new RestfulEntityBySummit<List<FunctionBean>>(ResponseCodeBySummit.CODE_4023,null);
             }
-            //JSONArray jsonArray = new JSONArray();
-            //jsonArray.put(funList);
             return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_0000,funList);
         }catch (Exception e) {
             //e.printStackTrace();
@@ -244,8 +231,6 @@ public class UserController {
             }
             Page<UserInfo> pageList=us.queryByPage(page, pageSize, paramJson);
             
-            //JSONArray jsonArray = new JSONArray();
-            //jsonArray.put(page);
             return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_0000,pageList);
         } catch (Exception e) {
             //e.printStackTrace();
@@ -264,11 +249,7 @@ public class UserController {
         LogBean logBean = new LogBean();
         try {
             logBean = logUtil.insertLog(request, "1", "用户管理重置密码", userName);
-//            if (st.stringEquals(SysConstants.SUPER_USERNAME, userName)) {
-//            	return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_0000);
-//            } else {
-            	return new RestfulEntityBySummit<String>(us.resetPassword(userName),null);
-//            }
+            return new RestfulEntityBySummit<String>(us.resetPassword(userName),null);
         } catch (Exception e) {
             //e.printStackTrace();
             logBean.setActionFlag("0");
@@ -287,13 +268,7 @@ public class UserController {
         try {
         	List<String> list=us.queryRoleByUserName(userName);
             logBean = logUtil.insertLog(request, "1", "用户管理查询用户角色", userName);
-//            if (st.stringEquals(SysConstants.SUPER_USERNAME, userName)) {
-//            	return  new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_0000);
-//            } else {
-            //JSONArray jsonArray = new JSONArray();
-           // jsonArray.put(list);
             return  new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_0000,list);
-//            }
         } catch (Exception e) {
             //e.printStackTrace();
             logBean.setActionFlag("0");
@@ -312,11 +287,7 @@ public class UserController {
         LogBean logBean = new LogBean();
         try {
             logBean = logUtil.insertLog(request, "1", "用户管理授权", userName);
-//            if (st.stringEquals(SysConstants.SUPER_USERNAME, userName)) {
-//            	return  new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_0000);
-//            } else {
-            	return  new RestfulEntityBySummit<String>(us.grantRole(userName,role),null);
-//            }
+            return  new RestfulEntityBySummit<String>(us.grantRole(userName,role),null);
         } catch (Exception e) {
             logBean.setActionFlag("0");
             logBean.setErroInfo(e.toString());
