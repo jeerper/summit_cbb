@@ -35,4 +35,5 @@ weather:
     save:
       today:
         weather: 0 0 23 * * ?
-
+logging:
+  file: logs/all.log
