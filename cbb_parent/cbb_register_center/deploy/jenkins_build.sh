@@ -1,6 +1,12 @@
 #!/bin/sh -l
 #项目名称
 projectName="cbb_register_center"
+#组件名称
+component_name="注册中心"
+#组件描述
+component_description="注册中心"
+#组件标签
+component_tag=${projectName}
 
 source ${WORKSPACE}/cbb_parent/env/env.sh
 
@@ -45,3 +51,6 @@ cd ${WORKSPACE}/cbb_parent/${projectName}/target
 cp -rf backend.jar ${fileStoragePath}/${projectName}/bin
 cp -rf lib ${fileStoragePath}/${projectName}/bin/
 cp -rf config ${fileStoragePath}/${projectName}/bin/
+
+echo "推送组件信息到组件货架上"
+curl -X POST "http://${Registry_Center_IP}:43000/component/pushComponentInfo" -H "accept: */*" -H "Content-Type: application/json;charset=UTF-8" -d "{ \"description\": \"${component_description}\", \"name\": \"${component_name}\", \"tag\": \"${component_tag}\"}"

@@ -4,7 +4,7 @@ projectName="cbb_api_gateway_db"
 #组件名称
 component_name="API网关组件"
 #组件描述
-component_description="哈哈"
+component_description="API网关组件"
 #组件标签
 component_tag=${projectName}
 
