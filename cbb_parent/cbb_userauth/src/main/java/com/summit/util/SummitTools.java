@@ -1,5 +1,6 @@
 package com.summit.util;
 
+import com.summit.common.entity.ResponseCodeBySummit;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import net.sf.json.xml.XMLSerializer;
@@ -11,7 +12,15 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collection;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -26,13 +35,13 @@ import java.util.regex.Pattern;
 @Component
 public class SummitTools {
 	private static final Logger log = LoggerFactory.getLogger(SummitTools.class);
-	private static SimpleDateFormat yearFormat = new SimpleDateFormat("yyyy");
+	private  SimpleDateFormat yearFormat = new SimpleDateFormat("yyyy");
 	private static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 	private static SimpleDateFormat date1Format = new SimpleDateFormat("yyyyMMdd");
 	private static SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
 	private static SimpleDateFormat dateTimeFormat = new SimpleDateFormat(
 			"yyyy-MM-dd HH:mm:ss");
-	private static SimpleDateFormat dateTimeFormat1 = new SimpleDateFormat(
+	private static  SimpleDateFormat dateTimeFormat1 = new SimpleDateFormat(
 			"yyyy/MM/dd HH:mm:ss");
 	private static SimpleDateFormat dateTimeNFormat = new SimpleDateFormat(
 			"yyyy-MM-dd HH:mm:ss.SSS");
@@ -80,8 +89,8 @@ public class SummitTools {
 
 	public Map<String, Object> success(String msg, Object data) {
 		Map<String, Object> map = new HashMap<String, Object>();
-		map.put("code", 200);
-		map.put("msg", msg);
+		map.put("code", ResponseCodeBySummit.CODE_0000.name());
+		map.put("msg", ResponseCodeBySummit.CODE_0000.getDescription());
 		map.put("data", data);
 		return map;
 	}
@@ -113,7 +122,7 @@ public class SummitTools {
 	 * @return
 	 * @throws ParseException
 	 */
-	public static synchronized Date DTParse(DateTimeType dateTimeType, String source)
+	public  synchronized Date DTParse(DateTimeType dateTimeType, String source)
 			throws ParseException {
 		switch (dateTimeType) {
 		case year:
@@ -142,7 +151,7 @@ public class SummitTools {
 	 * @param date
 	 * @return
 	 */
-	public static synchronized String DTFormat(DateTimeType dateTimeType, Date date) {
+	public  synchronized String DTFormat(DateTimeType dateTimeType, Date date) {
 		switch (dateTimeType) {
 		case year:
 			return yearFormat.format(date);
@@ -273,7 +282,7 @@ public class SummitTools {
 	 * @time 2014-12-12 上午10:51:29
 	 * 
 	 */
-	public boolean stringIsNull(String s) {
+	public static boolean stringIsNull(String s) {
 		if (s == null || s.isEmpty()) {
 			return true;
 		}

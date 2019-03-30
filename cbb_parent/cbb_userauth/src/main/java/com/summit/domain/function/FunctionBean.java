@@ -1,30 +1,45 @@
 package com.summit.domain.function;
 
-import com.summit.util.SummitTools.TreeNodeClass;
-import net.sf.json.JSONObject;
-
 import java.io.Serializable;
 
-public class FunctionBean implements Serializable, TreeNodeClass<JSONObject> {
-	/**
-	 * 
-	 */
+import io.swagger.annotations.ApiModelProperty;
+import net.sf.json.JSONObject;
+/**
+ * 功能基本属性
+ * @author Administrator
+ *
+ */
+public class FunctionBean implements Serializable {
+	
 	private static final long serialVersionUID = 1L;
+	@ApiModelProperty(value="主键id",name="id")
 	private String id;
+	@ApiModelProperty(value="父级菜单id",name="pid",required=true)
 	private String pid;
+	@ApiModelProperty(value="菜单名称",name="name",required=true)
 	private String name;
+	@ApiModelProperty(value="排序",name="fdesc",required=true)
 	private Integer fdesc;
+	@ApiModelProperty(hidden = true)
 	private Integer isEnabled;
+	@ApiModelProperty(value="路径地址",name="furl")
 	private String furl;
+	@ApiModelProperty(value="图片路径",name="imgUlr")
 	private String imgUlr;
+	@ApiModelProperty(value="备注",name="note")
 	private String note;
+	/**
+	 * 超级功能
+	 */
+	@ApiModelProperty(value="超级功能",name="superfun")
+	private String superfun;
 
 	public FunctionBean() {
 		super();
 	}
 
 	public FunctionBean(String id, String pid, String name, Integer fdesc,
-			Integer isEnabled, String furl, String imgUlr, String note) {
+			Integer isEnabled, String furl, String imgUlr, String note,String superfun) {
 		super();
 		this.id = id;
 		this.pid = pid;
@@ -34,6 +49,7 @@ public class FunctionBean implements Serializable, TreeNodeClass<JSONObject> {
 		this.furl = furl;
 		this.imgUlr = imgUlr;
 		this.note = note;
+		this.superfun=superfun;
 	}
 
 	public String getId() {
@@ -100,38 +116,12 @@ public class FunctionBean implements Serializable, TreeNodeClass<JSONObject> {
 		this.note = note;
 	}
 
-	public Boolean getChecked() {
-		return null;
+
+	public String getSuperfun() {
+		return superfun;
 	}
 
-	public Boolean getLeaf() {
-		return null;
+	public void setSuperfun(String superfun) {
+		this.superfun = superfun;
 	}
-
-	public JSONObject getNodeData() {
-		JSONObject jo = new JSONObject();
-		jo.put("fdesc", fdesc);
-		jo.put("isEnabled", isEnabled);
-		jo.put("furl", furl);
-		jo.put("imgUlr", imgUlr);
-		jo.put("note", note);
-		return jo;
-	}
-
-	public String getNodeId() {
-		return id;
-	}
-
-	public String getNodePid() {
-		return pid;
-	}
-
-	public String getNodeText() {
-		return name;
-	}
-
-	public Boolean getOpen() {
-		return true;
-	}
-
 }

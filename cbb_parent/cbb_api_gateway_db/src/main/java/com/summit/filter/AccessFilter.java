@@ -1,6 +1,5 @@
 package com.summit.filter;
 
-import cn.hutool.core.collection.CollectionUtil;
 import com.netflix.zuul.ZuulFilter;
 import com.netflix.zuul.context.RequestContext;
 import com.summit.common.constant.CommonConstant;
@@ -36,7 +35,6 @@ public class AccessFilter extends ZuulFilter {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null) {
             requestContext.addZuulRequestHeader(CommonConstant.USER_HEADER, authentication.getName());
-            requestContext.addZuulRequestHeader(CommonConstant.ROLE_HEADER, CollectionUtil.join(authentication.getAuthorities(), ","));
         }
         return null;
     }

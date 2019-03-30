@@ -8,4 +8,14 @@ public interface ServiceNameConstant {
      * 用户组件
      */
     String User_Auth_Service = "cbb-userauth";
+
+    /**
+     * 天气组件
+     */
+    String Weather_Service = "cbb-weather";
+    /**
+     * Demo组件
+     */
+    String Demo_Service = "cbb-demo";
+
 }

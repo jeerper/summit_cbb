@@ -1,8 +1,10 @@
 package com.summit.config;
 
 import com.summit.common.api.userauth.RemoteUserAuthService;
-import com.summit.common.entity.RestFulEntityBySummit;
+import com.summit.common.entity.ResponseCodeBySummit;
+import com.summit.common.entity.RestfulEntityBySummit;
 import com.summit.common.entity.UserInfo;
+import com.summit.common.redis.user.UserInfoCache;
 import com.summit.model.user.UserBean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,6 +29,8 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     private static final Logger logger = LoggerFactory.getLogger(UserDetailsServiceImpl.class);
     @Autowired
+    UserInfoCache userInfoCache;
+    @Autowired
     private RemoteUserAuthService remoteUserAuthService;
 
     /**
@@ -38,12 +42,14 @@ public class UserDetailsServiceImpl implements UserDetailsService {
      */
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        RestFulEntityBySummit<UserInfo> userInfoRestFulEntity = remoteUserAuthService.queryUserRoleByUserName(username);
+        RestfulEntityBySummit<UserInfo> userInfoRestFulEntity = remoteUserAuthService.queryUserInfoByUserName(username);
 
-        if (userInfoRestFulEntity.getCode() != 200) {
+        if (!userInfoRestFulEntity.getCode().equals(ResponseCodeBySummit.CODE_0000.name())) {
             throw new UsernameNotFoundException("用户不存在");
         }
-        UserInfo userInfo=userInfoRestFulEntity.getData();
+        UserInfo userInfo = userInfoRestFulEntity.getData();
+
+        userInfoCache.setUserInfo(userInfo.getUserName(), userInfo);
 
         UserBean user = new UserBean();
         user.setUserName(userInfo.getUserName());
@@ -52,9 +58,11 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         user.setIsEnabled(userInfo.getIsEnabled());
         user.setRoles(userInfo.getRoles());
         user.setPermissions(userInfo.getPermissions());
-        List<GrantedAuthority> authorities = AuthorityUtils.createAuthorityList(user.getRoles());
-//        authorities.add(new SimpleGrantedAuthority("ROLE_DEFAULT"));
-        user.setAuthorities(authorities);
+        if (userInfo.getRoles() != null && userInfo.getRoles().length > 0) {
+            List<GrantedAuthority> authorities = AuthorityUtils.createAuthorityList(user.getRoles());
+            //authorities.add(new SimpleGrantedAuthority("ROLE_DEFAULT"));
+            user.setAuthorities(authorities);
+        }
         return user;
     }
 }

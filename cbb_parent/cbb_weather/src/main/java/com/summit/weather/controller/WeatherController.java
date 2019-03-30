@@ -1,8 +1,11 @@
 package com.summit.weather.controller;
 
-import java.util.Date;
-import java.util.List;
-
+import com.summit.weather.service.IWeatherService;
+import com.summit.weather.vo.WeatherForecastVO;
+import com.summit.weather.vo.WeatherHistoryVO;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,13 +15,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.summit.weather.service.IWeatherService;
-import com.summit.weather.vo.WeatherForecastVO;
-import com.summit.weather.vo.WeatherHistoryVO;
-
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import java.util.Date;
+import java.util.List;
 
 /**
  * 
@@ -38,6 +36,8 @@ public class WeatherController {
 
 	@Autowired
 	IWeatherService iWeatherService;
+
+
 
 	@ApiOperation(value = "依据经纬度获得实时天气，包括实时天气，当天天气，未来天气")
 	@RequestMapping(value = "/{lgtd}/{lttd}", method = RequestMethod.GET)

@@ -1,16 +1,51 @@
 ##组件配置
 server:
-  port: "${WebServer_Port:45004}"
+  port: "${WebServer_Port:22225}"
 spring:
   application: 
     name: "cbb-weather"
-  profiles:    active:    - pro
+  profiles:
+    active:
+    - pro
   flyway:
     # 如果启动的时候需要flyway管理sql脚本的话，将enabled设置为true
     enabled: false
     baseline-on-migrate: true
     locations: classpath:db
     encoding: UTF-8
+
+#熔断器超时时间要大于负载均衡器超时时间
+#值设置的计算公式
+#timeoutInMilliseconds = (ribbonReadTimeout + ribbonConnectTimeout) * (maxAutoRetries + 1) * (maxAutoRetriesNextServer + 1);
+hystrix:
+  command:
+    default:
+      execution:
+        isolation:
+          strategy: SEMAPHORE
+          thread:
+            timeoutInMilliseconds: 40000
+
+ribbon:
+  # 请求连接的超时时间
+  ConnectTimeout: 10000
+  # 请求处理的超时时间
+  ReadTimeout: 10000
+
+
+feign:
+  httpclient:
+    enabled: false
+  okhttp:
+    enabled: true
+  hystrix:
+    enabled: true
+  compression:
+    request:
+      enabled: true
+    response:
+      enabled: true
+
 ##监控配置
 management:
   endpoints:
@@ -20,6 +55,9 @@ management:
   endpoint:
     health:
       show-details: ALWAYS
+
+logging:
+  file: logs/all.log
 ###天气组件的KEY
 weather:
 ##需要保存历史数据的城市名

@@ -1,7 +1,6 @@
 package com.summit.common.config;
 
 import com.google.common.base.Predicate;
-import io.swagger.annotations.ApiOperation;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import springfox.documentation.builders.ApiInfoBuilder;
@@ -34,15 +33,16 @@ import static springfox.documentation.builders.PathSelectors.regex;
 @EnableSwagger2
 public class SwaggerConfig {
 
-    private static final String OAuth2Name = "SummitOauth2";
+    private static final String OAUTH2_NAME = "SummitOauth2";
+    private static final String SWAGGER_SCAN_BASE_PACKAGE = "com.summit";
 
     @Bean
     public Docket createRestApi() {
-
         return new Docket(DocumentationType.SWAGGER_2)
                 .apiInfo(apiInfo())
+                .useDefaultResponseMessages(false)
                 .select()
-                .apis(RequestHandlerSelectors.withMethodAnnotation(ApiOperation.class))
+                .apis(RequestHandlerSelectors.basePackage(SWAGGER_SCAN_BASE_PACKAGE))
                 .paths(PathSelectors.any())
                 .build()
                 .securitySchemes(Collections.singletonList(securitySchema()))
@@ -61,7 +61,7 @@ public class SwaggerConfig {
     private OAuth securitySchema() {
         ArrayList<GrantType> grantTypes = new ArrayList<>();
         grantTypes.add(new ResourceOwnerPasswordCredentialsGrant("/oauth/token"));
-        return new OAuth(OAuth2Name, getAuthorizationScopeList(), grantTypes);
+        return new OAuth(OAUTH2_NAME, getAuthorizationScopeList(), grantTypes);
     }
 
     private List<SecurityReference> defaultAuth() {
@@ -71,7 +71,7 @@ public class SwaggerConfig {
         AuthorizationScope[] authorizationScopes = new AuthorizationScope[authorizationScopeList.size()];
         authorizationScopeList.toArray(authorizationScopes);
 
-        return newArrayList(new SecurityReference(OAuth2Name, authorizationScopes));
+        return newArrayList(new SecurityReference(OAUTH2_NAME, authorizationScopes));
     }
 
     private List<AuthorizationScope> getAuthorizationScopeList() {

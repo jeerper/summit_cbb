@@ -1,10 +1,10 @@
 
 package com.summit.handle;
 
-import cn.hutool.core.date.DateUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.summit.common.constant.CommonConstant;
-import com.summit.common.entity.RestFulEntityBySummit;
+import com.summit.common.entity.ResponseCodeBySummit;
+import com.summit.common.entity.RestfulEntityBySummit;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.AuthenticationException;
@@ -16,8 +16,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * @author Administrator
@@ -35,24 +33,16 @@ public class SummitResourceAuthExceptionEntryPoint implements AuthenticationEntr
 	public void commence(HttpServletRequest request, HttpServletResponse response,
                          AuthenticationException authException) throws IOException {
 
-		Map<String, Object> map = new HashMap<String, Object>();
 		Throwable cause = authException.getCause();
+		RestfulEntityBySummit entity;
 		if(cause instanceof InvalidTokenException) {
-			map.put("code", HttpStatus.UNAUTHORIZED.value());//401
-			map.put("msg", "无效的token");
+			entity=new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_4008);
 		}else{
-			map.put("code", "login_error");//401
-			map.put("msg", "访问此资源需要完全的身份验证");
+			entity=new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_4007);
 		}
-		map.put("data", authException.getMessage());
-		map.put("success", false);
-		map.put("path", request.getServletPath());
-		map.put("timestamp", DateUtil.now());
-		RestFulEntityBySummit<Map<String, Object>> entity = new RestFulEntityBySummit<>(map);
-
 		response.setCharacterEncoding(CommonConstant.UTF8);
 		response.setContentType(CommonConstant.CONTENT_TYPE);
-		response.setStatus(HttpStatus.UNAUTHORIZED.value());
+		response.setStatus(HttpStatus.OK.value());
 		PrintWriter printWriter = response.getWriter();
 		printWriter.append(objectMapper.writeValueAsString(entity));
 	}

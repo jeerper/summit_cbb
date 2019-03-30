@@ -20,7 +20,7 @@ cd ${WORKSPACE}/cbb_parent
 
 mvn clean
 
-mvn install
+mvn deploy
 
 
 cd ${WORKSPACE}/cbb_parent/${projectName}/deploy

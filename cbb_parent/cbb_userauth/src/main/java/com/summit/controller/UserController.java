@@ -1,32 +1,38 @@
 package com.summit.controller;
 
+import com.summit.common.entity.ResponseCodeBySummit;
+import com.summit.common.entity.RestfulEntityBySummit;
 import com.summit.common.entity.UserInfo;
+import com.summit.common.redis.user.UserInfoCache;
+import com.summit.domain.function.FunctionBean;
 import com.summit.domain.log.LogBean;
-import com.summit.domain.user.UserBean;
 import com.summit.service.log.ILogUtil;
 import com.summit.service.user.UserService;
 import com.summit.util.Page;
 import com.summit.util.SummitTools;
 import com.summit.util.SysConstants;
+
+import io.netty.util.internal.StringUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import net.sf.json.JSONObject;
-import org.springframework.beans.BeanUtils;
+import org.json.JSONArray;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Api(description = "用户管理")
 @CrossOrigin(origins = "*", maxAge = 3600)
@@ -34,239 +40,290 @@ import java.util.Map;
 @RequestMapping("/user")
 @Slf4j
 public class UserController {
-
+	private static final Logger logger = LoggerFactory.getLogger(UserController.class);
     @Autowired
     ILogUtil logUtil;
     @Autowired
     private UserService us;
     @Autowired
     private SummitTools st;
+    @Autowired
+    UserInfoCache userInfoCache;
 
     @PostMapping("/add")
-    @ApiOperation(value = "新增用户", notes = "用于application/json格式")
-    public Map<String, Object> add(UserBean userBean, HttpServletRequest request) {
-        Map<String, Object> res = new HashMap<String, Object>();
+    @ApiOperation(value = "新增用户",  notes = "昵称(name)，用户名(userName),密码(password)都是必输项")
+    public RestfulEntityBySummit<String> add(@RequestBody UserInfo userInfo, HttpServletRequest request) {
         LogBean logBean = new LogBean();
         try {
-            logBean = logUtil.insertLog(request, "1", "用户新增", userBean.getUserName());
-            res = us.add(userBean);
+            logBean = logUtil.insertLog(request, "1", "用户新增", userInfo.getUserName());
+            if(StringUtil.isNullOrEmpty( userInfo.getName()) || StringUtil.isNullOrEmpty(userInfo.getUserName()) || StringUtil.isNullOrEmpty(userInfo.getPassword())){
+                return new RestfulEntityBySummit<String>(ResponseCodeBySummit.CODE_9986,null);
+            }
+            return new RestfulEntityBySummit<String>(us.add(userInfo),null);
         } catch (Exception e) {
-            e.printStackTrace();
+            //e.printStackTrace();
+            logger.error("新增用户失败", e);
             logBean.setActionFlag("0");
             logBean.setErroInfo(e.toString());
+            logUtil.updateLog(logBean, "1");
+            return new RestfulEntityBySummit<String>(ResponseCodeBySummit.CODE_9999,null);
         }
-        logUtil.updateLog(logBean, "1");
-        return res;
     }
 
+    /**
+     * 此处的删除只修改状态。
+     * @param userNames
+     * @param request
+     * @param userName
+     * @return
+     */
     @ApiOperation(value = "删除用户信息")
     @DeleteMapping("/del")
-    public Map<String, Object> del(String userNames, HttpServletRequest request, String userName) {
-        Map<String, Object> res = new HashMap<String, Object>();
+    public RestfulEntityBySummit<String> del(
+    		@RequestParam(value = "userNames") String userNames, HttpServletRequest request) {
         LogBean logBean = new LogBean();
         try {
-            logBean = logUtil.insertLog(request, "1", "删除用户", userName);
-            res = us.del(userNames);
+            logBean = logUtil.insertLog(request, "1", "删除用户", "");
+            if(userNames.contains(",")){
+            	for(String username:userNames.split(",")){
+            		//系统管路员用户不能删除
+            		if (st.stringEquals(SysConstants.SUPER_USERNAME, username)) {
+            			continue;
+                    }
+            		userInfoCache.deleteUserInfo(username);		
+            	}
+            }
+            return new RestfulEntityBySummit<String>(us.del(userNames),null);
         } catch (Exception e) {
-            e.printStackTrace();
+            //e.printStackTrace();
+            logger.error("删除用户信息", e);
             logBean.setActionFlag("0");
             logBean.setErroInfo(e.toString());
+            logUtil.updateLog(logBean, "1");
+            return new RestfulEntityBySummit<String>(ResponseCodeBySummit.CODE_9999,null);
         }
-        logUtil.updateLog(logBean, "1");
-        return res;
     }
 
-    @ApiOperation(value = "修改用户", notes = "用于application/json格式")
+    @ApiOperation(value = "修改用户",  notes = "昵称(name)，用户名(userName),密码(password)都是必输项")
     @PutMapping("/edit")
-    public Map<String, Object> edit(UserBean userBean, HttpServletRequest request, String userName) {
-        Map<String, Object> res = new HashMap<String, Object>();
+    public RestfulEntityBySummit<String> edit(@RequestBody UserInfo userInfo, HttpServletRequest request) {
         LogBean logBean = new LogBean();
         try {
-            logBean = logUtil.insertLog(request, "1", "修改用户", userName);
-            if (st.stringEquals(SysConstants.SUPER_USERNAME, userBean.getUserName())) {
-                res = st.success("", new ArrayList<Object>());
-            } else {
-                res = us.edit(userBean);
-            }
+            logBean = logUtil.insertLog(request, "1", "修改用户", "");
+//            if (st.stringEquals(SysConstants.SUPER_USERNAME, userInfo.getUserName())) {
+//            	 return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_0000);
+//            } else {
+            	userInfoCache.setUserInfo(userInfo.getUserName(),userInfo);
+            	return new RestfulEntityBySummit<String>(us.edit(userInfo),null);
+//            }
         } catch (Exception e) {
-            e.printStackTrace();
+            //e.printStackTrace();
             logBean.setActionFlag("0");
             logBean.setErroInfo(e.toString());
+            logUtil.updateLog(logBean, "1");
+            logger.error("修改用户失败:", e);
+            return new RestfulEntityBySummit<String>(ResponseCodeBySummit.CODE_9999,null);
         }
-        logUtil.updateLog(logBean, "1");
-        return res;
     }
 
     @ApiOperation(value = "修改密码")
     @PutMapping("/editPassword")
-    public Map<String, Object> editPassword(String oldPassword, String password, String repeatPassword,
-                                            HttpServletRequest request, String userName) {
-        Map<String, Object> res = new HashMap<String, Object>();
+    public RestfulEntityBySummit<String> editPassword(
+    		@RequestParam(value = "oldPassword")  String oldPassword,
+    		@RequestParam(value = "password")  String password, 
+    		@RequestParam(value = "repeatPassword")  String repeatPassword,
+    		@RequestParam(value = "userName")  String userName,
+            HttpServletRequest request) {
         LogBean logBean = new LogBean();
         try {
             logBean = logUtil.insertLog(request, "1", "修改密码", userName);
-            if (st.stringIsNull(oldPassword)) {
-                res = st.error("，请输入旧密码");
-            } else if (st.stringIsNull(password)) {
-                res = st.error("，请输入新密码");
-            } else if (st.stringIsNull(repeatPassword)) {
-                res = st.error("，请输入确认密码");
-            } else if (!st.stringEquals(password, repeatPassword)) {
-                res = st.error("，两次输入的密码不一致");
-            } else {
-                res = us.editPassword(oldPassword, password, repeatPassword, userName);
-            }
+           return  new RestfulEntityBySummit<String>(us.editPassword(userName,oldPassword, password, repeatPassword),null);
         } catch (Exception e) {
-            e.printStackTrace();
+            //e.printStackTrace();
             logBean.setActionFlag("0");
             logBean.setErroInfo(e.toString());
+            logUtil.updateLog(logBean, "1");
+            logger.error("修改密码失败:", e);
+            return  new RestfulEntityBySummit<String>(ResponseCodeBySummit.CODE_9999,null);
         }
-        logUtil.updateLog(logBean, "1");
-        return res;
     }
 
     @ApiOperation(value = "根据用户名查询用户信息")
-    @GetMapping("/queryByUserName")
-    public Map<String, Object> queryByUserName(String userName, HttpServletRequest request) {
-        Map<String, Object> res = new HashMap<String, Object>();
+    @GetMapping("/queryUserInfoByUserName")
+    public RestfulEntityBySummit<UserInfo> queryUserInfoByUserName(
+    		@RequestParam(value = "userName")  String userName, HttpServletRequest request) {
         LogBean logBean = new LogBean();
         try {
             logBean = logUtil.insertLog(request, "1", "用户管理根据用户名查询用户", userName);
-            if (st.stringEquals(SysConstants.SUPER_USERNAME, userName)) {
-                return st.success("");
-            }
-            UserBean ub = us.queryByUserName(userName);
+            UserInfo ub = us.queryByUserName(userName);
             if (ub == null) {
-                return st.error("");
+            	return new RestfulEntityBySummit<UserInfo>(ResponseCodeBySummit.CODE_4023,null);
             }
-            ub.setPassword(null);
-            ub.setState(null);
-            ub.setLastUpdateTime(null);
-            res = st.success("", ub);
+            List<String> roleList = us.queryRoleByUserName(userName);
+            List<String> funList = us.getFunByUserName(userName);
+            
+            if(roleList!=null && roleList.size()>0){
+            	String[] roleArray = new String[roleList.size()];
+            	roleList.toArray(roleArray);
+                ub.setRoles(roleArray);	
+            }
+            if(funList!=null && funList.size()>0){
+            	String[] funArray = new String[funList.size()];
+            	funList.toArray(funArray);
+            	ub.setPermissions(funArray);
+            }
+//            JSONArray jsonArray = new JSONArray();
+//            jsonArray.put(ub);
+            return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_0000,ub);
+            //logger.debug("数据查询成功！"+info.getCode()+"==="+info.getData()); 
+           
         } catch (Exception e) {
-            e.printStackTrace();
+        	//logger.debug("数据查询失败1！" +e.toString());
+            //e.printStackTrace();
+            //logger.debug("数据查询失败2！" +e.toString());
             logBean.setActionFlag("0");
             logBean.setErroInfo(e.toString());
+            logUtil.updateLog(logBean, "1");
+            logger.error("根据用户名查询用户信息失败：", e);
+            //return  new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_9999);
+            return  new RestfulEntityBySummit<UserInfo>(ResponseCodeBySummit.CODE_9993,null);
         }
-        logUtil.updateLog(logBean, "1");
-        return res;
+    }
+    
+    @ApiOperation(value = "根据用户名查询所有菜单")
+    @GetMapping("/queryFunctionInfoByUserName")
+    public RestfulEntityBySummit<List<FunctionBean>> queryFunctionInfoByUserName(
+    		@RequestParam(value = "userName")  String userName, HttpServletRequest request) {
+        LogBean logBean = new LogBean();
+        try {
+            logBean = logUtil.insertLog(request, "1", "用户管理根据用户名查询菜单信息", userName);
+            List<FunctionBean> funList=us.getFunInfoByUserName(userName);
+            if (funList == null) {
+            	return new RestfulEntityBySummit<List<FunctionBean>>(ResponseCodeBySummit.CODE_4023,null);
+            }
+            //JSONArray jsonArray = new JSONArray();
+            //jsonArray.put(funList);
+            return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_0000,funList);
+        }catch (Exception e) {
+            //e.printStackTrace();
+            logBean.setActionFlag("0");
+            logBean.setErroInfo(e.toString());
+            logUtil.updateLog(logBean, "1");
+            logger.error("根据用户名查询所有菜单失败：", e);
+            return  new RestfulEntityBySummit<List<FunctionBean>>(ResponseCodeBySummit.CODE_9999,null);
+        }
     }
 
     @ApiOperation(value = "分页查询")
     @GetMapping("/queryByPage")
-    public Page<JSONObject> queryByPage(Integer start, Integer limit, UserBean userBean, HttpServletRequest request,
-										String userName) {
-        Page<JSONObject> res = new Page<JSONObject>();
+    public RestfulEntityBySummit<Page<UserInfo>> queryByPage(
+    		@RequestParam(value = "page") int page,
+            @RequestParam(value ="pageSize") int pageSize,
+            @RequestParam(value = "name",required = false) String name,
+            @RequestParam(value = "userName",required = false) String userName,
+            @RequestParam(value = "isEnabled",required = false) String isEnabled,
+            @RequestParam(value = "state",required = false) String state,HttpServletRequest request) {
         LogBean logBean = new LogBean();
         try {
-            logBean = logUtil.insertLog(request, "1", "用户管理分页查询", userName);
-            start = (start == null) ? 1 : start;
-            limit = (limit == null) ? SysConstants.PAGE_SIZE : limit;
-            res = us.queryByPage(start, limit, userBean);
+            logBean = logUtil.insertLog(request, "1", "用户管理分页查询", "");
+            page = (page == 0) ? 1 : page;
+            pageSize = (pageSize == 0) ? SysConstants.PAGE_SIZE : pageSize;
+            
+            JSONObject paramJson = new JSONObject();
+            if(!st.stringIsNull(name)){
+                paramJson.put("name",name);
+            }
+            if(!st.stringIsNull(userName)){
+                paramJson.put("userName",userName);
+            }
+            if(!st.stringIsNull(isEnabled)){
+                paramJson.put("isEnabled",isEnabled);
+            }
+            if(!st.stringIsNull(state)){
+                paramJson.put("state",state);
+            }
+            Page<UserInfo> pageList=us.queryByPage(page, pageSize, paramJson);
+            
+            //JSONArray jsonArray = new JSONArray();
+            //jsonArray.put(page);
+            return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_0000,pageList);
         } catch (Exception e) {
-            e.printStackTrace();
+            //e.printStackTrace();
             logBean.setActionFlag("0");
             logBean.setErroInfo(e.toString());
+            logUtil.updateLog(logBean, "1");
+            logger.error("用户分页查询失败：", e);
+           return new RestfulEntityBySummit<Page<UserInfo>>(ResponseCodeBySummit.CODE_9999,null);
         }
-        logUtil.updateLog(logBean, "1");
-        return res;
     }
 
     @ApiOperation(value = "重置密码")
     @PutMapping("/resetPassword")
-    public Map<String, Object> resetPassword(String userName, HttpServletRequest request) {
-        Map<String, Object> res = new HashMap<String, Object>();
+    public RestfulEntityBySummit<String> resetPassword(
+    		@RequestParam(value = "userName") String userName, HttpServletRequest request) {
         LogBean logBean = new LogBean();
         try {
             logBean = logUtil.insertLog(request, "1", "用户管理重置密码", userName);
-            if (st.stringEquals(SysConstants.SUPER_USERNAME, userName)) {
-                res = st.success("");
-            } else {
-                res = us.resetPassword(userName);
-            }
+//            if (st.stringEquals(SysConstants.SUPER_USERNAME, userName)) {
+//            	return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_0000);
+//            } else {
+            	return new RestfulEntityBySummit<String>(us.resetPassword(userName),null);
+//            }
         } catch (Exception e) {
-            e.printStackTrace();
+            //e.printStackTrace();
             logBean.setActionFlag("0");
             logBean.setErroInfo(e.toString());
+            logUtil.updateLog(logBean, "1");
+            logger.error("重置密码失败：", e);
+            return  new RestfulEntityBySummit<String>(ResponseCodeBySummit.CODE_9999,null);
         }
-        logUtil.updateLog(logBean, "1");
-        return res;
     }
 
-    @ApiOperation(value = "根据用户名查询权限")
+    @ApiOperation(value = "根据用户名查询角色")
     @GetMapping("/queryRoleByUserName")
-    public Map<String, Object> queryRoleByUserName(String userName, HttpServletRequest request) {
-        Map<String, Object> res = new HashMap<String, Object>();
+    public RestfulEntityBySummit<List<String>> queryRoleByUserName(
+    		@RequestParam(value = "userName") String userName, HttpServletRequest request) {
         LogBean logBean = new LogBean();
         try {
+        	List<String> list=us.queryRoleByUserName(userName);
             logBean = logUtil.insertLog(request, "1", "用户管理查询用户角色", userName);
-            if (st.stringEquals(SysConstants.SUPER_USERNAME, userName)) {
-                res = st.success("", new ArrayList<Object>());
-            } else {
-                res = st.success("", us.queryRoleByUserName(userName));
-            }
+//            if (st.stringEquals(SysConstants.SUPER_USERNAME, userName)) {
+//            	return  new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_0000);
+//            } else {
+            //JSONArray jsonArray = new JSONArray();
+           // jsonArray.put(list);
+            return  new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_0000,list);
+//            }
         } catch (Exception e) {
-            e.printStackTrace();
+            //e.printStackTrace();
             logBean.setActionFlag("0");
             logBean.setErroInfo(e.toString());
+            logUtil.updateLog(logBean, "1"); 
+            logger.error("根据用户名查询角色失败：", e);
+            return  new RestfulEntityBySummit<List<String>>(ResponseCodeBySummit.CODE_9999,null);
         }
-        logUtil.updateLog(logBean, "1");
-        return res;
     }
 
     @ApiOperation(value = "授权权限")
     @PutMapping("/grantRole")
-    public Map<String, Object> grantRole(String userName, String role, HttpServletRequest request) {
-        Map<String, Object> res = new HashMap<String, Object>();
+    public RestfulEntityBySummit<String>  grantRole(
+    		@RequestParam(value = "userName") String userName,
+    		@RequestParam(value = "role") String role, HttpServletRequest request) {
         LogBean logBean = new LogBean();
         try {
             logBean = logUtil.insertLog(request, "1", "用户管理授权", userName);
-            if (st.stringEquals(SysConstants.SUPER_USERNAME, userName)) {
-                res = st.success("");
-            } else {
-                res = us.grantRole(userName, role);
-            }
+//            if (st.stringEquals(SysConstants.SUPER_USERNAME, userName)) {
+//            	return  new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_0000);
+//            } else {
+            	return  new RestfulEntityBySummit<String>(us.grantRole(userName,role),null);
+//            }
         } catch (Exception e) {
-            log.error("授权错误", e);
             logBean.setActionFlag("0");
             logBean.setErroInfo(e.toString());
+            logUtil.updateLog(logBean, "1");
+            logger.error("授权权限失败：", e);
+            return  new RestfulEntityBySummit<String>(ResponseCodeBySummit.CODE_9999,null);
         }
-        logUtil.updateLog(logBean, "1");
-        return res;
     }
 
-    @ApiOperation(value = "根据用户名查询用户权限信息")
-    @GetMapping("/queryUserRoleByUserName")
-    public Map<String, Object> queryUserRoleByUserName(String userName, HttpServletRequest request) {
-        Map<String, Object> res = new HashMap<String, Object>();
-        LogBean logBean = new LogBean();
-        try {
-            logBean = logUtil.insertLog(request, "1", "根据用户名查询用户权限信息", userName);
-            UserBean ub = us.queryByUserName(userName);
-            List<String> roleList = us.queryRoleByUserName(userName);
-            List<String> funList = us.getFunByUserName(userName);
-            UserInfo ui = new UserInfo();
-            BeanUtils.copyProperties(ub, ui);
-            String[] tmpStrRole = new String[roleList.size()];
-            tmpStrRole = roleList.toArray(tmpStrRole);
-
-            String[] tmpStrFun = new String[funList.size()];
-            tmpStrFun = funList.toArray(tmpStrFun);
-            ui.setPermissions(tmpStrFun);
-            ui.setRoles(tmpStrRole);
-            if (ui == null) {
-                return st.error("");
-            }
-            ub.setPassword(null);
-            ub.setState(null);
-            ub.setLastUpdateTime(null);
-            res = st.success("success", ui);
-        } catch (Exception e) {
-            e.printStackTrace();
-            logBean.setActionFlag("0");
-            logBean.setErroInfo(e.toString());
-        }
-        logUtil.updateLog(logBean, "1");
-        return res;
-    }
 }
