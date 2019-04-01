@@ -63,7 +63,7 @@
 #### 参数接收   
 - <font color="red"><b>URL 传参: &emsp; 使用@ApiParam注解进行参数说明</b></font> 
 > <font color="red"><b>例1、</b></font>@ApiParam(value = "用户名", required = true, example = "example")@PathVariable String userName   
-> <font color="red"><b>例2、</b></font>@ApiParam(value = "用户名", required = true, example = "example")@PathVariable String userName   
+> <font color="red"><b>例2、</b></font>@ApiParam(value = "用户名", required = true, example = "example")@RequestParam String userName   
 
 - <font color="red"><b>RequestBody:&emsp;使用@ApiModelProperty对对象关键字段进行说明</b></font>   
 > <font color="red"><b>例：</b></font>@ApiModelProperty(value = "用户名", dataType = "String", required = true, example = "exampleuser")
