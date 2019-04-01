@@ -8,15 +8,15 @@ import io.swagger.annotations.ApiModelProperty;
 
 public class ADCDBean  implements Serializable {
 	private static final long serialVersionUID = 1L;
-	@ApiModelProperty(value="adcd",required=true)
+	@ApiModelProperty(value="行政区划编码",name="adcd",required=true)
 	private String adcd;
-	@ApiModelProperty(value="adnm",required=true)
+	@ApiModelProperty(value="行政区划名称",name="adnm",required=true)
 	private String adnm;
-	@ApiModelProperty(value="padcd",required=true)
+	@ApiModelProperty(value="上级行政区划编码",name="padcd",required=true)
 	private String padcd;
-	
+	@ApiModelProperty(value="级别",name="level")
 	private String level;
-	
+	@ApiModelProperty(value="下级行政区划集合",name="children")
 	private List<ADCDBean> children;
 	
 	public ADCDBean() {

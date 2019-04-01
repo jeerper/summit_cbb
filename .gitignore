@@ -20,3 +20,10 @@ cbb_parent/cbb_demo/backend/.factorypath
 cbb_parent/cbb_weather/backend/.factorypath
 cbb_parent/cbb_demo/backend/.springBeans
 .metadata/*
+cbb_parent/cbb_userauth/.factorypath
+cbb_parent/cbb_register_center/.factorypath
+cbb_parent/cbb_demo/.factorypath
+cbb_parent/cbb_api_gateway_db/.factorypath
+cbb_parent/cbb_pptn/.factorypath
+cbb_parent/cbb_api_gateway_es/.factorypath
+cbb_parent/cbb_weather/.factorypath

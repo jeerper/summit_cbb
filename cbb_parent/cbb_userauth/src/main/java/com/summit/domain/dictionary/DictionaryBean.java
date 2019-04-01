@@ -1,6 +1,7 @@
 package com.summit.domain.dictionary;
 
 import java.io.Serializable;
+import java.util.List;
 
 import io.swagger.annotations.ApiModelProperty;
 
@@ -9,13 +10,19 @@ public class DictionaryBean implements Serializable {
 	 * 
 	 */
 	private static final long serialVersionUID = 15451645L;
-	@ApiModelProperty(value="code",required=true)
+	@ApiModelProperty(value="编码",name="code",required=true)
 	private String code;
+	@ApiModelProperty(value="上级code",name="pcode",required=true)
 	private String pcode;
-	@ApiModelProperty(value="name",required=true)
+	@ApiModelProperty(value="名称",name="name",required=true)
 	private String name;
+	@ApiModelProperty(value="标识值，引用表存此值",name="ckey",required=true)
 	private String ckey;
+	@ApiModelProperty(value="备注",name="note")
 	private String note;
+	@ApiModelProperty(value="下级信息",name="children")
+	private List<DictionaryBean> children;
+	
 	
 	
 	public DictionaryBean() {
@@ -71,6 +78,15 @@ public class DictionaryBean implements Serializable {
 	public void setNote(String note) {
 		this.note = note;
 	}
+	
+
+	public List<DictionaryBean> getChildren() {
+		return children;
+	}
+
+	public void setChildren(List<DictionaryBean> children) {
+		this.children = children;
+	}
 
 	@Override
 	public DictionaryBean clone() {
@@ -79,16 +95,6 @@ public class DictionaryBean implements Serializable {
 	}
 
 	
-	public String getId() {
-		// TODO Auto-generated method stub
-		return code;
-	}
-
-	
-	public String getpId() {
-		// TODO Auto-generated method stub
-		return pcode;
-	}
 	
 	
 }

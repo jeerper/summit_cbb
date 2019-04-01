@@ -90,9 +90,6 @@ public class ADCDController {
 			JSONObject json =new JSONObject();
 			json.put("padcd", padcd);
 			json.put("level", level);
-			//list = ds.queryByPId(json);
-		    //JSONArray jsonArray = new JSONArray();
-            //jsonArray.add(ds.queryByPId(json));
 			return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_0000,ds.queryByPId(json));
 		} catch (Exception e) {
 			//e.printStackTrace();
@@ -122,8 +119,6 @@ public class ADCDController {
 			 logger.error("数据查询失败！", e);
 			return new RestfulEntityBySummit<List<ADCDBean>>(ResponseCodeBySummit.CODE_9999,null);
 		}
-		//logUtil.updateLog(logBean,"1");
-		//return list;
 	}
 	@ApiOperation(value = "根据父节点查询分页")
 	@RequestMapping(value = "/queryByPadcdPage",method = RequestMethod.GET)
@@ -145,9 +140,6 @@ public class ADCDController {
 			logger.error("数据查询失败！", e);
 			return new RestfulEntityBySummit<Page<ADCDBean>>(ResponseCodeBySummit.CODE_9999,null);
 		}
-		//logUtil.updateLog(logBean,"1");
-		
-		//return list;
 	}
 	/**
 	 * 新增
@@ -168,9 +160,6 @@ public class ADCDController {
 			logUtil.updateLog(logBean,"1");
 			return new RestfulEntityBySummit<String>(ResponseCodeBySummit.CODE_9999,null);
 		}
-		
-		
-		//return list;
 	}
 	
 	/**

@@ -88,10 +88,10 @@ public class DeptService {
     				childrenList=new ArrayList();
     			}
     			childrenList.add(JSONObject);
+    			id=JSONObject.getString("ID");
     			if(i==list.size()-1){
     				map.put(id, childrenList);
     			}
-    			id=JSONObject.getString("ID");
     			i++;
     		}
     		orgMaps=map;

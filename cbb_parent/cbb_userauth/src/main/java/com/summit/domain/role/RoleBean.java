@@ -11,14 +11,15 @@ public class RoleBean implements Serializable{
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+	@ApiModelProperty(value="角色编码",name="code", required=true)
 	private String code;
-	@ApiModelProperty(value="name",required=true)
+	@ApiModelProperty(value="角色名称",name="name",required=true)
 	private String name;
+	@ApiModelProperty(value="备注",name="note")
 	private String note;
 
 	public RoleBean() {
 		super();
-		// TODO Auto-generated constructor stub
 	}
 
 	public RoleBean(String code, String name, String note) {

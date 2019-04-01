@@ -17,7 +17,6 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.TypeReference;
 import com.summit.common.entity.ResponseCodeBySummit;
-import com.summit.common.entity.UserInfo;
 import com.summit.domain.adcd.ADCDBean;
 import com.summit.domain.adcd.ADCDBeanRowMapper;
 import com.summit.repository.UserRepository;
@@ -43,8 +42,9 @@ public class ADCDService {
 	 * 
 	 * 查询adcd树
 	 * @return
+	 * @throws Exception 
 	 */
-	public ADCDBean queryAdcdTree(String padcd) {
+	public ADCDBean queryAdcdTree(String padcd) throws Exception {
 		LinkedMap linkedMap=new LinkedMap();
 		StringBuffer sql = new StringBuffer("SELECT ADCD, ADNM,PADCD, ADLEVEL FROM AD_CD_B where 1=1 ");
 		if(padcd==null || "".equals(padcd)){
@@ -54,31 +54,17 @@ public class ADCDService {
 			linkedMap.put(1, padcd);
 			
 		}
-		List<Object> rootList= null;
-        try {
-			rootList= ur.queryAllCustom(sql.toString(),linkedMap);
-		} catch (Exception e1) {
-			e1.printStackTrace();
-		}
+		List<Object> rootList= ur.queryAllCustom(sql.toString(),linkedMap);
         ADCDBean ADCDBeanTree =null;
         if(rootList.size()>0){
         	String jsonTree=((JSONObject)rootList.get(0)).toString();
 			ADCDBeanTree = JSON.parseObject(jsonTree, new TypeReference<ADCDBean>() {});
-			
-			//logger.debug(" jSONOTree.getString: "+jSONOTree.getString("ADCD"));
 			List<ADCDBean> list=generateOrgMapToTree(null,ADCDBeanTree.getAdcd());
-			//logger.debug("list: "+list.size());
 			if(list!=null && list.size()>0){
 				ADCDBeanTree.setChildren(list);
 			}
-        	//System.out.println(jSONOTree);
-        	// ADCDBeanTree = JSON.parseObject(jSONOTree.toString(), new TypeReference<ADCDBean>() {});
-        	//System.out.println(ADCDBeanTree);
         	  
 		}
-        
-        //logger.debug("0-2");
-        //logger.debug("jSONOTree0: "+jSONOTree);
 		return ADCDBeanTree;
 	}
 	
@@ -86,15 +72,12 @@ public class ADCDService {
         if (null == orgMaps || orgMaps.size() == 0) {//a.ADLEVEL as LEVELa ,b.ADLEVEL as LEVELb
         	StringBuffer querySql = new StringBuffer("SELECT a.ADCD, a.ADNM,a.PADCD, b.ADCD AS CHILD_ID, b.ADNM AS CHILD_NAME FROM AD_CD_B AS a  ");
         	querySql.append(" JOIN AD_CD_B AS b ON b.PADCD = a.ADCD ORDER BY  a.ADCD ASC,b.ADCD asc");
-        	logger.debug("sql:"+querySql.toString());
-        	logger.debug("0:");
         	JSONArray list=null;
 			try {
 				list = ur.queryAllCustomJsonArray(querySql.toString(),null);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-        	logger.debug("1:"+list.size());
     		Map<String, List<Object>> map=new HashMap<String, List<Object>>();
     		List<Object> childrenList=new ArrayList();;
     		String adcd="";
@@ -106,15 +89,14 @@ public class ADCDService {
     				childrenList=new ArrayList();
     			}
     			childrenList.add(jSONObject);
+    			adcd=jSONObject.getString("ADCD");
     			if(i==list.size()-1){
     				map.put(adcd, childrenList);
     			}
     			i++;
-    			adcd=jSONObject.getString("ADCD");
+    			
     		}
     		orgMaps=map;
-//            String json_list = JSONObject.toJSONString(list);
-//            orgMaps = (List<Map<String, Object>>) JSONObject.parse(json_list);
         }
         logger.debug("2:"+orgMaps.size());
         List<ADCDBean> orgList = new ArrayList<>();
@@ -124,7 +106,6 @@ public class ADCDService {
         		return orgList;
         	}
         	logger.debug("3:"+parenList.size());
-        	int i=0;
             for (Object obj : parenList) {
             	// logger.debug("3-1:"+i);
             	ADCDBean adcdBean=new ADCDBean();
@@ -137,27 +118,15 @@ public class ADCDService {
             	if(json.containsKey("LEVELb")){
             		adcdBean.setLevel(json.getString("LEVELb"));
              	}
-            	
-//            	jSONOTree.put("ADCD", json.getString("CHILD_ID"));
-//            	jSONOTree.put("ADNM", json.getString("CHILD_NAME"));
-//            	jSONOTree.put("PADCD",pid);
-//            	if(json.containsKey("LEVELb")){
-//            	   jSONOTree.put("LEVEL",json.getString("LEVELb"));
-//            	}
-              //  List<JSONObject> children = generateOrgMapToTree(orgMaps, json.get("CHILD_ID").toString());
             	 List<ADCDBean> children = generateOrgMapToTree(orgMaps, json.get("CHILD_ID").toString());
                 //将子结果集存入当前对象的children字段中
                 if(children!=null && children.size()>0){
-                  // jSONOTree.put("CHILDREN", children);
                 	adcdBean.setChildren(children);
                 }
                 //添加当前对象到主结果集中
                 orgList.add(adcdBean);
-                i++;
             }
-            logger.debug("4:"+orgList.size());
         }
-        logger.debug("5:"+orgList.size());
         return orgList;
     }
 
