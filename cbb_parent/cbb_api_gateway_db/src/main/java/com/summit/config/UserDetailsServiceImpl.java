@@ -1,7 +1,7 @@
 package com.summit.config;
 
 import com.summit.common.api.userauth.RemoteUserAuthService;
-import com.summit.common.entity.ResponseCodeBySummit;
+import com.summit.common.entity.ResponseCodeEnum;
 import com.summit.common.entity.RestfulEntityBySummit;
 import com.summit.common.entity.UserInfo;
 import com.summit.common.redis.user.UserInfoCache;
@@ -44,7 +44,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         RestfulEntityBySummit<UserInfo> userInfoRestFulEntity = remoteUserAuthService.queryUserInfoByUserName(username);
 
-        if (!userInfoRestFulEntity.getCode().equals(ResponseCodeBySummit.CODE_0000.name())) {
+        if (!userInfoRestFulEntity.getCode().equals(ResponseCodeEnum.CODE_0000.getCode())) {
             throw new UsernameNotFoundException("用户不存在");
         }
         UserInfo userInfo = userInfoRestFulEntity.getData();
