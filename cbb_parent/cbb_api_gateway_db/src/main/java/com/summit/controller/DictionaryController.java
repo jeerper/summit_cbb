@@ -2,9 +2,9 @@ package com.summit.controller;
 
 import com.summit.common.api.demo.RemoteDemoService;
 import com.summit.common.api.userauth.RemoteUserAuthService;
-import com.summit.common.entity.ResponseCodeBySummit;
 import com.summit.common.entity.RestfulEntityBySummit;
 import com.summit.common.entity.UserInfo;
+import com.summit.common.util.ResultBuilder;
 import com.summit.model.user.FileUploadInfo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -37,7 +37,7 @@ public class DictionaryController {
     public RestfulEntityBySummit add() {
         //网关需要通过SecurityContextHolder获取用户信息
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        return new RestfulEntityBySummit(ResponseCodeBySummit.CODE_0000);
+        return ResultBuilder.buildSuccess();
     }
 
     @ApiOperation(value = "第三个demo接口,无参数传递，返回失败代码，返回用户名称")
@@ -55,9 +55,8 @@ public class DictionaryController {
 
     @ApiOperation(value = "文件上传测试接口")
     @PostMapping(value = "/loghahaha", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
-    public RestfulEntityBySummit fileUpload(@ApiParam(value ="文件上传对象",allowMultiple = true)MultipartFile[] uploadFile, FileUploadInfo fileUploadInfo) {
-
-        return new RestfulEntityBySummit(ResponseCodeBySummit.CODE_0000);
+    public RestfulEntityBySummit fileUpload(@ApiParam(value = "文件上传对象", allowMultiple = true) MultipartFile[] uploadFile, FileUploadInfo fileUploadInfo) {
+        return ResultBuilder.buildSuccess();
     }
 
 
