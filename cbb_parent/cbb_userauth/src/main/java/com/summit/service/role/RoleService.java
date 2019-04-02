@@ -3,7 +3,7 @@ package com.summit.service.role;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
 import com.summit.common.entity.ResponseCodeEnum;
-import com.summit.domain.role.RoleBean;
+import com.summit.common.entity.RoleBean;
 import com.summit.domain.role.RoleBeanRowMapper;
 import com.summit.repository.UserRepository;
 import com.summit.util.Page;

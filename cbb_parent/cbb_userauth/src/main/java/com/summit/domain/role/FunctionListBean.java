@@ -3,7 +3,7 @@ package com.summit.domain.role;
 import java.io.Serializable;
 import java.util.List;
 
-import com.summit.domain.function.FunctionBean;
+import com.summit.common.entity.FunctionBean;
 
 import io.swagger.annotations.ApiModelProperty;
 

@@ -16,10 +16,10 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
+import com.summit.common.entity.ADCDBean;
 import com.summit.common.entity.ResponseCodeEnum;
 import com.summit.common.entity.RestfulEntityBySummit;
 import com.summit.common.util.ResultBuilder;
-import com.summit.domain.adcd.ADCDBean;
 import com.summit.domain.log.LogBean;
 import com.summit.service.adcd.ADCDService;
 import com.summit.service.log.ILogUtil;

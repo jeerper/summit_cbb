@@ -1,5 +1,6 @@
 package com.summit.domain.dictionary;
 
+import com.summit.common.entity.DictionaryBean;
 import com.summit.util.RowMapperUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.RowMapper;

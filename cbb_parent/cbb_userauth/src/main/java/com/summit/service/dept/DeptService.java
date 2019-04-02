@@ -13,8 +13,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
+import com.summit.common.entity.DeptBean;
 import com.summit.common.entity.ResponseCodeEnum;
-import com.summit.domain.dept.DeptBean;
 import com.summit.domain.dept.DeptBeanRowMapper;
 import com.summit.repository.UserRepository;
 import com.summit.util.Page;

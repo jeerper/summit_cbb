@@ -17,12 +17,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.summit.common.entity.ResponseCodeEnum;
 import com.summit.common.entity.RestfulEntityBySummit;
+import com.summit.common.entity.RoleBean;
 import com.summit.common.entity.UserInfo;
 import com.summit.common.util.ResultBuilder;
 import com.summit.common.web.filter.UserContextHolder;
 import com.summit.domain.log.LogBean;
 import com.summit.domain.role.FunctionListBean;
-import com.summit.domain.role.RoleBean;
 import com.summit.service.function.FunctionService;
 import com.summit.service.log.ILogUtil;
 import com.summit.service.role.RoleService;

@@ -8,12 +8,13 @@
  */
 package com.summit.service.dictionary;
 
-import com.summit.domain.dictionary.DictionaryBean;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+
+import com.summit.common.entity.DictionaryBean;
 
 /**
  * 数据字典的内存缓存类如果仅仅是查询，建议调用本类中的getByCode和getChildList方法，直接从内存中取数据加速系统运行。

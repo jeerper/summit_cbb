@@ -1,6 +1,6 @@
 package com.summit.service.cache;
 
-import com.summit.domain.dictionary.DictionaryBean;
+import com.summit.common.entity.DictionaryBean;
 import com.summit.util.SysConstants;
 import org.springframework.stereotype.Service;
 

@@ -20,10 +20,10 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
+import com.summit.common.entity.DictionaryBean;
 import com.summit.common.entity.ResponseCodeEnum;
 import com.summit.common.entity.RestfulEntityBySummit;
 import com.summit.common.util.ResultBuilder;
-import com.summit.domain.dictionary.DictionaryBean;
 import com.summit.domain.log.LogBean;
 import com.summit.service.dictionary.DictionaryService;
 import com.summit.service.log.ILogUtil;

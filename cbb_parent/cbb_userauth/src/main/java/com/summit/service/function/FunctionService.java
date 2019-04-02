@@ -15,7 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
-import com.summit.domain.function.FunctionBean;
+import com.summit.common.entity.FunctionBean;
 import com.summit.domain.function.FunctionBeanRowMapper;
 import com.summit.repository.UserRepository;
 import com.summit.util.Page;
