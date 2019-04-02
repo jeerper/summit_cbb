@@ -8,7 +8,7 @@ spring:
 
   redis:
     host: "${Registry_Center_IP:localhost}"
-    port: 6379
+    port: 10001
 eureka:
   instance:
     #使用IP注册服务

@@ -7,7 +7,7 @@ spring:
     password: Summit2017
   redis:
     host: "${Registry_Center_IP:localhost}"
-    port: 6379
+    port: 10001
 
 eureka:
   instance:
