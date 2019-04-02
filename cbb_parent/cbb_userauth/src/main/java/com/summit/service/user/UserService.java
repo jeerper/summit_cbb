@@ -156,7 +156,7 @@ public class UserService {
 		List<Object[]> batchArgs = new ArrayList<Object[]>();
 		String[] roleArr = role.split(",");
 		for (String roleCode : roleArr) {
-			batchArgs.add(new Object[] { st.getKey(), userName, roleCode });
+			batchArgs.add(new Object[] { SummitTools.getKey(), userName, roleCode });
 		}
 		jdbcTemplate.batchUpdate(sql, batchArgs);
 	}
@@ -174,11 +174,11 @@ public class UserService {
 
 	public List<FunctionBean> getFunInfoByUserName(String userName){
 		String sql = "SELECT  SF.* FROM SYS_USER_ROLE SUR INNER JOIN SYS_ROLE_FUNCTION SRF ON ( SUR.ROLE_CODE = SRF.ROLE_CODE ) INNER JOIN SYS_FUNCTION SF ON (SRF.FUNCTION_ID = SF.ID) WHERE SF.IS_ENABLED = '1' AND SF.SUPER_FUN = 0 AND SUR.USERNAME = ? ORDER BY FDESC";
-		List list= ur.queryAllCustom(sql, userName);
+		List<JSONObject>list= ur.queryAllCustom(sql, userName);
 		if(list!=null){
 			 ArrayList<FunctionBean> functionBeans = JSON.parseObject(list.toString(), new TypeReference<ArrayList<FunctionBean>>() {});
 			 return functionBeans;
 		}
-		return list;
+		return null;
 	}
 }

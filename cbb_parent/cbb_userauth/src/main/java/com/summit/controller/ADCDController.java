@@ -1,7 +1,6 @@
 package com.summit.controller;
 
 import java.util.List;
-import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -202,7 +201,6 @@ public class ADCDController {
 	public RestfulEntityBySummit<?> del(@RequestParam(value = "ids") String ids) {
 		HttpServletRequest request = ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest();
 		LogBean logBean = logUtil.insertLog(request,"1", "行政区划删除","");
-		Map<String, Object> list = null;
 		try {
 			 ds.del(ids);
 			return ResultBuilder.buildSuccess();

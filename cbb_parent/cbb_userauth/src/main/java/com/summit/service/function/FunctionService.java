@@ -15,7 +15,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
-import com.summit.domain.dept.DeptBean;
 import com.summit.domain.function.FunctionBean;
 import com.summit.domain.function.FunctionBeanRowMapper;
 import com.summit.repository.UserRepository;
@@ -33,8 +32,6 @@ public class FunctionService {
 	private UserRepository ur;
 	@Autowired
 	public JdbcTemplate jdbcTemplate;
-	@Autowired
-	private SummitTools st;
 	@Autowired
 	private FunctionBeanRowMapper fbrm;
 	
@@ -75,14 +72,14 @@ public class FunctionService {
         	querySql.append("   ORDER BY  a.id asc  ");
         	com.alibaba.fastjson.JSONArray list= ur.queryAllCustomJsonArray(querySql.toString(),null);
     		Map<String, List<Object>> map=new HashMap<String, List<Object>>();
-    		List<Object> childrenList=new ArrayList();;
+    		List<Object> childrenList=new ArrayList<Object>();;
     		String adcd="";
     		int i=0;
     		for(Object o:list){
     			JSONObject jSONObject=(JSONObject)o;
     			if(!"".equals(adcd) && !adcd.equals(jSONObject.getString("ID"))){
     				map.put(adcd, childrenList);
-    				childrenList=new ArrayList();
+    				childrenList=new ArrayList<Object>();
     			}
     			childrenList.add(jSONObject);
     			adcd=jSONObject.getString("ID");
@@ -99,7 +96,7 @@ public class FunctionService {
        
         List<FunctionBean> orgList = new ArrayList<>();
         if (orgMaps != null && orgMaps.size() > 0) {
-        	List parenList=orgMaps.get(pid);
+        	List<Object> parenList=orgMaps.get(pid);
         	if(parenList==null){
         		return orgList;
         	}
@@ -128,7 +125,7 @@ public class FunctionService {
 
 	public void add(FunctionBean fb) {
 		String sql = "INSERT INTO SYS_FUNCTION (ID, PID, NAME, FDESC, IS_ENABLED, FURL, IMGULR, NOTE, SUPER_FUN) VALUES (?, ?, ?, ?, ?, ?, ?, ?,?)";
-		jdbcTemplate.update(sql, st.getKey(), fb.getPid(), fb.getName(), fb
+		jdbcTemplate.update(sql, SummitTools.getKey(), fb.getPid(), fb.getName(), fb
 				.getFdesc(), fb.getIsEnabled(), fb.getFurl(), fb.getImgUlr(),
 				fb.getNote(), 0);
 	}
@@ -152,7 +149,7 @@ public class FunctionService {
 	}
 
 	private boolean isSuperUser(String userName) {
-		if (st.stringEquals(SysConstants.SUPER_USERNAME, userName)) {
+		if (SummitTools.stringEquals(SysConstants.SUPER_USERNAME, userName)) {
 			return true;
 		}
 		return false;

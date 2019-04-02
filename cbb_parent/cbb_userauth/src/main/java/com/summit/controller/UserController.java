@@ -47,8 +47,6 @@ public class UserController {
     @Autowired
     private UserService us;
     @Autowired
-    private SummitTools st;
-    @Autowired
     UserInfoCache userInfoCache;
 
     @PostMapping("/add")
@@ -89,7 +87,7 @@ public class UserController {
             if(userNames.contains(",")){
             	for(String username:userNames.split(",")){
             		//系统管路员用户不能删除
-            		if (st.stringEquals(SysConstants.SUPER_USERNAME, username)) {
+            		if (SummitTools.stringEquals(SysConstants.SUPER_USERNAME, username)) {
             			continue;
                     }
             		userInfoCache.deleteUserInfo(username);		
@@ -227,16 +225,16 @@ public class UserController {
             pageSize = (pageSize == 0) ? SysConstants.PAGE_SIZE : pageSize;
             
             JSONObject paramJson = new JSONObject();
-            if(!st.stringIsNull(name)){
+            if(!SummitTools.stringIsNull(name)){
                 paramJson.put("name",name);
             }
-            if(!st.stringIsNull(userName)){
+            if(!SummitTools.stringIsNull(userName)){
                 paramJson.put("userName",userName);
             }
-            if(!st.stringIsNull(isEnabled)){
+            if(!SummitTools.stringIsNull(isEnabled)){
                 paramJson.put("isEnabled",isEnabled);
             }
-            if(!st.stringIsNull(state)){
+            if(!SummitTools.stringIsNull(state)){
                 paramJson.put("state",state);
             }
             Page<UserInfo> pageList=us.queryByPage(page, pageSize, paramJson);

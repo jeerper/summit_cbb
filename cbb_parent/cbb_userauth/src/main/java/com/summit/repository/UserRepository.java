@@ -5,7 +5,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -44,7 +43,6 @@ public class UserRepository extends JdbcDaoSupport {
 	public UserRepository(DataSource dataSource) {
 		setDataSource(dataSource);
 		jdbcTemplate = super.getJdbcTemplate();
-//		System.out.print("datasource==========="+dataSource);
 	}
 
 	@Autowired
@@ -75,11 +73,9 @@ public class UserRepository extends JdbcDaoSupport {
 				try {
 					for (Iterator iterator = linkedMap.keySet().iterator(); iterator.hasNext();) {
 						Object object = (Object) iterator.next();
-						//pstmt.setString(1, json.get(object).toString());
 						pstmt.setObject(Integer.valueOf(object.toString()), linkedMap.get(object));
 					}
 				} catch (Exception e3) {
-					// TODO Auto-generated catch block
 					throw e3;
 				}
 			}
@@ -139,11 +135,9 @@ public class UserRepository extends JdbcDaoSupport {
 				try {
 					for (Iterator iterator = linkedMap.keySet().iterator(); iterator.hasNext();) {
 						Object object = (Object) iterator.next();
-						//pstmt.setString(1, json.get(object).toString());
 						pstmt.setObject(Integer.valueOf(object.toString()), linkedMap.get(object));
 					}
 				} catch (Exception e3) {
-					// TODO Auto-generated catch block
 					throw e3;
 				}
 			}

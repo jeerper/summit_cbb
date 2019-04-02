@@ -49,7 +49,7 @@ public class LogUtilImpl implements ILogUtil {
 		}
 		LogBean lg = null;
 		if(request !=null && logType!=null && logType.trim().length()>0 && funName!=null && funName.trim().length()>0){
-			String id = new SummitTools().getKey();
+			String id = SummitTools.getKey();
 			String callerIP = "";
 			String sTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.sss").format(new Date());
 			String insertLogSql = "";

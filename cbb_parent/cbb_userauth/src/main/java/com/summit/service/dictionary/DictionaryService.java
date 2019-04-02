@@ -1,10 +1,20 @@
 package com.summit.service.dictionary;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.commons.collections.map.LinkedMap;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.TypeReference;
 import com.summit.common.entity.ResponseCodeEnum;
-import com.summit.domain.dept.DeptBean;
 import com.summit.domain.dictionary.DictionaryBean;
 import com.summit.domain.dictionary.DictionaryBeanRowMapper;
 import com.summit.repository.UserRepository;
@@ -12,22 +22,8 @@ import com.summit.service.cache.DictionaryCacheImpl;
 import com.summit.util.Page;
 import com.summit.util.SummitTools;
 import com.summit.util.SysConstants;
+
 import net.sf.json.JSONObject;
-
-import org.apache.commons.collections.map.LinkedMap;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.ws.rs.core.Response;
 
 
 @Transactional
@@ -131,14 +127,14 @@ public class DictionaryService {
 				e.printStackTrace();
 			}
     		Map<String, List<Object>> map=new HashMap<String, List<Object>>();
-    		List<Object> childrenList=new ArrayList();;
+    		List<Object> childrenList=new ArrayList<Object>();;
     		String adcd="";
     		int i=0;
     		for(Object o:list){
     			JSONObject jSONObject=(JSONObject)o;
     			if(!"".equals(adcd) && !adcd.equals(jSONObject.getString("CODE")) ){
     				map.put(adcd, childrenList);
-    				childrenList=new ArrayList();
+    				childrenList=new ArrayList<Object>();
     			}
     			childrenList.add(jSONObject);
     			adcd=jSONObject.getString("CODE");
@@ -201,8 +197,7 @@ public class DictionaryService {
 	}
 	
 	public List<DictionaryBean> queryByPid(String pId){
-		List list=dictionaryCacheImpl.findChildList(pId);
-		return list;
+		return dictionaryCacheImpl.findChildList(pId);
 	}
 	
 	/**

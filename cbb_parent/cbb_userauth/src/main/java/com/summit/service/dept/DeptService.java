@@ -6,8 +6,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.collections.map.LinkedMap;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
@@ -16,7 +14,6 @@ import org.springframework.transaction.annotation.Transactional;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
 import com.summit.common.entity.ResponseCodeEnum;
-import com.summit.domain.adcd.ADCDBean;
 import com.summit.domain.dept.DeptBean;
 import com.summit.domain.dept.DeptBeanRowMapper;
 import com.summit.repository.UserRepository;
@@ -28,7 +25,6 @@ import net.sf.json.JSONObject;
 @Service
 @Transactional
 public class DeptService {
-	private static final Logger logger = LoggerFactory.getLogger(DeptService.class);
 	@Autowired
 	private UserRepository ur;
 	@Autowired
@@ -77,7 +73,7 @@ public class DeptService {
         	//logger.debug(sql.toString());
         	List<Object> list=ur.queryAllCustom(sql.toString(),new LinkedMap());
     		Map<String, List<Object>> map=new HashMap<String, List<Object>>();
-    		List<Object> childrenList=new ArrayList();;
+    		List<Object> childrenList=new ArrayList<Object>();;
     		String id="";
     		int i=0;
     		for(Object s:list){
@@ -85,7 +81,7 @@ public class DeptService {
     			//logger.debug(JSONObject.getString("ID"));
     			if((!"".equals(id) && !id.equals(JSONObject.getString("ID"))) ){
     				map.put(id, childrenList);
-    				childrenList=new ArrayList();
+    				childrenList=new ArrayList<Object>();
     			}
     			childrenList.add(JSONObject);
     			id=JSONObject.getString("ID");
@@ -210,7 +206,7 @@ public class DeptService {
 		String sql = "INSERT INTO SYS_DEPT (ID, PID, DEPTCODE,DEPTNAME,REMARK) VALUES (?, ? ,?, ?,?)";
 		jdbcTemplate.update(
 				sql,
-				st.getKey(),
+				SummitTools.getKey(),
 				ab.getPid(),
 				ab.getDeptCode(),
 				ab.getDeptName(),

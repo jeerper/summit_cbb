@@ -3,7 +3,6 @@ package com.summit.service.role;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
 import com.summit.common.entity.ResponseCodeEnum;
-import com.summit.domain.function.FunctionBean;
 import com.summit.domain.role.RoleBean;
 import com.summit.domain.role.RoleBeanRowMapper;
 import com.summit.repository.UserRepository;
@@ -17,7 +16,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 
 @Service
@@ -109,7 +107,7 @@ public class RoleService {
 		List<Object[]> batchArgs = new ArrayList<Object[]>();
 		String[] funIdArr = funIds.split(",");
 		for (String funId : funIdArr) {
-			batchArgs.add(new Object[] { st.getKey(), roleCode, funId });
+			batchArgs.add(new Object[] { SummitTools.getKey(), roleCode, funId });
 		}
 		jdbcTemplate.batchUpdate(sql, batchArgs);
 	}

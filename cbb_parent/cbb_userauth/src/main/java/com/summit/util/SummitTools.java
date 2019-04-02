@@ -1,27 +1,26 @@
 package com.summit.util;
 
-import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
-import net.sf.json.xml.XMLSerializer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
-
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
+
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
+import net.sf.json.xml.XMLSerializer;
 
 
 /**
@@ -63,7 +62,7 @@ public class SummitTools {
 	 * @param str2
 	 * @return
 	 */
-	public boolean stringEquals(String str1, String str2) {
+	public static  boolean stringEquals(String str1, String str2) {
 		if (str1 == str2) {
 			return true;
 		} else if ((str1 != null && str2 == null)
@@ -643,105 +642,7 @@ public class SummitTools {
 		};
 	}
 
-	/**
-	 * 将实现接口的bean集合组装成一棵树（给EXTtreepanel用）
-	 * 
-	 * @param <T>
-	 * 
-	 * @param data
-	 *            实现TreeNodeClass接口的bean集合
-	 * @param pId
-	 *            父ID(根据此父ID生成树)
-	 * @param expanded
-	 *            整棵树是否展开
-	 * @return
-	 * @author 张展弋
-	 * @time 2014-12-12 上午11:03:31
-	 * 
-	 */
-	public <T extends TreeNodeClass<D>, D> List<TreeNode<D>> creatTreeNode(
-			Iterable<T> data, String pId) {
-		List<TreeNode<D>> list = new ArrayList<TreeNode<D>>();
-		if (data == null) {
-			return list;
-		}
-		if (pId == null) {
-			for (TreeNodeClass<D> treeNodeClass : data) {
-				if (treeNodeClass.getNodePid() == null) {
-					list.add(creatTreeNode(treeNodeClass, data, pId));
-				}
-			}
-
-		} else {
-			for (TreeNodeClass<D> treeNodeClass : data) {
-				if (pId.equals(treeNodeClass.getNodePid())) {
-					list.add(creatTreeNode(treeNodeClass, data, pId));
-				}
-			}
-		}
-		return list;
-	}
-
-	private <T extends TreeNodeClass<D>, D> TreeNode<D> creatTreeNode(
-			TreeNodeClass<D> treeNodeClass, Iterable<T> data, String pId) {
-		TreeNode<D> treeNode = new TreeNode<D>();
-		treeNode.setId(treeNodeClass.getNodeId());
-		treeNode.setText(treeNodeClass.getNodeText());
-		treeNode.setData(treeNodeClass.getNodeData());
-		treeNode.setChecked(treeNodeClass.getChecked());
-		treeNode.setExpanded(treeNodeClass.getOpen());
-		List<TreeNode<D>> children = creatTreeNode(data, treeNode.getId());
-		if (treeNodeClass.getLeaf() != null) {
-			treeNode.setLeaf(treeNodeClass.getLeaf());
-		} else {
-			if (collectionNotNull(children)) {
-				treeNode.setLeaf(false);
-			}
-		}
-		if (collectionNotNull(children)) {
-			treeNode.setChildren(children);
-		}
-		return treeNode;
-	}
-
-	/**
-	 * 从实现接口的bean集合中取出指定父节点下的所有子节点（给EXTtreepanel用）
-	 * 
-	 * @param <T>
-	 * @param data
-	 *            实现TreeNodeClass接口的bean集合
-	 * @param pId
-	 *            父ID(根据此父ID提取数据)
-	 * @return
-	 * @author zzy
-	 * @time 2014-4-10 下午07:53:12
-	 * 
-	 */
-	public <T extends TreeNodeClass<D>, D> List<T> getTreeNodeList(
-			Iterable<T> data, String pId) {
-		List<T> list = new ArrayList<T>();
-		if (data == null) {
-			return list;
-		}
-		if (pId == null) {
-			for (T t : data) {
-				if (t.getNodePid() == null) {
-					list.add(t);
-					list.addAll(getTreeNodeList(data, t.getNodeId()));
-				}
-			}
-
-		} else {
-			for (T t : data) {
-				if (pId.equals(t.getNodePid())) {
-					list.add(t);
-					list.addAll(getTreeNodeList(data, t.getNodeId()));
-				}
-			}
-		}
-		return list;
-	}
-
+	
 	/**
 	 * 获取给定时间月的最大天数
 	 * 

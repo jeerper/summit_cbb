@@ -21,7 +21,6 @@ import com.summit.domain.adcd.ADCDBean;
 import com.summit.domain.adcd.ADCDBeanRowMapper;
 import com.summit.repository.UserRepository;
 import com.summit.util.Page;
-import com.summit.util.SummitTools;
 
 import net.sf.json.JSONObject;
 
@@ -34,8 +33,6 @@ public class ADCDService {
 	private UserRepository ur;
 	@Autowired
 	public JdbcTemplate jdbcTemplate;
-	@Autowired
-	private SummitTools st;
 	@Autowired
 	private ADCDBeanRowMapper atm;
 	/**
@@ -79,14 +76,14 @@ public class ADCDService {
 				e.printStackTrace();
 			}
     		Map<String, List<Object>> map=new HashMap<String, List<Object>>();
-    		List<Object> childrenList=new ArrayList();;
+    		List<Object> childrenList=new ArrayList<Object>();;
     		String adcd="";
     		int i=0;
     		for(Object o:list){
     			JSONObject jSONObject=(JSONObject)o;
     			if(!"".equals(adcd) && !adcd.equals(jSONObject.getString("ADCD"))){
     				map.put(adcd, childrenList);
-    				childrenList=new ArrayList();
+    				childrenList=new ArrayList<Object>();
     			}
     			childrenList.add(jSONObject);
     			adcd=jSONObject.getString("ADCD");
