@@ -1,5 +1,6 @@
 package com.summit.service.user;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -55,7 +56,7 @@ public class UserService {
 				userInfo.getPhoneNumber(),
 				1,
 				userInfo.getNote(),
-				st.DTFormat(DateTimeType.dateTime, new Date()));
+				new Date());
 		return null;
 	}
 
@@ -65,8 +66,7 @@ public class UserService {
 				+ SysConstants.SUPER_USERNAME
 				+ "' AND USERNAME IN ('"
 				+ userNames + "')";
-		jdbcTemplate.update(sql, st.DTFormat(DateTimeType.dateTime,
-				new Date()));
+		jdbcTemplate.update(sql,new Date());
 		delUserRoleByUserName(userNames);
 	}
 
@@ -74,8 +74,8 @@ public class UserService {
 		String sql = "UPDATE SYS_USER SET NAME = ?, EMAIL = ?, PHONE_NUMBER =?, NOTE = ?, IS_ENABLED = ?, LAST_UPDATE_TIME = ? WHERE USERNAME = ? AND STATE = 1";
 		jdbcTemplate.update(sql, userInfo.getName(), userInfo.getEmail(),
 				userInfo.getPhoneNumber(), userInfo.getNote(), userInfo
-						.getIsEnabled(), st.DTFormat(DateTimeType.dateTime,
-						new Date()), userInfo.getUserName());
+						.getIsEnabled(), 
+						new Date(), userInfo.getUserName());
 	
 	}
 
@@ -85,7 +85,7 @@ public class UserService {
         UserInfo ub = queryByUserName(userName);
 		
 		String sql = "UPDATE SYS_USER SET PASSWORD = ?, LAST_UPDATE_TIME = ? WHERE USERNAME = ? AND STATE = 1";
-		jdbcTemplate.update(sql, encoder.encode(password), st.DTFormat(DateTimeType.dateTime, new Date()), ub
+		jdbcTemplate.update(sql, encoder.encode(password), new Date(), ub
 				.getUserName());
 	}
 
@@ -98,7 +98,7 @@ public class UserService {
 		return null;
 	}
 
-	public Page<UserInfo> queryByPage(int start, int limit, JSONObject paramJson) {
+	public Page<UserInfo> queryByPage(int start, int limit, JSONObject paramJson) throws SQLException {
 		StringBuilder sb = new StringBuilder(
 				"SELECT USERNAME,NAME,IS_ENABLED,EMAIL,PHONE_NUMBER,STATE,NOTE,LAST_UPDATE_TIME FROM SYS_USER WHERE USERNAME <> '"
 						+ SysConstants.SUPER_USERNAME + "'");
@@ -130,7 +130,7 @@ public class UserService {
 		userNames = userNames.replaceAll(",", "','");
         BCryptPasswordEncoder encoder =new BCryptPasswordEncoder();
 		String sql = "UPDATE SYS_USER SET PASSWORD = ?, LAST_UPDATE_TIME = ? WHERE USERNAME = ?";
-		jdbcTemplate.update(sql, encoder.encode("888888"), st.DTFormat(DateTimeType.dateTime, new Date()),
+		jdbcTemplate.update(sql, encoder.encode("888888"),  new Date(),
 				userNames);
 	}
 

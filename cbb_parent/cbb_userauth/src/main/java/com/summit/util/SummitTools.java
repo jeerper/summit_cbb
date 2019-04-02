@@ -33,16 +33,7 @@ import net.sf.json.xml.XMLSerializer;
 @Component
 public class SummitTools {
 	private static final Logger log = LoggerFactory.getLogger(SummitTools.class);
-	private  SimpleDateFormat yearFormat = new SimpleDateFormat("yyyy");
-	private static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-	private static SimpleDateFormat date1Format = new SimpleDateFormat("yyyyMMdd");
-	private static SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
-	private static SimpleDateFormat dateTimeFormat = new SimpleDateFormat(
-			"yyyy-MM-dd HH:mm:ss");
-	private static  SimpleDateFormat dateTimeFormat1 = new SimpleDateFormat(
-			"yyyy/MM/dd HH:mm:ss");
-	private static SimpleDateFormat dateTimeNFormat = new SimpleDateFormat(
-			"yyyy-MM-dd HH:mm:ss.SSS");
+
 
 	private XMLSerializer xmlSerializer = new XMLSerializer();
 	private static Properties p;
@@ -96,35 +87,6 @@ public class SummitTools {
 		year, date, date1, time, dateTime, dateTime1, dateTimeN
 	}
 
-	/**
-	 * 将字符串转为Date
-	 * 
-	 * @param dateTimeType
-	 * @param source
-	 * @return
-	 * @throws ParseException
-	 */
-	public  synchronized Date DTParse(DateTimeType dateTimeType, String source)
-			throws ParseException {
-		switch (dateTimeType) {
-		case year:
-			return yearFormat.parse(source);
-		case date:
-			return dateFormat.parse(source);
-		case date1:
-			return date1Format.parse(source);
-		case time:
-			return timeFormat.parse(source);
-		case dateTime:
-			return dateTimeFormat.parse(source);
-		case dateTime1:
-			return dateTimeFormat1.parse(source);
-		case dateTimeN:
-			return dateTimeNFormat.parse(source);
-		default:
-			return dateTimeFormat.parse(source);
-		}
-	}
 
 	/**
 	 * 将时间转为字符串
@@ -133,54 +95,12 @@ public class SummitTools {
 	 * @param date
 	 * @return
 	 */
-	public  synchronized String DTFormat(DateTimeType dateTimeType, Date date) {
-		switch (dateTimeType) {
-		case year:
-			return yearFormat.format(date);
-		case date:
-			return dateFormat.format(date);
-		case date1:
-			return date1Format.format(date);
-		case time:
-			return timeFormat.format(date);
-		case dateTime:
-			return dateTimeFormat.format(date);
-		case dateTime1:
-			return dateTimeFormat1.format(date);
-		case dateTimeN:
-			return dateTimeNFormat.format(date);
-		default:
-			return dateTimeFormat.format(date);
-		}
+	public  static String DTFormat(String aMask, Date date) {
+		SimpleDateFormat yearFormat = new SimpleDateFormat(aMask);
+		return yearFormat.format(date);   
 	}
 
-	/**
-	 * 将long时间转为字符串
-	 * 
-	 * @param dateTimeType
-	 * @param date
-	 * @return
-	 */
-	public synchronized String DTFormat(DateTimeType dateTimeType, Long date) {
-		switch (dateTimeType) {
-		case year:
-			return yearFormat.format(date);
-		case date:
-			return dateFormat.format(date);
-		case date1:
-			return date1Format.format(date);
-		case time:
-			return timeFormat.format(date);
-		case dateTime:
-			return dateTimeFormat.format(date);
-		case dateTime1:
-			return dateTimeFormat1.format(date);
-		case dateTimeN:
-			return dateTimeNFormat.format(date);
-		default:
-			return dateTimeFormat.format(date);
-		}
-	}
+
 
 	/**
 	 * 将xml转成JSONObject
@@ -690,16 +610,7 @@ public class SummitTools {
 		return obj;
 	}
 	
-	/**
-	 * 获取上月起始时间    取当前时间往前推算一个月
-	 * @return
-	 */
-	public static String getLastMonthDate()
-	{
-		Calendar calendar = Calendar.getInstance();
-		calendar.add(Calendar.MONTH, -1);
-		return (dateTimeFormat.format(calendar.getTime()));
-	}
+	
 	/**
 	 * 计算两个时间差，要精确到小时
 	 * date1 开始时间

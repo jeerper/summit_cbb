@@ -14,6 +14,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -64,7 +65,7 @@ public class RoleService {
 		return  l.get(0);
 	}
 
-	public Page<RoleBean> queryByPage(int start, int limit, String name) {
+	public Page<RoleBean> queryByPage(int start, int limit, String name) throws SQLException {
 		StringBuilder sb = new StringBuilder(
 				"SELECT * FROM SYS_ROLE WHERE 1 = 1");
 		if (st.stringNotNull(name)) {

@@ -100,18 +100,10 @@ public class UserRepository extends JdbcDaoSupport {
 			throw e;
 		} finally {
 			if(pstmt != null && !pstmt.isClosed()){
-				try {
-					pstmt.close();
-					if (conn != null && !conn.isClosed()) {
-						try {
-							conn.close();
-						} catch (Exception e2) {
-							throw e2;
-						}
-					}
-				} catch (Exception e1) {
-					throw e1;
-				}
+			   pstmt.close();
+			}
+			if (conn != null && !conn.isClosed()) {
+				conn.close();
 			}
 		}
 		return array;
@@ -119,7 +111,7 @@ public class UserRepository extends JdbcDaoSupport {
 
 	
 	public Page<JSONObject> queryByCustomPage(String sql, int start,
-			int pageSize, Object... args) {
+			int pageSize, Object... args) throws SQLException {
 		return queryByCustomPage(sql, userDaoRowMapper, start, pageSize, args);
 	}
 	
@@ -161,18 +153,10 @@ public class UserRepository extends JdbcDaoSupport {
 			throw e;
 		} finally {
 			if(pstmt != null && !pstmt.isClosed()){
-				try {
-					pstmt.close();
-					if (conn != null && !conn.isClosed()) {
-						try {
-							conn.close();
-						} catch (Exception e2) {
-							throw e2;
-						}
-					}
-				} catch (Exception e1) {
-					throw e1;
-				}
+				pstmt.close();
+			}
+			if (conn != null && !conn.isClosed()) {
+			     conn.close();
 			}
 		}
 		return rtnJson;
@@ -194,7 +178,6 @@ public class UserRepository extends JdbcDaoSupport {
 							pstmt.setObject(Integer.valueOf(object.toString()), linkedMap.get(object));
 						}
 					} catch (Exception e3) {
-						// TODO Auto-generated catch block
 						throw e3;
 					}
 				}
@@ -219,18 +202,10 @@ public class UserRepository extends JdbcDaoSupport {
 				throw e;
 			} finally {
 				if(pstmt != null && !pstmt.isClosed()){
-					try {
-						pstmt.close();
-						if (conn != null && !conn.isClosed()) {
-							try {
-								conn.close();
-							} catch (Exception e2) {
-								throw e2;
-							}
-						}
-					} catch (Exception e1) {
-						throw e1;
-					}
+					pstmt.close();
+				}
+				if (conn != null && !conn.isClosed()) {
+				     conn.close();
 				}
 			}
 			return list;
@@ -238,7 +213,7 @@ public class UserRepository extends JdbcDaoSupport {
 
 	
 	public <T> Page<T> queryByCustomPage(String sql, RowMapper<T> rowMapper,
-			int start, int pageSize, Object... args) {
+			int start, int pageSize, Object... args) throws SQLException {
 		// TODO Auto-generated method stub
 		/*log.info("自定义查询开始SQL:" + sql);
 		log.info("自定义查询参数start:" + start + "  pageSize:" + pageSize + "  args:"
@@ -287,21 +262,13 @@ public class UserRepository extends JdbcDaoSupport {
 				p.setTotalElements(rowsCount);
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			throw e;
 		} finally {
-			try {
-				if (pstmt != null && !pstmt.isClosed()) {
-					pstmt.close();
-				}
-			} catch (Exception e1) {
-				e1.printStackTrace();
+			if (pstmt != null && !pstmt.isClosed()) {
+				pstmt.close();
 			}
-			try {
-				if (conn != null && !conn.isClosed()) {
+			if (conn != null && !conn.isClosed()) {
 					conn.close();
-				}
-			} catch (Exception e2) {
-				e2.printStackTrace();
 			}
 		}
 		return p;
