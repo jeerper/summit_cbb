@@ -127,6 +127,34 @@ mvn clean
 mvn install
 ```
 
+## 组件名称命名规范
+
+- 配置组件中的`application.yml`配置文件:
+
+  组件名称以`cbb-`开头，后缀以具体组件的用途的英文全拼或缩写命名，注意：用缩写的前提是必须是有明确意义的缩写
+
+  ``` yml
+    spring:
+        application:
+          name: "cbb-demo" -- 分隔符必须用'-'
+  ```
+
+- 配置组件中的`deploy/jenkins_build.sh`部署脚本:
+
+  组件名称以`cbb_`开头,后缀以具体组件的用途的英文全拼或缩写命名，注意：用缩写的前提是必须是有明确意义的缩写
+
+  ``` sh
+    #项目名称
+    projectName="cbb_api_gateway_db" -- 分隔符必须用'_'(下划线)，并且要保证该组件名称与共享货架中的组件不冲突
+    #组件名称
+    component_name="API网关组件"  --并且要保证该组件名称与共享货架中的组件不冲突
+    #组件描述
+    component_description="API网关组件"
+    #组件标签
+    component_tag=${projectName}
+  ```
+
+
 ## 启动
 
 ### 方式一、所有组件本地启动
