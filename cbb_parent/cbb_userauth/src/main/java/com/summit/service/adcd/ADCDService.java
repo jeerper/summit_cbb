@@ -16,7 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.TypeReference;
-import com.summit.common.entity.ResponseCodeBySummit;
+import com.summit.common.entity.ResponseCodeEnum;
 import com.summit.domain.adcd.ADCDBean;
 import com.summit.domain.adcd.ADCDBeanRowMapper;
 import com.summit.repository.UserRepository;
@@ -204,7 +204,7 @@ public class ADCDService {
 	 * @param 
 	 * @return
 	 */
-	public ResponseCodeBySummit edit(ADCDBean ab) {
+	public void edit(ADCDBean ab) {
 		String sql = "UPDATE AD_CD_B SET  ADNM = ?, PADCD = ?, ADLEVEL = ? where ADCD = ?";
 		jdbcTemplate.update(
 				sql,
@@ -213,16 +213,15 @@ public class ADCDService {
 				ab.getLevel(),
 				ab.getAdcd()
 		);
-		return ResponseCodeBySummit.CODE_0000;
 	}
 	/**
 	 * 新增
 	 */
-	public ResponseCodeBySummit add(ADCDBean ab) {
+	public ResponseCodeEnum add(ADCDBean ab) {
 		String hasadcd="select * from AD_CD_B where adcd='"+ab.getAdcd()+"'";
 		List l=ur.queryAllCustom(hasadcd);
 		if(l.size()>0){
-			return ResponseCodeBySummit.CODE_4033;
+			return ResponseCodeEnum.CODE_9992;
 		}
 		String sql = "INSERT INTO AD_CD_B (ADCD, ADNM, PADCD,ADLEVEL) VALUES (?, ? ,?, ?)";
 		jdbcTemplate.update(
@@ -231,7 +230,7 @@ public class ADCDService {
 				ab.getAdnm(),
 				ab.getPadcd(),
 				ab.getLevel());
-		return ResponseCodeBySummit.CODE_0000;
+		return null;
 	}
 
 
@@ -242,16 +241,16 @@ public class ADCDService {
 	 * @param ids
 	 * @return
 	 */
-	public ResponseCodeBySummit del(String ids) {
+	public void del(String ids) {
 		ids = ids.replaceAll(",", "','");
-		String sql = "SELECT * FROM AD_CD_B WHERE PADCD IN ('" + ids + "')";
-		List<ADCDBean> l = ur.queryAllCustom(sql, atm);
-		if (st.collectionNotNull(l)) {
-			return ResponseCodeBySummit.CODE_9981;
-		}
-		sql = "DELETE FROM AD_CD_B WHERE ADCD IN ('" + ids+ "') ";
+		//String sql = "SELECT * FROM AD_CD_B WHERE PADCD IN ('" + ids + "')";
+		//List<ADCDBean> l = ur.queryAllCustom(sql, atm);
+		//if (st.collectionNotNull(l)) {
+		//	return ResponseCodeBySummit.CODE_9981;
+		//}
+		String sql = "DELETE FROM AD_CD_B WHERE ADCD IN ('" + ids+ "') ";
 		jdbcTemplate.update(sql);
-		return ResponseCodeBySummit.CODE_0000;
+		//return ResponseCodeBySummit.CODE_0000;
 	}
 
 

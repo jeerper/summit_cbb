@@ -1,6 +1,5 @@
 package com.summit.util;
 
-import com.summit.common.entity.ResponseCodeBySummit;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import net.sf.json.xml.XMLSerializer;
@@ -77,23 +76,7 @@ public class SummitTools {
 		}
 	}
 
-	/**
-	 * 后台默认返回前台数据
-	 * 
-	 * @param msg
-	 * @return
-	 */
-	public Map<String, Object> success(String msg) {
-		return success(msg, null);
-	}
-
-	public Map<String, Object> success(String msg, Object data) {
-		Map<String, Object> map = new HashMap<String, Object>();
-		map.put("code", ResponseCodeBySummit.CODE_0000.name());
-		map.put("msg", ResponseCodeBySummit.CODE_0000.getDescription());
-		map.put("data", data);
-		return map;
-	}
+	
 
 	public Map<String, Object> error(String msg) {
 		Map<String, Object> map = new HashMap<String, Object>();

@@ -1,8 +1,6 @@
 package com.summit.controller;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -18,9 +16,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.summit.common.entity.ResponseCodeBySummit;
+import com.summit.common.entity.ResponseCodeEnum;
 import com.summit.common.entity.RestfulEntityBySummit;
 import com.summit.common.entity.UserInfo;
+import com.summit.common.util.ResultBuilder;
 import com.summit.common.web.filter.UserContextHolder;
 import com.summit.domain.function.FunctionBean;
 import com.summit.domain.log.LogBean;
@@ -48,13 +47,14 @@ public class FunctionController {
 		LogBean logBean = new LogBean();
 		try {
 			logBean = logUtil.insertLog(request,"1", "功能管理新增","");
-			return new RestfulEntityBySummit<String>(fs.add(functionBean),null);
+			fs.add(functionBean);
+			return ResultBuilder.buildSuccess();
 		} catch (Exception e) {
 			logger.error("操作失败！", e);
 			logBean.setActionFlag("0");
 			logBean.setErroInfo(e.toString());
 			logUtil.updateLog(logBean,"1");
-			return new RestfulEntityBySummit<String>(ResponseCodeBySummit.CODE_9999,null);
+			return ResultBuilder.buildError(ResponseCodeEnum.CODE_9999);
 		}
 	}
 
@@ -66,7 +66,8 @@ public class FunctionController {
 		LogBean logBean = new LogBean();
 		try {
 			logBean = logUtil.insertLog(request,"1", "功能管理删除","");
-			return new RestfulEntityBySummit<String>(fs.del(ids),null);
+			fs.del(ids);
+			return ResultBuilder.buildSuccess();
 			//res = fs.del(ids);
 		} catch (Exception e) {
 			//e.printStackTrace();
@@ -74,7 +75,7 @@ public class FunctionController {
 			logBean.setActionFlag("0");
 			logBean.setErroInfo(e.toString());
 			logUtil.updateLog(logBean,"1");
-			return new RestfulEntityBySummit<String>(ResponseCodeBySummit.CODE_9999,null);
+			 return ResultBuilder.buildError(ResponseCodeEnum.CODE_9999);
 		}
 		//logUtil.updateLog(logBean,"1");
 		//return res;
@@ -86,15 +87,15 @@ public class FunctionController {
 		LogBean logBean = new LogBean();
 		try {
 			logBean = logUtil.insertLog(request,"1", "功能管理修改","");
-			//res = fs.edit(functionBean);
-			return new RestfulEntityBySummit<String>(fs.edit(functionBean),null);
+			 fs.edit(functionBean);
+			return ResultBuilder.buildSuccess();
 		} catch (Exception e) {
 			//e.printStackTrace();
 			logger.error("操作失败！", e);
 			logBean.setActionFlag("0");
 			logBean.setErroInfo(e.toString());
 			logUtil.updateLog(logBean,"1");
-			return new RestfulEntityBySummit<String>(ResponseCodeBySummit.CODE_9999,null);
+			 return ResultBuilder.buildError(ResponseCodeEnum.CODE_9999);
 		}
 	}
 
@@ -111,14 +112,14 @@ public class FunctionController {
 			if(userInfo!=null){
 				userName=userInfo.getUserName();
 			}
-			return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_0000,fs.queryById(id,userName));
+			return ResultBuilder.buildSuccess(fs.queryById(id,userName));
 		} catch (Exception e) {
 			//e.printStackTrace();
 			logger.error("查询失败！", e);
 			logBean.setActionFlag("0");
 			logBean.setErroInfo(e.toString());
 			logUtil.updateLog(logBean,"1");
-			return new RestfulEntityBySummit<List<FunctionBean>>(ResponseCodeBySummit.CODE_9999,null);
+			return ResultBuilder.buildError(ResponseCodeEnum.CODE_9999);
 		}
 	}
 
@@ -135,14 +136,15 @@ public class FunctionController {
 //			if(userInfo!=null){
 //				userName=userInfo.getUserName();
 //			}
-			return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_0000,fs.queryFunTree(pid));
+			
+			return ResultBuilder.buildSuccess(fs.queryFunTree(pid));
 		} catch (Exception e) {
 			//e.printStackTrace();
 			logger.error("查询失败！", e);
 			logBean.setActionFlag("0");
 			logBean.setErroInfo(e.toString());
 			logUtil.updateLog(logBean,"1");
-			return new RestfulEntityBySummit<FunctionBean>(ResponseCodeBySummit.CODE_9999,null);
+			return ResultBuilder.buildError(ResponseCodeEnum.CODE_9999);
 		}
 		//logUtil.updateLog(logBean,"1");
 		//return res;
@@ -164,14 +166,14 @@ public class FunctionController {
 			if(userInfo!=null){
 				userName=userInfo.getUserName();
 			}
-			return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_0000,fs.queryByPage(page, pageSize, pId,userName));
+			return ResultBuilder.buildSuccess(fs.queryByPage(page, pageSize, pId,userName));
 		} catch (Exception e) {
 			//e.printStackTrace();
 			logger.error("查询失败！", e);
 			logBean.setActionFlag("0");
 			logBean.setErroInfo(e.toString());
 			logUtil.updateLog(logBean,"1");
-			return new RestfulEntityBySummit<Page<FunctionBean>>(ResponseCodeBySummit.CODE_9999,null);
+			 return ResultBuilder.buildError(ResponseCodeEnum.CODE_9999);
 		}
 	}
 }

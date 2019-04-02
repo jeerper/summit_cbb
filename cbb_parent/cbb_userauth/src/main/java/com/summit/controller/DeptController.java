@@ -1,7 +1,5 @@
 package com.summit.controller;
 
-import java.util.Map;
-
 import javax.servlet.http.HttpServletRequest;
 
 import org.slf4j.Logger;
@@ -15,9 +13,9 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
-import com.summit.common.entity.ResponseCodeBySummit;
+import com.summit.common.entity.ResponseCodeEnum;
 import com.summit.common.entity.RestfulEntityBySummit;
-import com.summit.domain.adcd.ADCDBean;
+import com.summit.common.util.ResultBuilder;
 import com.summit.domain.dept.DeptBean;
 import com.summit.domain.log.LogBean;
 import com.summit.service.dept.DeptService;
@@ -49,7 +47,7 @@ public class DeptController {
 	 */
 	@ApiOperation(value = "查询部门树")
 	@RequestMapping(value = "/queryTree",method = RequestMethod.GET)
-	public RestfulEntityBySummit<DeptBean> queryTree(String pid) {
+	public RestfulEntityBySummit<DeptBean> queryTree(@RequestParam(value = "pid",required = false) String pid) {
 		HttpServletRequest request = ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest();
 		//UserContextHolder.getUserName();
 		LogBean logBean = new LogBean();
@@ -58,14 +56,14 @@ public class DeptController {
 	           logBean = logUtil.insertLog(request, "1", "查询部门树", "");
 	           //list = ds.queryDeptTree();
 	           //return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_0000,ds.queryDeptTree(pid));
-	           return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_0000,ds.queryDeptTree(pid));
+	           return ResultBuilder.buildSuccess(ds.queryDeptTree(pid));
 	     } catch (Exception e) {
 	    	    logger.error("查询部门树失败：", e);
 	    	    logUtil.updateLog(logBean, "1");
 	            //e.printStackTrace();
 	            logBean.setActionFlag("0");
 	            logBean.setErroInfo(e.toString());
-	            return new RestfulEntityBySummit<DeptBean>(ResponseCodeBySummit.CODE_9999,null);
+	            return ResultBuilder.buildError(ResponseCodeEnum.CODE_9999);
 	     }
 	    // logUtil.updateLog(logBean, "1");
 		//return list;
@@ -82,14 +80,15 @@ public class DeptController {
 		HttpServletRequest request = ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest();
 		LogBean logBean = logUtil.insertLog(request,"1", "根据id查询分页","");
 		try {
-			return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_0000,ds.queryById(id));
+			return ResultBuilder.buildSuccess(ds.queryById(id));
+			//return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_0000,ds.queryById(id));
 		} catch (Exception e) {
 			//e.printStackTrace();
 			logger.error("查询失败：", e);
 			logBean.setActionFlag("0");
 			logBean.setErroInfo(e.toString());
 			logUtil.updateLog(logBean,"1");
-			return new RestfulEntityBySummit<DeptBean>(ResponseCodeBySummit.CODE_9999,null);
+			return ResultBuilder.buildError(ResponseCodeEnum.CODE_9999);
 		}
 		//logUtil.updateLog(logBean,"1");
 		
@@ -113,14 +112,15 @@ public class DeptController {
 			 paramJson.put("deptcode",deptcode);
 			 paramJson.put("deptname",deptname);
 			 //list = ds.queryByPage(start, limit, pid);
-			return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_0000,ds.queryByPage(page, pageSize, paramJson));
+			return ResultBuilder.buildSuccess(ds.queryByPage(page, pageSize, paramJson));
+			//return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_0000,);
 		} catch (Exception e) {
 			//e.printStackTrace();
 			logger.error("查询失败：", e);
 			logBean.setActionFlag("0");
 			logBean.setErroInfo(e.toString());
 			logUtil.updateLog(logBean,"1");
-			return new RestfulEntityBySummit<Page<DeptBean>>(ResponseCodeBySummit.CODE_9999,null);
+			return ResultBuilder.buildError(ResponseCodeEnum.CODE_9999);
 		}
 		//logUtil.updateLog(logBean,"1");
 		
@@ -140,14 +140,19 @@ public class DeptController {
 		//Map<String, Object> list = null;
 		try {
 			//list = ds.add(deptBean);
-			return new RestfulEntityBySummit<String>(ds.add(deptBean),null);
+			ResponseCodeEnum responseCodeEnum=ds.add(deptBean);
+			if(responseCodeEnum!=null){ 
+				return ResultBuilder.buildError(responseCodeEnum);
+			}else{
+				return ResultBuilder.buildSuccess();
+			}
 		} catch (Exception e) {
 			//e.printStackTrace();
 			logger.error("操作失败：", e);
 			logBean.setActionFlag("0");
 			logBean.setErroInfo(e.toString());
 			logUtil.updateLog(logBean,"1");
-			return new RestfulEntityBySummit<String>(ResponseCodeBySummit.CODE_9999,null);
+			return ResultBuilder.buildError(ResponseCodeEnum.CODE_9999);
 		}
 		//logUtil.updateLog(logBean,"1");
 		
@@ -165,14 +170,15 @@ public class DeptController {
 		//Map<String, Object> list = null;
 		try {
 			//list = ds.edit(deptBean);
-			return new RestfulEntityBySummit<String>(ds.edit(deptBean),null);
+			ds.edit(deptBean);
+			return ResultBuilder.buildSuccess();
 		} catch (Exception e) {
 			//e.printStackTrace();
 			logger.error("操作失败：", e);
 			logBean.setActionFlag("0");
 			logBean.setErroInfo(e.toString());
 			logUtil.updateLog(logBean,"1");
-			return new RestfulEntityBySummit<String>(ResponseCodeBySummit.CODE_9999,null);
+			return ResultBuilder.buildError(ResponseCodeEnum.CODE_9999);
 		}
 		//logUtil.updateLog(logBean,"1");
 		
@@ -186,21 +192,18 @@ public class DeptController {
 	public RestfulEntityBySummit<String> del(@RequestParam(value = "ids") String ids) {
 		HttpServletRequest request = ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest();
 		LogBean logBean = logUtil.insertLog(request,"1", "部门删除","");
-		Map<String, Object> list = null;
 		try {
 			//list = ds.del(ids);
-			return new RestfulEntityBySummit<String>(ds.del(ids),null);
+			ds.del(ids);
+			return ResultBuilder.buildSuccess();
 		} catch (Exception e) {
 			//e.printStackTrace();
 			logger.error("操作失败：", e);
 			logBean.setActionFlag("0");
 			logBean.setErroInfo(e.toString());
 			logUtil.updateLog(logBean,"1");
-			return new RestfulEntityBySummit<String>(ResponseCodeBySummit.CODE_9999,null);
+			return ResultBuilder.buildError(ResponseCodeEnum.CODE_9999);
 		}
-		//logUtil.updateLog(logBean,"1");
-		
-		//return list;
 	}
 	
 }

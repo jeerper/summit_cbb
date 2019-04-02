@@ -15,7 +15,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
-import com.summit.common.entity.ResponseCodeBySummit;
 import com.summit.domain.dept.DeptBean;
 import com.summit.domain.function.FunctionBean;
 import com.summit.domain.function.FunctionBeanRowMapper;
@@ -127,36 +126,29 @@ public class FunctionService {
 
 
 
-	public ResponseCodeBySummit add(FunctionBean fb) {
+	public void add(FunctionBean fb) {
 		String sql = "INSERT INTO SYS_FUNCTION (ID, PID, NAME, FDESC, IS_ENABLED, FURL, IMGULR, NOTE, SUPER_FUN) VALUES (?, ?, ?, ?, ?, ?, ?, ?,?)";
 		jdbcTemplate.update(sql, st.getKey(), fb.getPid(), fb.getName(), fb
 				.getFdesc(), fb.getIsEnabled(), fb.getFurl(), fb.getImgUlr(),
 				fb.getNote(), 0);
-		return ResponseCodeBySummit.CODE_0000;
 	}
 
-	public ResponseCodeBySummit del(String ids) {
+	public void del(String ids) {
 		ids = ids.replaceAll(",", "','");
-		String sql = "SELECT * FROM SYS_FUNCTION WHERE PID IN ('" + ids + "')";
-		List<FunctionBean> l = ur.queryAllCustom(sql, fbrm);
-		if (st.collectionNotNull(l)) {
-			return ResponseCodeBySummit.CODE_9981;
-		}
-		sql = "DELETE FROM SYS_FUNCTION WHERE ID IN ('" + ids
-				+ "') AND SUPER_FUN <> 1";
+		//String sql = "SELECT * FROM SYS_FUNCTION WHERE PID IN ('" + ids + "')";
+		//List<FunctionBean> l = ur.queryAllCustom(sql, fbrm);
+		String sql = "DELETE FROM SYS_FUNCTION WHERE ID IN ('" + ids+ "') AND SUPER_FUN <> 1";
 		jdbcTemplate.update(sql);
 
 		sql = "DELETE FROM SYS_ROLE_FUNCTION WHERE FUNCTION_ID IN ('" + ids + "')";
 		jdbcTemplate.update(sql);
-		return ResponseCodeBySummit.CODE_0000;
 	}
 
-	public ResponseCodeBySummit edit(FunctionBean fb) {
+	public void edit(FunctionBean fb) {
 		String sql = "UPDATE SYS_FUNCTION SET NAME = ?, FDESC = ?, IS_ENABLED = ?, FURL = ?, IMGULR = ?, NOTE = ? WHERE ID = ?";
 		jdbcTemplate.update(sql, fb.getName(), fb.getFdesc(), fb
 				.getIsEnabled(), fb.getFurl(), fb.getImgUlr(), fb.getNote(), fb
 				.getId());
-		return ResponseCodeBySummit.CODE_0000;
 	}
 
 	private boolean isSuperUser(String userName) {
@@ -189,13 +181,19 @@ public class FunctionService {
 	}
 
 	public Page<FunctionBean> queryByPage(int start, int limit, String pId,String userName) {
-		String sql;
-		if (isSuperUser(userName)) {
-			sql = "SELECT * FROM SYS_FUNCTION WHERE PID = ? ORDER BY FDESC";
-		} else {
-			sql = "SELECT * FROM SYS_FUNCTION WHERE PID = ? AND SUPER_FUN = 0 ORDER BY FDESC";
+		StringBuffer sql=new StringBuffer("SELECT * FROM SYS_FUNCTION where 1=1 ");
+		Page<JSONObject> rs =null;
+		if("root".equals(pId) || pId==null){
+			 rs = ur.queryByCustomPage(sql.toString(), start, limit);
+		}else {
+			if (isSuperUser(userName)) {
+				sql.append(" and PID = ? ");
+			}else{
+			    sql.append(" and  PID = ? AND SUPER_FUN = 0 ");
+			}
+			sql.append(" ORDER BY FDESC");
+			rs = ur.queryByCustomPage(sql.toString(), start, limit, pId);
 		}
-		Page<JSONObject> rs = ur.queryByCustomPage(sql, start, limit, pId);
 		if(rs!=null){
 			 Page<FunctionBean> pageFunctionBeanInfo=new Page<FunctionBean>();
 			 ArrayList<FunctionBean> students = JSON.parseObject(rs.getContent().toString(), new TypeReference<ArrayList<FunctionBean>>() {});

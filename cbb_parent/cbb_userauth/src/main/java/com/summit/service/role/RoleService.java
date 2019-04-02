@@ -2,7 +2,7 @@ package com.summit.service.role;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
-import com.summit.common.entity.ResponseCodeBySummit;
+import com.summit.common.entity.ResponseCodeEnum;
 import com.summit.domain.function.FunctionBean;
 import com.summit.domain.role.RoleBean;
 import com.summit.domain.role.RoleBeanRowMapper;
@@ -32,18 +32,19 @@ public class RoleService {
 	@Autowired
 	private RoleBeanRowMapper rbrm;
 
-	public ResponseCodeBySummit add(RoleBean rb) {
+	public ResponseCodeEnum add(RoleBean rb) {
 		String sql = "SELECT * FROM SYS_ROLE WHERE NAME = ?";
 		List<JSONObject> l = ur.queryAllCustom(sql, rb.getName());
 		if (st.collectionNotNull(l)) {
-			return ResponseCodeBySummit.CODE_4033;
+			return ResponseCodeEnum.CODE_9992;
 		}
 		sql = "INSERT INTO SYS_ROLE (CODE,NAME,NOTE) VALUES ( ?, ?, ?)";
 		jdbcTemplate.update(sql, "ROLE_" + System.currentTimeMillis(), rb.getName(), rb.getNote());
-		return ResponseCodeBySummit.CODE_0000;
+		return null;
 	}
-
-	public ResponseCodeBySummit del(String codes) {
+	
+	@Transactional
+	public void del(String codes) {
 		codes = codes.replaceAll(",", "','");
 		String sql = "DELETE FROM SYS_ROLE WHERE CODE IN ('" + codes + "')";
 		jdbcTemplate.update(sql);
@@ -52,13 +53,11 @@ public class RoleService {
 		jdbcTemplate.update(sql);
 		
 		delRoleAuthorizationByRoleCode(codes);
-		return ResponseCodeBySummit.CODE_0000;
 	}
 
-	public ResponseCodeBySummit edit(RoleBean rb) {
+	public void edit(RoleBean rb) {
 		String sql = "UPDATE SYS_ROLE SET NOTE = ?,NAME=? WHERE CODE = ?";
 		jdbcTemplate.update(sql, rb.getNote(),rb.getName(), rb.getCode());
-		return ResponseCodeBySummit.CODE_0000;
 	}
 
 	public RoleBean queryByCode(String code) {
@@ -104,7 +103,7 @@ public class RoleService {
 		jdbcTemplate.update(sql);
 	}
 	
-	public ResponseCodeBySummit roleAuthorization(String roleCode, String funIds) {
+	public void roleAuthorization(String roleCode, String funIds) {
 		delRoleAuthorizationByRoleCode(roleCode);
 		String sql = "INSERT INTO SYS_ROLE_FUNCTION (ID, ROLE_CODE, FUNCTION_ID) VALUES (?, ?, ?)";
 		List<Object[]> batchArgs = new ArrayList<Object[]>();
@@ -113,6 +112,5 @@ public class RoleService {
 			batchArgs.add(new Object[] { st.getKey(), roleCode, funId });
 		}
 		jdbcTemplate.batchUpdate(sql, batchArgs);
-		return ResponseCodeBySummit.CODE_0000;
 	}
 }

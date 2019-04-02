@@ -15,7 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
-import com.summit.common.entity.ResponseCodeBySummit;
+import com.summit.common.entity.ResponseCodeEnum;
 import com.summit.domain.adcd.ADCDBean;
 import com.summit.domain.dept.DeptBean;
 import com.summit.domain.dept.DeptBeanRowMapper;
@@ -184,7 +184,7 @@ public class DeptService {
 	 * @param 
 	 * @return
 	 */
-	public ResponseCodeBySummit edit(DeptBean ab) {
+	public void edit(DeptBean ab) {
 		String sql = "UPDATE SYS_DEPT SET  pid = ?, DEPTCODE = ?, DEPTNAME = ?, REMARK = ? where id = ?";
 		jdbcTemplate.update(
 				sql,
@@ -194,16 +194,18 @@ public class DeptService {
 				ab.getRemark(),
 				ab.getId()
 		);
-		return ResponseCodeBySummit.CODE_0000;
+		//return ResponseCodeBySummit.CODE_0000;
 	}
 	/**
 	 * 新增
 	 */
-	public ResponseCodeBySummit add(DeptBean ab) {
+	public ResponseCodeEnum add(DeptBean ab) {
 		String hasadcd="select * from SYS_DEPT where DEPTCODE='"+ab.getDeptCode()+"'";
 		List l=ur.queryAllCustom(hasadcd);
 		if(l.size()>0){
-			return ResponseCodeBySummit.CODE_4033;
+			// CODE_6666("猝不及防，网络异常");
+		
+			return ResponseCodeEnum.CODE_9992;
 		}
 		String sql = "INSERT INTO SYS_DEPT (ID, PID, DEPTCODE,DEPTNAME,REMARK) VALUES (?, ? ,?, ?,?)";
 		jdbcTemplate.update(
@@ -213,8 +215,9 @@ public class DeptService {
 				ab.getDeptCode(),
 				ab.getDeptName(),
 				ab.getRemark());
-		return ResponseCodeBySummit.CODE_0000;
+		return null;
 	}
+
 
 
 	/**
@@ -224,16 +227,16 @@ public class DeptService {
 	 * @param ids
 	 * @return
 	 */
-	public ResponseCodeBySummit del(String ids) {
+	public void del(String ids) {
 		ids = ids.replaceAll(",", "','");
-		String sql = "SELECT * FROM SYS_DEPT WHERE pid IN ('" + ids + "')";
-		List<DeptBean> l = ur.queryAllCustom(sql, atm);
-		if (st.collectionNotNull(l)) {
-			return ResponseCodeBySummit.CODE_9981;
-		}
-		sql = "DELETE FROM SYS_DEPT WHERE id IN ('" + ids+ "') ";
+		//String sql = "SELECT * FROM SYS_DEPT WHERE pid IN ('" + ids + "')";
+		//List<DeptBean> l = ur.queryAllCustom(sql, atm);
+//		if (st.collectionNotNull(l)) {
+//			return ResponseCodeBySummit.CODE_9981;
+//		}
+		String sql = "DELETE FROM SYS_DEPT WHERE id IN ('" + ids+ "') ";
 		jdbcTemplate.update(sql);
-		return ResponseCodeBySummit.CODE_0000;
+		//return ResponseCodeBySummit.CODE_0000;
 	}
 
 

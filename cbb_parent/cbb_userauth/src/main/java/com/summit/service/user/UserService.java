@@ -12,7 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
-import com.summit.common.entity.ResponseCodeBySummit;
+import com.summit.common.entity.ResponseCodeEnum;
 import com.summit.common.entity.UserInfo;
 import com.summit.domain.function.FunctionBean;
 import com.summit.domain.user.UserInfoRowMapper;
@@ -38,12 +38,12 @@ public class UserService {
 	private UserInfoRowMapper ubr;
 
 
-	public ResponseCodeBySummit add(UserInfo userInfo) {
+	public ResponseCodeEnum add(UserInfo userInfo) {
         BCryptPasswordEncoder encoder =new BCryptPasswordEncoder();
 		String sql = "SELECT * FROM SYS_USER WHERE USERNAME = ?";
 		List<JSONObject> l = ur.queryAllCustom(sql, userInfo.getUserName());
 		if (st.collectionNotNull(l)) {
-			return ResponseCodeBySummit.CODE_4033;
+			return ResponseCodeEnum.CODE_4022;
 		}
 		sql = "INSERT INTO SYS_USER (USERNAME,NAME,PASSWORD,IS_ENABLED,EMAIL,PHONE_NUMBER,STATE,NOTE,LAST_UPDATE_TIME) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 		jdbcTemplate.update(sql,
@@ -56,10 +56,10 @@ public class UserService {
 				1,
 				userInfo.getNote(),
 				st.DTFormat(DateTimeType.dateTime, new Date()));
-		return ResponseCodeBySummit.CODE_0000;
+		return null;
 	}
 
-	public ResponseCodeBySummit  del(String userNames) {
+	public void  del(String userNames) {
 		userNames = userNames.replaceAll(",", "','");
 		String sql = "UPDATE SYS_USER SET STATE = 0, LAST_UPDATE_TIME = ? WHERE USERNAME <> '"
 				+ SysConstants.SUPER_USERNAME
@@ -68,19 +68,18 @@ public class UserService {
 		jdbcTemplate.update(sql, st.DTFormat(DateTimeType.dateTime,
 				new Date()));
 		delUserRoleByUserName(userNames);
-		return ResponseCodeBySummit.CODE_0000;
 	}
 
-	public ResponseCodeBySummit edit(UserInfo userInfo) {
+	public void edit(UserInfo userInfo) {
 		String sql = "UPDATE SYS_USER SET NAME = ?, EMAIL = ?, PHONE_NUMBER =?, NOTE = ?, IS_ENABLED = ?, LAST_UPDATE_TIME = ? WHERE USERNAME = ? AND STATE = 1";
 		jdbcTemplate.update(sql, userInfo.getName(), userInfo.getEmail(),
 				userInfo.getPhoneNumber(), userInfo.getNote(), userInfo
 						.getIsEnabled(), st.DTFormat(DateTimeType.dateTime,
 						new Date()), userInfo.getUserName());
-		return ResponseCodeBySummit.CODE_0000;
+	
 	}
 
-	public ResponseCodeBySummit editPassword(String userName, String oldPassword,
+	public void editPassword(String userName, String oldPassword,
 			String password, String repeatPassword) {
         BCryptPasswordEncoder encoder =new BCryptPasswordEncoder();
         UserInfo ub = queryByUserName(userName);
@@ -88,7 +87,6 @@ public class UserService {
 		String sql = "UPDATE SYS_USER SET PASSWORD = ?, LAST_UPDATE_TIME = ? WHERE USERNAME = ? AND STATE = 1";
 		jdbcTemplate.update(sql, encoder.encode(password), st.DTFormat(DateTimeType.dateTime, new Date()), ub
 				.getUserName());
-		return ResponseCodeBySummit.CODE_0000;
 	}
 
 	public UserInfo queryByUserName(String userName) {
@@ -128,13 +126,12 @@ public class UserService {
 		return null;
 	}
 
-	public ResponseCodeBySummit resetPassword(String userNames) {
+	public void resetPassword(String userNames) {
 		userNames = userNames.replaceAll(",", "','");
         BCryptPasswordEncoder encoder =new BCryptPasswordEncoder();
 		String sql = "UPDATE SYS_USER SET PASSWORD = ?, LAST_UPDATE_TIME = ? WHERE USERNAME = ?";
 		jdbcTemplate.update(sql, encoder.encode("888888"), st.DTFormat(DateTimeType.dateTime, new Date()),
 				userNames);
-		return ResponseCodeBySummit.CODE_0000;
 	}
 
 	public List<String> queryRoleByUserName(String userName) {
@@ -147,18 +144,14 @@ public class UserService {
 		return list;
 	}
 
-	public ResponseCodeBySummit delUserRoleByUserName(String userNames){
+	public void delUserRoleByUserName(String userNames){
 		String sql = "DELETE FROM SYS_USER_ROLE WHERE USERNAME IN ('"
 				+ userNames + "')";
 		jdbcTemplate.update(sql);
-		return ResponseCodeBySummit.CODE_0000;
 	}
 	
-	public ResponseCodeBySummit grantRole(String userName, String role) {
+	public void grantRole(String userName, String role) {
 		delUserRoleByUserName(userName);
-		if (st.stringIsNull(role)) {
-			return ResponseCodeBySummit.CODE_4025;
-		}
 		String sql = "INSERT INTO SYS_USER_ROLE (ID, USERNAME, ROLE_CODE) VALUES (?, ?, ?)";
 		List<Object[]> batchArgs = new ArrayList<Object[]>();
 		String[] roleArr = role.split(",");
@@ -166,7 +159,6 @@ public class UserService {
 			batchArgs.add(new Object[] { st.getKey(), userName, roleCode });
 		}
 		jdbcTemplate.batchUpdate(sql, batchArgs);
-		return ResponseCodeBySummit.CODE_0000;
 	}
 
 

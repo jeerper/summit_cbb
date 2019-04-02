@@ -1,9 +1,6 @@
 package com.summit.controller;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-
 import javax.servlet.http.HttpServletRequest;
 
 import org.slf4j.Logger;
@@ -18,9 +15,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.summit.common.entity.ResponseCodeBySummit;
+import com.summit.common.entity.ResponseCodeEnum;
 import com.summit.common.entity.RestfulEntityBySummit;
 import com.summit.common.entity.UserInfo;
+import com.summit.common.util.ResultBuilder;
 import com.summit.common.web.filter.UserContextHolder;
 import com.summit.domain.log.LogBean;
 import com.summit.domain.role.FunctionListBean;
@@ -53,16 +51,19 @@ public class RoleController {
 		//Map<String, Object> res = new HashMap<String, Object>();
 		LogBean logBean = new LogBean();
 		try {
-			
 			logBean = logUtil.insertLog(request,"1", "角色管理新增","");
-			return new RestfulEntityBySummit<String>(rs.add(roleBean),null);
+			ResponseCodeEnum responseCodeEnum=rs.add(roleBean);
+			if(responseCodeEnum!=null){
+				return ResultBuilder.buildError(responseCodeEnum);
+			}
+			return ResultBuilder.buildSuccess();
 		} catch (Exception e) {
 			//e.printStackTrace();
 			logger.error("操作失败！", e);
 			logBean.setActionFlag("0");
 			logBean.setErroInfo(e.toString());
 			logUtil.updateLog(logBean,"1");
-			return new RestfulEntityBySummit<String>(ResponseCodeBySummit.CODE_9999,null);
+			return ResultBuilder.buildError(ResponseCodeEnum.CODE_9999);
 		}
 	}
 
@@ -73,15 +74,14 @@ public class RoleController {
 		LogBean logBean = new LogBean();
 		try {
 			logBean = logUtil.insertLog(request,"1", "角色管理删除","");
-			//res = rs.del(codes);
-			return new RestfulEntityBySummit<String>(rs.del(codes),null);
+			rs.del(codes);
+			return ResultBuilder.buildSuccess();
 		} catch (Exception e) {
-			//e.printStackTrace();
 			logger.error("操作失败！", e);
 			logBean.setActionFlag("0");
 			logBean.setErroInfo(e.toString());
 			logUtil.updateLog(logBean,"1");
-			return new RestfulEntityBySummit<String>(ResponseCodeBySummit.CODE_9999,null);
+			return ResultBuilder.buildError(ResponseCodeEnum.CODE_9999);
 		}
 	}
 
@@ -92,14 +92,15 @@ public class RoleController {
 		LogBean logBean = new LogBean();
 		try {
 			logBean = logUtil.insertLog(request,"1", "角色管理修改","");
-			return new RestfulEntityBySummit<String>(rs.edit(roleBean),null);
+			rs.edit(roleBean);
+			return ResultBuilder.buildSuccess();
 		} catch (Exception e) {
 			//e.printStackTrace();
 			logger.error("操作失败！", e);
 			logBean.setActionFlag("0");
 			logBean.setErroInfo(e.toString());
 			logUtil.updateLog(logBean,"1");
-		    return new RestfulEntityBySummit<String>(ResponseCodeBySummit.CODE_9999,null);
+			return ResultBuilder.buildError(ResponseCodeEnum.CODE_9999);
 		}
 	}
 
@@ -110,14 +111,14 @@ public class RoleController {
 		LogBean logBean = new LogBean();
 		try {
 			logBean = logUtil.insertLog(request,"1", "角色管理按照编号查询","");
-			return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_0000,rs.queryByCode(code));
+			return ResultBuilder.buildSuccess(rs.queryByCode(code));
 		} catch (Exception e) {
 			//e.printStackTrace();
 			logger.error("数据查询失败！", e);
 			logBean.setActionFlag("0");
 			logBean.setErroInfo(e.toString());
 			logUtil.updateLog(logBean,"1");
-			return new RestfulEntityBySummit<RoleBean>(ResponseCodeBySummit.CODE_9999,null);
+			return ResultBuilder.buildError(ResponseCodeEnum.CODE_9999);
 		}
 	}
 
@@ -131,14 +132,14 @@ public class RoleController {
 		LogBean logBean = new LogBean();
 		try {
 			logBean = logUtil.insertLog(request,"1", "角色管理分页查询","");
-			return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_0000,rs.queryByPage(page, pageSize, name));
+			return ResultBuilder.buildSuccess(rs.queryByPage(page, pageSize, name));
 		} catch (Exception e) {
 			//e.printStackTrace();
 			logger.error("数据查询失败！", e);
 			logBean.setActionFlag("0");
 			logBean.setErroInfo(e.toString());
 			logUtil.updateLog(logBean,"1");
-		    return new RestfulEntityBySummit<Page<RoleBean>>(ResponseCodeBySummit.CODE_9999,null);
+			return ResultBuilder.buildError(ResponseCodeEnum.CODE_9999);
 		}
 	}
 
@@ -149,13 +150,13 @@ public class RoleController {
 		try {
 			logBean = logUtil.insertLog(request,"1", "查询所有数据","");
 			//res = rs.queryAll();
-			return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_0000,rs.queryAll());
+			return ResultBuilder.buildSuccess(rs.queryAll());
 		} catch (Exception e) {
 			logger.error("数据查询失败！", e);
 			logBean.setActionFlag("0");
 			logBean.setErroInfo(e.toString());
 			logUtil.updateLog(logBean,"1");
-			return new RestfulEntityBySummit<List<RoleBean>>(ResponseCodeBySummit.CODE_9999,null);
+			return ResultBuilder.buildError(ResponseCodeEnum.CODE_9999);
 		}
 	}
 
@@ -174,13 +175,13 @@ public class RoleController {
 			FunctionListBean functionListBean=new FunctionListBean();
 			functionListBean.setFunctionList(fs.queryAll(userName));
 			functionListBean.setFunctionIdList(rs.queryFunIdByRoleCode(roleCode));
-			return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_0000,functionListBean);
+			return ResultBuilder.buildSuccess(functionListBean);
 		} catch (Exception e) {
 			logger.error("数据查询失败！", e);
 			logBean.setActionFlag("0");
 			logBean.setErroInfo(e.toString());
 			logUtil.updateLog(logBean,"1");
-			return new RestfulEntityBySummit<FunctionListBean>(ResponseCodeBySummit.CODE_9999,null);
+			return ResultBuilder.buildError(ResponseCodeEnum.CODE_9999);
 		}
 	}
 
@@ -193,14 +194,15 @@ public class RoleController {
 		try {
 			logBean = logUtil.insertLog(request,"1", "角色管理角色授权","");
 			//res = rs.roleAuthorization(roleCode, funIds);
-			return new RestfulEntityBySummit<String>(rs.roleAuthorization(roleCode, funIds),null);
+			rs.roleAuthorization(roleCode, funIds);
+			return ResultBuilder.buildSuccess();
 		} catch (Exception e) {
 			//e.printStackTrace();
 			logger.error("数据查询失败！", e);
 			logBean.setActionFlag("0");
 			logBean.setErroInfo(e.toString());
 			logUtil.updateLog(logBean,"1");
-			return new RestfulEntityBySummit<String>(ResponseCodeBySummit.CODE_9999,null);
+			return ResultBuilder.buildError(ResponseCodeEnum.CODE_9999);
 		}
 	}
 }

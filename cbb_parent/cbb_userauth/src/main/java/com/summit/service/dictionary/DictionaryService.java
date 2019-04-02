@@ -3,7 +3,7 @@ package com.summit.service.dictionary;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.TypeReference;
-import com.summit.common.entity.ResponseCodeBySummit;
+import com.summit.common.entity.ResponseCodeEnum;
 import com.summit.domain.dept.DeptBean;
 import com.summit.domain.dictionary.DictionaryBean;
 import com.summit.domain.dictionary.DictionaryBeanRowMapper;
@@ -27,6 +27,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.ws.rs.core.Response;
+
 
 @Transactional
 @Service
@@ -44,11 +46,11 @@ public class DictionaryService {
 	
 	//private static Logger logger = LoggerFactory.getLogger(DictionaryService.class);
 
-	public ResponseCodeBySummit add(DictionaryBean db) {
+	public ResponseCodeEnum add(DictionaryBean db) {
 		String sql = "SELECT * FROM SYS_DICTIONARY WHERE CODE = ?";
 		List<JSONObject> l = ur.queryAllCustom(sql, db.getCode());
 		if (st.collectionNotNull(l)) {
-			return ResponseCodeBySummit.CODE_4033;
+			return ResponseCodeEnum.CODE_9992;
 			//return st.error("编码" + db.getCode() + "已存在！");
 		}
 		sql = "INSERT INTO SYS_DICTIONARY (CODE, PCODE, NAME, CKEY, NOTE) VALUES (?, ?, ?, ?, ?)";
@@ -57,42 +59,38 @@ public class DictionaryService {
 //		SysDicMap.add(db);
 		//新增字典对象加入缓存
 		dictionaryCacheImpl.addDic(db);
-		return ResponseCodeBySummit.CODE_0000;
+		return null;
 	}
 
-	public ResponseCodeBySummit del(String codes) {
+	public void del(String codes) {
 		String codeArr[] = codes.split(",");
 		codes = codes.replaceAll(",", "','");
-		String sql = "SELECT * FROM SYS_DICTIONARY WHERE PCODE IN ('" + codes
-				+ "')";
-		List<DictionaryBean> l = ur.queryAllCustom(sql, dbrm);
-		if (st.collectionNotNull(l)) {
-			return ResponseCodeBySummit.CODE_9981;
-		}
-		sql = "DELETE FROM SYS_DICTIONARY WHERE CODE IN ('" + codes + "')";
+//		String sql = "SELECT * FROM SYS_DICTIONARY WHERE PCODE IN ('" + codes
+//				+ "')";
+//		List<DictionaryBean> l = ur.queryAllCustom(sql, dbrm);
+//		if (st.collectionNotNull(l)) {
+//			return ResponseCodeBySummit.CODE_9981;
+//		}
+		String sql = "DELETE FROM SYS_DICTIONARY WHERE CODE IN ('" + codes + "')";
 		jdbcTemplate.update(sql);
 		for (String code : codeArr) {
 //			SysDicMap.reomve(code);
 			dictionaryCacheImpl.delDic(code);
 		}
-		return ResponseCodeBySummit.CODE_0000;
 	}
 
-	public ResponseCodeBySummit edit(DictionaryBean db) {
+	public void edit(DictionaryBean db) {
 		String sql = "UPDATE SYS_DICTIONARY SET NAME = ?, CKEY = ?, NOTE =? WHERE CODE = ?";
 		jdbcTemplate.update(sql, db.getName(), db.getCkey(), db.getNote(),
 				db.getCode());
 //		SysDicMap.update(db);
 		dictionaryCacheImpl.editDic(db);
-		return ResponseCodeBySummit.CODE_0000;
 	}
 
 	public DictionaryBean queryByCode(String code) {
 //		DictionaryBean db = SysDicMap.getByCode(code);
 		return  dictionaryCacheImpl.queryByCode(code);
 	}
-	
-
 	
 
 	public List<DictionaryBean> queryAll() {

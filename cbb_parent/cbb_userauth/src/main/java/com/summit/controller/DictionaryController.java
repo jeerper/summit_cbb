@@ -20,9 +20,9 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
-import com.alibaba.fastjson.JSONArray;
-import com.summit.common.entity.ResponseCodeBySummit;
+import com.summit.common.entity.ResponseCodeEnum;
 import com.summit.common.entity.RestfulEntityBySummit;
+import com.summit.common.util.ResultBuilder;
 import com.summit.domain.dictionary.DictionaryBean;
 import com.summit.domain.log.LogBean;
 import com.summit.service.dictionary.DictionaryService;
@@ -50,14 +50,17 @@ public class DictionaryController {
 		LogBean logBean = new LogBean();
 		try {
 			logBean = logUtil.insertLog(request,"1", "数据字典新增","");
-			//res = dictionaryService.add(dictionaryBean);
-			return new RestfulEntityBySummit<String>(dictionaryService.add(dictionaryBean),null);
+			ResponseCodeEnum responseCodeEnum=dictionaryService.add(dictionaryBean);
+			if(responseCodeEnum!=null){
+				return ResultBuilder.buildError(responseCodeEnum);
+			}
+			return ResultBuilder.buildSuccess();
 		} catch (Exception e) {
 			logger.error("操作失败", e);
 			logBean.setActionFlag("0");
 			logBean.setErroInfo(e.toString());
 			logUtil.updateLog(logBean,"1");
-			return new RestfulEntityBySummit<String>(ResponseCodeBySummit.CODE_9999,null);
+			return ResultBuilder.buildError(ResponseCodeEnum.CODE_9999);
 			
 		}
 	}
@@ -69,13 +72,15 @@ public class DictionaryController {
 		LogBean logBean = new LogBean();
 		try {
 			logBean = logUtil.insertLog(request,"1", "数据字典删除","");
-			return new RestfulEntityBySummit<String>(dictionaryService.del(codes),null);
+			dictionaryService.del(codes);
+			return ResultBuilder.buildSuccess();
+			//return new RestfulEntityBySummit<String>(,null);
 		} catch (Exception e) {
 			logger.error("操作失败", e);
 			logBean.setActionFlag("0");
 			logBean.setErroInfo(e.toString());
 			logUtil.updateLog(logBean,"1");
-			return new RestfulEntityBySummit<String>(ResponseCodeBySummit.CODE_9999,null);
+			return ResultBuilder.buildError(ResponseCodeEnum.CODE_9999);
 		}
 	}
 
@@ -85,31 +90,33 @@ public class DictionaryController {
 		LogBean logBean = new LogBean();
 		try {
 			logBean = logUtil.insertLog(request,"1", "数据字典修改","");
-			return new RestfulEntityBySummit<String>(dictionaryService.edit(dictionaryBean),null);
+			dictionaryService.edit(dictionaryBean);
+			return ResultBuilder.buildSuccess();
 		} catch (Exception e) {
 			logger.error("操作失败", e);
 			logBean.setActionFlag("0");
 			logBean.setErroInfo(e.toString());
 			logUtil.updateLog(logBean,"1");
-			return new RestfulEntityBySummit<String>(ResponseCodeBySummit.CODE_9999,null);
+			return ResultBuilder.buildError(ResponseCodeEnum.CODE_9999);
 		}
 	}
 	
 	@ApiOperation(value = "查询数据字典树")
 	@RequestMapping(value = "/queryTree",method = RequestMethod.GET)
-	public RestfulEntityBySummit<DictionaryBean> queryTree(String pid) {
+	public RestfulEntityBySummit<DictionaryBean> queryTree(@RequestParam(value = "pid",required = false) String pid) {
 		HttpServletRequest request = ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest();
 		
 		LogBean logBean = new LogBean();
 	     try {
 	           logBean = logUtil.insertLog(request, "1", "数据字典树", "");
-	           return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_0000,dictionaryService.queryTree(pid));
+	           return ResultBuilder.buildSuccess(dictionaryService.queryTree(pid));
+	          // return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_0000,dictionaryService.queryTree(pid));
 	     } catch (Exception e) {
 	    	    logger.error("查询数据字典树失败：", e);
 	    	    logUtil.updateLog(logBean, "1");
 	            logBean.setActionFlag("0");
 	            logBean.setErroInfo(e.toString());
-	            return new RestfulEntityBySummit<DictionaryBean>(ResponseCodeBySummit.CODE_9999,null);
+	            return ResultBuilder.buildError(ResponseCodeEnum.CODE_9999);
 	     }
 	}
 
@@ -121,14 +128,14 @@ public class DictionaryController {
 		try {
 			logBean = logUtil.insertLog(request,"1", "数据字典按照编码查询","");
 			//res = dictionaryService.queryByCode(code);
-			return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_0000,dictionaryService.queryByCode(code));
+			return ResultBuilder.buildSuccess(dictionaryService.queryByCode(code));
 		} catch (Exception e) {
 			//e.printStackTrace();
 			logger.error("查询失败", e);
 			logBean.setActionFlag("0");
 			logBean.setErroInfo(e.toString());
 			logUtil.updateLog(logBean,"1");
-			return new RestfulEntityBySummit<DictionaryBean>(ResponseCodeBySummit.CODE_9999,null);
+			return ResultBuilder.buildError(ResponseCodeEnum.CODE_9999);
 		}
 		//logUtil.updateLog(logBean,"1");
 		//return res;
@@ -141,14 +148,15 @@ public class DictionaryController {
 		LogBean logBean = new LogBean();
 		try {
 			logBean = logUtil.insertLog(request,"1", "数据字典查询全部数据","");
-			return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_0000,dictionaryService.queryAll());
+			return ResultBuilder.buildSuccess(dictionaryService.queryAll());
+			//return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_0000,dictionaryService.queryAll());
 		} catch (Exception e) {
 			//e.printStackTrace();
 			logger.error("查询失败", e);
 			logBean.setActionFlag("0");
 			logBean.setErroInfo(e.toString());
 			logUtil.updateLog(logBean,"1");
-			return new RestfulEntityBySummit<List<DictionaryBean>>(ResponseCodeBySummit.CODE_9999,null);
+			return ResultBuilder.buildError(ResponseCodeEnum.CODE_9999);
 		}
 		//logUtil.updateLog(logBean,"1");
 		//return res;
@@ -166,14 +174,15 @@ public class DictionaryController {
 			logBean = logUtil.insertLog(request,"1", "数据字典分页查询", "");
 			page = (page == 0) ? 1 : page;
             pageSize = (pageSize == 0) ? SysConstants.PAGE_SIZE : pageSize;
-			return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_0000,dictionaryService.queryByPage(page, pageSize, pId));
+			//return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_0000,dictionaryService.queryByPage(page, pageSize, pId));
+			return ResultBuilder.buildSuccess(dictionaryService.queryByPage(page, pageSize, pId));
 		} catch (Exception e) {
 			//e.printStackTrace();
 			logger.error("查询失败", e);
 			logBean.setActionFlag("0");
 			logBean.setErroInfo(e.toString());
 			logUtil.updateLog(logBean,"1");
-			return new RestfulEntityBySummit<Page<DictionaryBean>>(ResponseCodeBySummit.CODE_9999,null);
+			return ResultBuilder.buildError(ResponseCodeEnum.CODE_9999);
 		}
 	}
 	
@@ -190,26 +199,15 @@ public class DictionaryController {
 			List <DictionaryBean> list=dictionaryService.queryByPid(pId);
 			//JSONArray jsonArray= JSONArray.parseArray(JSON.toJSONString(list));
 			logger.info("查询成功");
-			return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_0000,list);
-//			if(null != list){
-//                JSONArray jsonArray = new JSONArray();
-//                jsonArray.add(list);
-//                mb.setCode("CODE_0000");
-//                mb.setMessage("数据查询成功!");
-//                mb.setData(jsonArray);
-//            }
-			
+			return ResultBuilder.buildSuccess(list);
 		} catch (Exception e) {
 			//e.printStackTrace();
 			logger.error("查询失败", e);
 			logBean.setActionFlag("0");
 			logBean.setErroInfo(e.toString());
 			logUtil.updateLog(logBean,"1");
-			return new RestfulEntityBySummit<List <DictionaryBean>>(ResponseCodeBySummit.CODE_9999,null);
+			return ResultBuilder.buildError(ResponseCodeEnum.CODE_9999);
 		}
-		//return mb;
-		//logUtil.updateLog(logBean,"1");
-		// return null;
 	}
 	@ApiOperation(value = "初始化字典缓存加载")
 	@GetMapping("initSysDic")
@@ -220,14 +218,10 @@ public class DictionaryController {
 			//logBean = logUtil.insertLog(request,"1", "初始化字典缓存加载", "");
 			dictionaryService.initSysDic();
 			logger.info("初始化字典缓存加载");
-			return new RestfulEntityBySummit<String>(ResponseCodeBySummit.CODE_0000,null);
+			return ResultBuilder.buildSuccess();
 		} catch (Exception e) {
-			//e.printStackTrace();
 			logger.error("查询失败", e);
-			//logBean.setActionFlag("0");
-			//logBean.setErroInfo(e.toString());
-			//logUtil.updateLog(logBean,"1");
-			return new RestfulEntityBySummit<String>(ResponseCodeBySummit.CODE_9999,null);
+			return ResultBuilder.buildError(ResponseCodeEnum.CODE_9999);
 		}
 	}
 	
