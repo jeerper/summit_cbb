@@ -1,5 +1,6 @@
 package com.summit.service.function;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -177,7 +178,7 @@ public class FunctionService {
 		return ur.queryAllCustom(sql, fbrm);
 	}
 
-	public Page<FunctionBean> queryByPage(int start, int limit, String pId,String userName) {
+	public Page<FunctionBean> queryByPage(int start, int limit, String pId,String userName) throws SQLException {
 		StringBuffer sql=new StringBuffer("SELECT * FROM SYS_FUNCTION where 1=1 ");
 		Page<JSONObject> rs =null;
 		if("root".equals(pId) || pId==null){

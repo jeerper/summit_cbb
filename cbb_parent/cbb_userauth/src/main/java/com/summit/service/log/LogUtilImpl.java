@@ -102,7 +102,7 @@ public class LogUtilImpl implements ILogUtil {
 			try {
 			    actionTime = (int) (sf.parse(eTime).getTime()-sf.parse(sTime).getTime());
 			} catch (ParseException e) {
-				e.printStackTrace();
+				//e.printStackTrace();
 				logger.error("记录日志功能时间转换失败！");
 			}
 			logBean.seteTime(eTime);
@@ -153,7 +153,8 @@ public class LogUtilImpl implements ILogUtil {
 					ip = ip.substring(computNameIndex+1);
 				}
 			} catch (UnknownHostException e) {
-				e.printStackTrace();
+				logger.error("获取ip失败！"+e.getMessage());
+				//e.printStackTrace();
 			}
 		 }
 		 return ip;

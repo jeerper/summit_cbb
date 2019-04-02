@@ -1,5 +1,6 @@
 package com.summit.service.adcd;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -178,8 +179,9 @@ public class ADCDService {
 	 * @param limit
 	 * @param pId
 	 * @return
+	 * @throws SQLException 
 	 */
-	public Page<ADCDBean> queryByPage(int start, int limit, String padcd) {
+	public Page<ADCDBean> queryByPage(int start, int limit, String padcd) throws SQLException {
 		String sql = "SELECT * FROM AD_CD_B WHERE PADCD = ?";
 		//if("".equals(padcd))padcd ="root";
 		Page<JSONObject> rs = ur.queryByCustomPage(sql, start, limit, padcd);

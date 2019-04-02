@@ -1,5 +1,6 @@
 package com.summit.service.dept;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -140,8 +141,9 @@ public class DeptService {
 	 * @param limit
 	 * @param pId
 	 * @return
+	 * @throws SQLException 
 	 */
-	public Page<DeptBean> queryByPage(int start, int limit, JSONObject paramJson) {
+	public Page<DeptBean> queryByPage(int start, int limit, JSONObject paramJson) throws SQLException {
 		StringBuffer sql = new StringBuffer("SELECT dept.*,fdept.DEPTCODE as pdeptCode,fdept.DEPTNAME as pdeptName FROM SYS_DEPT dept left join SYS_DEPT fdept on dept.pid=fdept.DEPTCODE where 1=1 ");
 		LinkedMap map = new LinkedMap();
         Integer index = 1;

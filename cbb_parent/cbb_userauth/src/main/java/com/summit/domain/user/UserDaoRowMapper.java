@@ -1,23 +1,25 @@
 package com.summit.domain.user;
 
-import com.summit.util.SummitTools;
-import com.summit.util.SummitTools.DateTimeType;
-import net.sf.json.JSONObject;
-import net.sourceforge.jtds.jdbc.ClobImpl;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.RowMapper;
-import org.springframework.stereotype.Component;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.Reader;
-import java.sql.*;
+import java.sql.Date;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
+import java.sql.Timestamp;
+
+import org.springframework.jdbc.core.RowMapper;
+import org.springframework.stereotype.Component;
+
+import com.summit.util.SummitTools;
+
+import net.sf.json.JSONObject;
+import net.sourceforge.jtds.jdbc.ClobImpl;
 
 
 @Component
 public class UserDaoRowMapper implements RowMapper<JSONObject> {
-	@Autowired
-	SummitTools st;
 
 	public JSONObject mapRow(ResultSet rs, int rowNum) throws SQLException {
 		ResultSetMetaData rsd = rs.getMetaData();
@@ -41,11 +43,9 @@ public class UserDaoRowMapper implements RowMapper<JSONObject> {
 				}
 				o.put(columnName, b.toString());
 			} else if (oo instanceof Date) {
-				o.put(columnName, st.DTFormat(DateTimeType.dateTime,
-						((Date) oo).getTime()));
+				o.put(columnName, SummitTools.DTFormat("yyyy-MM-dd",(Date) oo));
 			} else if (oo instanceof Timestamp) {
-				o.put(columnName, st.DTFormat(DateTimeType.dateTime,
-						((Timestamp) oo).getTime()));
+				o.put(columnName, SummitTools.DTFormat("yyyy-MM-dd",(Timestamp) oo));
 			} else {
 				o.put(columnName, oo);
 			}
