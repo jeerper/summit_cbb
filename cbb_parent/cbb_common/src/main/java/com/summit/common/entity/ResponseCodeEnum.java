@@ -31,6 +31,7 @@ public enum ResponseCodeEnum implements ResponseCode {
     
     CODE_4012("权限不足"),// 用于权限不足
     CODE_4011("登录状态失效，请重新登录");// 用于登录状态失效
+	
 
 	private String message;// 提示消息
 

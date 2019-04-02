@@ -1,4 +1,4 @@
-package com.summit.domain.dept;
+package com.summit.common.entity;
 
 import java.io.Serializable;
 import java.util.List;

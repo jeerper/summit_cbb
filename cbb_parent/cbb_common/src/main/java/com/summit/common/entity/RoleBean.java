@@ -1,4 +1,4 @@
-package com.summit.domain.role;
+package com.summit.common.entity;
 
 import java.io.Serializable;
 
