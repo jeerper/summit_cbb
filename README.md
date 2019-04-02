@@ -312,12 +312,14 @@ mvn install
     ![点击新建任务](doc/create_build_job.png)
   - 第二步，复制脚手架配置，然后点击确定：
     ![复制脚手架配置](doc/copy_config.png)
-  - 第三步,更换仓库地址,然后点击保存：
+  - 第三步,更换仓库地址：
     ![更换仓库地址](doc/change_git_address.png)
+  - 第四步,更换脚本执行路径,然后点击保存：
+    ![更换仓库地址](doc/change_build_path.png)
 
-- 如下图创建的是一个业务组件脚手架的构建任务：
+- 如下图创建的是一个共享组件脚手架的构建任务：
 
-    ![一个业务组件脚手架的构建任务](doc/jenkins.png)
+    ![一个共享组件脚手架的构建任务](doc/jenkins.png)
 
 ## 其他注意事项
 
