@@ -56,8 +56,7 @@ management:
     health:
       show-details: ALWAYS
 
-logging:
-  file: logs/all.log
+
 ###天气组件的KEY
 weather:
 ##需要保存历史数据的城市名
