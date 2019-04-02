@@ -14,29 +14,32 @@ public class UserInfo implements Serializable {
     /**
      * 用户昵称
      */
-    @ApiModelProperty(value="name",required=true)
+    @ApiModelProperty(value="姓名",name="name",required=true)
     private String name;
     /**
      * 账户名称
      */
-    @ApiModelProperty(value="userName",required=true)
+    @ApiModelProperty(value="登录名称",name="userName",required=true)
     private String userName;
     /**
      * 账户密码
      */
-    @ApiModelProperty(value="password",required=true)
+    @ApiModelProperty(value="账户密码",name="password",required=true)
     private String password;
     /**
      * 邮箱
      */
+    @ApiModelProperty(value="邮箱",name="email")
     private String email;
     /**
      * 电话号码
      */
+    @ApiModelProperty(value="电话号码",name="phoneNumber")
     private String phoneNumber;
     /**
-     * 启用状态
+     * 启用状态 
      */
+    @ApiModelProperty(value="启用状态:1是，0否 ,添加默认为启用",name="isEnabled")
     private Integer isEnabled;
     /**
      * 最后一次更新时间
@@ -52,18 +55,19 @@ public class UserInfo implements Serializable {
     /**
      * 备注
      */
+    @ApiModelProperty(value="备注",name="note")
     private String note;
 
     /**
      * 权限标识集合(对应sys_function表中的ID字段)
      */
-    @ApiModelProperty(hidden = true)
+    @ApiModelProperty(value="权限标识集合，查询用",name="permissions")
     private String[] permissions;
 
     /**
      * 角色集合
      */
-    @ApiModelProperty(hidden = true)
+    @ApiModelProperty(value="角色集合，查询用",name="roles")
     private String[] roles;
 
 
