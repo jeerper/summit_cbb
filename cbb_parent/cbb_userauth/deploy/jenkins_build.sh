@@ -50,6 +50,10 @@ fi
 
 cd ${WORKSPACE}/cbb_parent/${projectName}/target
 
+rm -rf ${fileStoragePath}/${projectName}/bin/backend.jar
+rm -rf ${fileStoragePath}/${projectName}/bin/lib
+rm -rf ${fileStoragePath}/${projectName}/bin/config
+
 cp -rf backend.jar ${fileStoragePath}/${projectName}/bin
 cp -rf lib ${fileStoragePath}/${projectName}/bin/
 cp -rf config ${fileStoragePath}/${projectName}/bin/
