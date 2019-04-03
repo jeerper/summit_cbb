@@ -1,5 +1,5 @@
 server:
-  port: "${WebServer_Port:22222}"
+  port: ${WebServer_Port}
 spring:
   profiles:
     active: pro
