@@ -14,6 +14,9 @@ sed -i 's,${projectName},'${projectName}',g' ./.env
 
 sed -i 's,${WebServer_Port},'${UserAuth_Port}',g' ./.env
 
+sed -i 's,${WebServer_Port},'${UserAuth_Port}',g' ${WORKSPACE}/cbb_parent/${projectName}/src/main/resources/application-pro.yml
+
+
 sed -i 's,${Registry_Center_URL},'${Registry_Center_URL}',g' ./.env
 
 sed -i 's,${Registry_Center_IP},'${Registry_Center_IP}',g' ./.env

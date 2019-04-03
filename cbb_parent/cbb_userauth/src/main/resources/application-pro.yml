@@ -1,4 +1,6 @@
 #生产环境
+server:
+  port: ${WebServer_Port}
 spring:
   datasource:
     driver-class-name: com.mysql.jdbc.Driver
