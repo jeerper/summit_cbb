@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -32,11 +33,14 @@ import com.summit.util.SysConstants;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import lombok.extern.slf4j.Slf4j;
 
 
 @Api(description = "数据字典")
 @RestController
+@CrossOrigin(origins = "*", maxAge = 3600)
 @RequestMapping("dictionary")
+@Slf4j
 public class DictionaryController {
 	private static final Logger logger = LoggerFactory.getLogger(DictionaryController.class);
 	@Autowired
@@ -122,19 +126,19 @@ public class DictionaryController {
 
 	@ApiOperation(value = "数据字典按照编码查询")
 	@GetMapping("queryByCode")
-	public RestfulEntityBySummit<DictionaryBean> queryByCode(@RequestParam(value = "code")  String code, HttpServletRequest request) {
+	public RestfulEntityBySummit<DictionaryBean> queryByCode(@RequestParam(value = "code")  String code) {
 		//Map<String, Object> res = new HashMap<String, Object>();
-		LogBean logBean = new LogBean();
+		//LogBean logBean = new LogBean();
 		try {
-			logBean = logUtil.insertLog(request,"1", "数据字典按照编码查询","");
+			//logBean = logUtil.insertLog(request,"1", "数据字典按照编码查询","");
 			//res = dictionaryService.queryByCode(code);
 			return ResultBuilder.buildSuccess(dictionaryService.queryByCode(code));
 		} catch (Exception e) {
 			//e.printStackTrace();
 			logger.error("查询失败", e);
-			logBean.setActionFlag("0");
-			logBean.setErroInfo(e.toString());
-			logUtil.updateLog(logBean,"1");
+			//logBean.setActionFlag("0");
+			//logBean.setErroInfo(e.toString());
+			//logUtil.updateLog(logBean,"1");
 			return ResultBuilder.buildError(ResponseCodeEnum.CODE_9999);
 		}
 		//logUtil.updateLog(logBean,"1");
