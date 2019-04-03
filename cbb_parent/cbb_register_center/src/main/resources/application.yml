@@ -1,6 +1,11 @@
+server:
+  port: 8761
 spring:
+  profiles:
+    active: pro
   application:
     name: "cbb-register-center"
+
   #强制检测运行环境编码格式,不符合设置则退出当前程序
   mandatory-file-encoding: UTF-8
   boot:
@@ -19,8 +24,7 @@ spring:
       name: "${spring_boot_admin_username:ucp}"
       password: "${spring_boot_admin_password:Summit2018}"
 
-server:
-  port: "${WebServer_Port:8761}"
+
 
 
 eureka:

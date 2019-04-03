@@ -14,6 +14,9 @@ sed -i 's,${projectName},'${projectName}',g' ./.env
 
 sed -i 's,${WebServer_Port},'${Registry_Center_Port}',g' ./.env
 
+sed -i 's,${WebServer_Port},'${Registry_Center_Port}',g' ${WORKSPACE}/cbb_parent/${projectName}/src/main/resources/application-pro.yml
+
+
 sed -i 's,${spring_boot_admin_username},'${spring_boot_admin_username}',g' ./.env
 sed -i 's,${spring_boot_admin_password},'${spring_boot_admin_password}',g' ./.env
 
