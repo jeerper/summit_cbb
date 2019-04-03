@@ -57,10 +57,9 @@ rm -rf ${fileStoragePath}/${projectName}/bin/backend.jar
 rm -rf ${fileStoragePath}/${projectName}/bin/lib
 rm -rf ${fileStoragePath}/${projectName}/bin/config
 
-
-#cp -rf backend.jar ${fileStoragePath}/${projectName}/bin
-#cp -rf lib ${fileStoragePath}/${projectName}/bin/
-#cp -rf config ${fileStoragePath}/${projectName}/bin/
+cp -rf backend.jar ${fileStoragePath}/${projectName}/bin
+cp -rf lib ${fileStoragePath}/${projectName}/bin/
+cp -rf config ${fileStoragePath}/${projectName}/bin/
 
 echo "推送组件信息到组件货架上"
 curl -X POST "http://${Registry_Center_IP}:43000/component/pushComponentInfo" -H "accept: */*" -H "Content-Type: application/json;charset=UTF-8" -d "{ \"description\": \"${component_description}\", \"name\": \"${component_name}\", \"tag\": \"${component_tag}\"}"
