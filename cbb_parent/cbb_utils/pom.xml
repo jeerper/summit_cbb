@@ -11,6 +11,7 @@
 	</parent>
 	<artifactId>cbb_utils</artifactId>
 	<name>cbb_utils</name>
+	<version>${cbb.util.version}</version>
 	<packaging>jar</packaging>
 
 	<properties>

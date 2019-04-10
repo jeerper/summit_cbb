@@ -16,6 +16,7 @@
 	<properties>
 		<!--公共组件common包发布版本号 -->
 		<cbb.common.version>1.0.5-SNAPSHOT</cbb.common.version>
+		<cbb.util.version>1.0.0-SNAPSHOT</cbb.util.version>
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
 		<maven.compiler.compilerVersion>1.8</maven.compiler.compilerVersion>
@@ -41,6 +42,11 @@
 				<groupId>com.summit</groupId>
 				<artifactId>cbb_common</artifactId>
 				<version>${cbb.common.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.summit</groupId>
+				<artifactId>cbb_utils</artifactId>
+				<version>${cbb.util.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>org.springframework.cloud</groupId>
