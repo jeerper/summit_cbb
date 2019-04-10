@@ -15,7 +15,7 @@
 
 	<properties>
 		<!--公共组件common包发布版本号 -->
-		<cbb.common.version>1.0.5.RELEASE</cbb.common.version>
+		<cbb.common.version>1.0.5-SNAPSHOT</cbb.common.version>
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
 		<maven.compiler.compilerVersion>1.8</maven.compiler.compilerVersion>
@@ -250,7 +250,8 @@
 				<enabled>true</enabled>
 			</releases>
 			<snapshots>
-				<enabled>false</enabled>
+				<enabled>true</enabled>
+				<updatePolicy>always</updatePolicy>
 			</snapshots>
 		</repository>
 	</repositories>
