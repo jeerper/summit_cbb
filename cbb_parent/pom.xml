@@ -197,6 +197,10 @@
 							<addClasspath>true</addClasspath>
 							<mainClass>com.summit.MainAction</mainClass>
 							<classpathPrefix>lib/</classpathPrefix>
+							<!-- 如果不加这一句则依赖的SNAPSHOT的jar包就会表现为MANIFEST.MF中的
+                            Class-Path: lib/facede-user-1.0-20160512.093945-1.jar
+                            但是打包到../lib/facede-user-1.0-SNAPSHOT.jar下面包,这样就会出现找不到类的情况 -->
+							<useUniqueVersions>false</useUniqueVersions>
 						</manifest>
 						<manifestEntries>
 							<Class-Path>config/</Class-Path>
