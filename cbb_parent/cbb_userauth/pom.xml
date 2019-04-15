@@ -10,9 +10,9 @@
 	<artifactId>cbb_userauth</artifactId>
 	<packaging>jar</packaging>
 
-	<build>
-		<finalName>backend</finalName>
-	</build>
+<!-- 	<build> -->
+<!-- 		<finalName>backend</finalName> -->
+<!-- 	</build> -->
 
 	<dependencies>
 		<dependency>

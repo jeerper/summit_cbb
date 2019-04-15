@@ -99,12 +99,8 @@ public class UserRepository extends JdbcDaoSupport {
 		} catch (Exception e) {
 			throw e;
 		} finally {
-			if(pstmt != null && !pstmt.isClosed()){
 			   pstmt.close();
-			}
-			if (conn != null && !conn.isClosed()) {
 				conn.close();
-			}
 		}
 		return array;
 	}
@@ -152,12 +148,8 @@ public class UserRepository extends JdbcDaoSupport {
 		} catch (Exception e) {
 			throw e;
 		} finally {
-			if(pstmt != null && !pstmt.isClosed()){
 				pstmt.close();
-			}
-			if (conn != null && !conn.isClosed()) {
 			     conn.close();
-			}
 		}
 		return rtnJson;
 	}
@@ -201,12 +193,8 @@ public class UserRepository extends JdbcDaoSupport {
 			} catch (Exception e) {
 				throw e;
 			} finally {
-				if(pstmt != null && !pstmt.isClosed()){
 					pstmt.close();
-				}
-				if (conn != null && !conn.isClosed()) {
-				     conn.close();
-				}
+				    conn.close();
 			}
 			return list;
 		}
@@ -264,12 +252,8 @@ public class UserRepository extends JdbcDaoSupport {
 		} catch (Exception e) {
 			throw e;
 		} finally {
-			if (pstmt != null && !pstmt.isClosed()) {
 				pstmt.close();
-			}
-			if (conn != null && !conn.isClosed()) {
-					conn.close();
-			}
+				conn.close();
 		}
 		return p;
 	}

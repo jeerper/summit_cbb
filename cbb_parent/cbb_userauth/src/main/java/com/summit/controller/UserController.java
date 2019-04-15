@@ -64,7 +64,7 @@ public class UserController {
             }
             return ResultBuilder.buildSuccess();
         } catch (Exception e) {
-            e.printStackTrace();
+           //e.printStackTrace();
             logger.error("新增用户失败", e);
             logBean.setActionFlag("0");
             logBean.setErroInfo(e.getMessage());
