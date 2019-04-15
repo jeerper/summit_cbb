@@ -20,6 +20,11 @@ public class DeptBean  implements Serializable {
 	private String remark;
 	@ApiModelProperty(value="下级部门",name="children")
 	private List<DeptBean> children;
+	
+	@ApiModelProperty(value="上级部门名称",name="pdeptName")
+	private String pdeptName;
+	
+	
 	public DeptBean() {
 		super();
 	}
@@ -82,5 +87,14 @@ public class DeptBean  implements Serializable {
 	public void setChildren(List<DeptBean> children) {
 		this.children = children;
 	}
+
+	public String getPdeptName() {
+		return pdeptName;
+	}
+
+	public void setPdeptName(String pdeptName) {
+		this.pdeptName = pdeptName;
+	}
+	
 	
 }
