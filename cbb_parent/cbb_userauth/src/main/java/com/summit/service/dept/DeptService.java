@@ -144,7 +144,7 @@ public class DeptService {
 	 * @throws SQLException 
 	 */
 	public Page<DeptBean> queryByPage(int start, int limit, JSONObject paramJson) throws SQLException {
-		StringBuffer sql = new StringBuffer("SELECT dept.*, fdept.DEPTNAME as pdeptName FROM SYS_DEPT dept left join SYS_DEPT fdept on dept.pid=fdept.DEPTCODE where 1=1 ");
+		StringBuffer sql = new StringBuffer("SELECT dept.*, fdept.DEPTNAME as pdeptName FROM SYS_DEPT dept left join SYS_DEPT fdept on dept.pid=fdept.id where 1=1 ");
 		if(paramJson!=null && !paramJson.isEmpty()){
         	if(paramJson.containsKey("pid")    ){
         		sql.append(" and dept.pid = "+paramJson.get("pid")+" ");
