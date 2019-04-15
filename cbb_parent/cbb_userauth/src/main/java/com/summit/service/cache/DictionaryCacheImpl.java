@@ -92,6 +92,43 @@ public class DictionaryCacheImpl extends CacheImpl implements DictionaryCacheInf
 		}
 	}
 	
+	@SuppressWarnings("unchecked")
+	public  List<DictionaryBean> queryDictionaryByPcodes(String pcodes) {
+		List<DictionaryBean> pcodeList=new ArrayList<DictionaryBean>();
+		List<DictionaryBean>  all = (List<DictionaryBean>)getCacheElement(SysConstants.DICTIONARY, "dictionaryAll");
+		if(pcodes!=null && !"".equals(pcodes)){
+			DictionaryBean dictionaryBean=null;
+			String[] pcodeArray=pcodes.split(",");
+			List<DictionaryBean> list =null;
+			for(String pcode:pcodeArray){
+				list = new ArrayList<DictionaryBean>();
+				if(all!=null && all.size()>0){
+					//for (DictionaryBean sysDictionary : all) {
+					for (int i=0;i<all.size();i++) {
+						DictionaryBean sysDictionary=all.get(i);
+						DictionaryBean sysDictionaryNext=null;
+						if(i+1<all.size()){
+							sysDictionaryNext=all.get(i+1);	
+						}
+						if (pcode.equals(sysDictionary.getPcode()) ) {
+							list.add(sysDictionary.clone());
+							if(sysDictionaryNext!=null && !pcode.equals(sysDictionaryNext.getPcode())){
+								break;
+							}
+						}
+					}	
+				}
+				dictionaryBean=new DictionaryBean();
+				dictionaryBean.setCode(pcode);
+				dictionaryBean.setChildren(list);
+				pcodeList.add(dictionaryBean);
+			}
+			return pcodeList;
+		}else{
+			return null;
+		}
+	}
+	
 	/**
 	 * 根据code值返回ckey
 	 * @param code

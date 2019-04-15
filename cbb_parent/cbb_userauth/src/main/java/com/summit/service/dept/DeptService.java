@@ -144,27 +144,19 @@ public class DeptService {
 	 * @throws SQLException 
 	 */
 	public Page<DeptBean> queryByPage(int start, int limit, JSONObject paramJson) throws SQLException {
-		StringBuffer sql = new StringBuffer("SELECT dept.*,fdept.DEPTCODE as pdeptCode,fdept.DEPTNAME as pdeptName FROM SYS_DEPT dept left join SYS_DEPT fdept on dept.pid=fdept.DEPTCODE where 1=1 ");
-		LinkedMap map = new LinkedMap();
-        Integer index = 1;
-        if(paramJson!=null && !paramJson.isEmpty()){
+		StringBuffer sql = new StringBuffer("SELECT dept.* FROM SYS_DEPT dept left join SYS_DEPT fdept on dept.pid=fdept.DEPTCODE where 1=1 ");
+		if(paramJson!=null && !paramJson.isEmpty()){
         	if(paramJson.containsKey("pid")   && !st.stringNotNull(paramJson.getString("pid")) ){
-        		sql.append(" and dept.pid = ? ");
-        		map.put(index,paramJson.get("pid") );
-        		index++;
+        		sql.append(" and dept.pid = "+paramJson.get("pid")+" ");
         	}
         	if(paramJson.containsKey("deptcode")   && !st.stringNotNull(paramJson.getString("deptcode")) ){
-        		sql.append(" and dept.deptcode like ? ");
-        		map.put(index,"%" + paramJson.get("deptcode") + "%");
-        		index++;
+        		sql.append(" and dept.deptcode like '%"+paramJson.get("deptcode")+"%' ");
         	}
         	if(paramJson.containsKey("deptname")   && !st.stringNotNull(paramJson.getString("deptname")) ){
-        		sql.append(" and dept.deptname like ? ");
-        		map.put(index,"%" + paramJson.get("deptname") + "%");
-        		index++;
+        		sql.append(" and dept.deptname like '%"+paramJson.get("deptname")+"%' ");
         	}
         }
-		Page<JSONObject> rs = ur.queryByCustomPage(sql.toString(), start, limit, map);
+        Page<JSONObject>  rs = ur.queryByCustomPage(sql.toString(), start, limit);
 		if(rs!=null){
 			 Page<DeptBean> pageDeptBeanInfo=new Page<DeptBean>();
 			 ArrayList<DeptBean> students = JSON.parseObject(rs.getContent().toString(), new TypeReference<ArrayList<DeptBean>>() {});

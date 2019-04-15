@@ -200,6 +200,10 @@ public class DictionaryService {
 		return dictionaryCacheImpl.findChildList(pId);
 	}
 	
+	public List<DictionaryBean> queryDictionaryByPcodes(String pcodes){
+		return dictionaryCacheImpl.queryDictionaryByPcodes(pcodes);
+	}
+	
 	/**
 	 * 初始化字典缓存加载
 	 */

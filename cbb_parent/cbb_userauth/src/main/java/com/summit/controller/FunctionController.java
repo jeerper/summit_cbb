@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import com.summit.common.entity.FunctionBean;
 import com.summit.common.entity.ResponseCodeEnum;
@@ -43,9 +45,10 @@ public class FunctionController {
 
 	@ApiOperation(value = "新增功能",  notes = "上级功能(pid),功能名称(name),功能排序(fdesc)都是必输项")
 	@PostMapping("/add")
-	public RestfulEntityBySummit<String> add(@RequestBody FunctionBean functionBean, HttpServletRequest request) {
+	public RestfulEntityBySummit<String> add(@RequestBody FunctionBean functionBean) {
 		LogBean logBean = new LogBean();
 		try {
+			HttpServletRequest request = ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest();
 			logBean = logUtil.insertLog(request,"1", "功能管理新增","");
 			fs.add(functionBean);
 			return ResultBuilder.buildSuccess();
@@ -61,10 +64,11 @@ public class FunctionController {
 	@ApiOperation(value = "功能管理删除")
 	@DeleteMapping("del")
 	public RestfulEntityBySummit<String> del(
-			@RequestParam(value = "ids") String ids, HttpServletRequest request) {
+			@RequestParam(value = "ids") String ids) {
 		//Map<String, Object> res = new HashMap<String, Object>();
 		LogBean logBean = new LogBean();
 		try {
+			HttpServletRequest request = ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest();
 			logBean = logUtil.insertLog(request,"1", "功能管理删除","");
 			fs.del(ids);
 			return ResultBuilder.buildSuccess();
@@ -83,9 +87,10 @@ public class FunctionController {
 
 	@ApiOperation(value = "功能管理修改" ,notes = "id,上级功能(pid),功能名称(name),功能排序(fdesc)都是必输项")
 	@PutMapping("edit")
-	public RestfulEntityBySummit<String> edit(@RequestBody FunctionBean functionBean, HttpServletRequest request) {
+	public RestfulEntityBySummit<String> edit(@RequestBody FunctionBean functionBean) {
 		LogBean logBean = new LogBean();
 		try {
+			HttpServletRequest request = ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest();
 			logBean = logUtil.insertLog(request,"1", "功能管理修改","");
 			 fs.edit(functionBean);
 			return ResultBuilder.buildSuccess();
@@ -102,10 +107,11 @@ public class FunctionController {
 	@ApiOperation(value = "功能管理根据ID查询")
 	@GetMapping("queryById")
 	public RestfulEntityBySummit<List<FunctionBean>> queryById(
-			@RequestParam(value = "id")  String id,  HttpServletRequest request) {
+			@RequestParam(value = "id")  String id) {
 		//Map<String, Object> res = new HashMap<String, Object>();
 		LogBean logBean = new LogBean();
 		try {
+			HttpServletRequest request = ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest();
 			logBean = logUtil.insertLog(request,"1", "功能管理根据ID查询","");
 			String userName="";
 			UserInfo userInfo=UserContextHolder.getUserInfo();
@@ -125,10 +131,11 @@ public class FunctionController {
 
 	@ApiOperation(value = "功能管理查询树形结构")
 	@GetMapping("queryTree")
-	public RestfulEntityBySummit<FunctionBean> queryTree(@RequestParam(value = "pid" ,required = false)  String pid, HttpServletRequest request) {
+	public RestfulEntityBySummit<FunctionBean> queryTree(@RequestParam(value = "pid" ,required = false)  String pid) {
 		LogBean logBean = new LogBean();
 		//Map<String, Object> res = new HashMap<String, Object>();
 		try {
+			HttpServletRequest request = ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest();
 			logBean = logUtil.insertLog(request,"1", "功能管理查询树形","");
 			//res = st.success("", fs.queryAll(userName));
 //			String userName="";
@@ -155,10 +162,11 @@ public class FunctionController {
 	public RestfulEntityBySummit<Page<FunctionBean>> queryByPage(
 			@RequestParam(value = "page") int page,
             @RequestParam(value ="pageSize") int pageSize,
-            @RequestParam(value = "pId",required = false) String pId,HttpServletRequest request) {
+            @RequestParam(value = "pId",required = false) String pId) {
 		//Page<JSONObject> res = new Page<JSONObject>();
 		LogBean logBean = new LogBean();
 		try {
+			HttpServletRequest request = ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest();
 			logBean = logUtil.insertLog(request,"1", "功能管理分页查询","");
 			//res = fs.queryByPage(start, limit, pId,"");
 			String userName="";

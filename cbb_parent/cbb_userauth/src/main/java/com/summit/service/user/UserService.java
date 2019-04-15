@@ -40,13 +40,14 @@ public class UserService {
 
 
 	public ResponseCodeEnum add(UserInfo userInfo) {
+		System.out.println("==========="+userInfo.toString());
         BCryptPasswordEncoder encoder =new BCryptPasswordEncoder();
 		String sql = "SELECT * FROM SYS_USER WHERE USERNAME = ?";
 		List<JSONObject> l = ur.queryAllCustom(sql, userInfo.getUserName());
 		if (st.collectionNotNull(l)) {
 			return ResponseCodeEnum.CODE_4022;
 		}
-		sql = "INSERT INTO SYS_USER (USERNAME,NAME,PASSWORD,IS_ENABLED,EMAIL,PHONE_NUMBER,STATE,NOTE,LAST_UPDATE_TIME) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+		sql = "INSERT INTO SYS_USER (USERNAME,NAME,PASSWORD,IS_ENABLED,EMAIL,PHONE_NUMBER,STATE,NOTE,LAST_UPDATE_TIME) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?,now())";
 		jdbcTemplate.update(sql,
 				userInfo.getUserName(),
 				userInfo.getName(),
@@ -55,8 +56,8 @@ public class UserService {
 				userInfo.getEmail(),
 				userInfo.getPhoneNumber(),
 				1,
-				userInfo.getNote(),
-				new Date());
+				userInfo.getNote()
+				);
 		return null;
 	}
 

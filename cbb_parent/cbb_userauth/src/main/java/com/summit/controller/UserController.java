@@ -16,6 +16,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import com.summit.common.entity.FunctionBean;
 import com.summit.common.entity.ResponseCodeEnum;
@@ -51,17 +53,18 @@ public class UserController {
 
     @PostMapping("/add")
     @ApiOperation(value = "新增用户",  notes = "昵称(name)，用户名(userName),密码(password)都是必输项")
-    public RestfulEntityBySummit<String> add(@RequestBody UserInfo userInfo, HttpServletRequest request) {
-        LogBean logBean = new LogBean();
+    public RestfulEntityBySummit<String> add(@RequestBody UserInfo userInfo) {
+       LogBean logBean = new LogBean();
         try {
-            logBean = logUtil.insertLog(request, "1", "用户新增", userInfo.getUserName());
+        	HttpServletRequest request = ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest();
+    		logBean = logUtil.insertLog(request, "1", "用户新增", userInfo.getUserName());
             ResponseCodeEnum c=us.add(userInfo);
             if(c!=null){
             	 return ResultBuilder.buildError(c);
             }
             return ResultBuilder.buildSuccess();
         } catch (Exception e) {
-            //e.printStackTrace();
+            e.printStackTrace();
             logger.error("新增用户失败", e);
             logBean.setActionFlag("0");
             logBean.setErroInfo(e.getMessage());
@@ -80,10 +83,11 @@ public class UserController {
     @ApiOperation(value = "删除用户信息")
     @DeleteMapping("/del")
     public RestfulEntityBySummit<String> del(
-    		@RequestParam(value = "userNames") String userNames, HttpServletRequest request) {
+    		@RequestParam(value = "userNames") String userNames) {
         LogBean logBean = new LogBean();
         try {
-            logBean = logUtil.insertLog(request, "1", "删除用户", "");
+        	HttpServletRequest request = ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest();
+    		 logBean = logUtil.insertLog(request, "1", "删除用户", "");
             if(userNames.contains(",")){
             	for(String username:userNames.split(",")){
             		//系统管路员用户不能删除
@@ -107,9 +111,10 @@ public class UserController {
 
     @ApiOperation(value = "修改用户",  notes = "昵称(name)，用户名(userName),密码(password)都是必输项")
     @PutMapping("/edit")
-    public RestfulEntityBySummit<String> edit(@RequestBody UserInfo userInfo, HttpServletRequest request) {
+    public RestfulEntityBySummit<String> edit(@RequestBody UserInfo userInfo) {
         LogBean logBean = new LogBean();
         try {
+        	HttpServletRequest request = ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest();
             logBean = logUtil.insertLog(request, "1", "修改用户", "");
             	userInfoCache.setUserInfo(userInfo.getUserName(),userInfo);
             	us.edit(userInfo);
@@ -130,13 +135,13 @@ public class UserController {
     		@RequestParam(value = "oldPassword")  String oldPassword,
     		@RequestParam(value = "password")  String password, 
     		@RequestParam(value = "repeatPassword")  String repeatPassword,
-    		@RequestParam(value = "userName")  String userName,
-            HttpServletRequest request) {
+    		@RequestParam(value = "userName")  String userName) {
         LogBean logBean = new LogBean();
         try {
         	if(!oldPassword.equals(password)){
         		return ResultBuilder.buildError(ResponseCodeEnum.CODE_4013); 
         	}
+        	HttpServletRequest request = ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest();
             logBean = logUtil.insertLog(request, "1", "修改密码", userName);
            us.editPassword(userName,oldPassword, password, repeatPassword);
            return ResultBuilder.buildSuccess();
@@ -153,9 +158,10 @@ public class UserController {
     @ApiOperation(value = "根据用户名查询用户信息")
     @GetMapping("/queryUserInfoByUserName")
     public RestfulEntityBySummit<UserInfo> queryUserInfoByUserName(
-    		@RequestParam(value = "userName")  String userName, HttpServletRequest request) {
+    		@RequestParam(value = "userName")  String userName) {
         LogBean logBean = new LogBean();
         try {
+        	HttpServletRequest request = ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest();
             logBean = logUtil.insertLog(request, "1", "用户管理根据用户名查询用户", userName);
             UserInfo ub = us.queryByUserName(userName);
             if (ub == null) {
@@ -187,9 +193,10 @@ public class UserController {
     @ApiOperation(value = "根据用户名查询所有菜单")
     @GetMapping("/queryFunctionInfoByUserName")
     public RestfulEntityBySummit<List<FunctionBean>> queryFunctionInfoByUserName(
-    		@RequestParam(value = "userName")  String userName, HttpServletRequest request) {
+    		@RequestParam(value = "userName")  String userName) {
         LogBean logBean = new LogBean();
         try {
+        	HttpServletRequest request = ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest();
             logBean = logUtil.insertLog(request, "1", "用户管理根据用户名查询菜单信息", userName);
             UserInfo ub = us.queryByUserName(userName);
             if (ub == null) {
@@ -217,9 +224,10 @@ public class UserController {
             @RequestParam(value = "name",required = false) String name,
             @RequestParam(value = "userName",required = false) String userName,
             @RequestParam(value = "isEnabled",required = false) String isEnabled,
-            @RequestParam(value = "state",required = false) String state,HttpServletRequest request) {
+            @RequestParam(value = "state",required = false) String state) {
         LogBean logBean = new LogBean();
         try {
+        	HttpServletRequest request = ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest();
             logBean = logUtil.insertLog(request, "1", "用户管理分页查询", "");
             page = (page == 0) ? 1 : page;
             pageSize = (pageSize == 0) ? SysConstants.PAGE_SIZE : pageSize;
@@ -252,9 +260,10 @@ public class UserController {
     @ApiOperation(value = "重置密码")
     @PutMapping("/resetPassword")
     public RestfulEntityBySummit<String> resetPassword(
-    		@RequestParam(value = "userName") String userName, HttpServletRequest request) {
+    		@RequestParam(value = "userName") String userName) {
         LogBean logBean = new LogBean();
         try {
+        	HttpServletRequest request = ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest();
             logBean = logUtil.insertLog(request, "1", "用户管理重置密码", userName);
             us.resetPassword(userName);
             return ResultBuilder.buildSuccess();
@@ -271,9 +280,10 @@ public class UserController {
     @ApiOperation(value = "根据用户名查询角色")
     @GetMapping("/queryRoleByUserName")
     public RestfulEntityBySummit<List<String>> queryRoleByUserName(
-    		@RequestParam(value = "userName") String userName, HttpServletRequest request) {
+    		@RequestParam(value = "userName") String userName) {
         LogBean logBean = new LogBean();
         try {
+        	HttpServletRequest request = ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest();
         	UserInfo ub = us.queryByUserName(userName);
             if (ub == null) {
             	return ResultBuilder.buildError(ResponseCodeEnum.CODE_4023);
@@ -295,9 +305,10 @@ public class UserController {
     @PutMapping("/grantRole")
     public RestfulEntityBySummit<String>  grantRole(
     		@RequestParam(value = "userName") String userName,
-    		@RequestParam(value = "role") String role, HttpServletRequest request) {
+    		@RequestParam(value = "role") String role) {
         LogBean logBean = new LogBean();
         try {
+        	HttpServletRequest request = ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest();
             logBean = logUtil.insertLog(request, "1", "用户管理授权", userName);
             UserInfo ub = us.queryByUserName(userName);
             if (ub == null) {
