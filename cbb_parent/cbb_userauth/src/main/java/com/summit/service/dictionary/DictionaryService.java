@@ -90,7 +90,7 @@ public class DictionaryService {
 	
 
 	public List<DictionaryBean> queryAll() {
-		return ur.queryAllCustom("SELECT * FROM SYS_DICTIONARY order by code ,pcode desc", dbrm);
+		return ur.queryAllCustom("SELECT * FROM SYS_DICTIONARY order by code ,ckey asc", dbrm);
 	}
 	
 	
@@ -186,13 +186,7 @@ public class DictionaryService {
 	public Page<DictionaryBean> queryByPage(int start, int limit, String pId) {
 //		List<DictionaryBean> list = SysDicMap.getChildList(pId);
 		List<DictionaryBean> list = dictionaryCacheImpl.findChildList(pId);
-		List<DictionaryBean> l = new ArrayList<DictionaryBean>();
-		for (int i = start, j = 0; i < list.size(); i++, j++) {
-			if (j >= limit) {
-				break;
-			}
-			l.add(list.get(i));
-		}
+		List<DictionaryBean> l =  list.subList((start-1)*10, ((start-1)*10)+10);
 		return new Page<DictionaryBean>(l, list.size());
 	}
 	
