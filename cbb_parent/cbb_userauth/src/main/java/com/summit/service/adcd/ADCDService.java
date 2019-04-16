@@ -18,6 +18,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.TypeReference;
 import com.summit.common.entity.ADCDBean;
+import com.summit.common.entity.ADCDTreeBean;
 import com.summit.common.entity.ResponseCodeEnum;
 import com.summit.domain.adcd.ADCDBeanRowMapper;
 import com.summit.repository.UserRepository;
@@ -61,7 +62,6 @@ public class ADCDService {
 			if(list!=null && list.size()>0){
 				ADCDBeanTree.setChildren(list);
 			}
-        	  
 		}
 		return ADCDBeanTree;
 	}
@@ -96,20 +96,18 @@ public class ADCDService {
     		}
     		orgMaps=map;
         }
-        logger.debug("2:"+orgMaps.size());
         List<ADCDBean> orgList = new ArrayList<>();
         if (orgMaps != null && orgMaps.size() > 0) {
         	List parenList=orgMaps.get(pid);
         	if(parenList==null){
         		return orgList;
         	}
-        	logger.debug("3:"+parenList.size());
             for (Object obj : parenList) {
             	// logger.debug("3-1:"+i);
             	ADCDBean adcdBean=new ADCDBean();
             	// JSONObject jSONOTree=new JSONObject();
             	JSONObject json=(JSONObject)obj;
-            	System.out.println(json);
+            	//System.out.println(json);
             	adcdBean.setAdcd(json.getString("CHILD_ID"));
             	adcdBean.setAdnm(json.getString("CHILD_NAME"));
             	adcdBean.setPadcd(pid);
@@ -128,7 +126,62 @@ public class ADCDService {
         return orgList;
     }
 
-
+   
+   
+   public ADCDTreeBean queryJsonAdcdTree(String padcd) throws Exception {
+		LinkedMap linkedMap=new LinkedMap();
+		StringBuffer sql = new StringBuffer("SELECT ADCD as value, ADNM as title,PADCD, ADLEVEL FROM AD_CD_B where 1=1 ");
+		if(padcd==null || "".equals(padcd)){
+			sql.append(" and (padcd is null  or padcd='-1' )");
+		}else{
+			sql.append(" and padcd =? ");
+			linkedMap.put(1, padcd);
+			
+		}
+	   List<Object> rootList= ur.queryAllCustom(sql.toString(),linkedMap);
+	   ADCDTreeBean adcdTreeBean =null;
+       if(rootList.size()>0){
+       	String jsonTree=((JSONObject)rootList.get(0)).toString();
+       	adcdTreeBean = JSON.parseObject(jsonTree, new TypeReference<ADCDTreeBean>() {});
+			List<ADCDBean> list=generateOrgMapToTree(null,adcdTreeBean.getValue());
+			if(list!=null && list.size()>0){
+				List<ADCDTreeBean> adcdTreeBeanList=new ArrayList<ADCDTreeBean>();
+				ADCDTreeBean adcdTreeBean1=null;
+				for(ADCDBean adcdBean:list){
+					adcdTreeBean1=new ADCDTreeBean();
+					adcdTreeBean1.setValue(adcdBean.getAdcd());
+					adcdTreeBean1.setTitle(adcdBean.getAdnm());
+					adcdTreeBean1.setLevel(adcdBean.getLevel());
+					adcdTreeBean1.setPadcd(adcdBean.getPadcd());
+					adcdTreeBean1.setChildren(getAdcdTreeBean(adcdBean.getChildren()));
+					adcdTreeBeanList.add(adcdTreeBean1);
+				}
+				adcdTreeBean.setChildren(adcdTreeBeanList);
+				
+			}
+		}
+		return adcdTreeBean;
+	}
+    private List<ADCDTreeBean> getAdcdTreeBean(List<ADCDBean> children){
+    	if(children!=null && children.size()>0){
+    		List<ADCDTreeBean> adcdTreeBeanList=new ArrayList<ADCDTreeBean>();
+    		ADCDTreeBean adcdTreeBean1=null;
+    		for (ADCDBean adcdBean : children) {
+    			adcdTreeBean1=new ADCDTreeBean();
+    			adcdTreeBean1.setValue(adcdBean.getAdcd());
+				adcdTreeBean1.setTitle(adcdBean.getAdnm());
+				adcdTreeBean1.setLevel(adcdBean.getLevel());
+				adcdTreeBean1.setPadcd(adcdBean.getPadcd());
+				List<ADCDTreeBean> adcdChildren =getAdcdTreeBean(adcdBean.getChildren());
+				if(adcdChildren!=null && adcdChildren.size()>0){
+					adcdTreeBean1.setChildren(adcdChildren);
+                }
+				adcdTreeBeanList.add(adcdTreeBean1);
+    		}
+    		return adcdTreeBeanList;
+    	}
+    	return null;
+    }
 	/**
 	 * 根据adcd查询
 	 * @param adcd

@@ -17,6 +17,7 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import com.summit.common.entity.ADCDBean;
+import com.summit.common.entity.ADCDTreeBean;
 import com.summit.common.entity.ResponseCodeEnum;
 import com.summit.common.entity.RestfulEntityBySummit;
 import com.summit.common.util.ResultBuilder;
@@ -74,6 +75,29 @@ public class ADCDController {
 		
 		//return list;
 	}
+	
+	
+	@ApiOperation(value = "查询行政区划树--JSON 数据直接生成树结构", notes = "用于application/json格式")
+	@GetMapping(value = "/queryAdcdJsonTree")
+	public RestfulEntityBySummit<ADCDTreeBean> queryJsonTree(@RequestParam(value = "pid",required = false)  String pid) {
+		HttpServletRequest request = ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest();
+		LogBean logBean = new LogBean();
+	     try {
+	           logBean = logUtil.insertLog(request, "1", "查询行政区划树--JSON 数据直接生成树结构", "");
+	           ADCDTreeBean adcdBean=ds.queryJsonAdcdTree(pid);
+	           return ResultBuilder.buildSuccess(adcdBean);
+	     } catch (Exception e) {
+	            //e.printStackTrace();
+	            logBean.setActionFlag("0");
+	            logBean.setErroInfo(e.toString());
+	            logger.error("数据查询失败！", e);
+	            return ResultBuilder.buildError(ResponseCodeEnum.CODE_9999);
+	     }
+	    // logUtil.updateLog(logBean, "1");
+		
+		//return list;
+	}
+	
 	
 	/**
 	 * 
