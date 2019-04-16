@@ -40,7 +40,6 @@ public class UserService {
 
 
 	public ResponseCodeEnum add(UserInfo userInfo) {
-		System.out.println("==========="+userInfo.toString());
         BCryptPasswordEncoder encoder =new BCryptPasswordEncoder();
 		String sql = "SELECT * FROM SYS_USER WHERE USERNAME = ?";
 		List<JSONObject> l = ur.queryAllCustom(sql, userInfo.getUserName());
@@ -72,11 +71,10 @@ public class UserService {
 	}
 
 	public void edit(UserInfo userInfo) {
-		String sql = "UPDATE SYS_USER SET NAME = ?, EMAIL = ?, PHONE_NUMBER =?, NOTE = ?, IS_ENABLED = ?, LAST_UPDATE_TIME = ? WHERE USERNAME = ? AND STATE = 1";
+		String sql = "UPDATE SYS_USER SET NAME = ?, EMAIL = ?, PHONE_NUMBER =?, NOTE = ?, IS_ENABLED = ?, LAST_UPDATE_TIME = now() WHERE USERNAME = ? AND STATE = 1";
 		jdbcTemplate.update(sql, userInfo.getName(), userInfo.getEmail(),
 				userInfo.getPhoneNumber(), userInfo.getNote(), userInfo
-						.getIsEnabled(), 
-						new Date(), userInfo.getUserName());
+						.getIsEnabled(), userInfo.getUserName());
 	
 	}
 

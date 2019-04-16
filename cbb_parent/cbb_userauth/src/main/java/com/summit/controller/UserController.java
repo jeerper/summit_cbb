@@ -110,7 +110,7 @@ public class UserController {
     }
 
     @ApiOperation(value = "修改用户",  notes = "昵称(name)，用户名(userName),密码(password)都是必输项")
-    @PutMapping("/edit")
+    @PostMapping("/edit")
     public RestfulEntityBySummit<String> edit(@RequestBody UserInfo userInfo) {
         LogBean logBean = new LogBean();
         try {
