@@ -42,7 +42,7 @@ import net.sf.json.JSONObject;
 public class ADCDController {
 	private static final Logger logger = LoggerFactory.getLogger(ADCDController.class);
 	@Autowired
-	private ADCDService ds;
+	private ADCDService adcdService;
 	
 	@Autowired
 	ILogUtil logUtil;
@@ -59,8 +59,8 @@ public class ADCDController {
 		//Map<String, Object> list = null;
 	     try {
 	           logBean = logUtil.insertLog(request, "1", "查询adcd树", "");
-	           //list = st.success("", ds.queryAdcdTree(pid));
-	           ADCDBean ADCDBean=ds.queryAdcdTree(pid);
+	           //list = st.success("", adcdService.queryAdcdTree(pid));
+	           ADCDBean ADCDBean=adcdService.queryAdcdTree(pid);
 	           return ResultBuilder.buildSuccess(ADCDBean);
 	           //logger.debug("数据查询成功！"+info.getCode()+"==="+info.getData()); 
 	          
@@ -84,7 +84,7 @@ public class ADCDController {
 		LogBean logBean = new LogBean();
 	     try {
 	           logBean = logUtil.insertLog(request, "1", "查询行政区划树--JSON 数据直接生成树结构", "");
-	           ADCDTreeBean adcdBean=ds.queryJsonAdcdTree(pid);
+	           ADCDTreeBean adcdBean=adcdService.queryJsonAdcdTree(pid);
 	           return ResultBuilder.buildSuccess(adcdBean);
 	     } catch (Exception e) {
 	            //e.printStackTrace();
@@ -116,7 +116,7 @@ public class ADCDController {
 			JSONObject json =new JSONObject();
 			json.put("padcd", padcd);
 			json.put("level", level);
-			return ResultBuilder.buildSuccess(ds.queryByPId(json));
+			return ResultBuilder.buildSuccess(adcdService.queryByPId(json));
 		} catch (Exception e) {
 			//e.printStackTrace();
 			logBean.setActionFlag("0");
@@ -135,7 +135,7 @@ public class ADCDController {
 		HttpServletRequest request = ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest();
 		LogBean logBean = logUtil.insertLog(request,"1", "根据adcds查询","");
 		try {
-			List<ADCDBean> list=ds.queryByAdcds(adcds);
+			List<ADCDBean> list=adcdService.queryByAdcds(adcds);
 			return ResultBuilder.buildSuccess(list);
 		} catch (Exception e) {
 			//e.printStackTrace();
@@ -156,7 +156,7 @@ public class ADCDController {
 		LogBean logBean = logUtil.insertLog(request,"1", "根据PADCD查询分页","");
 		Page<ADCDBean> list = null;
 		try {
-			list = ds.queryByPage(page, pageSize, padcd);
+			list = adcdService.queryByPage(page, pageSize, padcd);
 			return ResultBuilder.buildSuccess(list);
 		} catch (Exception e) {
 			//e.printStackTrace();
@@ -176,8 +176,8 @@ public class ADCDController {
 		HttpServletRequest request = ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest();
 		LogBean logBean = logUtil.insertLog(request,"1", "行政区划新增","");
 		try {
-			//list = ds.add(adcdBean);
-			ResponseCodeEnum responseCodeEnum=ds.add(adcdBean);
+			//list = adcdService.add(adcdBean);
+			ResponseCodeEnum responseCodeEnum=adcdService.add(adcdBean);
 			if(responseCodeEnum!=null){
 				return ResultBuilder.buildError(responseCodeEnum);
 			}else{
@@ -203,7 +203,7 @@ public class ADCDController {
 		LogBean logBean = logUtil.insertLog(request,"1", "行政区划编辑","");
 		//Map<String, Object> list = null;
 		try {
-			ds.edit(adcdBean);
+			adcdService.edit(adcdBean);
 			return ResultBuilder.buildSuccess();
 		} catch (Exception e) {
 			//e.printStackTrace();
@@ -226,9 +226,9 @@ public class ADCDController {
 		HttpServletRequest request = ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest();
 		LogBean logBean = logUtil.insertLog(request,"1", "行政区划删除","");
 		try {
-			 ds.del(ids);
+			 adcdService.del(ids);
 			return ResultBuilder.buildSuccess();
-			//return new RestfulEntityBySummit<String>(ds.del(ids),null);
+			//return new RestfulEntityBySummit<String>(adcdService.del(ids),null);
 		} catch (Exception e) {
 			//e.printStackTrace();
 			logger.error("行政区划删除失败！", e);

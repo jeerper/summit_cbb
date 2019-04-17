@@ -138,13 +138,13 @@ public class UserController {
     		@RequestParam(value = "userName")  String userName) {
         LogBean logBean = new LogBean();
         try {
-        	if(!oldPassword.equals(password)){
+        	if(!oldPassword.equals(repeatPassword)){
         		return ResultBuilder.buildError(ResponseCodeEnum.CODE_4013); 
         	}
         	HttpServletRequest request = ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest();
             logBean = logUtil.insertLog(request, "1", "修改密码", userName);
-           us.editPassword(userName,oldPassword, password, repeatPassword);
-           return ResultBuilder.buildSuccess();
+            us.editPassword(userName,oldPassword, password, repeatPassword);
+            return ResultBuilder.buildSuccess();
         } catch (Exception e) {
             //e.printStackTrace();
             logBean.setActionFlag("0");

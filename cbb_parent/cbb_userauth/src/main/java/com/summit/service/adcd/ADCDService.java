@@ -28,15 +28,17 @@ import net.sf.json.JSONObject;
 
 
 @Service
-@Transactional
 public class ADCDService {
-	private static final Logger logger = LoggerFactory.getLogger(ADCDService.class);
-	@Autowired
-	private UserRepository ur;
-	@Autowired
-	public JdbcTemplate jdbcTemplate;
+	
+	
 	@Autowired
 	private ADCDBeanRowMapper atm;
+	
+	@Autowired
+	private UserRepository ur;
+	
+	@Autowired
+	public JdbcTemplate jdbcTemplate;
 	/**
 	 * 
 	 * 查询adcd树
