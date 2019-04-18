@@ -209,13 +209,15 @@ public class UserRepository extends JdbcDaoSupport {
 		List<T> list = new ArrayList<T>();
 		Page<T> p = new Page<T>(list, 0);
 
-		if (start < 0) {
-			start = 0;
+		if (start <= 0) {
+			start = 1;
 		}
 		if (pageSize < 1) {
 			pageSize = SysConstants.PAGE_SIZE;
 		}
-		int page = start / pageSize + 1;
+		
+		//int page = start / pageSize + 1;
+		int page=start;
 		DataSource ds = getDataSource();
 		Connection conn = null;
 		PreparedStatement pstmt = null;

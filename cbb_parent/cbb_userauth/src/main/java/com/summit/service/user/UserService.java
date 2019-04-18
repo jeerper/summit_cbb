@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.collections.map.LinkedMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -99,7 +100,7 @@ public class UserService {
 
 	public Page<UserInfo> queryByPage(int start, int limit, JSONObject paramJson) throws SQLException {
 		StringBuilder sb = new StringBuilder(
-				"SELECT USERNAME,NAME,IS_ENABLED,EMAIL,PHONE_NUMBER,STATE,NOTE,LAST_UPDATE_TIME FROM SYS_USER WHERE USERNAME <> '"
+				"SELECT USERNAME,NAME,IS_ENABLED,EMAIL,PHONE_NUMBER,STATE,NOTE FROM SYS_USER WHERE USERNAME <> '"
 						+ SysConstants.SUPER_USERNAME + "'");
 		if (paramJson.containsKey("name")) {
 			sb.append(" AND NAME LIKE '%"+paramJson.get("name")+"%'");
@@ -125,6 +126,30 @@ public class UserService {
 		return null;
 	}
 
+	public List<UserInfo> queryByPage(JSONObject paramJson) throws Exception {
+		StringBuilder sb = new StringBuilder(
+				"SELECT USERNAME,NAME,IS_ENABLED,EMAIL,PHONE_NUMBER,STATE,NOTE,LAST_UPDATE_TIME FROM SYS_USER WHERE USERNAME <> '"
+						+ SysConstants.SUPER_USERNAME + "'");
+		if (paramJson.containsKey("name")) {
+			sb.append(" AND NAME LIKE '%"+paramJson.get("name")+"%'");
+		}
+		if (paramJson.containsKey("userName")) {
+			sb.append(" AND USERNAME LIKE '%"+paramJson.get("userName")+"%'");
+		}
+		if (paramJson.containsKey("isEnabled")) {
+			sb.append(" AND IS_ENABLED = '"+paramJson.get("isEnabled")+"'");
+		}
+		if (paramJson.containsKey("state")) {
+			sb.append(" AND STATE = '"+paramJson.get("state")+"'");
+		}
+		List<Object> userInfoList= ur.queryAllCustom(sb.toString(), new LinkedMap());
+		if(userInfoList!=null){
+			 ArrayList<UserInfo> userInfo = JSON.parseObject(userInfoList.toString(), new TypeReference<ArrayList<UserInfo>>() {});
+			 return userInfo;
+		}
+		return null;
+	}
+	
 	public void resetPassword(String userNames) {
 		userNames = userNames.replaceAll(",", "','");
         BCryptPasswordEncoder encoder =new BCryptPasswordEncoder();
