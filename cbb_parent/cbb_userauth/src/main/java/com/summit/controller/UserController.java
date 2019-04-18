@@ -216,6 +216,42 @@ public class UserController {
         }
     }
 
+    @ApiOperation(value = "查询用户所有记录")
+    @GetMapping("/queryAllUser")
+    public RestfulEntityBySummit<List<UserInfo>> queryAllUser(
+            @RequestParam(value = "name",required = false) String name,
+            @RequestParam(value = "userName",required = false) String userName,
+            @RequestParam(value = "isEnabled",required = false) String isEnabled,
+            @RequestParam(value = "state",required = false) String state) {
+        LogBean logBean = new LogBean();
+        try {
+        	HttpServletRequest request = ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest();
+            logBean = logUtil.insertLog(request, "1", "用户管理分页查询", "");
+            JSONObject paramJson = new JSONObject();
+            if(!SummitTools.stringIsNull(name)){
+                paramJson.put("name",name);
+            }
+            if(!SummitTools.stringIsNull(userName)){
+                paramJson.put("userName",userName);
+            }
+            if(!SummitTools.stringIsNull(isEnabled)){
+                paramJson.put("isEnabled",isEnabled);
+            }
+            if(!SummitTools.stringIsNull(state)){
+                paramJson.put("state",state);
+            }
+            List<UserInfo> pageList=us.queryByPage( paramJson);
+            return ResultBuilder.buildSuccess(pageList);
+        } catch (Exception e) {
+            //e.printStackTrace();
+            logBean.setActionFlag("0");
+            logBean.setErroInfo(e.toString());
+            logUtil.updateLog(logBean, "1");
+            logger.error("用户分页查询失败：", e);
+            return ResultBuilder.buildError(ResponseCodeEnum.CODE_9999);
+        }
+    }
+    
     @ApiOperation(value = "分页查询")
     @GetMapping("/queryByPage")
     public RestfulEntityBySummit<Page<UserInfo>> queryByPage(

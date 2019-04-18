@@ -6,7 +6,7 @@ public class SysConstants {
 	public static final String SUROLE_CODE = "ROLE_SUPERUSER";
 
 	// 通用分页数据条数
-	public static final int PAGE_SIZE = 25;
+	public static final int PAGE_SIZE = 10;
 	
 	// 系统字典缓存 name
 	public static final String  DICTIONARY = "dictionary";
