@@ -8,6 +8,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
 import javax.servlet.MultipartConfigElement;
+import java.io.File;
 
 @Configuration
 public class WebServerConfig {
@@ -36,6 +37,12 @@ public class WebServerConfig {
         factory.setMaxFileSize("1024MB");
         /// 设置总上传数据总大小
         factory.setMaxRequestSize("10240MB");
+        String file=System.getProperty("user.dir")+ File.separator+"tomcat.temp";
+        File tempFile=new File(file);
+        if(!tempFile.exists()){
+            tempFile.mkdirs();
+        }
+        factory.setLocation(file);
         return factory.createMultipartConfig();
     }
 
