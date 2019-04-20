@@ -1,4 +1,4 @@
-﻿CREATE TABLE `ad_cd_b` (
+﻿CREATE TABLE `sys_ad_cd` (
   `ADCD` varchar(15) NOT NULL COMMENT '行政区划编码',
   `ADNM` varchar(100) DEFAULT NULL COMMENT '行政区划名称',
   `PADCD` varchar(15) DEFAULT NULL COMMENT '父节点',
@@ -93,7 +93,7 @@ CREATE TABLE `sys_user_role` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
-CREATE TABLE `wf_sys_log` (
+CREATE TABLE `sys_log` (
   `id` varchar(40) NOT NULL COMMENT '主键',
   `userName` varchar(100) DEFAULT NULL COMMENT '登录用户名',
   `callerIP` varchar(100) DEFAULT NULL COMMENT '访问机器IP',
