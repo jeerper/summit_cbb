@@ -16,6 +16,10 @@ public class DeptBean  implements Serializable {
 	private String deptCode;
 	@ApiModelProperty(value="部门名称",name="deptName",required=true)
 	private String deptName;
+	@ApiModelProperty(value="行政区划编码",name="adcd")
+	private String adcd;
+	@ApiModelProperty(value="行政区划名称",name="adnm")
+	private String adnm;
 	@ApiModelProperty(value="备注",name="remark")
 	private String remark;
 	@ApiModelProperty(value="下级部门",name="children")
@@ -29,12 +33,14 @@ public class DeptBean  implements Serializable {
 		super();
 	}
 	
-	public DeptBean(String id, String pid, String deptCode, String deptName,String remark) {
+	public DeptBean(String id, String pid, String deptCode, String deptName,String adcd,String adnm,String remark) {
 		super();
 		this.id = id;
 		this.pid = pid;
 		this.deptCode = deptCode;
 		this.deptName = deptName;
+		this.adcd=adcd;
+		this.adnm=adnm;
 		this.remark = remark;
 	}
 
@@ -95,6 +101,23 @@ public class DeptBean  implements Serializable {
 	public void setPdeptName(String pdeptName) {
 		this.pdeptName = pdeptName;
 	}
+
+	public String getAdcd() {
+		return adcd;
+	}
+
+	public void setAdcd(String adcd) {
+		this.adcd = adcd;
+	}
+
+	public String getAdnm() {
+		return adnm;
+	}
+
+	public void setAdnm(String adnm) {
+		this.adnm = adnm;
+	}
+	
 	
 	
 }
