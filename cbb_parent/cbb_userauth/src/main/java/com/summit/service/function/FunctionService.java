@@ -110,9 +110,9 @@ public class FunctionService {
             	if(json.containsKey("FDESC")){
             		functionBean.setFdesc(json.getInt("FDESC"));	
             	}
-            	functionBean.setFurl(json.containsKey("FURL")?"":json.getString("FURL"));
-            	functionBean.setImgUlr(json.containsKey("IMGULR")?"":json.getString("IMGULR"));
-            	functionBean.setNote(json.containsKey("SUPER_FUN")?"":json.getString("SUPER_FUN"));
+            	functionBean.setFurl(json.containsKey("FURL")?json.getString("FURL"):"");
+            	functionBean.setImgUlr(json.containsKey("IMGULR")?json.getString("IMGULR"):"");
+            	functionBean.setNote(json.containsKey("SUPER_FUN")?json.getString("SUPER_FUN"):"");
                 List<FunctionBean> children = generateOrgMapToTree(orgMaps, json.get("CHILD_ID").toString());
                 functionBean.setChildren(children);
                 //添加当前对象到主结果集中

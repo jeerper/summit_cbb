@@ -56,10 +56,7 @@ public class LogUtilImpl implements ILogUtil {
 			String dbName = "";
 			if("1".equals(logType)){
 				callerIP = getIPFromHttp(request);
-				dbName = "WF_SYS_LOG";
-			}else if("2".equals(logType)){
-				// webservice 调用获取IP
-				dbName = "WF_DATA_SERVICESLOG";
+				dbName = "SYS_LOG";
 			}
 			insertLogSql = "INSERT INTO "+dbName+"(id,userName,callerIP,funName,sTime) VALUES (?,?,?,?,?) ";
 			int insertLogCount = jdbcTemplate.update(insertLogSql, id,userName,callerIP,funName,sTime);
@@ -95,7 +92,7 @@ public class LogUtilImpl implements ILogUtil {
 			String dbName = "";
 			int actionTime=  0;
 			if("1".equals(logType)){
-				dbName = "WF_SYS_LOG";
+				dbName = "SYS_LOG";
 			}else if("2".equals(logType)){
 				dbName = "WF_DATA_SERVICESLOG";
 			}

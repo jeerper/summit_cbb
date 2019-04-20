@@ -1,9 +1,11 @@
 package com.summit.service.role;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.TypeReference;
 import com.summit.common.entity.ResponseCodeEnum;
 import com.summit.common.entity.RoleBean;
+import com.summit.common.entity.AntdJsonBean;
 import com.summit.domain.role.RoleBeanRowMapper;
 import com.summit.repository.UserRepository;
 import com.summit.util.Page;
@@ -17,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+
 
 
 @Service
@@ -85,6 +88,16 @@ public class RoleService {
 	public List<RoleBean> queryAll() {
 		String sql = "SELECT * FROM SYS_ROLE";
 		return ur.queryAllCustom(sql, rbrm);
+	}
+	
+	public List<AntdJsonBean> queryRoleAntdJsonAll() throws Exception {
+		String sql = "SELECT  code  as 'key',code as 'value',name as title FROM SYS_ROLE";
+		JSONArray listRole= ur.queryAllCustomJsonArray(sql,null);
+		if(listRole!=null && listRole.size()>0){
+			 ArrayList<AntdJsonBean> students = JSON.parseObject(listRole.toString(), new TypeReference<ArrayList<AntdJsonBean>>() {});
+		     return students;
+		}
+		return null;
 	}
 
 	public List<String> queryFunIdByRoleCode(String roleCode) {

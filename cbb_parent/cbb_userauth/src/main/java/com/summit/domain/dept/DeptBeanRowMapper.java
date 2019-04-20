@@ -23,6 +23,8 @@ public class DeptBeanRowMapper implements RowMapper<DeptBean> {
 				rmu.resultSetGetString(rs, "PID"),
 				rmu.resultSetGetString(rs, "DEPTCODE"),
 				rmu.resultSetGetString(rs, "DEPTNAME"),
+				rmu.resultSetGetString(rs, "ADCD"),
+				rmu.resultSetGetString(rs, "ADNM"),
 				rmu.resultSetGetString(rs, "REMARK")
 				);
 	}

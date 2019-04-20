@@ -19,6 +19,7 @@ public class UserInfoRowMapper implements RowMapper<UserInfo> {
 		UserInfo userInfo=new UserInfo();
 		userInfo.setName(rmu.resultSetGetString(rs, "NAME"));
 		userInfo.setUserName(rmu.resultSetGetString(rs, "USERNAME"));
+		userInfo.setSex(rmu.resultSetGetString(rs, "SEX"));
 		userInfo.setPassword(rmu.resultSetGetString(rs, "PASSWORD"));
 		userInfo.setEmail(rmu.resultSetGetString(rs, "EMAIL"));
 		userInfo.setPhoneNumber(rmu.resultSetGetString(rs, "PHONE_NUMBER"));

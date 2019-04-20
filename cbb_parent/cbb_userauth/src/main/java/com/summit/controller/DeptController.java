@@ -94,6 +94,30 @@ public class DeptController {
 		
 		//return list;
 	}
+	/**
+	 * 
+	 * 根据id查询（分页）
+	 * 
+	 */
+	@ApiOperation(value = "根据id查询部门包含行政区划")
+	@RequestMapping(value = "/queryDeptAdcdById",method = RequestMethod.GET)
+	public RestfulEntityBySummit<DeptBean> queryDeptAdcdById(@RequestParam(value = "id") String id) {
+		HttpServletRequest request = ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest();
+		LogBean logBean = logUtil.insertLog(request,"1", "根据id查询分页","");
+		try {
+			return ResultBuilder.buildSuccess(ds.queryDeptAdcdById(id));
+			//return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_0000,ds.queryById(id));
+		} catch (Exception e) {
+			//e.printStackTrace();
+			logger.error("查询失败：", e);
+			logBean.setActionFlag("0");
+			logBean.setErroInfo(e.toString());
+			logUtil.updateLog(logBean,"1");
+			return ResultBuilder.buildError(ResponseCodeEnum.CODE_9999);
+		}
+		
+		//return list;
+	}
 	
 	@ApiOperation(value = "根据pid查询分页")
 	@RequestMapping(value = "/queryByPidPage",method = RequestMethod.GET)
@@ -102,7 +126,9 @@ public class DeptController {
             @RequestParam(value ="pageSize") int pageSize,
             @RequestParam(value = "pid",required = false) String pid,
             @RequestParam(value = "deptcode",required = false) String deptcode,
-            @RequestParam(value = "deptname",required = false) String deptname) {
+            @RequestParam(value = "deptname",required = false) String deptname,
+            @RequestParam(value = "adcd",required = false) String adcd,
+            @RequestParam(value = "adnm",required = false) String adnm) {
 		HttpServletRequest request = ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest();
 		LogBean logBean = logUtil.insertLog(request,"1", "根据pid查询分页","");
 		//Page<JSONObject> list = null;
@@ -111,6 +137,8 @@ public class DeptController {
 			 paramJson.put("pid",pid);
 			 paramJson.put("deptcode",deptcode);
 			 paramJson.put("deptname",deptname);
+			 paramJson.put("adcd",adcd);
+			 paramJson.put("adnm",adnm);
 			 //list = ds.queryByPage(start, limit, pid);
 			return ResultBuilder.buildSuccess(ds.queryByPage(page, pageSize, paramJson));
 			//return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_0000,);

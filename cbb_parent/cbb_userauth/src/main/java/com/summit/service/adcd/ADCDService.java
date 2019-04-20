@@ -47,7 +47,7 @@ public class ADCDService {
 	 */
 	public ADCDBean queryAdcdTree(String padcd) throws Exception {
 		LinkedMap linkedMap=new LinkedMap();
-		StringBuffer sql = new StringBuffer("SELECT ADCD, ADNM,PADCD, ADLEVEL FROM AD_CD_B where 1=1 ");
+		StringBuffer sql = new StringBuffer("SELECT ADCD, ADNM,PADCD, ADLEVEL FROM SYS_AD_CD where 1=1 ");
 		if(padcd==null || "".equals(padcd)){
 			sql.append(" and (padcd is null  or padcd='-1' )");
 		}else{
@@ -70,8 +70,8 @@ public class ADCDService {
 	
    public List<ADCDBean> generateOrgMapToTree(Map<String, List<Object>>  orgMaps, String pid)  {
         if (null == orgMaps || orgMaps.size() == 0) {//a.ADLEVEL as LEVELa ,b.ADLEVEL as LEVELb
-        	StringBuffer querySql = new StringBuffer("SELECT a.ADCD, a.ADNM,a.PADCD, b.ADCD AS CHILD_ID, b.ADNM AS CHILD_NAME FROM AD_CD_B AS a  ");
-        	querySql.append(" JOIN AD_CD_B AS b ON b.PADCD = a.ADCD ORDER BY  a.ADCD ASC,b.ADCD asc");
+        	StringBuffer querySql = new StringBuffer("SELECT a.ADCD, a.ADNM,a.PADCD, b.ADCD AS CHILD_ID, b.ADNM AS CHILD_NAME FROM SYS_AD_CD AS a  ");
+        	querySql.append(" JOIN SYS_AD_CD AS b ON b.PADCD = a.ADCD ORDER BY  a.ADCD ASC,b.ADCD asc");
         	JSONArray list=null;
 			try {
 				list = ur.queryAllCustomJsonArray(querySql.toString(),null);
@@ -132,7 +132,7 @@ public class ADCDService {
    
    public ADCDTreeBean queryJsonAdcdTree(String padcd) throws Exception {
 		LinkedMap linkedMap=new LinkedMap();
-		StringBuffer sql = new StringBuffer("SELECT ADCD as value, ADNM as title,PADCD, ADLEVEL FROM AD_CD_B where 1=1 ");
+		StringBuffer sql = new StringBuffer("SELECT ADCD as value, ADNM as title,PADCD, ADLEVEL FROM SYS_AD_CD where 1=1 ");
 		if(padcd==null || "".equals(padcd)){
 			sql.append(" and (padcd is null  or padcd='-1' )");
 		}else{
@@ -190,7 +190,7 @@ public class ADCDService {
 	 * @return
 	 */
 	public List<ADCDBean> queryByPId(JSONObject paramJson)throws Exception{
-		StringBuffer sql =new StringBuffer( "SELECT * FROM AD_CD_B WHERE 1=1 ");
+		StringBuffer sql =new StringBuffer( "SELECT * FROM SYS_AD_CD WHERE 1=1 ");
 		LinkedMap map = new LinkedMap();
 		if(paramJson!=null){
             Integer index = 1;
@@ -223,7 +223,7 @@ public class ADCDService {
 	 */
 	public List<ADCDBean> queryByAdcds(String adcds) {
 		adcds = adcds.replaceAll(",", "','");
-		String sql = "SELECT * FROM AD_CD_B WHERE ADCD IN ('"+ adcds + "') ";
+		String sql = "SELECT * FROM SYS_AD_CD WHERE ADCD IN ('"+ adcds + "') ";
 		List<ADCDBean> l = ur.queryAllCustom(sql, atm, null);
 		return l;
 	}
@@ -237,7 +237,7 @@ public class ADCDService {
 	 * @throws SQLException 
 	 */
 	public Page<ADCDBean> queryByPage(int start, int limit, String padcd) throws SQLException {
-		String sql = "SELECT * FROM AD_CD_B WHERE PADCD = ?";
+		String sql = "SELECT * FROM SYS_AD_CD WHERE PADCD = ?";
 		//if("".equals(padcd))padcd ="root";
 		Page<JSONObject> rs = ur.queryByCustomPage(sql, start, limit, padcd);
 		
@@ -259,7 +259,7 @@ public class ADCDService {
 	 * @return
 	 */
 	public void edit(ADCDBean ab) {
-		String sql = "UPDATE AD_CD_B SET  ADNM = ?, PADCD = ?, ADLEVEL = ? where ADCD = ?";
+		String sql = "UPDATE SYS_AD_CD SET  ADNM = ?, PADCD = ?, ADLEVEL = ? where ADCD = ?";
 		jdbcTemplate.update(
 				sql,
 				ab.getAdnm(),
@@ -272,12 +272,12 @@ public class ADCDService {
 	 * 新增
 	 */
 	public ResponseCodeEnum add(ADCDBean ab) {
-		String hasadcd="select * from AD_CD_B where adcd='"+ab.getAdcd()+"'";
+		String hasadcd="select * from SYS_AD_CD where adcd='"+ab.getAdcd()+"'";
 		List l=ur.queryAllCustom(hasadcd);
 		if(l.size()>0){
 			return ResponseCodeEnum.CODE_9992;
 		}
-		String sql = "INSERT INTO AD_CD_B (ADCD, ADNM, PADCD,ADLEVEL) VALUES (?, ? ,?, ?)";
+		String sql = "INSERT INTO SYS_AD_CD (ADCD, ADNM, PADCD,ADLEVEL) VALUES (?, ? ,?, ?)";
 		jdbcTemplate.update(
 				sql,
 				ab.getAdcd(),
@@ -297,12 +297,12 @@ public class ADCDService {
 	 */
 	public void del(String ids) {
 		ids = ids.replaceAll(",", "','");
-		//String sql = "SELECT * FROM AD_CD_B WHERE PADCD IN ('" + ids + "')";
+		//String sql = "SELECT * FROM SYS_AD_CD WHERE PADCD IN ('" + ids + "')";
 		//List<ADCDBean> l = ur.queryAllCustom(sql, atm);
 		//if (st.collectionNotNull(l)) {
 		//	return ResponseCodeBySummit.CODE_9981;
 		//}
-		String sql = "DELETE FROM AD_CD_B WHERE ADCD IN ('" + ids+ "') ";
+		String sql = "DELETE FROM SYS_AD_CD WHERE ADCD IN ('" + ids+ "') ";
 		jdbcTemplate.update(sql);
 		//return ResponseCodeBySummit.CODE_0000;
 	}

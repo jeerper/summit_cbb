@@ -1,24 +1,5 @@
 package com.summit.controller;
 
-import java.util.List;
-
-import javax.servlet.http.HttpServletRequest;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
-
 import com.summit.common.entity.FunctionBean;
 import com.summit.common.entity.ResponseCodeEnum;
 import com.summit.common.entity.RestfulEntityBySummit;
@@ -31,11 +12,19 @@ import com.summit.service.user.UserService;
 import com.summit.util.Page;
 import com.summit.util.SummitTools;
 import com.summit.util.SysConstants;
-
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import net.sf.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 @Api(description = "用户管理")
 @CrossOrigin(origins = "*", maxAge = 3600)
@@ -180,6 +169,16 @@ public class UserController {
             	funList.toArray(funArray);
             	ub.setPermissions(funArray);
             }
+            
+            String[] adcdsArray = us.queryAdcdByUserName(userName);
+            if(adcdsArray!=null && adcdsArray.length>0){
+            	ub.setAdcds(adcdsArray);
+            }
+            
+            String[] deptsArray = us.queryDeptByUserName(userName);
+            if(deptsArray!=null && deptsArray.length>0){
+            	ub.setDepts(deptsArray);
+            }
             return ResultBuilder.buildSuccess(ub);
         } catch (Exception e) {
             logBean.setActionFlag("0");
@@ -317,25 +316,45 @@ public class UserController {
     @GetMapping("/queryRoleByUserName")
     public RestfulEntityBySummit<List<String>> queryRoleByUserName(
     		@RequestParam(value = "userName") String userName) {
-        LogBean logBean = new LogBean();
+       // LogBean logBean = new LogBean();
         try {
-        	HttpServletRequest request = ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest();
+        	//HttpServletRequest request = ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest();
         	UserInfo ub = us.queryByUserName(userName);
             if (ub == null) {
             	return ResultBuilder.buildError(ResponseCodeEnum.CODE_4023);
             }
         	List<String> list=us.queryRoleByUserName(userName);
-            logBean = logUtil.insertLog(request, "1", "用户管理查询用户角色", userName);
+           // logBean = logUtil.insertLog(request, "1", "用户管理查询用户角色", userName);
             return ResultBuilder.buildSuccess(list);
         } catch (Exception e) {
             //e.printStackTrace();
-            logBean.setActionFlag("0");
-            logBean.setErroInfo(e.toString());
-            logUtil.updateLog(logBean, "1"); 
+           // logBean.setActionFlag("0");
+            //logBean.setErroInfo(e.toString());
+            //logUtil.updateLog(logBean, "1"); 
             logger.error("根据用户名查询角色失败：", e);
             return ResultBuilder.buildError(ResponseCodeEnum.CODE_9999);
         }
     }
+    
+    @ApiOperation(value = "根据用户名查询角色--基于antd：Transfer穿梭框")
+    @GetMapping("/queryRoleListAntdByUserName")
+    public RestfulEntityBySummit<List<String>> queryRoleListAntdByUserName(
+    		@RequestParam(value = "userName") String userName) {
+	        try {
+	        	UserInfo ub = us.queryByUserName(userName);
+	            if (ub == null) {
+	            	return ResultBuilder.buildError(ResponseCodeEnum.CODE_4023);
+	            }
+	        	List<String> list=us.queryRoleListByUserName(userName);
+	            return ResultBuilder.buildSuccess(list);
+	        } catch (Exception e) {
+	            logger.error("根据用户名查询角色失败：", e);
+	            return ResultBuilder.buildError(ResponseCodeEnum.CODE_9999);
+	        }
+    }
+    
+    
+    
 
     @ApiOperation(value = "授权权限")
     @PutMapping("/grantRole")

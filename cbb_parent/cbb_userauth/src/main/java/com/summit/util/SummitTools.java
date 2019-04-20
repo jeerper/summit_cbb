@@ -200,7 +200,7 @@ public class SummitTools {
 	 * @time 2014-12-12 上午10:58:33
 	 * 
 	 */
-	public boolean stringNotNull(String s) {
+	public static boolean stringNotNull(String s) {
 		if (s != null && !s.isEmpty() && s.trim().length() > 0) {
 			return true;
 		}

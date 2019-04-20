@@ -21,6 +21,7 @@ import com.summit.repository.UserRepository;
 import com.summit.util.Page;
 import com.summit.util.SummitTools;
 
+import io.netty.util.internal.StringUtil;
 import net.sf.json.JSONObject;
 
 @Service
@@ -129,14 +130,24 @@ public class DeptService {
 	 * @return
 	 */
 	public DeptBean queryById(String id) {
-		String sql = "SELECT ID,PID,DEPTCODE,DEPTNAME,REMARK FROM SYS_DEPT WHERE id = ?";
+		String sql = "SELECT ID,PID,DEPTCODE,DEPTNAME,ADCD,REMARK FROM SYS_DEPT WHERE id = ?";
+		List<DeptBean> l = ur.queryAllCustom(sql, atm, id);
+		return l.get(0);
+	}
+	/**
+	 * 根据id查询
+	 * @param id
+	 * @return
+	 */
+	public DeptBean queryDeptAdcdById(String id) {
+		String sql = "SELECT ID,PID,DEPTCODE,DEPTNAME,DEPT.ADCD,AD.ADNM,DEPT.REMARK FROM SYS_DEPT DEPT LEFT JOIN  SYS_AD_CD AD ON DEPT.ADCD=AD.ADCD  WHERE id = ?";
 		List<DeptBean> l = ur.queryAllCustom(sql, atm, id);
 		return l.get(0);
 	}
 
 	/**
 	 * 
-	 * 编辑（查询）
+	 * 分页查询
 	 * @param start
 	 * @param limit
 	 * @param pId
@@ -144,9 +155,10 @@ public class DeptService {
 	 * @throws SQLException 
 	 */
 	public Page<DeptBean> queryByPage(int start, int limit, JSONObject paramJson) throws SQLException {
-		StringBuffer sql = new StringBuffer("SELECT dept.*, fdept.DEPTNAME as pdeptName FROM SYS_DEPT dept left join SYS_DEPT fdept on dept.pid=fdept.id where 1=1 ");
+		StringBuffer sql = new StringBuffer("SELECT dept.*, fdept.DEPTNAME as PDEPTNAME,AD.ADNM FROM SYS_DEPT dept left join SYS_DEPT fdept on dept.pid=fdept.id  ");
+		sql.append(" LEFT JOIN SYS_AD_CD AD ON AD.ADCD=DEPT.ADCD where 1=1 ");
 		if(paramJson!=null && !paramJson.isEmpty()){
-        	if(paramJson.containsKey("pid")    ){
+        	if(paramJson.containsKey("pid") &&  SummitTools.stringNotNull(paramJson.getString("pid"))  ){
         		sql.append(" and dept.pid = "+paramJson.get("pid")+" ");
         	}
         	if(paramJson.containsKey("deptcode")    ){
@@ -154,6 +166,12 @@ public class DeptService {
         	}
         	if(paramJson.containsKey("deptname")   ){
         		sql.append(" and dept.deptname like '%"+paramJson.get("deptname")+"%' ");
+        	}
+        	if(paramJson.containsKey("adnm")   ){
+        		sql.append(" and AD.ADNM like '%"+paramJson.get("adnm")+"%' ");
+        	}
+        	if(paramJson.containsKey("adcd")   ){
+        		sql.append(" and AD.ADCD = '"+paramJson.get("adcd")+"' ");
         	}
         }
         Page<JSONObject>  rs = ur.queryByCustomPage(sql.toString(), start, limit);
@@ -175,12 +193,13 @@ public class DeptService {
 	 * @return
 	 */
 	public void edit(DeptBean ab) {
-		String sql = "UPDATE SYS_DEPT SET  pid = ?, DEPTCODE = ?, DEPTNAME = ?, REMARK = ? where id = ?";
+		String sql = "UPDATE SYS_DEPT SET  pid = ?, DEPTCODE = ?, DEPTNAME = ?, ADCD=?,REMARK = ? where id = ?";
 		jdbcTemplate.update(
 				sql,
 				ab.getPid(),
 				ab.getDeptCode(),
 				ab.getDeptName(),
+				ab.getAdcd(),
 				ab.getRemark(),
 				ab.getId()
 		);
@@ -193,17 +212,16 @@ public class DeptService {
 		String hasadcd="select * from SYS_DEPT where DEPTCODE='"+ab.getDeptCode()+"'";
 		List l=ur.queryAllCustom(hasadcd);
 		if(l.size()>0){
-			// CODE_6666("猝不及防，网络异常");
-		
 			return ResponseCodeEnum.CODE_9992;
 		}
-		String sql = "INSERT INTO SYS_DEPT (ID, PID, DEPTCODE,DEPTNAME,REMARK) VALUES (?, ? ,?, ?,?)";
+		String sql = "INSERT INTO SYS_DEPT (ID, PID, DEPTCODE,DEPTNAME,ADCD,REMARK) VALUES (?, ? ,?, ?,?,?)";
 		jdbcTemplate.update(
 				sql,
 				SummitTools.getKey(),
 				ab.getPid(),
 				ab.getDeptCode(),
 				ab.getDeptName(),
+				ab.getAdcd(),
 				ab.getRemark());
 		return null;
 	}

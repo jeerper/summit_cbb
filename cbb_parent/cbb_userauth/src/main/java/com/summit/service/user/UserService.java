@@ -3,17 +3,23 @@ package com.summit.service.user;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.collections.map.LinkedMap;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.TypeReference;
+import com.summit.common.entity.AntdJsonBean;
 import com.summit.common.entity.FunctionBean;
 import com.summit.common.entity.ResponseCodeEnum;
 import com.summit.common.entity.UserInfo;
@@ -40,17 +46,20 @@ public class UserService {
 	private UserInfoRowMapper ubr;
 
 
+	@Transactional
 	public ResponseCodeEnum add(UserInfo userInfo) {
+		//保存用户
         BCryptPasswordEncoder encoder =new BCryptPasswordEncoder();
 		String sql = "SELECT * FROM SYS_USER WHERE USERNAME = ?";
 		List<JSONObject> l = ur.queryAllCustom(sql, userInfo.getUserName());
 		if (st.collectionNotNull(l)) {
 			return ResponseCodeEnum.CODE_4022;
 		}
-		sql = "INSERT INTO SYS_USER (USERNAME,NAME,PASSWORD,IS_ENABLED,EMAIL,PHONE_NUMBER,STATE,NOTE,LAST_UPDATE_TIME) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?,now())";
+		sql = "INSERT INTO SYS_USER (USERNAME,NAME,SEX,PASSWORD,IS_ENABLED,EMAIL,PHONE_NUMBER,STATE,NOTE,LAST_UPDATE_TIME) VALUES ( ?,?, ?, ?, ?, ?, ?, ?, ?,now())";
 		jdbcTemplate.update(sql,
 				userInfo.getUserName(),
 				userInfo.getName(),
+				userInfo.getSex(),
 				encoder.encode(userInfo.getPassword()),
 				1,
 				userInfo.getEmail(),
@@ -58,25 +67,94 @@ public class UserService {
 				1,
 				userInfo.getNote()
 				);
+		
+		//保存行政区划
+		if(userInfo.getAdcds()!=null && userInfo.getAdcds().length>0){
+			String insertAdcdSql="INSERT INTO SYS_USER_ADCD(ID,USERNAME,ADCD,CREATETIME) VALUES ( ?, ?, ?, now())";
+			List userAdcdParams = new ArrayList();
+	        for(String adcd:userInfo.getAdcds()){
+	            Object glxxParam[]={
+	            		SummitTools.getKey(),
+	            		userInfo.getUserName(),
+	            		adcd,
+	            };
+	            userAdcdParams.add(glxxParam);
+	        }
+	        jdbcTemplate.batchUpdate(insertAdcdSql,userAdcdParams);
+		}
+		//保存部门
+		if(userInfo.getDepts()!=null && userInfo.getDepts().length>0){
+			String insertAdcdSql="INSERT INTO SYS_USER_DEPT(ID,USERNAME,DEPTID,CREATETIME) VALUES ( ?, ?, ?, now())";
+			List userAdcdParams = new ArrayList();
+	        for(String deptId:userInfo.getDepts()){
+	            Object glxxParam[]={
+	            		SummitTools.getKey(),
+	            		userInfo.getUserName(),
+	            		deptId,
+	            };
+	            userAdcdParams.add(glxxParam);
+	        }
+	        jdbcTemplate.batchUpdate(insertAdcdSql,userAdcdParams);
+		}
+		
 		return null;
 	}
 
+	@Transactional
 	public void  del(String userNames) {
 		userNames = userNames.replaceAll(",", "','");
-		String sql = "UPDATE SYS_USER SET STATE = 0, LAST_UPDATE_TIME = ? WHERE USERNAME <> '"
-				+ SysConstants.SUPER_USERNAME
-				+ "' AND USERNAME IN ('"
-				+ userNames + "')";
+		String sql = "UPDATE SYS_USER SET STATE = 0, LAST_UPDATE_TIME = ? WHERE USERNAME <> '"+ SysConstants.SUPER_USERNAME+ "' AND USERNAME IN ('"+ userNames + "')";
 		jdbcTemplate.update(sql,new Date());
 		delUserRoleByUserName(userNames);
+		
+		String adcdSql=" delete from sys_user_adcd where USERNAME  IN ('"+userNames+"') ";
+		jdbcTemplate.update(adcdSql);
+		
+		String deptSql=" delete from SYS_USER_DEPT where USERNAME  IN ('"+userNames+"') ";
+		jdbcTemplate.update(deptSql);
 	}
 
+	@Transactional
 	public void edit(UserInfo userInfo) {
-		String sql = "UPDATE SYS_USER SET NAME = ?, EMAIL = ?, PHONE_NUMBER =?, NOTE = ?, IS_ENABLED = ?, LAST_UPDATE_TIME = now() WHERE USERNAME = ? AND STATE = 1";
-		jdbcTemplate.update(sql, userInfo.getName(), userInfo.getEmail(),
+		String sql = "UPDATE SYS_USER SET NAME = ?,SEX=?, EMAIL = ?, PHONE_NUMBER =?, NOTE = ?, IS_ENABLED = ?, LAST_UPDATE_TIME = now() WHERE USERNAME = ? AND STATE = 1";
+		jdbcTemplate.update(sql, userInfo.getName(), userInfo.getSex(), userInfo.getEmail(),
 				userInfo.getPhoneNumber(), userInfo.getNote(), userInfo
 						.getIsEnabled(), userInfo.getUserName());
-	
+		
+		String adcdSql=" delete from sys_user_adcd where USERNAME  IN ('"+userInfo.getUserName()+"') ";
+		jdbcTemplate.update(adcdSql);
+		
+		//保存行政区划
+		if(userInfo.getAdcds()!=null && userInfo.getAdcds().length>0){
+			String insertAdcdSql="INSERT INTO SYS_USER_ADCD(ID,USERNAME,ADCD,CREATETIME) VALUES ( ?, ?, ?, now())";
+			List userAdcdParams = new ArrayList();
+			for(String adcd:userInfo.getAdcds()){
+			            Object adcdParam[]={
+			            		SummitTools.getKey(),
+			            		userInfo.getUserName(),
+			            		adcd,
+			            };
+			       userAdcdParams.add(adcdParam);
+			}
+			jdbcTemplate.batchUpdate(insertAdcdSql,userAdcdParams);
+		}
+		
+		String deptSql=" delete from SYS_USER_DEPT where USERNAME  IN ('"+userInfo.getUserName()+"') ";
+		jdbcTemplate.update(deptSql);
+		//保存部门
+		if(userInfo.getDepts()!=null && userInfo.getDepts().length>0){
+			String insertAdcdSql="INSERT INTO SYS_USER_DEPT(ID,USERNAME,DEPTID,CREATETIME) VALUES ( ?, ?, ?, now())";
+			List userdeptParams = new ArrayList();
+	        for(String deptId:userInfo.getDepts()){
+	            Object deptParam[]={
+	            		SummitTools.getKey(),
+	            		userInfo.getUserName(),
+	            		deptId,
+	            };
+	            userdeptParams.add(deptParam);
+	        }
+	        jdbcTemplate.batchUpdate(insertAdcdSql,userdeptParams);
+		}
 	}
 
 	public void editPassword(String userName, String oldPassword,
@@ -90,7 +168,7 @@ public class UserService {
 	}
 
 	public UserInfo queryByUserName(String userName) {
-		String sql = "SELECT USERNAME ,NAME ,PASSWORD ,IS_ENABLED ,EMAIL ,PHONE_NUMBER ,STATE ,NOTE ,LAST_UPDATE_TIME FROM SYS_USER WHERE STATE = 1 AND USERNAME = ?";
+		String sql = "SELECT USERNAME ,NAME ,SEX,PASSWORD ,IS_ENABLED ,EMAIL ,PHONE_NUMBER ,STATE ,NOTE ,LAST_UPDATE_TIME FROM SYS_USER WHERE STATE = 1 AND USERNAME = ?";
 		List<UserInfo> l = ur.queryAllCustom(sql, ubr, userName);
 		if (st.collectionNotNull(l)) {
 			return l.get(0);
@@ -100,7 +178,7 @@ public class UserService {
 
 	public Page<UserInfo> queryByPage(int start, int limit, JSONObject paramJson) throws SQLException {
 		StringBuilder sb = new StringBuilder(
-				"SELECT USERNAME,NAME,IS_ENABLED,EMAIL,PHONE_NUMBER,STATE,NOTE FROM SYS_USER WHERE USERNAME <> '"
+				"SELECT USERNAME,NAME,SEX,IS_ENABLED,EMAIL,PHONE_NUMBER,STATE,NOTE FROM SYS_USER WHERE USERNAME <> '"
 						+ SysConstants.SUPER_USERNAME + "'");
 		if (paramJson.containsKey("name")) {
 			sb.append(" AND NAME LIKE '%"+paramJson.get("name")+"%'");
@@ -128,7 +206,7 @@ public class UserService {
 
 	public List<UserInfo> queryByPage(JSONObject paramJson) throws Exception {
 		StringBuilder sb = new StringBuilder(
-				"SELECT USERNAME,NAME,IS_ENABLED,EMAIL,PHONE_NUMBER,STATE,NOTE,LAST_UPDATE_TIME FROM SYS_USER WHERE USERNAME <> '"
+				"SELECT USERNAME,NAME,SEX,IS_ENABLED,EMAIL,PHONE_NUMBER,STATE,NOTE,LAST_UPDATE_TIME FROM SYS_USER WHERE USERNAME <> '"
 						+ SysConstants.SUPER_USERNAME + "'");
 		if (paramJson.containsKey("name")) {
 			sb.append(" AND NAME LIKE '%"+paramJson.get("name")+"%'");
@@ -167,7 +245,47 @@ public class UserService {
 		}
 		return list;
 	}
-
+	
+	public List<String> queryRoleListByUserName(String userName) {
+		List<String> list = new ArrayList<String>();
+		String sql = "SELECT ROLE_CODE as 'key' FROM SYS_USER_ROLE WHERE USERNAME = ?";
+		List<JSONObject> l = ur.queryAllCustom(sql, userName);
+		for (JSONObject o : l) {
+			list.add(st.objJsonGetString(o, "key"));
+		}
+	     return list;
+	    
+	}
+	
+	public String[] queryAdcdByUserName(String userName) {
+		String sql = "SELECT ADCD FROM SYS_USER_ADCD WHERE USERNAME = ?";
+		List<JSONObject> l = ur.queryAllCustom(sql, userName);
+		if(l!=null && l.size()>0){
+			String[] adcds=  new String [l.size()];
+			int i=0;
+			for (JSONObject o : l) {
+				adcds[i]=st.objJsonGetString(o, "ADCD");
+				i++;
+			}
+			return adcds;
+		}
+		return null;
+	}
+	
+	public String[] queryDeptByUserName(String userName) {
+		String sql = "SELECT DEPTID FROM SYS_USER_DEPT WHERE USERNAME = ?";
+		List<JSONObject> l = ur.queryAllCustom(sql, userName);
+		if(l!=null && l.size()>0){
+			String[] deptIds=  new String [l.size()];
+			int i=0;
+			for (JSONObject o : l) {
+				deptIds[i]=st.objJsonGetString(o, "DEPTID");
+				i++;
+			}
+			return deptIds;
+		}
+		return null;
+	}
 	public void delUserRoleByUserName(String userNames){
 		String sql = "DELETE FROM SYS_USER_ROLE WHERE USERNAME IN ('"
 				+ userNames + "')";
