@@ -117,8 +117,7 @@ INSERT INTO `sys_ad_cd` VALUES ('659002000000', '阿拉尔市', '659000000000', 
 INSERT INTO `sys_ad_cd` VALUES ('659003000000', '图木舒克市', '659000000000', null);
 INSERT INTO `sys_ad_cd` VALUES ('659004000000', '五家渠市', '659000000000', null);
 
-INSERT INTO `sys_dept` VALUES ('1', null, '人事部', null, '');
-INSERT INTO `sys_dept` VALUES ('2', null, '财务部', null, '');
+INSERT INTO `sys_dept` VALUES ('1', null, 'xahzb', '西安市', null, null);
 
 INSERT INTO `sys_function` VALUES ('root', null, '功能树', '1', '1', null, null, '根节点请勿删除或移动', '0');
 INSERT INTO `sys_function` VALUES ('3e0183a912f949779d4157b3241455ff', 'root', '系统管理', '9', '1', '', '/image/system/menu/xtgl.png-/image/system/mainPage/titleImg/xtgl.png-/image/system/mainPage/titleImg/xtgl_over.png', '系统管理', '0');
