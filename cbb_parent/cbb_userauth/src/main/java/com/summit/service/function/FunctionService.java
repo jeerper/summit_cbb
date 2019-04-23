@@ -47,7 +47,7 @@ public class FunctionService {
 		if(padcd==null || "".equals(padcd)){
 			sql.append(" and (pid is null  or pid='-1' )");
 		}else{
-			sql.append(" and pid =? ");
+			sql.append(" and id =? ");
 			linkedMap.put(1, padcd);
 		}
 		List<Object> rootList= ur.queryAllCustom(sql.toString(),linkedMap);

@@ -192,27 +192,43 @@ public class UserService {
 		if (paramJson.containsKey("state")) {
 			sb.append(" AND STATE = '"+paramJson.get("state")+"'");
 		}
-		Page<UserInfo> pageUserInfo=new Page<UserInfo>();
+	
 		Page <JSONObject> page= ur.queryByCustomPage(sb.toString(), start, limit);
 		if(page!=null){
-			 ArrayList<UserInfo> students = JSON.parseObject(page.getContent().toString(), new TypeReference<ArrayList<UserInfo>>() {});
-			 pageUserInfo.setContent(students);
-			 pageUserInfo.setTotalElements(page.getTotalElements());
+			Page<UserInfo> pageUserInfo=new Page<UserInfo>();
+			if(page.getContent()!=null && page.getContent().size()>0){
+				List<UserInfo> userInfoList=new ArrayList<UserInfo>();
+				  for(Object o:page.getContent()){
+					 JSONObject jsonObject=(JSONObject)o;
+					 UserInfo userInfo=JSON.parseObject(o.toString(), new TypeReference<UserInfo>() {});
+					 userInfo.setAdcds(jsonObject.containsKey("ADCD")?jsonObject.getString("ADCD").split(","):null);
+					 userInfo.setDepts(jsonObject.containsKey("DEPTID")?jsonObject.getString("DEPTID").split(","):null);
+					 userInfoList.add(userInfo);
+				 }
+				pageUserInfo.setContent(userInfoList);
+				pageUserInfo.setTotalElements(page.getTotalElements());
+				
+			}
 			 return pageUserInfo;
 		}
-		
 		return null;
 	}
 
-	public List<UserInfo> queryByPage(JSONObject paramJson) throws Exception {
+	public List<UserInfo> queryUserInfoList(JSONObject paramJson) throws Exception {
 		StringBuilder sb = new StringBuilder(
-				"SELECT USERNAME,NAME,SEX,IS_ENABLED,EMAIL,PHONE_NUMBER,STATE,NOTE,LAST_UPDATE_TIME FROM SYS_USER WHERE USERNAME <> '"
-						+ SysConstants.SUPER_USERNAME + "'");
+				"SELECT user1.USERNAME,NAME,SEX,IS_ENABLED,EMAIL,PHONE_NUMBER,STATE,NOTE,USERADCD.ADCD,useradcd.adnms,userdept.DEPTID,userdept.deptNames FROM SYS_USER user1 ");
+		sb.append(" left join (SELECT username,GROUP_CONCAT(useradcd.`adcd`)AS adcd ,GROUP_CONCAT(`adnm`)AS adnms ");
+		sb.append(" FROM sys_user_adcd useradcd inner join sys_ad_cd ad on useradcd.adcd=ad.adcd GROUP BY username)useradcd on useradcd.username=user1.USERNAME");
+		sb.append(" left join (SELECT username,GROUP_CONCAT(userdept.`deptid`)AS DEPTID,GROUP_CONCAT(dept.`deptname`)AS deptNames FROM sys_user_dept userdept ");
+		sb.append(" inner join sys_dept dept on userdept.deptid=dept.id)userdept on userdept.username=user1.USERNAME");
+		sb.append(" WHERE user1.USERNAME <> ' ");
+		sb.append(SysConstants.SUPER_USERNAME );
+		sb.append("'");
 		if (paramJson.containsKey("name")) {
 			sb.append(" AND NAME LIKE '%"+paramJson.get("name")+"%'");
 		}
 		if (paramJson.containsKey("userName")) {
-			sb.append(" AND USERNAME LIKE '%"+paramJson.get("userName")+"%'");
+			sb.append(" AND user1.USERNAME LIKE '%"+paramJson.get("userName")+"%'");
 		}
 		if (paramJson.containsKey("isEnabled")) {
 			sb.append(" AND IS_ENABLED = '"+paramJson.get("isEnabled")+"'");
@@ -220,10 +236,17 @@ public class UserService {
 		if (paramJson.containsKey("state")) {
 			sb.append(" AND STATE = '"+paramJson.get("state")+"'");
 		}
-		List<Object> userInfoList= ur.queryAllCustom(sb.toString(), new LinkedMap());
-		if(userInfoList!=null){
-			 ArrayList<UserInfo> userInfo = JSON.parseObject(userInfoList.toString(), new TypeReference<ArrayList<UserInfo>>() {});
-			 return userInfo;
+		List<Object> list= ur.queryAllCustom(sb.toString(), new LinkedMap());
+		if(list!=null && list.size()>0){
+			List<UserInfo> userInfoList=new ArrayList<UserInfo>();
+			  for(Object o:list){
+					 JSONObject jsonObject=(JSONObject)o;
+					 UserInfo userInfo=JSON.parseObject(o.toString(), new TypeReference<UserInfo>() {});
+					 userInfo.setAdcds(jsonObject.containsKey("ADCD")?jsonObject.getString("ADCD").split(","):null);
+					 userInfo.setDepts(jsonObject.containsKey("DEPTID")?jsonObject.getString("DEPTID").split(","):null);
+					 userInfoList.add(userInfo);
+			 }
+			 return userInfoList;
 		}
 		return null;
 	}

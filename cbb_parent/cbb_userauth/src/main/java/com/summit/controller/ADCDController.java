@@ -1,6 +1,7 @@
 package com.summit.controller;
 
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -20,11 +21,13 @@ import com.summit.common.entity.ADCDBean;
 import com.summit.common.entity.ADCDTreeBean;
 import com.summit.common.entity.ResponseCodeEnum;
 import com.summit.common.entity.RestfulEntityBySummit;
+import com.summit.common.entity.UserInfo;
 import com.summit.common.util.ResultBuilder;
 import com.summit.domain.log.LogBean;
 import com.summit.service.adcd.ADCDService;
 import com.summit.service.log.ILogUtil;
 import com.summit.util.Page;
+import com.summit.util.SummitTools;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -99,13 +102,14 @@ public class ADCDController {
 	}
 	
 	
+	
 	/**
 	 * 
 	 * 根据特定条件查询
 	 * 
 	 */
 	@ApiOperation(value = "根据特定条件查询[padcd,level]")
-	@RequestMapping(value = "/queryByPadcd",method = RequestMethod.GET)
+	@RequestMapping(value = "/queryAdcd",method = RequestMethod.GET)
 	public RestfulEntityBySummit<List<ADCDBean>> queryByPadcd(
 			@RequestParam(value = "padcd",required = false) String padcd,
 			@RequestParam(value = "level",required = false) String level) {
@@ -146,6 +150,27 @@ public class ADCDController {
 			 return ResultBuilder.buildError(ResponseCodeEnum.CODE_9999);
 		}
 	}
+	
+	@ApiOperation(value = "根据编码查询不分页返回Map")
+	@RequestMapping(value = "/queryAdcdMap",method = RequestMethod.GET)
+	public RestfulEntityBySummit<Map<String,ADCDBean>> queryAdcdMap(
+			@RequestParam(value = "adcds" ,required = false) String adcds,
+            @RequestParam(value = "padcd" ,required = false) String padcd) {
+		HttpServletRequest request = ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest();
+		LogBean logBean = logUtil.insertLog(request,"1", "根据adcds查询","");
+		try {
+			Map<String,ADCDBean> adcdsMap=adcdService.queryAdcdMap(adcds,padcd);
+			return ResultBuilder.buildSuccess(adcdsMap);
+		} catch (Exception e) {
+			//e.printStackTrace();
+			logBean.setActionFlag("0");
+			logBean.setErroInfo(e.toString());
+			logUtil.updateLog(logBean,"1");
+			 logger.error("数据查询失败！", e);
+			 return ResultBuilder.buildError(ResponseCodeEnum.CODE_9999);
+		}
+	}
+	
 	@ApiOperation(value = "根据父节点查询分页")
 	@RequestMapping(value = "/queryByPadcdPage",method = RequestMethod.GET)
 	public RestfulEntityBySummit<Page<ADCDBean>> queryByPage(

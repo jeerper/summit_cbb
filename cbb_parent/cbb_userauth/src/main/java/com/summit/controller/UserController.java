@@ -215,7 +215,7 @@ public class UserController {
         }
     }
 
-    @ApiOperation(value = "查询用户所有记录")
+    @ApiOperation(value = "根据条件查询用户信息不分页")
     @GetMapping("/queryAllUser")
     public RestfulEntityBySummit<List<UserInfo>> queryAllUser(
             @RequestParam(value = "name",required = false) String name,
@@ -239,7 +239,7 @@ public class UserController {
             if(!SummitTools.stringIsNull(state)){
                 paramJson.put("state",state);
             }
-            List<UserInfo> pageList=us.queryByPage( paramJson);
+            List<UserInfo> pageList=us.queryUserInfoList( paramJson);
             return ResultBuilder.buildSuccess(pageList);
         } catch (Exception e) {
             //e.printStackTrace();
@@ -251,6 +251,7 @@ public class UserController {
         }
     }
     
+
     @ApiOperation(value = "分页查询")
     @GetMapping("/queryByPage")
     public RestfulEntityBySummit<Page<UserInfo>> queryByPage(

@@ -1,19 +1,5 @@
 package com.summit.service.adcd;
 
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.commons.collections.map.LinkedMap;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.TypeReference;
@@ -23,8 +9,17 @@ import com.summit.common.entity.ResponseCodeEnum;
 import com.summit.domain.adcd.ADCDBeanRowMapper;
 import com.summit.repository.UserRepository;
 import com.summit.util.Page;
-
 import net.sf.json.JSONObject;
+import org.apache.commons.collections.map.LinkedMap;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.stereotype.Service;
+
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 
 @Service
@@ -184,6 +179,38 @@ public class ADCDService {
     	}
     	return null;
     }
+    
+    public Map<String,ADCDBean> queryAdcdMap(String adcds,String padcd)throws Exception{
+		StringBuffer sql =new StringBuffer( "SELECT * FROM SYS_AD_CD WHERE 1=1 ");
+		LinkedMap map = new LinkedMap();
+		Integer index = 1;
+		if(adcds!=null && !"".equals(adcds)){
+			adcds = adcds.replaceAll(",", "','");
+		    sql.append(" and  ADCD in ?");
+			map.put(index, adcds);
+            index++;
+		}
+		if(padcd!=null && !"".equals(padcd)){
+			sql.append(" and  padcd = ?");
+			map.put(index, padcd);
+            index++;
+	    }
+		List<Object> l=ur.queryAllCustom(sql.toString(), map);
+		if(l!=null){
+			 Map<String,ADCDBean> adcdMap=new HashMap<String,ADCDBean>();
+			 ArrayList<ADCDBean> adCDBeans = JSON.parseObject(l.toString(), new TypeReference<ArrayList<ADCDBean>>() {});
+			 if(adCDBeans!=null && adCDBeans.size()>0){
+				 for(ADCDBean adcdbean:adCDBeans){
+					 adcdMap.put(adcdbean.getAdcd(), adcdbean);
+				 }
+			 }
+            return adcdMap;
+		}else{
+			return null;
+		}
+		
+	}
+    
 	/**
 	 * 根据adcd查询
 	 * @param adcd
