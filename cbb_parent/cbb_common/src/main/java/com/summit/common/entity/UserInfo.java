@@ -63,11 +63,17 @@ public class UserInfo implements Serializable {
     @ApiModelProperty(value="备注",name="note")
     private String note;
 
-    @ApiModelProperty(value="行政区划集合，以,分割",name="adcds")
+    @ApiModelProperty(value="行政区划编码集合",name="adcds")
     private String[] adcds;
     
-    @ApiModelProperty(value="部门集合，以,分割",name="depts")
+    @ApiModelProperty(value="行政区划名称，以,分割",name="adcds",hidden = true)
+    private String adnms;
+    
+    @ApiModelProperty(value="部门集合",name="depts")
     private String[] depts;
+    
+    @ApiModelProperty(value="部门名称，以,分割",name="deptNames",hidden = true)
+    private String deptNames;
     
     /**
      * 权限标识集合(对应sys_function表中的ID字段)
@@ -194,5 +200,21 @@ public class UserInfo implements Serializable {
 
 	public void setSex(String sex) {
 		this.sex = sex;
+	}
+
+	public String getAdnms() {
+		return adnms;
+	}
+
+	public void setAdnms(String adnms) {
+		this.adnms = adnms;
+	}
+
+	public String getDeptNames() {
+		return deptNames;
+	}
+
+	public void setDeptNames(String deptNames) {
+		this.deptNames = deptNames;
 	}
 }
