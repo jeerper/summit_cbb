@@ -46,7 +46,7 @@ public class ADCDService {
 		if(padcd==null || "".equals(padcd)){
 			sql.append(" and (padcd is null  or padcd='-1' )");
 		}else{
-			sql.append(" and padcd =? ");
+			sql.append(" and adcd =? ");
 			linkedMap.put(1, padcd);
 			
 		}

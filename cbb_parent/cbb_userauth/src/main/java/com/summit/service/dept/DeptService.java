@@ -1,17 +1,5 @@
 package com.summit.service.dept;
 
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.commons.collections.map.LinkedMap;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
 import com.summit.common.entity.DeptBean;
@@ -20,9 +8,18 @@ import com.summit.domain.dept.DeptBeanRowMapper;
 import com.summit.repository.UserRepository;
 import com.summit.util.Page;
 import com.summit.util.SummitTools;
-
-import io.netty.util.internal.StringUtil;
 import net.sf.json.JSONObject;
+import org.apache.commons.collections.map.LinkedMap;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Service
 @Transactional
@@ -49,7 +46,7 @@ public class DeptService {
 		if(pid==null || "".equals(pid)){
 			sql.append(" and (pid is null  or pid='-1' )");
 		}else{
-			sql.append(" and PID =? ");
+			sql.append(" and ID =? ");
 			linkedMap.put(1, pid);
 			
 		}
