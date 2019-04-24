@@ -4,7 +4,7 @@ spring:
   profiles:
     active: pro
   application:
-    name: "liuyonghong-cbb-userauth"
+    name: "cbb-userauth"
   flyway:
     # 如果启动的时候需要flyway管理sql脚本的话，将enabled设置为true
     enabled: false
