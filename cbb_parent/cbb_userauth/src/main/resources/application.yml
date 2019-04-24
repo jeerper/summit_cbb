@@ -2,7 +2,7 @@ server:
   port: 22224
 spring:
   profiles:
-    active: dev
+    active: pro
   application:
     name: "cbb-userauth"
   flyway:
