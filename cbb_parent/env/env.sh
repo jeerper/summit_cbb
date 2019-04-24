@@ -12,6 +12,8 @@ UserAuth_Port=45002
 Demo_Port=45003
 #天气组件端口
 Weather_Port=45004
+#共享货架URL
+Cbb_Store_Server_Url="192.168.140.155:43000"
 
 
 #文件仓库地址
