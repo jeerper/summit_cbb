@@ -1,8 +1,8 @@
 package com.summit.common.entity;
 
-import java.io.Serializable;
-
 import io.swagger.annotations.ApiModelProperty;
+
+import java.io.Serializable;
 
 /**
  * 用户基本信息接口实体
@@ -78,7 +78,7 @@ public class UserInfo implements Serializable {
     /**
      * 权限标识集合(对应sys_function表中的ID字段)
      */
-    @ApiModelProperty(value="权限标识集合，查询用",name="permissions")
+    @ApiModelProperty(value="权限标识集合，查询用",name="permissions",hidden = true)
     private String[] permissions;
 
     
