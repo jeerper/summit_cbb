@@ -104,9 +104,9 @@ public class DeptService {
             for (Object obj : parenList) {
             	deptBean=new DeptBean();
             	JSONObject json=(JSONObject)obj;
-            	deptBean.setId(json.getString("CHILD_ID"));
-            	deptBean.setDeptCode(json.getString("CHILD_CODE"));
-            	deptBean.setDeptName(json.getString("CHILD_NAME"));
+            	deptBean.setId(json.containsKey("CHILD_ID")?json.getString("CHILD_ID"):"");
+            	deptBean.setDeptCode(json.containsKey("CHILD_CODE")?json.getString("CHILD_CODE"):"");
+            	deptBean.setDeptName(json.containsKey("CHILD_NAME")?json.getString("CHILD_NAME"):"" );
             	deptBean.setPid(pid);
             	//jSONOTree.put("id", json.getString("ID"));
                 List<DeptBean> children = generateOrgMapToTree(orgMaps, json.get("CHILD_ID").toString());
@@ -147,7 +147,7 @@ public class DeptService {
 	 * 分页查询
 	 * @param start
 	 * @param limit
-	 * @param pId
+	 * @param paramJson
 	 * @return
 	 * @throws SQLException 
 	 */

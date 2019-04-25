@@ -70,7 +70,7 @@ public class FunctionService {
         	querySql.append("  JOIN SYS_FUNCTION AS B ON B.PID = A.ID ");
         	// querySql.append("  where a.id!='root' ");
         	querySql.append("  where 1=1 ");
-        	querySql.append("   ORDER BY  a.id asc  ");
+        	querySql.append("   ORDER BY fdesc ");
         	com.alibaba.fastjson.JSONArray list= ur.queryAllCustomJsonArray(querySql.toString(),null);
     		Map<String, List<Object>> map=new HashMap<String, List<Object>>();
     		List<Object> childrenList=new ArrayList<Object>();;
@@ -162,7 +162,7 @@ public class FunctionService {
 		if (isSuperUser(userName)) {
 			sql = "SELECT * FROM SYS_FUNCTION WHERE ID = ?";
 		} else {
-			sql = "SELECT * FROM SYS_FUNCTION WHERE ID = ? AND SUPER_FUN = 0";
+			sql = "SELECT * FROM SYS_FUNCTION WHERE ID = ? AND SUPER_FUN = 0 order by fdesc ";
 		}
 		List<FunctionBean> l = ur.queryAllCustom(sql, fbrm, id);
 		return l;
@@ -182,6 +182,7 @@ public class FunctionService {
 		StringBuffer sql=new StringBuffer("SELECT * FROM SYS_FUNCTION where 1=1 ");
 		Page<JSONObject> rs =null;
 		if("root".equals(pId) || pId==null){
+             sql.append(" ORDER BY FDESC");
 			 rs = ur.queryByCustomPage(sql.toString(), start, limit);
 		}else {
 			if (isSuperUser(userName)) {
