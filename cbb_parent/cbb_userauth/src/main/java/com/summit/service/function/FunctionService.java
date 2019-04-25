@@ -70,7 +70,7 @@ public class FunctionService {
         	querySql.append("  JOIN SYS_FUNCTION AS B ON B.PID = A.ID ");
         	// querySql.append("  where a.id!='root' ");
         	querySql.append("  where 1=1 ");
-        	querySql.append("   ORDER BY fdesc ");
+        	querySql.append("   ORDER BY a.id,fdesc ");
         	com.alibaba.fastjson.JSONArray list= ur.queryAllCustomJsonArray(querySql.toString(),null);
     		Map<String, List<Object>> map=new HashMap<String, List<Object>>();
     		List<Object> childrenList=new ArrayList<Object>();;
