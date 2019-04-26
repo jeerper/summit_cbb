@@ -100,7 +100,7 @@ public class DictionaryService {
 		if(padcd==null || "".equals(padcd)){
 			sql.append(" and (PCODE is null  or PCODE='-1' )");
 		}else{
-			sql.append(" and PCODE =? ");
+			sql.append(" and CODE =? ");
 			linkedMap.put(1, padcd);
 			
 		}
@@ -156,9 +156,9 @@ public class DictionaryService {
             	JSONObject json=(JSONObject)obj;
             	dictionaryBean=new DictionaryBean();
             	
-            	dictionaryBean.setCode(json.getString("CHILD_ID"));
-            	dictionaryBean.setName(json.getString("CHILD_NAME"));
-            	dictionaryBean.setCkey(json.getString("CKEY"));
+            	dictionaryBean.setCode(json.containsKey("CHILD_ID")?json.getString("CHILD_ID"):"");
+            	dictionaryBean.setName(json.containsKey("CHILD_NAME")?json.getString("CHILD_NAME"):"");
+            	dictionaryBean.setCkey(json.containsKey("CKEY")?json.getString("CKEY"):"");
             	dictionaryBean.setPcode(pid);
                 List<DictionaryBean> children = generateOrgMapToTree(orgMaps, json.get("CHILD_ID").toString());
                 //将子结果集存入当前对象的children字段中
