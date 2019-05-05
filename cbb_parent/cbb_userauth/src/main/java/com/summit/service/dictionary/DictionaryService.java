@@ -19,7 +19,11 @@ import com.summit.common.entity.ResponseCodeEnum;
 import com.summit.domain.dictionary.DictionaryBeanRowMapper;
 import com.summit.repository.UserRepository;
 import com.summit.service.cache.DictionaryCacheImpl;
-import com.summit.util.Page;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+
+import com.summit.util.PageUtil;
 import com.summit.util.SummitTools;
 import com.summit.util.SysConstants;
 
@@ -192,7 +196,9 @@ public class DictionaryService {
 		}else{
 			l=list;
 		}
-		return new Page<DictionaryBean>(l, list.size());
+		PageRequest pr = PageUtil.createPageRequest(start, limit, null);
+		return new PageImpl(l,pr,list.size());
+		//return new Page<DictionaryBean>(l, list.size());
 	}
 	
 	public List<DictionaryBean> queryByPid(String pId){

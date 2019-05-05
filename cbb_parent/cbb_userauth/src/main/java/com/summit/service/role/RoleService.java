@@ -8,9 +8,12 @@ import com.summit.common.entity.RoleBean;
 import com.summit.common.entity.AntdJsonBean;
 import com.summit.domain.role.RoleBeanRowMapper;
 import com.summit.repository.UserRepository;
-import com.summit.util.Page;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import com.summit.util.SummitTools;
 import net.sf.json.JSONObject;
+
+import org.apache.commons.collections.map.LinkedMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
@@ -68,19 +71,22 @@ public class RoleService {
 		return  l.get(0);
 	}
 
-	public Page<RoleBean> queryByPage(int start, int limit, String name) throws SQLException {
+	public Page<RoleBean> queryByPage(int start, int limit, String name) throws Exception {
+		LinkedMap linkedMap=null;
 		StringBuilder sb = new StringBuilder(
 				"SELECT * FROM SYS_ROLE WHERE 1 = 1");
 		if (st.stringNotNull(name)) {
-			sb.append(" AND NAME LIKE '%").append(name).append("%'");
+			sb.append(" AND NAME LIKE ? ");
+			linkedMap=new LinkedMap();
+		    linkedMap.put(1,"%" + name + "%");
 		}
-		Page<JSONObject> rs = ur.queryByCustomPage(sb.toString(), start, limit);
+		Page<Object> rs = ur.queryByCustomPage(sb.toString(), start, limit,linkedMap);
 		if(rs!=null){
-			 Page<RoleBean> pageRoleBeanInfo=new Page<RoleBean>();
-			 ArrayList<RoleBean> students = JSON.parseObject(rs.getContent().toString(), new TypeReference<ArrayList<RoleBean>>() {});
-			 pageRoleBeanInfo.setContent(students);
-			 pageRoleBeanInfo.setTotalElements(rs.getTotalElements());
-			 return pageRoleBeanInfo;
+			 ArrayList<RoleBean> roles = JSON.parseObject(rs.getContent().toString(), new TypeReference<ArrayList<RoleBean>>() {});
+			// pageRoleBeanInfo.setContent(students);
+			 ///pageRoleBeanInfo.setTotalElements(rs.getTotalElements());
+			 //return pageRoleBeanInfo;
+			 return new PageImpl(roles,rs.getPageable(),rs.getTotalElements());
 		}
 		return null;
 	}

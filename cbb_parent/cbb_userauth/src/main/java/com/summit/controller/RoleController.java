@@ -12,7 +12,7 @@ import com.summit.domain.role.FunctionListBean;
 import com.summit.service.function.FunctionService;
 import com.summit.service.log.ILogUtil;
 import com.summit.service.role.RoleService;
-import com.summit.util.Page;
+import org.springframework.data.domain.Page;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;

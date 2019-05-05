@@ -8,14 +8,15 @@ import com.summit.common.entity.ADCDTreeBean;
 import com.summit.common.entity.ResponseCodeEnum;
 import com.summit.domain.adcd.ADCDBeanRowMapper;
 import com.summit.repository.UserRepository;
-import com.summit.util.Page;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+
 import net.sf.json.JSONObject;
 import org.apache.commons.collections.map.LinkedMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -261,19 +262,20 @@ public class ADCDService {
 	 * @param limit
 	 * @param pId
 	 * @return
-	 * @throws SQLException 
+	 * @throws Exception 
 	 */
-	public Page<ADCDBean> queryByPage(int start, int limit, String padcd) throws SQLException {
-		String sql = "SELECT * FROM SYS_AD_CD WHERE PADCD = ?";
-		//if("".equals(padcd))padcd ="root";
-		Page<JSONObject> rs = ur.queryByCustomPage(sql, start, limit, padcd);
-		
-		Page<ADCDBean> pageADCDBeanInfo=new Page<ADCDBean>();
+	public Page<ADCDBean> queryByPage(int start, int limit, String padcd) throws Exception {
+		String sql = "SELECT * FROM SYS_AD_CD WHERE 1=1 ";
+		LinkedMap linkedMap=null;
+		if(padcd!=null && padcd.length()>0){
+			sql+=" and PADCD = ? ";
+		    linkedMap=new LinkedMap();
+		    linkedMap.put(1,padcd);
+		}
+		Page<Object> rs = ur.queryByCustomPage(sql, start, limit, linkedMap);
 		if(rs!=null){
-			 ArrayList<ADCDBean> students = JSON.parseObject(rs.getContent().toString(), new TypeReference<ArrayList<ADCDBean>>() {});
-			 pageADCDBeanInfo.setContent(students);
-			 pageADCDBeanInfo.setTotalElements(rs.getTotalElements());
-			 return pageADCDBeanInfo;
+			 ArrayList<ADCDBean> adcds = JSON.parseObject(rs.getContent().toString(), new TypeReference<ArrayList<ADCDBean>>() {});
+			 return new PageImpl(adcds,rs.getPageable(),rs.getTotalElements());
 		}
 		return null;
 	}

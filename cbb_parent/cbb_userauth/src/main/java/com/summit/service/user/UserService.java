@@ -1,33 +1,26 @@
 package com.summit.service.user;
 
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.commons.collections.map.LinkedMap;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.BatchPreparedStatementSetter;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.TypeReference;
-import com.summit.common.entity.AntdJsonBean;
 import com.summit.common.entity.FunctionBean;
 import com.summit.common.entity.ResponseCodeEnum;
 import com.summit.common.entity.UserInfo;
 import com.summit.domain.user.UserInfoRowMapper;
 import com.summit.repository.UserRepository;
-import com.summit.util.Page;
 import com.summit.util.SummitTools;
-import com.summit.util.SummitTools.DateTimeType;
 import com.summit.util.SysConstants;
 
 import net.sf.json.JSONObject;
@@ -176,28 +169,36 @@ public class UserService {
 		return null;
 	}
 
-	public Page<UserInfo> queryByPage(int start, int limit, JSONObject paramJson) throws SQLException {
+	public Page<UserInfo> queryByPage(int start, int limit, JSONObject paramJson) throws Exception {
+		LinkedMap linkedMap=new LinkedMap();
+		Integer index = 1;
 		StringBuilder sb = new StringBuilder(
 				"SELECT USERNAME,NAME,SEX,IS_ENABLED,EMAIL,PHONE_NUMBER,STATE,NOTE FROM SYS_USER WHERE USERNAME <> '"
 						+ SysConstants.SUPER_USERNAME + "'");
 		if (paramJson.containsKey("name")) {
-			sb.append(" AND NAME LIKE '%"+paramJson.get("name")+"%'");
+			sb.append(" AND NAME LIKE ? ");
+			linkedMap.put(index,"%" + paramJson.get("name") + "%");
+    		index++;
 		}
 		if (paramJson.containsKey("userName")) {
-			sb.append(" AND USERNAME LIKE '%"+paramJson.get("userName")+"%'");
+			sb.append(" AND USERNAME LIKE ? ");
+			linkedMap.put(index,"%" + paramJson.get("userName") + "%");
+    		index++;
 		}
 		if (paramJson.containsKey("isEnabled")) {
-			sb.append(" AND IS_ENABLED = '"+paramJson.get("isEnabled")+"'");
+			sb.append(" AND IS_ENABLED = ? ");
+			linkedMap.put(index, paramJson.get("isEnabled"));
+    		index++;
 		}
 		if (paramJson.containsKey("state")) {
-			sb.append(" AND STATE = '"+paramJson.get("state")+"'");
+			sb.append(" AND STATE =  ? ");
+			linkedMap.put(index, paramJson.get("state"));
+    		index++;
 		}
-	
-		Page <JSONObject> page= ur.queryByCustomPage(sb.toString(), start, limit);
+		Page<Object> page= ur.queryByCustomPage(sb.toString(), start, limit,linkedMap);
 		if(page!=null){
-			Page<UserInfo> pageUserInfo=new Page<UserInfo>();
+			List<UserInfo> userInfoList=new ArrayList<UserInfo>();
 			if(page.getContent()!=null && page.getContent().size()>0){
-				List<UserInfo> userInfoList=new ArrayList<UserInfo>();
 				  for(Object o:page.getContent()){
 					 JSONObject jsonObject=(JSONObject)o;
 					 UserInfo userInfo=JSON.parseObject(o.toString(), new TypeReference<UserInfo>() {});
@@ -205,11 +206,8 @@ public class UserService {
 					 userInfo.setDepts(jsonObject.containsKey("DEPTID")?jsonObject.getString("DEPTID").split(","):null);
 					 userInfoList.add(userInfo);
 				 }
-				pageUserInfo.setContent(userInfoList);
-				pageUserInfo.setTotalElements(page.getTotalElements());
-				
 			}
-			 return pageUserInfo;
+			 return new PageImpl(userInfoList,page.getPageable(),page.getTotalElements());
 		}
 		return null;
 	}

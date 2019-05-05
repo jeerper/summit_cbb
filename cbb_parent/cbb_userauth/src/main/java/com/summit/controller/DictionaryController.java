@@ -28,7 +28,7 @@ import com.summit.common.util.ResultBuilder;
 import com.summit.domain.log.LogBean;
 import com.summit.service.dictionary.DictionaryService;
 import com.summit.service.log.ILogUtil;
-import com.summit.util.Page;
+import org.springframework.data.domain.Page;
 import com.summit.util.SysConstants;
 
 import io.swagger.annotations.Api;

@@ -27,7 +27,7 @@ import com.summit.common.web.filter.UserContextHolder;
 import com.summit.domain.log.LogBean;
 import com.summit.service.function.FunctionService;
 import com.summit.service.log.ILogUtil;
-import com.summit.util.Page;
+import org.springframework.data.domain.Page;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;

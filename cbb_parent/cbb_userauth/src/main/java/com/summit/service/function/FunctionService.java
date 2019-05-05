@@ -1,6 +1,5 @@
 package com.summit.service.function;
 
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -10,6 +9,7 @@ import org.apache.commons.collections.map.LinkedMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,7 +19,8 @@ import com.alibaba.fastjson.TypeReference;
 import com.summit.common.entity.FunctionBean;
 import com.summit.domain.function.FunctionBeanRowMapper;
 import com.summit.repository.UserRepository;
-import com.summit.util.Page;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import com.summit.util.SummitTools;
 import com.summit.util.SysConstants;
 
@@ -178,27 +179,23 @@ public class FunctionService {
 		return ur.queryAllCustom(sql, fbrm);
 	}
 
-	public Page<FunctionBean> queryByPage(int start, int limit, String pId,String userName) throws SQLException {
+	public Page<FunctionBean> queryByPage(int start, int limit, String pId,String userName) throws Exception {
 		StringBuffer sql=new StringBuffer("SELECT * FROM SYS_FUNCTION where 1=1 ");
-		Page<JSONObject> rs =null;
-		if("root".equals(pId) || pId==null){
-             sql.append(" ORDER BY FDESC");
-			 rs = ur.queryByCustomPage(sql.toString(), start, limit);
-		}else {
+		 LinkedMap linkedMap=null;
+          if(!"root".equals(pId)){ 
 			if (isSuperUser(userName)) {
 				sql.append(" and PID = ? ");
 			}else{
 			    sql.append(" and  PID = ? AND SUPER_FUN = 0 ");
 			}
-			sql.append(" ORDER BY FDESC");
-			rs = ur.queryByCustomPage(sql.toString(), start, limit, pId);
-		}
+			linkedMap=new LinkedMap();
+		    linkedMap.put(1,pId);
+		  }
+		sql.append(" ORDER BY FDESC");
+		Page<Object> rs = ur.queryByCustomPage(sql.toString(), start, limit, linkedMap);
 		if(rs!=null){
-			 Page<FunctionBean> pageFunctionBeanInfo=new Page<FunctionBean>();
-			 ArrayList<FunctionBean> students = JSON.parseObject(rs.getContent().toString(), new TypeReference<ArrayList<FunctionBean>>() {});
-			 pageFunctionBeanInfo.setContent(students);
-			 pageFunctionBeanInfo.setTotalElements(rs.getTotalElements());
-			 return pageFunctionBeanInfo;
+			 ArrayList<FunctionBean> functions = JSON.parseObject(rs.getContent().toString(), new TypeReference<ArrayList<FunctionBean>>() {});
+			 return new PageImpl(functions,rs.getPageable(),rs.getTotalElements());
 		}
 		return null;
 	}

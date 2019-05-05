@@ -9,7 +9,7 @@ import com.summit.common.util.ResultBuilder;
 import com.summit.domain.log.LogBean;
 import com.summit.service.log.ILogUtil;
 import com.summit.service.user.UserService;
-import com.summit.util.Page;
+import org.springframework.data.domain.Page;
 import com.summit.util.SummitTools;
 import com.summit.util.SysConstants;
 import io.swagger.annotations.Api;
@@ -127,7 +127,7 @@ public class UserController {
     		@RequestParam(value = "userName")  String userName) {
         LogBean logBean = new LogBean();
         try {
-        	if(!oldPassword.equals(repeatPassword)){
+        	if(!password.equals(repeatPassword)){
         		return ResultBuilder.buildError(ResponseCodeEnum.CODE_4013); 
         	}
         	HttpServletRequest request = ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest();

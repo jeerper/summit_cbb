@@ -6,11 +6,12 @@ import com.summit.common.entity.DeptBean;
 import com.summit.common.entity.ResponseCodeEnum;
 import com.summit.domain.dept.DeptBeanRowMapper;
 import com.summit.repository.UserRepository;
-import com.summit.util.Page;
 import com.summit.util.SummitTools;
 import net.sf.json.JSONObject;
 import org.apache.commons.collections.map.LinkedMap;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -149,35 +150,46 @@ public class DeptService {
 	 * @param limit
 	 * @param paramJson
 	 * @return
-	 * @throws SQLException 
+	 * @throws Exception 
 	 */
-	public Page<DeptBean> queryByPage(int start, int limit, JSONObject paramJson) throws SQLException {
+	public Page<DeptBean> queryByPage(int start, int limit, JSONObject paramJson) throws Exception {
 		StringBuffer sql = new StringBuffer("SELECT dept.*, fdept.DEPTNAME as PDEPTNAME,AD.ADNM FROM SYS_DEPT dept left join SYS_DEPT fdept on dept.pid=fdept.id  ");
 		sql.append(" LEFT JOIN SYS_AD_CD AD ON AD.ADCD=DEPT.ADCD where 1=1 ");
+		Integer index = 1;
+		LinkedMap linkedMap=new LinkedMap();
 		if(paramJson!=null && !paramJson.isEmpty()){
         	if(paramJson.containsKey("pid") &&  SummitTools.stringNotNull(paramJson.getString("pid"))  ){
-        		sql.append(" and dept.pid = "+paramJson.get("pid")+" ");
+        		sql.append(" and dept.pid = ? ");
+        		linkedMap.put(index, paramJson.get("pid") );
+        		index++;
         	}
         	if(paramJson.containsKey("deptcode")    ){
-        		sql.append(" and dept.deptcode like '%"+paramJson.get("deptcode")+"%' ");
+        		sql.append(" and dept.deptcode  like ? ");
+        		linkedMap.put(index,"%" + paramJson.get("deptcode") + "%");
+        		index++;
         	}
         	if(paramJson.containsKey("deptname")   ){
-        		sql.append(" and dept.deptname like '%"+paramJson.get("deptname")+"%' ");
+        		sql.append(" and dept.deptname like ? ");
+        		linkedMap.put(index,"%" + paramJson.get("deptname") + "%");
+        		index++;
         	}
         	if(paramJson.containsKey("adnm")   ){
-        		sql.append(" and AD.ADNM like '%"+paramJson.get("adnm")+"%' ");
+        		sql.append(" and AD.ADNM like ? ");
+        		linkedMap.put(index,"%" + paramJson.get("adnm") + "%");
+        		index++;
         	}
         	if(paramJson.containsKey("adcd")   ){
-        		sql.append(" and AD.ADCD = '"+paramJson.get("adcd")+"' ");
+        		sql.append(" and AD.ADCD = ? ");
+        		linkedMap.put(index,paramJson.get("adcd") );
+        		index++;
         	}
         }
-        Page<JSONObject>  rs = ur.queryByCustomPage(sql.toString(), start, limit);
+		//Page<JSONObject>  rs =null;
+		Page<Object> rs =  ur.queryByCustomPage(sql.toString(), start, limit, linkedMap);
+       // Page<JSONObject>  rs = ur.queryByCustomPage(sql.toString(), start, limit);
 		if(rs!=null){
-			 Page<DeptBean> pageDeptBeanInfo=new Page<DeptBean>();
-			 ArrayList<DeptBean> students = JSON.parseObject(rs.getContent().toString(), new TypeReference<ArrayList<DeptBean>>() {});
-			 pageDeptBeanInfo.setContent(students);
-			 pageDeptBeanInfo.setTotalElements(rs.getTotalElements());
-			 return pageDeptBeanInfo;
+			 ArrayList<DeptBean> depts = JSON.parseObject(rs.getContent().toString(), new TypeReference<ArrayList<DeptBean>>() {});
+			 return new PageImpl(depts,rs.getPageable(),rs.getTotalElements());
 		}
 		return null;
 	}
