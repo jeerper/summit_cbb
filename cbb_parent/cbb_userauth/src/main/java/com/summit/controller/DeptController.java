@@ -5,6 +5,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -13,7 +14,9 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
+import com.summit.common.entity.ADCDTreeBean;
 import com.summit.common.entity.DeptBean;
+import com.summit.common.entity.DeptTreeBean;
 import com.summit.common.entity.ResponseCodeEnum;
 import com.summit.common.entity.RestfulEntityBySummit;
 import com.summit.common.util.ResultBuilder;
@@ -69,6 +72,26 @@ public class DeptController {
 		//return list;
 	}
 	
+	@ApiOperation(value = "查询部门--JSON 数据直接生成树结构", notes = "用于application/json格式")
+	@GetMapping(value = "/queryDeptJsonTree")
+	public RestfulEntityBySummit<DeptTreeBean> queryJsonTree(@RequestParam(value = "pid",required = false)  String pid) {
+		HttpServletRequest request = ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest();
+		LogBean logBean = new LogBean();
+	     try {
+	           logBean = logUtil.insertLog(request, "1", "查询行政区划树--JSON 数据直接生成树结构", "");
+	           DeptTreeBean adcdBean=ds.queryJsonAdcdTree(pid);
+	           return ResultBuilder.buildSuccess(adcdBean);
+	     } catch (Exception e) {
+	            //e.printStackTrace();
+	            logBean.setActionFlag("0");
+	            logBean.setErroInfo(e.toString());
+	            logger.error("数据查询失败！", e);
+	            return ResultBuilder.buildError(ResponseCodeEnum.CODE_9999);
+	     }
+	    // logUtil.updateLog(logBean, "1");
+		
+		//return list;
+	}
 	/**
 	 * 
 	 * 根据id查询（分页）

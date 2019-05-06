@@ -1,15 +1,11 @@
 package com.summit.controller;
 
-import com.summit.common.entity.FunctionBean;
-import com.summit.common.entity.ResponseCodeEnum;
-import com.summit.common.entity.RestfulEntityBySummit;
-import com.summit.common.entity.UserInfo;
+import com.summit.common.entity.*;
 import com.summit.common.redis.user.UserInfoCache;
 import com.summit.common.util.ResultBuilder;
 import com.summit.domain.log.LogBean;
 import com.summit.service.log.ILogUtil;
 import com.summit.service.user.UserService;
-import org.springframework.data.domain.Page;
 import com.summit.util.SummitTools;
 import com.summit.util.SysConstants;
 import io.swagger.annotations.Api;
@@ -19,6 +15,7 @@ import net.sf.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -33,6 +30,7 @@ import java.util.List;
 @Slf4j
 public class UserController {
 	private static final Logger logger = LoggerFactory.getLogger(UserController.class);
+
     @Autowired
     ILogUtil logUtil;
     @Autowired
@@ -65,8 +63,6 @@ public class UserController {
     /**
      * 此处的删除只修改状态。
      * @param userNames
-     * @param request
-     * @param userName
      * @return
      */
     @ApiOperation(value = "删除用户信息")
@@ -118,7 +114,7 @@ public class UserController {
         }
     }
 
-    @ApiOperation(value = "修改密码")
+   /* @ApiOperation(value = "修改密码")
     @PutMapping("/editPassword")
     public RestfulEntityBySummit<String> editPassword(
     		@RequestParam(value = "oldPassword")  String oldPassword,
@@ -133,6 +129,28 @@ public class UserController {
         	HttpServletRequest request = ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest();
             logBean = logUtil.insertLog(request, "1", "修改密码", userName);
             us.editPassword(userName,oldPassword, password, repeatPassword);
+            return ResultBuilder.buildSuccess();
+        } catch (Exception e) {
+            //e.printStackTrace();
+            logBean.setActionFlag("0");
+            logBean.setErroInfo(e.toString());
+            logUtil.updateLog(logBean, "1");
+            logger.error("修改密码失败:", e);
+            return ResultBuilder.buildError(ResponseCodeEnum.CODE_9999);
+        }
+    }*/
+
+    @ApiOperation(value = "修改密码")
+    @PutMapping("/editPassword")
+    public RestfulEntityBySummit<String> editPassword(@RequestBody UserPassWordInfo userPassWordInfo) {
+        LogBean logBean = new LogBean();
+        try {
+            if(!userPassWordInfo.getPassword().equals(userPassWordInfo.getRepeatPassword())){
+                return ResultBuilder.buildError(ResponseCodeEnum.CODE_4013);
+            }
+            HttpServletRequest request = ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest();
+            logBean = logUtil.insertLog(request, "1", "修改密码", userPassWordInfo.getUserName());
+            us.editPassword(userPassWordInfo.getUserName(),userPassWordInfo.getOldPassword(), userPassWordInfo.getPassword(), userPassWordInfo.getRepeatPassword());
             return ResultBuilder.buildSuccess();
         } catch (Exception e) {
             //e.printStackTrace();

@@ -53,7 +53,8 @@ public class ADCDController {
 	 */
 	@ApiOperation(value = "查询行政区划树", notes = "用于application/json格式")
 	@GetMapping(value = "/queryAdTree")
-	public RestfulEntityBySummit<ADCDBean> queryTree(@RequestParam(value = "pid",required = false)  String pid) {
+	public RestfulEntityBySummit<ADCDBean> queryTree(@RequestParam(value = "pid",required = false)  String pid,
+			@RequestParam(value = "isQueryAll",required = false)  boolean isQueryAll) {
 		HttpServletRequest request = ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest();
 		//UserContextHolder.getUserName();
 		LogBean logBean = new LogBean();
@@ -61,7 +62,7 @@ public class ADCDController {
 	     try {
 	           logBean = logUtil.insertLog(request, "1", "查询adcd树", "");
 	           //list = st.success("", adcdService.queryAdcdTree(pid));
-	           ADCDBean ADCDBean=adcdService.queryAdcdTree(pid);
+	           ADCDBean ADCDBean=adcdService.queryAdcdTree(pid,isQueryAll);
 	           return ResultBuilder.buildSuccess(ADCDBean);
 	           //logger.debug("数据查询成功！"+info.getCode()+"==="+info.getData()); 
 	          
@@ -80,12 +81,13 @@ public class ADCDController {
 	
 	@ApiOperation(value = "查询行政区划树--JSON 数据直接生成树结构", notes = "用于application/json格式")
 	@GetMapping(value = "/queryAdcdJsonTree")
-	public RestfulEntityBySummit<ADCDTreeBean> queryJsonTree(@RequestParam(value = "pid",required = false)  String pid) {
+	public RestfulEntityBySummit<ADCDTreeBean> queryJsonTree(@RequestParam(value = "pid",required = false)  String pid,
+			@RequestParam(value = "isQueryAll",required = false)  boolean isQueryAll) {
 		HttpServletRequest request = ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest();
 		LogBean logBean = new LogBean();
 	     try {
 	           logBean = logUtil.insertLog(request, "1", "查询行政区划树--JSON 数据直接生成树结构", "");
-	           ADCDTreeBean adcdBean=adcdService.queryJsonAdcdTree(pid);
+	           ADCDTreeBean adcdBean=adcdService.queryJsonAdcdTree(pid,isQueryAll);
 	           return ResultBuilder.buildSuccess(adcdBean);
 	     } catch (Exception e) {
 	            //e.printStackTrace();

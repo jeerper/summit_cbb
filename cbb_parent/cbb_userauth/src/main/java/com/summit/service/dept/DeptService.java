@@ -2,7 +2,10 @@ package com.summit.service.dept;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
+import com.summit.common.entity.ADCDBean;
+import com.summit.common.entity.DeptTreeBean;
 import com.summit.common.entity.DeptBean;
+import com.summit.common.entity.DeptTreeBean;
 import com.summit.common.entity.ResponseCodeEnum;
 import com.summit.domain.dept.DeptBeanRowMapper;
 import com.summit.repository.UserRepository;
@@ -121,7 +124,60 @@ public class DeptService {
         
         return orgList;
     }
+   
+   public DeptTreeBean queryJsonAdcdTree(String pid) throws Exception {
+		LinkedMap linkedMap=new LinkedMap();
+		StringBuffer sql = new StringBuffer("SELECT ID as value,PID as pid,DEPTCODE,DEPTNAME as title,REMARK FROM SYS_DEPT  where 1=1");
+		if(pid==null || "".equals(pid)){
+			sql.append(" and (pid is null  or pid='-1' )");
+		}else{
+			sql.append(" and ID =? ");
+			linkedMap.put(1, pid);
+			
+		}
+	  List<Object> rootList= ur.queryAllCustom(sql.toString(),linkedMap);
+	  DeptTreeBean deptTreeBean =null;
+      if(rootList.size()>0){
+      	String jsonTree=((JSONObject)rootList.get(0)).toString();
+      	deptTreeBean = JSON.parseObject(jsonTree, new TypeReference<DeptTreeBean>() {});
+			List<DeptBean> list=generateOrgMapToTree(null,deptTreeBean.getValue());
+			if(list!=null && list.size()>0){
+				List<DeptTreeBean> detpTreeBeanList=new ArrayList<DeptTreeBean>();
+				DeptTreeBean deptTreeBeanInfo=null;
+				for(DeptBean deptBean1:list){
+					deptTreeBeanInfo=new DeptTreeBean();
+					deptTreeBeanInfo.setValue(deptBean1.getId());
+					deptTreeBeanInfo.setTitle(deptBean1.getDeptName());
+					deptTreeBeanInfo.setPid(deptBean1.getPid());
+					deptTreeBeanInfo.setChildren(getDeptTreeBean(deptBean1.getChildren()));
+					detpTreeBeanList.add(deptTreeBeanInfo);
+				}
+				deptTreeBean.setChildren(detpTreeBeanList);
+				
+			}
+		}
+		return deptTreeBean;
+	}
 
+   private List<DeptTreeBean> getDeptTreeBean(List<DeptBean> children){
+   	if(children!=null && children.size()>0){
+   		List<DeptTreeBean> DeptTreeBeanList=new ArrayList<DeptTreeBean>();
+   		DeptTreeBean DeptTreeBean1=null;
+   		for (DeptBean adcdBean : children) {
+   			DeptTreeBean1=new DeptTreeBean();
+   			DeptTreeBean1.setValue(adcdBean.getAdcd());
+				DeptTreeBean1.setTitle(adcdBean.getAdnm());
+				DeptTreeBean1.setPid(adcdBean.getPid());
+				List<DeptTreeBean> adcdChildren =getDeptTreeBean(adcdBean.getChildren());
+				if(adcdChildren!=null && adcdChildren.size()>0){
+					DeptTreeBean1.setChildren(adcdChildren);
+               }
+				DeptTreeBeanList.add(DeptTreeBean1);
+   		}
+   		return DeptTreeBeanList;
+   	}
+   	return null;
+   }
 	/**
 	 * 根据id查询
 	 * @param id
