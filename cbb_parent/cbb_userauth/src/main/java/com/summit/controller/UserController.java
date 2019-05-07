@@ -379,7 +379,7 @@ public class UserController {
     @PutMapping("/grantRole")
     public RestfulEntityBySummit<String>  grantRole(
     		@RequestParam(value = "userName") String userName,
-    		@RequestParam(value = "role") String role) {
+    		@RequestParam(value = "role",required = false) String role) {
         LogBean logBean = new LogBean();
         try {
         	HttpServletRequest request = ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest();

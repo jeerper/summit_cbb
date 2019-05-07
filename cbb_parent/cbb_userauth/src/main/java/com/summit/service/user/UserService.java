@@ -307,21 +307,24 @@ public class UserService {
 		}
 		return null;
 	}
-	public void delUserRoleByUserName(String userNames){
-		String sql = "DELETE FROM SYS_USER_ROLE WHERE USERNAME IN ('"
-				+ userNames + "')";
-		jdbcTemplate.update(sql);
+	public void delUserRoleByUserName(String userName){
+		String sql = "DELETE FROM SYS_USER_ROLE WHERE USERNAME =?";
+		jdbcTemplate.update(sql,userName);
 	}
 	
+	@Transactional
 	public void grantRole(String userName, String role) {
-		delUserRoleByUserName(userName);
-		String sql = "INSERT INTO SYS_USER_ROLE (ID, USERNAME, ROLE_CODE) VALUES (?, ?, ?)";
-		List<Object[]> batchArgs = new ArrayList<Object[]>();
-		String[] roleArr = role.split(",");
-		for (String roleCode : roleArr) {
-			batchArgs.add(new Object[] { SummitTools.getKey(), userName, roleCode });
+		String deleteSql = "DELETE FROM SYS_USER_ROLE WHERE USERNAME =?";
+		jdbcTemplate.update(deleteSql,userName);
+		if(role!=null && role.length()>0){
+			String sql = "INSERT INTO SYS_USER_ROLE (ID, USERNAME, ROLE_CODE) VALUES (?, ?, ?)";
+			List<Object[]> batchArgs = new ArrayList<Object[]>();
+			String[] roleArr = role.split(",");
+			for (String roleCode : roleArr) {
+				batchArgs.add(new Object[] { SummitTools.getKey(), userName, roleCode });
+			}
+			jdbcTemplate.batchUpdate(sql, batchArgs);
 		}
-		jdbcTemplate.batchUpdate(sql, batchArgs);
 	}
 
 

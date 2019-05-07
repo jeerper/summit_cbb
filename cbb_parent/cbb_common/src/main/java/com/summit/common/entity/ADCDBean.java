@@ -12,10 +12,14 @@ public class ADCDBean  implements Serializable {
 	private String adcd;
 	@ApiModelProperty(value="行政区划名称",name="adnm",required=true)
 	private String adnm;
-	@ApiModelProperty(value="上级行政区划编码",name="padcd",required=true)
-	private String padcd;
 	@ApiModelProperty(value="级别",name="level")
 	private String level;
+	
+	@ApiModelProperty(value="上级行政区划编码",name="padcd",required=true)
+	private String padcd;
+	@ApiModelProperty(value="上级行政区划名称",name="padnm")
+	private String padnm;
+
 	@ApiModelProperty(value="下级行政区划集合",name="children")
 	private List<ADCDBean> children;
 	
@@ -75,5 +79,14 @@ public class ADCDBean  implements Serializable {
 	public static long getSerialversionuid() {
 		return serialVersionUID;
 	}
+
+	public String getPadnm() {
+		return padnm;
+	}
+
+	public void setPadnm(String padnm) {
+		this.padnm = padnm;
+	}
+	
 	
 }

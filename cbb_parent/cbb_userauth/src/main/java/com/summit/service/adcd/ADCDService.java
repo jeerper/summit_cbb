@@ -273,10 +273,10 @@ public class ADCDService {
 	 * @throws Exception 
 	 */
 	public Page<ADCDBean> queryByPage(int start, int limit, String padcd) throws Exception {
-		String sql = "SELECT * FROM SYS_AD_CD WHERE 1=1 ";
+		String sql = "SELECT adcd.ADCD,adcd.ADNM,adcd.ADLEVEL,padcd.ADCD as padcd,padcd.ADNM as padnm  FROM SYS_AD_CD adcd left join SYS_AD_CD padcd on adcd.PADCD=padcd.ADCD WHERE 1=1 ";
 		LinkedMap linkedMap=null;
 		if(padcd!=null && padcd.length()>0){
-			sql+=" and PADCD = ? ";
+			sql+=" and adcd.PADCD = ? ";
 		    linkedMap=new LinkedMap();
 		    linkedMap.put(1,padcd);
 		}
