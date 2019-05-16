@@ -167,7 +167,26 @@ public class ADCDService {
 		}
 		return adcdTreeBean;
 	}
-   
+
+	public List<String> getAdcdBean(String pid) throws Exception{
+       StringBuffer querySql=new StringBuffer(" select adcd from ( select t1.adcd, ");
+		querySql.append(" if(find_in_set(padcd, @pids) > 0, @pids := concat(@pids, ',', adcd), 0) as ischild ");
+		querySql.append("  from ( select adcd,padcd from sys_ad_cd t order by padcd, adcd) t1,(select @pids := ? ) t2 ");
+		querySql.append(" ) t3 where ischild != 0 ");
+		LinkedMap linkedMap=new LinkedMap();
+		linkedMap.put(1, pid);
+		List<Object> l=ur.queryAllCustom(querySql.toString(),linkedMap);
+		List<String> adcdList=new ArrayList<String>();
+		if(l.size()>0){
+			 adcdList.add(pid);
+			 for(Object adcd:l){
+				 adcdList.add(((JSONObject)adcd).getString("adcd"));
+			 }
+			 return adcdList;
+		}
+		return null;
+	}
+
     private List<ADCDTreeBean> getAdcdTreeBean(List<ADCDBean> children){
     	if(children!=null && children.size()>0){
     		List<ADCDTreeBean> adcdTreeBeanList=new ArrayList<ADCDTreeBean>();

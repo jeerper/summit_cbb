@@ -1,30 +1,30 @@
 package com.summit.service.function;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.TypeReference;
+import com.summit.common.entity.FunctionBean;
+import com.summit.common.entity.FunctionTreeBean;
+import com.summit.domain.function.FunctionBeanRowMapper;
+import com.summit.repository.UserRepository;
+import com.summit.util.SummitTools;
+import com.summit.util.SysConstants;
+import net.sf.json.JSONObject;
 import org.apache.commons.collections.map.LinkedMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.TypeReference;
-import com.summit.common.entity.FunctionBean;
-import com.summit.domain.function.FunctionBeanRowMapper;
-import com.summit.repository.UserRepository;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import com.summit.util.SummitTools;
-import com.summit.util.SysConstants;
-
-import net.sf.json.JSONObject;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 @Service
 @Transactional
@@ -42,14 +42,14 @@ public class FunctionService {
 	 * 查询菜单树
 	 * @return
 	 */
-	public FunctionBean queryFunTree(String padcd) throws Exception{
+	public FunctionBean queryFunTree(String pid) throws Exception{
 		LinkedMap linkedMap=new LinkedMap();
 		StringBuffer sql = new StringBuffer("SELECT * from  sys_function fun where 1=1 ");
-		if(padcd==null || "".equals(padcd)){
+		if(pid==null || "".equals(pid)){
 			sql.append(" and (pid is null  or pid='-1' )");
 		}else{
 			sql.append(" and id =? ");
-			linkedMap.put(1, padcd);
+			linkedMap.put(1, pid);
 		}
 		List<Object> rootList= ur.queryAllCustom(sql.toString(),linkedMap);
         
@@ -64,6 +64,7 @@ public class FunctionService {
 		}
 		return null;
 	}
+	
 	
    public List<FunctionBean> generateOrgMapToTree(Map<String, List<Object>>  orgMaps, String pid)throws  Exception {
         if (null == orgMaps || orgMaps.size() == 0) {//a.ADLEVEL as LEVELa ,b.ADLEVEL as LEVELb
@@ -123,6 +124,51 @@ public class FunctionService {
         return orgList;
     }
 
+   
+   public FunctionTreeBean queryJsonFunctionTree(String pid) throws Exception {
+		LinkedMap linkedMap=new LinkedMap();
+		StringBuffer sql = new StringBuffer("SELECT ID as `key`,NAME as title,pid from  sys_function fun where 1=1 ");
+		if(pid==null || "".equals(pid)){
+			sql.append(" and (pid is null  or pid='-1' )");
+		}else{
+			sql.append(" and id =? ");
+			linkedMap.put(1, pid);
+		}
+	  List<Object> rootList= ur.queryAllCustom(sql.toString(),linkedMap);
+	  FunctionTreeBean functionTreeBean =null;
+     if(rootList.size()>0){
+     	String jsonTree=((JSONObject)rootList.get(0)).toString();
+     	functionTreeBean = JSON.parseObject(jsonTree, new TypeReference<FunctionTreeBean>() {});
+     
+			List<FunctionBean> list=generateOrgMapToTree(null,functionTreeBean.getKey());
+			if(list!=null && list.size()>0){
+				functionTreeBean.setChildren(getFunctionTreeBean(list));
+			}
+		}
+		return functionTreeBean;
+	}
+   
+   private List<FunctionTreeBean> getFunctionTreeBean(List<FunctionBean> children){
+   	if(children!=null && children.size()>0){
+   		List<FunctionTreeBean> functionTreeBeanList=new ArrayList<FunctionTreeBean>();
+   		FunctionTreeBean functionTreeBean1=null;
+   		for (FunctionBean functionBean : children) {
+   			functionTreeBean1=new FunctionTreeBean();
+   			functionTreeBean1.setValue(functionBean.getId());
+   			functionTreeBean1.setKey(functionBean.getId());
+   			functionTreeBean1.setTitle(functionBean.getName());
+			List<FunctionTreeBean> adcdChildren =getFunctionTreeBean(functionBean.getChildren());
+			if(adcdChildren!=null && adcdChildren.size()>0){
+				functionTreeBean1.setChildren(adcdChildren);
+            }
+			functionTreeBeanList.add(functionTreeBean1);
+   		}
+   		return functionTreeBeanList;
+   	}
+   	return null;
+   }
+   
+   
 
 
 	public void add(FunctionBean fb) {
@@ -199,5 +245,40 @@ public class FunctionService {
 		}
 		return null;
 	}
+	
+	public List<FunctionBean> getFunInfoByUserName(String userName){
+		String sql = "SELECT  SF.* FROM SYS_USER_ROLE SUR INNER JOIN SYS_ROLE_FUNCTION SRF ON ( SUR.ROLE_CODE = SRF.ROLE_CODE ) INNER JOIN SYS_FUNCTION SF ON (SRF.FUNCTION_ID = SF.ID) WHERE SF.IS_ENABLED = '1'  AND SUR.USERNAME = ? and SF.id!='root' order by	pid desc,FDESC";
+		List<JSONObject>list= ur.queryAllCustom(sql, userName);
+		if(list!=null){
+			 ArrayList<FunctionBean> functionBeans = JSON.parseObject(list.toString(), new TypeReference<ArrayList<FunctionBean>>() {});
+			 ArrayList<FunctionBean> functionBeancChildren =null;
+			 Map<String,FunctionBean> map=new LinkedHashMap<String,FunctionBean>();
+			 if(functionBeans!=null && functionBeans.size()>0){
+				 String pid="";
+	        	 for(FunctionBean functionBean:functionBeans){
+	        		 if("root".equals(functionBean.getPid())){
+	        			 map.put(functionBean.getId(), functionBean);
+	        		 }else{
+	        			 if("".equals(pid) || !pid.equals(functionBean.getPid())){
+	        				 functionBeancChildren=new ArrayList<FunctionBean>();
+	        			 }
+	        			 functionBeancChildren.add(functionBean);
+	        			 FunctionBean functionBean1=map.get(functionBean.getPid());
+	        			 functionBean1.setChildren(functionBeancChildren);
+	        			 map.put(functionBean.getPid(), functionBean1);
+	        			 pid=functionBean.getPid();
+	        		 }
+	        	 }
+	         }
+			 Collection<FunctionBean> valueCollection = map.values();
+			 List<FunctionBean> valueList = new ArrayList<FunctionBean>(valueCollection);
+//			 for(FunctionBean functionBean:valueList){
+//				 System.out.println("====:"+functionBean.getId()+","+functionBean.getName()+","+functionBean.getPid());	
+//			 }
+			 return valueList;
+		}
+		return null;
+	}
+	
 
 }

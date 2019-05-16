@@ -46,7 +46,7 @@ public class RoleController {
 		LogBean logBean = new LogBean();
 		try {
 			HttpServletRequest request = ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest();
-			logBean = logUtil.insertLog(request,"1", "角色管理新增","");
+			logBean = logUtil.insertLog("1", "角色管理新增");
 			ResponseCodeEnum responseCodeEnum=rs.add(roleBean);
 			if(responseCodeEnum!=null){
 				return ResultBuilder.buildError(responseCodeEnum);
@@ -69,7 +69,7 @@ public class RoleController {
 		LogBean logBean = new LogBean();
 		try {
 			HttpServletRequest request = ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest();
-			logBean = logUtil.insertLog(request,"1", "角色管理删除","");
+			logBean = logUtil.insertLog("1", "角色管理删除");
 			rs.del(codes);
 			return ResultBuilder.buildSuccess();
 		} catch (Exception e) {
@@ -88,7 +88,7 @@ public class RoleController {
 		LogBean logBean = new LogBean();
 		try {
 			HttpServletRequest request = ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest();
-			logBean = logUtil.insertLog(request,"1", "角色管理修改","");
+			logBean = logUtil.insertLog("1", "角色管理修改");
 			rs.edit(roleBean);
 			return ResultBuilder.buildSuccess();
 		} catch (Exception e) {
@@ -107,15 +107,10 @@ public class RoleController {
 			@RequestParam(value = "code") String code) {
 		LogBean logBean = new LogBean();
 		try {
-			HttpServletRequest request = ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest();
-			logBean = logUtil.insertLog(request,"1", "角色管理按照编号查询","");
 			return ResultBuilder.buildSuccess(rs.queryByCode(code));
 		} catch (Exception e) {
 			//e.printStackTrace();
 			logger.error("数据查询失败！", e);
-			logBean.setActionFlag("0");
-			logBean.setErroInfo(e.toString());
-			logUtil.updateLog(logBean,"1");
 			return ResultBuilder.buildError(ResponseCodeEnum.CODE_9999);
 		}
 	}
@@ -129,15 +124,10 @@ public class RoleController {
 		//Page<JSONObject> res = new Page<JSONObject>();
 		LogBean logBean = new LogBean();
 		try {
-			HttpServletRequest request = ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest();
-			logBean = logUtil.insertLog(request,"1", "角色管理分页查询","");
 			return ResultBuilder.buildSuccess(rs.queryByPage(page, pageSize, name));
 		} catch (Exception e) {
 			//e.printStackTrace();
 			logger.error("数据查询失败！", e);
-			logBean.setActionFlag("0");
-			logBean.setErroInfo(e.toString());
-			logUtil.updateLog(logBean,"1");
 			return ResultBuilder.buildError(ResponseCodeEnum.CODE_9999);
 		}
 	}
@@ -147,15 +137,9 @@ public class RoleController {
 	public RestfulEntityBySummit<List<RoleBean>> queryAll() {
 		LogBean logBean = new LogBean();
 		try {
-			HttpServletRequest request = ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest();
-			logBean = logUtil.insertLog(request,"1", "查询所有数据","");
-			//res = rs.queryAll();
 			return ResultBuilder.buildSuccess(rs.queryAll());
 		} catch (Exception e) {
 			logger.error("数据查询失败！", e);
-			logBean.setActionFlag("0");
-			logBean.setErroInfo(e.toString());
-			logUtil.updateLog(logBean,"1");
 			return ResultBuilder.buildError(ResponseCodeEnum.CODE_9999);
 		}
 	}
@@ -164,17 +148,10 @@ public class RoleController {
 	@ApiOperation(value = "角色管理查询所有数据--基于antd：Transfer穿梭框")
 	@GetMapping("queryRoleAllAntd")
 	public RestfulEntityBySummit<List<AntdJsonBean>> queryRoleAllAntd() {
-		//LogBean logBean = new LogBean();
 		try {
-			//HttpServletRequest request = ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest();
-			//logBean = logUtil.insertLog(request,"1", "查询所有数据","");
-			//res = rs.queryAll();
 			return ResultBuilder.buildSuccess(rs.queryRoleAntdJsonAll());
 		} catch (Exception e) {
 			logger.error("数据查询失败！", e);
-			//logBean.setActionFlag("0");
-			//logBean.setErroInfo(e.toString());
-			//logUtil.updateLog(logBean,"1");
 			return ResultBuilder.buildError(ResponseCodeEnum.CODE_9999);
 		}
 	}
@@ -183,10 +160,7 @@ public class RoleController {
 	@GetMapping("getRoleFunInfo")
 	public RestfulEntityBySummit<FunctionListBean> getRoleFunInfo(
 		@RequestParam(value = "roleCode") String roleCode) {
-		LogBean logBean = new LogBean();
 		try {
-			HttpServletRequest request = ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest();
-			logBean = logUtil.insertLog(request,"1", "角色管理查询角色权限","");
 			String userName="";
 			UserInfo userInfo=UserContextHolder.getUserInfo();
 			if(userInfo!=null){
@@ -198,9 +172,6 @@ public class RoleController {
 			return ResultBuilder.buildSuccess(functionListBean);
 		} catch (Exception e) {
 			logger.error("数据查询失败！", e);
-			logBean.setActionFlag("0");
-			logBean.setErroInfo(e.toString());
-			logUtil.updateLog(logBean,"1");
 			return ResultBuilder.buildError(ResponseCodeEnum.CODE_9999);
 		}
 	}
@@ -210,19 +181,12 @@ public class RoleController {
 	public RestfulEntityBySummit<String> roleAuthorization(
 			@RequestParam(value = "roleCode") String roleCode,
 			@RequestParam(value = "funIds") String funIds) {
-		LogBean logBean = new LogBean();
 		try {
-			HttpServletRequest request = ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest();
-			logBean = logUtil.insertLog(request,"1", "角色管理角色授权","");
-			//res = rs.roleAuthorization(roleCode, funIds);
 			rs.roleAuthorization(roleCode, funIds);
 			return ResultBuilder.buildSuccess();
 		} catch (Exception e) {
 			//e.printStackTrace();
 			logger.error("数据查询失败！", e);
-			logBean.setActionFlag("0");
-			logBean.setErroInfo(e.toString());
-			logUtil.updateLog(logBean,"1");
 			return ResultBuilder.buildError(ResponseCodeEnum.CODE_9999);
 		}
 	}

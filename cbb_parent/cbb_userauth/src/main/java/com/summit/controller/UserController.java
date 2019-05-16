@@ -44,7 +44,7 @@ public class UserController {
        LogBean logBean = new LogBean();
         try {
         	HttpServletRequest request = ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest();
-    		logBean = logUtil.insertLog(request, "1", "用户新增", userInfo.getUserName());
+    		logBean = logUtil.insertLog( "1", "用户新增");
             ResponseCodeEnum c=us.add(userInfo);
             if(c!=null){
             	 return ResultBuilder.buildError(c);
@@ -53,9 +53,6 @@ public class UserController {
         } catch (Exception e) {
            //e.printStackTrace();
             logger.error("新增用户失败", e);
-            logBean.setActionFlag("0");
-            logBean.setErroInfo(e.getMessage());
-            logUtil.updateLog(logBean, "1");
             return ResultBuilder.buildError(ResponseCodeEnum.CODE_9999);
         }
     }
@@ -72,7 +69,7 @@ public class UserController {
         LogBean logBean = new LogBean();
         try {
         	HttpServletRequest request = ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest();
-    		 logBean = logUtil.insertLog(request, "1", "删除用户", "");
+    		 logBean = logUtil.insertLog( "1", "删除用户");
             if(userNames.contains(",")){
             	for(String username:userNames.split(",")){
             		//系统管路员用户不能删除
@@ -87,9 +84,6 @@ public class UserController {
         } catch (Exception e) {
             //e.printStackTrace();
             logger.error("删除用户信息", e);
-            logBean.setActionFlag("0");
-            logBean.setErroInfo(e.toString());
-            logUtil.updateLog(logBean, "1");
             return ResultBuilder.buildError(ResponseCodeEnum.CODE_9999);
         }
     }
@@ -99,8 +93,7 @@ public class UserController {
     public RestfulEntityBySummit<String> edit(@RequestBody UserInfo userInfo) {
         LogBean logBean = new LogBean();
         try {
-        	HttpServletRequest request = ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest();
-            logBean = logUtil.insertLog(request, "1", "修改用户", "");
+        	logBean = logUtil.insertLog( "1", "修改用户");
             	userInfoCache.setUserInfo(userInfo.getUserName(),userInfo);
             	us.edit(userInfo);
             	return ResultBuilder.buildSuccess();
@@ -149,14 +142,10 @@ public class UserController {
                 return ResultBuilder.buildError(ResponseCodeEnum.CODE_4013);
             }
             HttpServletRequest request = ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest();
-            logBean = logUtil.insertLog(request, "1", "修改密码", userPassWordInfo.getUserName());
+            logBean = logUtil.insertLog("1", "修改密码");
             us.editPassword(userPassWordInfo.getUserName(),userPassWordInfo.getOldPassword(), userPassWordInfo.getPassword(), userPassWordInfo.getRepeatPassword());
             return ResultBuilder.buildSuccess();
         } catch (Exception e) {
-            //e.printStackTrace();
-            logBean.setActionFlag("0");
-            logBean.setErroInfo(e.toString());
-            logUtil.updateLog(logBean, "1");
             logger.error("修改密码失败:", e);
             return ResultBuilder.buildError(ResponseCodeEnum.CODE_9999);
         }
@@ -166,11 +155,8 @@ public class UserController {
     @GetMapping("/queryUserInfoByUserName")
     public RestfulEntityBySummit<UserInfo> queryUserInfoByUserName(
     		@RequestParam(value = "userName")  String userName) {
-        LogBean logBean = new LogBean();
         try {
-        	HttpServletRequest request = ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest();
-            logBean = logUtil.insertLog(request, "1", "用户管理根据用户名查询用户", userName);
-            UserInfo ub = us.queryByUserName(userName);
+        	UserInfo ub = us.queryByUserName(userName);
             if (ub == null) {
             	 return ResultBuilder.buildError(ResponseCodeEnum.CODE_4023);
             }
@@ -199,9 +185,6 @@ public class UserController {
             }
             return ResultBuilder.buildSuccess(ub);
         } catch (Exception e) {
-            logBean.setActionFlag("0");
-            logBean.setErroInfo(e.toString());
-            logUtil.updateLog(logBean, "1");
             logger.error("根据用户名查询用户信息失败：", e);
             return ResultBuilder.buildError(ResponseCodeEnum.CODE_9999);
         }
@@ -213,9 +196,7 @@ public class UserController {
     		@RequestParam(value = "userName")  String userName) {
         LogBean logBean = new LogBean();
         try {
-        	HttpServletRequest request = ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest();
-            logBean = logUtil.insertLog(request, "1", "用户管理根据用户名查询菜单信息", userName);
-            UserInfo ub = us.queryByUserName(userName);
+        	UserInfo ub = us.queryByUserName(userName);
             if (ub == null) {
             	 return ResultBuilder.buildError(ResponseCodeEnum.CODE_4023);
             }
@@ -224,10 +205,6 @@ public class UserController {
             return ResultBuilder.buildSuccess(funList);
             
         }catch (Exception e) {
-            //e.printStackTrace();
-            logBean.setActionFlag("0");
-            logBean.setErroInfo(e.toString());
-            logUtil.updateLog(logBean, "1");
             logger.error("根据用户名查询所有菜单失败：", e);
             return ResultBuilder.buildError(ResponseCodeEnum.CODE_9999);
         }
@@ -242,9 +219,7 @@ public class UserController {
             @RequestParam(value = "state",required = false) String state) {
         LogBean logBean = new LogBean();
         try {
-        	HttpServletRequest request = ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest();
-            logBean = logUtil.insertLog(request, "1", "用户管理分页查询", "");
-            JSONObject paramJson = new JSONObject();
+        	JSONObject paramJson = new JSONObject();
             if(!SummitTools.stringIsNull(name)){
                 paramJson.put("name",name);
             }
@@ -260,10 +235,6 @@ public class UserController {
             List<UserInfo> pageList=us.queryUserInfoList( paramJson);
             return ResultBuilder.buildSuccess(pageList);
         } catch (Exception e) {
-            //e.printStackTrace();
-            logBean.setActionFlag("0");
-            logBean.setErroInfo(e.toString());
-            logUtil.updateLog(logBean, "1");
             logger.error("用户分页查询失败：", e);
             return ResultBuilder.buildError(ResponseCodeEnum.CODE_9999);
         }
@@ -281,9 +252,7 @@ public class UserController {
             @RequestParam(value = "state",required = false) String state) {
         LogBean logBean = new LogBean();
         try {
-        	HttpServletRequest request = ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest();
-            logBean = logUtil.insertLog(request, "1", "用户管理分页查询", "");
-            page = (page == 0) ? 1 : page;
+        	page = (page == 0) ? 1 : page;
             pageSize = (pageSize == 0) ? SysConstants.PAGE_SIZE : pageSize;
             
             JSONObject paramJson = new JSONObject();
@@ -302,10 +271,6 @@ public class UserController {
             Page<UserInfo> pageList=us.queryByPage(page, pageSize, paramJson);
             return ResultBuilder.buildSuccess(pageList);
         } catch (Exception e) {
-            //e.printStackTrace();
-            logBean.setActionFlag("0");
-            logBean.setErroInfo(e.toString());
-            logUtil.updateLog(logBean, "1");
             logger.error("用户分页查询失败：", e);
             return ResultBuilder.buildError(ResponseCodeEnum.CODE_9999);
         }
@@ -318,7 +283,7 @@ public class UserController {
         LogBean logBean = new LogBean();
         try {
         	HttpServletRequest request = ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest();
-            logBean = logUtil.insertLog(request, "1", "用户管理重置密码", userName);
+            logBean = logUtil.insertLog("1", "用户管理重置密码");
             us.resetPassword(userName);
             return ResultBuilder.buildSuccess();
         } catch (Exception e) {
@@ -343,13 +308,8 @@ public class UserController {
             	return ResultBuilder.buildError(ResponseCodeEnum.CODE_4023);
             }
         	List<String> list=us.queryRoleByUserName(userName);
-           // logBean = logUtil.insertLog(request, "1", "用户管理查询用户角色", userName);
             return ResultBuilder.buildSuccess(list);
         } catch (Exception e) {
-            //e.printStackTrace();
-           // logBean.setActionFlag("0");
-            //logBean.setErroInfo(e.toString());
-            //logUtil.updateLog(logBean, "1"); 
             logger.error("根据用户名查询角色失败：", e);
             return ResultBuilder.buildError(ResponseCodeEnum.CODE_9999);
         }
@@ -383,7 +343,7 @@ public class UserController {
         LogBean logBean = new LogBean();
         try {
         	HttpServletRequest request = ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest();
-            logBean = logUtil.insertLog(request, "1", "用户管理授权", userName);
+            logBean = logUtil.insertLog( "1", "用户管理授权");
             UserInfo ub = us.queryByUserName(userName);
             if (ub == null) {
             	return ResultBuilder.buildError(ResponseCodeEnum.CODE_4023);

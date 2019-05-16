@@ -14,6 +14,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import com.summit.common.entity.UserInfo;
 import com.summit.common.web.filter.UserContextHolder;
@@ -40,13 +42,14 @@ public class LogUtilImpl implements ILogUtil {
 	 * @return LogBean:日志实体类
 	 * 
 	 */
-	public  LogBean insertLog(HttpServletRequest request, String logType,String funName,String userName) {
-		if(userName==null || "".equals(userName)){
-			UserInfo userInfo=UserContextHolder.getUserInfo();
-			if(userInfo!=null){
+	public  LogBean insertLog(String logType,String funName) {
+		HttpServletRequest request = ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest();
+		String userName="";
+		UserInfo userInfo=UserContextHolder.getUserInfo();
+		if(userInfo!=null){
 			   userName=userInfo.getUserName();
-			}
 		}
+		
 		LogBean lg = null;
 		if(request !=null && logType!=null && logType.trim().length()>0 && funName!=null && funName.trim().length()>0){
 			String id = SummitTools.getKey();

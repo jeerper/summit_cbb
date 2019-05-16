@@ -2,8 +2,6 @@ package com.summit.service.dept;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
-import com.summit.common.entity.ADCDBean;
-import com.summit.common.entity.DeptTreeBean;
 import com.summit.common.entity.DeptBean;
 import com.summit.common.entity.DeptTreeBean;
 import com.summit.common.entity.ResponseCodeEnum;
@@ -19,7 +17,6 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -140,6 +137,7 @@ public class DeptService {
       if(rootList.size()>0){
       	String jsonTree=((JSONObject)rootList.get(0)).toString();
       	deptTreeBean = JSON.parseObject(jsonTree, new TypeReference<DeptTreeBean>() {});
+      
 			List<DeptBean> list=generateOrgMapToTree(null,deptTreeBean.getValue());
 			if(list!=null && list.size()>0){
 				List<DeptTreeBean> detpTreeBeanList=new ArrayList<DeptTreeBean>();
@@ -163,15 +161,17 @@ public class DeptService {
    	if(children!=null && children.size()>0){
    		List<DeptTreeBean> DeptTreeBeanList=new ArrayList<DeptTreeBean>();
    		DeptTreeBean DeptTreeBean1=null;
-   		for (DeptBean adcdBean : children) {
+   		for (DeptBean deptBean : children) {
    			DeptTreeBean1=new DeptTreeBean();
-   			DeptTreeBean1.setValue(adcdBean.getAdcd());
-				DeptTreeBean1.setTitle(adcdBean.getAdnm());
-				DeptTreeBean1.setPid(adcdBean.getPid());
-				List<DeptTreeBean> adcdChildren =getDeptTreeBean(adcdBean.getChildren());
-				if(adcdChildren!=null && adcdChildren.size()>0){
-					DeptTreeBean1.setChildren(adcdChildren);
-               }
+   			DeptTreeBean1.setValue(deptBean.getId());
+				DeptTreeBean1.setTitle(deptBean.getDeptName());
+				DeptTreeBean1.setPid(deptBean.getPid());
+				if(deptBean.getChildren()!=null && deptBean.getChildren().size()>0){
+					List<DeptTreeBean> adcdChildren =getDeptTreeBean(deptBean.getChildren());
+					if(adcdChildren!=null && adcdChildren.size()>0){
+						DeptTreeBean1.setChildren(adcdChildren);
+	                }
+				}
 				DeptTreeBeanList.add(DeptTreeBean1);
    		}
    		return DeptTreeBeanList;

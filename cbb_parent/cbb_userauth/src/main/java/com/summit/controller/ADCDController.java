@@ -55,27 +55,14 @@ public class ADCDController {
 	@GetMapping(value = "/queryAdTree")
 	public RestfulEntityBySummit<ADCDBean> queryTree(@RequestParam(value = "pid",required = false)  String pid,
 			@RequestParam(value = "isQueryAll",required = false)  boolean isQueryAll) {
-		HttpServletRequest request = ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest();
-		//UserContextHolder.getUserName();
-		LogBean logBean = new LogBean();
-		//Map<String, Object> list = null;
-	     try {
-	           logBean = logUtil.insertLog(request, "1", "查询adcd树", "");
-	           //list = st.success("", adcdService.queryAdcdTree(pid));
+	        try {
 	           ADCDBean ADCDBean=adcdService.queryAdcdTree(pid,isQueryAll);
 	           return ResultBuilder.buildSuccess(ADCDBean);
-	           //logger.debug("数据查询成功！"+info.getCode()+"==="+info.getData()); 
 	          
-	     } catch (Exception e) {
-	            //e.printStackTrace();
-	            logBean.setActionFlag("0");
-	            logBean.setErroInfo(e.toString());
+	        } catch (Exception e) {
 	            logger.error("数据查询失败！", e);
 	            return ResultBuilder.buildError(ResponseCodeEnum.CODE_9999);
-	     }
-	    // logUtil.updateLog(logBean, "1");
-		
-		//return list;
+	        }
 	}
 	
 	
@@ -83,24 +70,29 @@ public class ADCDController {
 	@GetMapping(value = "/queryAdcdJsonTree")
 	public RestfulEntityBySummit<ADCDTreeBean> queryJsonTree(@RequestParam(value = "pid",required = false)  String pid,
 			@RequestParam(value = "isQueryAll",required = false)  boolean isQueryAll) {
-		HttpServletRequest request = ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest();
-		LogBean logBean = new LogBean();
+		// HttpServletRequest request = ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest();
 	     try {
-	           logBean = logUtil.insertLog(request, "1", "查询行政区划树--JSON 数据直接生成树结构", "");
 	           ADCDTreeBean adcdBean=adcdService.queryJsonAdcdTree(pid,isQueryAll);
 	           return ResultBuilder.buildSuccess(adcdBean);
 	     } catch (Exception e) {
-	            //e.printStackTrace();
-	            logBean.setActionFlag("0");
-	            logBean.setErroInfo(e.toString());
 	            logger.error("数据查询失败！", e);
 	            return ResultBuilder.buildError(ResponseCodeEnum.CODE_9999);
 	     }
-	    // logUtil.updateLog(logBean, "1");
-		
-		//return list;
 	}
 	
+	
+	@ApiOperation(value = "根据padcd查询下面所有的子节点")
+	@RequestMapping(value = "/queryAllAdcdByPadcd",method = RequestMethod.GET)
+	public RestfulEntityBySummit<List<String>> queryAllAdcdByPadcd(
+			@RequestParam(value = "padcd",required = true) String padcd) {
+		// HttpServletRequest request = ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest();
+		try {
+			return ResultBuilder.buildSuccess(adcdService.getAdcdBean(padcd));
+		} catch (Exception e) {
+			 logger.error("数据查询失败！", e);
+			 return ResultBuilder.buildError(ResponseCodeEnum.CODE_9999);
+		}
+	}
 	
 	
 	/**
@@ -113,39 +105,26 @@ public class ADCDController {
 	public RestfulEntityBySummit<List<ADCDBean>> queryByPadcd(
 			@RequestParam(value = "padcd",required = false) String padcd,
 			@RequestParam(value = "level",required = false) String level) {
-		HttpServletRequest request = ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest();
-		LogBean logBean = logUtil.insertLog(request,"1", "根据特定条件查询","");
-		//Map<String, Object> list = null;
 		try {
 			JSONObject json =new JSONObject();
 			json.put("padcd", padcd);
 			json.put("level", level);
 			return ResultBuilder.buildSuccess(adcdService.queryByPId(json));
 		} catch (Exception e) {
-			//e.printStackTrace();
-			logBean.setActionFlag("0");
-			logBean.setErroInfo(e.toString());
 			 logger.error("数据查询失败！", e);
 			 return ResultBuilder.buildError(ResponseCodeEnum.CODE_9999);
 		}
-		//logUtil.updateLog(logBean,"1");
-		//return list;
 	}
 	
 	@ApiOperation(value = "根据编码查询不分页")
 	@RequestMapping(value = "/queryByAdcds",method = RequestMethod.GET)
 	public RestfulEntityBySummit<List<ADCDBean>> queryByAdcds(
             @RequestParam(value = "adcds") String adcds) {
-		HttpServletRequest request = ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest();
-		LogBean logBean = logUtil.insertLog(request,"1", "根据adcds查询","");
+		
 		try {
 			List<ADCDBean> list=adcdService.queryByAdcds(adcds);
 			return ResultBuilder.buildSuccess(list);
 		} catch (Exception e) {
-			//e.printStackTrace();
-			logBean.setActionFlag("0");
-			logBean.setErroInfo(e.toString());
-			logUtil.updateLog(logBean,"1");
 			 logger.error("数据查询失败！", e);
 			 return ResultBuilder.buildError(ResponseCodeEnum.CODE_9999);
 		}
@@ -156,16 +135,10 @@ public class ADCDController {
 	public RestfulEntityBySummit<Map<String,ADCDBean>> queryAdcdMap(
 			@RequestParam(value = "adcds" ,required = false) String adcds,
             @RequestParam(value = "padcd" ,required = false) String padcd) {
-		HttpServletRequest request = ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest();
-		LogBean logBean = logUtil.insertLog(request,"1", "根据adcds查询","");
 		try {
 			Map<String,ADCDBean> adcdsMap=adcdService.queryAdcdMap(adcds,padcd);
 			return ResultBuilder.buildSuccess(adcdsMap);
 		} catch (Exception e) {
-			//e.printStackTrace();
-			logBean.setActionFlag("0");
-			logBean.setErroInfo(e.toString());
-			logUtil.updateLog(logBean,"1");
 			 logger.error("数据查询失败！", e);
 			 return ResultBuilder.buildError(ResponseCodeEnum.CODE_9999);
 		}
@@ -177,21 +150,18 @@ public class ADCDController {
 			@RequestParam(value = "page") int page,
             @RequestParam(value ="pageSize") int pageSize,
             @RequestParam(value = "padcd",required = false) String padcd) {
-		HttpServletRequest request = ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest();
-		LogBean logBean = logUtil.insertLog(request,"1", "根据PADCD查询分页","");
 		Page<ADCDBean> list = null;
 		try {
 			list = adcdService.queryByPage(page, pageSize, padcd);
 			return ResultBuilder.buildSuccess(list);
 		} catch (Exception e) {
-			//e.printStackTrace();
-			logBean.setActionFlag("0");
-			logBean.setErroInfo(e.toString());
-			logUtil.updateLog(logBean,"1");
 			logger.error("数据查询失败！", e);
-			 return ResultBuilder.buildError(ResponseCodeEnum.CODE_9999);
+			return ResultBuilder.buildError(ResponseCodeEnum.CODE_9999);
 		}
 	}
+	
+	
+	
 	/**
 	 * 新增
 	 */
@@ -199,7 +169,7 @@ public class ADCDController {
 	@RequestMapping(value = "/add",method = RequestMethod.POST)
 	public RestfulEntityBySummit<String> add(@RequestBody ADCDBean adcdBean) {
 		HttpServletRequest request = ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest();
-		LogBean logBean = logUtil.insertLog(request,"1", "行政区划新增","");
+		logUtil.insertLog("1", "行政区划新增");
 		try {
 			//list = adcdService.add(adcdBean);
 			ResponseCodeEnum responseCodeEnum=adcdService.add(adcdBean);
@@ -209,11 +179,7 @@ public class ADCDController {
 			   return ResultBuilder.buildSuccess();
 			}
 		} catch (Exception e) {
-			//e.printStackTrace();
 			logger.error("行政区划新增失败！", e);
-			logBean.setActionFlag("0");
-			logBean.setErroInfo(e.toString());
-			logUtil.updateLog(logBean,"1");
 			return ResultBuilder.buildError(ResponseCodeEnum.CODE_9999);
 		}
 	}
@@ -225,7 +191,7 @@ public class ADCDController {
 	@RequestMapping(value = "/edit",method = RequestMethod.POST)
 	public RestfulEntityBySummit<?> edit(@RequestBody ADCDBean adcdBean) {
 		HttpServletRequest request = ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest();
-		LogBean logBean = logUtil.insertLog(request,"1", "行政区划编辑","");
+		LogBean logBean = logUtil.insertLog("1", "行政区划编辑");
 		//Map<String, Object> list = null;
 		try {
 			adcdService.edit(adcdBean);
@@ -233,9 +199,6 @@ public class ADCDController {
 		} catch (Exception e) {
 			//e.printStackTrace();
 			logger.error("行政区划编辑失败！", e);
-			logBean.setActionFlag("0");
-			logBean.setErroInfo(e.toString());
-			logUtil.updateLog(logBean,"1");
 			 return ResultBuilder.buildError(ResponseCodeEnum.CODE_9999);
 		}
 		//logUtil.updateLog(logBean,"1");
@@ -249,22 +212,15 @@ public class ADCDController {
 	@RequestMapping(value = "/del",method = RequestMethod.DELETE)
 	public RestfulEntityBySummit<?> del(@RequestParam(value = "ids") String ids) {
 		HttpServletRequest request = ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest();
-		LogBean logBean = logUtil.insertLog(request,"1", "行政区划删除","");
+		LogBean logBean = logUtil.insertLog("1", "行政区划删除");
 		try {
 			 adcdService.del(ids);
 			return ResultBuilder.buildSuccess();
-			//return new RestfulEntityBySummit<String>(adcdService.del(ids),null);
 		} catch (Exception e) {
 			//e.printStackTrace();
 			logger.error("行政区划删除失败！", e);
-			logBean.setActionFlag("0");
-			logBean.setErroInfo(e.toString());
-			logUtil.updateLog(logBean,"1");
 			 return ResultBuilder.buildError(ResponseCodeEnum.CODE_9999);
 		}
-		//logUtil.updateLog(logBean,"1");
-		
-		//return list;
 	}
 	
 }

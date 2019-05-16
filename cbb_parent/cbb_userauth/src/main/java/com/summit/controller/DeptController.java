@@ -51,21 +51,11 @@ public class DeptController {
 	@ApiOperation(value = "查询部门树")
 	@RequestMapping(value = "/queryTree",method = RequestMethod.GET)
 	public RestfulEntityBySummit<DeptBean> queryTree(@RequestParam(value = "pid",required = false) String pid) {
-		HttpServletRequest request = ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest();
-		//UserContextHolder.getUserName();
-		LogBean logBean = new LogBean();
-		//Map<String, Object> list = null;
+		
 	     try {
-	           logBean = logUtil.insertLog(request, "1", "查询部门树", "");
-	           //list = ds.queryDeptTree();
-	           //return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_0000,ds.queryDeptTree(pid));
 	           return ResultBuilder.buildSuccess(ds.queryDeptTree(pid));
 	     } catch (Exception e) {
 	    	    logger.error("查询部门树失败：", e);
-	    	    logUtil.updateLog(logBean, "1");
-	            //e.printStackTrace();
-	            logBean.setActionFlag("0");
-	            logBean.setErroInfo(e.toString());
 	            return ResultBuilder.buildError(ResponseCodeEnum.CODE_9999);
 	     }
 	    // logUtil.updateLog(logBean, "1");
@@ -75,22 +65,13 @@ public class DeptController {
 	@ApiOperation(value = "查询部门--JSON 数据直接生成树结构", notes = "用于application/json格式")
 	@GetMapping(value = "/queryDeptJsonTree")
 	public RestfulEntityBySummit<DeptTreeBean> queryJsonTree(@RequestParam(value = "pid",required = false)  String pid) {
-		HttpServletRequest request = ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest();
-		LogBean logBean = new LogBean();
 	     try {
-	           logBean = logUtil.insertLog(request, "1", "查询行政区划树--JSON 数据直接生成树结构", "");
 	           DeptTreeBean adcdBean=ds.queryJsonAdcdTree(pid);
 	           return ResultBuilder.buildSuccess(adcdBean);
 	     } catch (Exception e) {
-	            //e.printStackTrace();
-	            logBean.setActionFlag("0");
-	            logBean.setErroInfo(e.toString());
 	            logger.error("数据查询失败！", e);
 	            return ResultBuilder.buildError(ResponseCodeEnum.CODE_9999);
 	     }
-	    // logUtil.updateLog(logBean, "1");
-		
-		//return list;
 	}
 	/**
 	 * 
@@ -100,22 +81,13 @@ public class DeptController {
 	@ApiOperation(value = "根据id查询")
 	@RequestMapping(value = "/queryById",method = RequestMethod.GET)
 	public RestfulEntityBySummit<DeptBean> queryById(@RequestParam(value = "id") String id) {
-		HttpServletRequest request = ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest();
-		LogBean logBean = logUtil.insertLog(request,"1", "根据id查询分页","");
 		try {
 			return ResultBuilder.buildSuccess(ds.queryById(id));
-			//return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_0000,ds.queryById(id));
 		} catch (Exception e) {
 			//e.printStackTrace();
 			logger.error("查询失败：", e);
-			logBean.setActionFlag("0");
-			logBean.setErroInfo(e.toString());
-			logUtil.updateLog(logBean,"1");
 			return ResultBuilder.buildError(ResponseCodeEnum.CODE_9999);
 		}
-		//logUtil.updateLog(logBean,"1");
-		
-		//return list;
 	}
 	/**
 	 * 
@@ -125,17 +97,10 @@ public class DeptController {
 	@ApiOperation(value = "根据id查询部门包含行政区划")
 	@RequestMapping(value = "/queryDeptAdcdById",method = RequestMethod.GET)
 	public RestfulEntityBySummit<DeptBean> queryDeptAdcdById(@RequestParam(value = "id") String id) {
-		HttpServletRequest request = ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest();
-		LogBean logBean = logUtil.insertLog(request,"1", "根据id查询分页","");
 		try {
 			return ResultBuilder.buildSuccess(ds.queryDeptAdcdById(id));
-			//return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_0000,ds.queryById(id));
 		} catch (Exception e) {
-			//e.printStackTrace();
 			logger.error("查询失败：", e);
-			logBean.setActionFlag("0");
-			logBean.setErroInfo(e.toString());
-			logUtil.updateLog(logBean,"1");
 			return ResultBuilder.buildError(ResponseCodeEnum.CODE_9999);
 		}
 		
@@ -152,8 +117,6 @@ public class DeptController {
             @RequestParam(value = "deptname",required = false) String deptname,
             @RequestParam(value = "adcd",required = false) String adcd,
             @RequestParam(value = "adnm",required = false) String adnm) {
-		HttpServletRequest request = ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest();
-		LogBean logBean = logUtil.insertLog(request,"1", "根据pid查询分页","");
 		//Page<JSONObject> list = null;
 		try {
 			JSONObject paramJson = new JSONObject();
@@ -162,20 +125,12 @@ public class DeptController {
 			 paramJson.put("deptname",deptname);
 			 paramJson.put("adcd",adcd);
 			 paramJson.put("adnm",adnm);
-			 //list = ds.queryByPage(start, limit, pid);
 			return ResultBuilder.buildSuccess(ds.queryByPage(page, pageSize, paramJson));
-			//return new RestfulEntityBySummit<>(ResponseCodeBySummit.CODE_0000,);
 		} catch (Exception e) {
 			//e.printStackTrace();
 			logger.error("查询失败：", e);
-			logBean.setActionFlag("0");
-			logBean.setErroInfo(e.toString());
-			logUtil.updateLog(logBean,"1");
 			return ResultBuilder.buildError(ResponseCodeEnum.CODE_9999);
 		}
-		//logUtil.updateLog(logBean,"1");
-		
-		//return list;
 	}
 	
 	
@@ -187,7 +142,7 @@ public class DeptController {
 	@RequestMapping(value = "/add",method = RequestMethod.POST)
 	public RestfulEntityBySummit<String> add(@RequestBody  DeptBean deptBean) {
 		HttpServletRequest request = ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest();
-		LogBean logBean = logUtil.insertLog(request,"1", "部门新增","");
+		LogBean logBean = logUtil.insertLog("1", "部门新增");
 		//Map<String, Object> list = null;
 		try {
 			//list = ds.add(deptBean);
@@ -198,16 +153,9 @@ public class DeptController {
 				return ResultBuilder.buildSuccess();
 			}
 		} catch (Exception e) {
-			//e.printStackTrace();
 			logger.error("操作失败：", e);
-			logBean.setActionFlag("0");
-			logBean.setErroInfo(e.toString());
-			logUtil.updateLog(logBean,"1");
 			return ResultBuilder.buildError(ResponseCodeEnum.CODE_9999);
 		}
-		//logUtil.updateLog(logBean,"1");
-		
-		//return list;
 	}
 	
 	/**
@@ -217,7 +165,7 @@ public class DeptController {
 	@RequestMapping(value = "/edit",method = RequestMethod.POST)
 	public RestfulEntityBySummit<String> edit(@RequestBody DeptBean deptBean) {
 		HttpServletRequest request = ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest();
-		LogBean logBean = logUtil.insertLog(request,"1", "部门编辑","");
+		LogBean logBean = logUtil.insertLog("1", "部门编辑");
 		//Map<String, Object> list = null;
 		try {
 			//list = ds.edit(deptBean);
@@ -226,14 +174,8 @@ public class DeptController {
 		} catch (Exception e) {
 			//e.printStackTrace();
 			logger.error("操作失败：", e);
-			logBean.setActionFlag("0");
-			logBean.setErroInfo(e.toString());
-			logUtil.updateLog(logBean,"1");
 			return ResultBuilder.buildError(ResponseCodeEnum.CODE_9999);
 		}
-		//logUtil.updateLog(logBean,"1");
-		
-		//return list;
 	}
 	/**
 	 * 删除
@@ -242,17 +184,13 @@ public class DeptController {
 	@RequestMapping(value = "/del",method = RequestMethod.DELETE)
 	public RestfulEntityBySummit<String> del(@RequestParam(value = "ids") String ids) {
 		HttpServletRequest request = ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest();
-		LogBean logBean = logUtil.insertLog(request,"1", "部门删除","");
+		LogBean logBean = logUtil.insertLog("1", "部门删除");
 		try {
 			//list = ds.del(ids);
 			ds.del(ids);
 			return ResultBuilder.buildSuccess();
 		} catch (Exception e) {
-			//e.printStackTrace();
 			logger.error("操作失败：", e);
-			logBean.setActionFlag("0");
-			logBean.setErroInfo(e.toString());
-			logUtil.updateLog(logBean,"1");
 			return ResultBuilder.buildError(ResponseCodeEnum.CODE_9999);
 		}
 	}

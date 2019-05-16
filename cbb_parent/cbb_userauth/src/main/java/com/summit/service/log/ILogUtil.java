@@ -16,7 +16,7 @@ import javax.servlet.http.HttpServletRequest;
 @Component
 public interface ILogUtil {
 	
-	public LogBean insertLog(HttpServletRequest request, String logType, String funName,String userName);
+	public LogBean insertLog( String logType, String funName);
 
 	public int updateLog(LogBean logBean, String type);
 
