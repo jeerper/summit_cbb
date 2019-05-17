@@ -40,7 +40,6 @@ cd ${WORKSPACE}/cbb_parent/${projectName}/deploy
 
 echo "部署"${projectName}"(Docker版本)"
 
-
 docker-compose -p ${projectName} down  --rmi all
 
 docker-compose -p ${projectName} up  -d
