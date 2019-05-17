@@ -1,5 +1,7 @@
 package com.summit.controller;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.TypeReference;
 import com.summit.common.entity.*;
 import com.summit.common.redis.user.UserInfoCache;
 import com.summit.common.util.ResultBuilder;
@@ -11,6 +13,7 @@ import com.summit.util.SysConstants;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,6 +24,8 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
+
+import java.util.ArrayList;
 import java.util.List;
 
 @Api(description = "用户管理")
@@ -151,9 +156,9 @@ public class UserController {
         }
     }
 
-    @ApiOperation(value = "根据用户名查询用户信息")
-    @GetMapping("/queryUserInfoByUserName")
-    public RestfulEntityBySummit<UserInfo> queryUserInfoByUserName(
+    @ApiOperation(value = "根据用户名查询用户信息(对内接口),该接口只供注册中心使用")
+    @GetMapping("/queryUserInfoByUserNameService")
+    public RestfulEntityBySummit<UserInfo> queryUserInfoByUserNameService(
     		@RequestParam(value = "userName")  String userName) {
         try {
         	UserInfo ub = us.queryByUserName(userName);
@@ -173,22 +178,60 @@ public class UserController {
             	funList.toArray(funArray);
             	ub.setPermissions(funArray);
             }
+            return ResultBuilder.buildSuccess(ub);
+        } catch (Exception e) {
+            logger.error("根据用户名查询用户信息失败-对内接口：", e);
+            return ResultBuilder.buildError(ResponseCodeEnum.CODE_9999);
+        }
+    }
+    
+    @ApiOperation(value = "根据用户名查询用户信息--对外接口")
+    @GetMapping("/queryUserInfoByUserName")
+    public RestfulEntityBySummit<UserInfo> queryUserInfoByUserName(
+    		@RequestParam(value = "userName")  String userName) {
+        try {
+        	UserInfo ub = us.queryByUserName(userName);
+            if (ub == null) {
+            	 return ResultBuilder.buildError(ResponseCodeEnum.CODE_4023);
+            }
+            ub.setPassword(null);
+            List<String> roleList = us.queryRoleByUserName(userName);
+            List<String> funList = us.getFunByUserName(userName);
             
-            String[] adcdsArray = us.queryAdcdByUserName(userName);
-            if(adcdsArray!=null && adcdsArray.length>0){
+            if(roleList!=null && roleList.size()>0){
+            	String[] roleArray = new String[roleList.size()];
+            	roleList.toArray(roleArray);
+                ub.setRoles(roleArray);	
+            }
+            if(funList!=null && funList.size()>0){
+            	String[] funArray = new String[funList.size()];
+            	funList.toArray(funArray);
+            	ub.setPermissions(funArray);
+            }
+            JSONObject objcet= us.queryAdcdByUserName(userName);
+           
+            if(objcet!=null){
+            	String[] adcdsArray = JSON.parseObject(objcet.get("adcds").toString(), new TypeReference<String[]>() {});
             	ub.setAdcds(adcdsArray);
+            	String adnms=objcet.getString("adnms");
+            	ub.setAdnms(adnms);
             }
             
-            String[] deptsArray = us.queryDeptByUserName(userName);
-            if(deptsArray!=null && deptsArray.length>0){
+            JSONObject objcetdept=  us.queryDeptByUserName(userName);
+            if(objcetdept!=null ){
+            	String[] deptsArray = JSON.parseObject(objcetdept.get("deptIds").toString(), new TypeReference<String[]>() {});
             	ub.setDepts(deptsArray);
+            	String deptnames=objcetdept.getString("deptnames");
+            	ub.setDeptNames(deptnames);
             }
+            
             return ResultBuilder.buildSuccess(ub);
         } catch (Exception e) {
             logger.error("根据用户名查询用户信息失败：", e);
             return ResultBuilder.buildError(ResponseCodeEnum.CODE_9999);
         }
     }
+    
     
     @ApiOperation(value = "根据用户名查询所有菜单")
     @GetMapping("/queryFunctionInfoByUserName")

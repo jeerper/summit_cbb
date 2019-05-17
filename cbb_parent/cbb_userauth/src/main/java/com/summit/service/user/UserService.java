@@ -278,32 +278,48 @@ public class UserService {
 	    
 	}
 	
-	public String[] queryAdcdByUserName(String userName) {
-		String sql = "SELECT ADCD FROM SYS_USER_ADCD WHERE USERNAME = ?";
+	public JSONObject queryAdcdByUserName(String userName) {
+		String sql = "SELECT USERADCD.ADCD, ADCDS.ADNM FROM SYS_USER_ADCD USERADCD inner join SYS_AD_CD ADCDS  ON USERADCD.ADCD=ADCDS.ADCD  WHERE USERNAME = ?";
 		List<JSONObject> l = ur.queryAllCustom(sql, userName);
 		if(l!=null && l.size()>0){
+			String adnms="";
 			String[] adcds=  new String [l.size()];
 			int i=0;
 			for (JSONObject o : l) {
 				adcds[i]=st.objJsonGetString(o, "ADCD");
+				adnms+=st.objJsonGetString(o, "ADNM")+",";
 				i++;
 			}
-			return adcds;
+			JSONObject jsonobject=new JSONObject();
+			jsonobject.put("adcds", adcds);
+			if(adnms!=null && !"".equals(adnms)){
+				jsonobject.put("adnms", adnms.substring(0, adnms.length()-1));	
+			}
+			return jsonobject;
 		}
 		return null;
 	}
 	
-	public String[] queryDeptByUserName(String userName) {
-		String sql = "SELECT DEPTID FROM SYS_USER_DEPT WHERE USERNAME = ?";
+	public JSONObject queryDeptByUserName(String userName) {
+		String sql = "SELECT DEPTID,DEPTNAME FROM SYS_USER_DEPT userdept inner join sys_dept dept on userdept.DEPTID=dept.ID WHERE USERNAME = ?";
 		List<JSONObject> l = ur.queryAllCustom(sql, userName);
 		if(l!=null && l.size()>0){
+			String deptnames="";
 			String[] deptIds=  new String [l.size()];
 			int i=0;
 			for (JSONObject o : l) {
 				deptIds[i]=st.objJsonGetString(o, "DEPTID");
+				if(i!=l.size()-1){
+					deptnames+=st.objJsonGetString(o, "DEPTNAME")+",";
+			    }
 				i++;
 			}
-			return deptIds;
+			JSONObject jsonobject=new JSONObject();
+			jsonobject.put("deptIds", deptIds);
+			if(deptnames!=null && !"".equals(deptnames)){
+				jsonobject.put("deptnames", deptnames.substring(0, deptnames.length()-1));	
+			}
+			return jsonobject;
 		}
 		return null;
 	}
