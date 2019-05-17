@@ -61,7 +61,7 @@ public class DemoController {
 	@ApiOperation(value = "第四个demo接口,有参数传递，返回成功代码，返回用户信息")
 	@GetMapping(value = "/queryUserInfoByUserName")
 	public RestfulEntityBySummit<UserInfo> queryUserInfoByUserName(String userName) {
-		UserInfo userInfo=remoteUserAuthService.queryUserInfoByUserName(userName).getData();
+		UserInfo userInfo=remoteUserAuthService.queryUserInfoByUserNameService(userName).getData();
 		return ResultBuilder.buildSuccess(userInfo);
 	}
 
