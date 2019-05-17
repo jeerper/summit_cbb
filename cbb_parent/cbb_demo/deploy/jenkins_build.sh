@@ -36,6 +36,12 @@ mvn clean
 
 mvn deploy
 
+if [ $? = 0 ]
+then
+ echo "maven构建成功"
+else
+ exit 1
+fi
 
 cd ${WORKSPACE}/cbb_parent/${projectName}/deploy
 
