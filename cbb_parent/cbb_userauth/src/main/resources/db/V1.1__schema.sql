@@ -98,14 +98,14 @@ CREATE TABLE `sys_log` (
   `userName` varchar(100) DEFAULT NULL COMMENT '登录用户名',
   `callerIP` varchar(100) DEFAULT NULL COMMENT '访问机器IP',
   `funName` varchar(255) DEFAULT NULL COMMENT '访问模块名称',
-  `sTime` datetime(3) DEFAULT NULL COMMENT '访问开始时间',
-  `actionTime` int(11) DEFAULT NULL COMMENT '执行时间',
+  `sTime` datetime DEFAULT NULL COMMENT '访问开始时间',
   `erroInfo` longtext COMMENT '错误信息',
-  `eTime` datetime(3) DEFAULT NULL,
+  `updateTime` datetime DEFAULT NULL COMMENT '修改时间',
   `actionFlag` varchar(1) DEFAULT NULL COMMENT '调用是否成功标志  1：成功  0：失败',
+  `operType` varchar(1) DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE,
   KEY `index_sTimeasc` (`sTime`) USING BTREE,
   KEY `index_sTimedesc` (`sTime`) USING BTREE,
-  KEY `index_eTimeasc` (`eTime`) USING BTREE,
-  KEY `index_eTimedesc` (`eTime`) USING BTREE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  KEY `index_eTimeasc` (`updateTime`) USING BTREE,
+  KEY `index_eTimedesc` (`updateTime`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=COMPACT;
