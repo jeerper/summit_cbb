@@ -58,8 +58,8 @@ public class LogUtilImpl  {
 			String id = SummitTools.getKey();
 			String callerIP = "";
 			String sTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.sss").format(new Date());
-			String insertLogSql = "INSERT INTO SYS_LOG(id,userName,callerIP,funName,stime,systemName,describe,actionFlag) VALUES (?,?,?,?,?,?,?) ";
-			jdbcTemplate.update(insertLogSql, id,userName,callerIP,logBean.getFunName(),sTime,logBean.getSystemName(),logBean.getDescribe(),"0");
+			String insertLogSql = "INSERT INTO SYS_LOG(id,userName,callerIP,funName,stime,systemName,describe,actionFlag,operType) VALUES (?,?,?,?,?,?,?) ";
+			jdbcTemplate.update(insertLogSql, id,userName,callerIP,logBean.getFunName(),sTime,logBean.getSystemName(),logBean.getDescribe(),"0",logBean.getOperType());
 				
 		}
 	}
@@ -76,12 +76,13 @@ public class LogUtilImpl  {
 			SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.sss");
 			
 			String updateTime = sf.format(new Date());
-			String updateLogSql = "UPDATE SYS_LOG SET updateTime=?,actionFlag = ?,erroInfo = ?,systemName=?,describe=? WHERE id = ? ";
+			String updateLogSql = "UPDATE SYS_LOG SET updateTime=?,actionFlag = ?,erroInfo = ?,systemName=?,describe=? ,operType=? WHERE id = ? ";
 			jdbcTemplate.update(
 					updateLogSql,
 					updateTime,
 					logBean.getActionFlag(),
 					logBean.getErroInfo(),
+					logBean.getOperType(),
 					logBean.getId()
 			);
 		}
@@ -101,7 +102,7 @@ public class LogUtilImpl  {
 			LinkedMap linkedMap=new LinkedMap();
 			Integer index = 1;
 			StringBuilder sb = new StringBuilder("select syslog.id,syslog.username,callerIP,funName,DATE_FORMAT(stime, '%Y-%m-%d %H:%i:%s')AS stime,erroInfo,");
-			sb.append(" DATE_FORMAT(updateTime, '%Y-%m-%d %H:%i:%s')AS updateTime,actionFlag, user1.NAME ");
+			sb.append(" DATE_FORMAT(updateTime, '%Y-%m-%d %H:%i:%s')AS updateTime,actionFlag, user1.NAME,operType ");
 			sb.append(" from sys_log syslog  inner join sys_user user1");
 			sb.append(" on syslog.username=user1.username where 1=1 ");
             
