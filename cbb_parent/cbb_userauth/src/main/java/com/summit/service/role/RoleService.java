@@ -8,8 +8,7 @@ import com.summit.common.entity.RoleBean;
 import com.summit.common.entity.AntdJsonBean;
 import com.summit.domain.role.RoleBeanRowMapper;
 import com.summit.repository.UserRepository;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
+import com.summit.cbb.utils.page.Page;
 import com.summit.util.SummitTools;
 import net.sf.json.JSONObject;
 
@@ -86,7 +85,7 @@ public class RoleService {
 			// pageRoleBeanInfo.setContent(students);
 			 ///pageRoleBeanInfo.setTotalElements(rs.getTotalElements());
 			 //return pageRoleBeanInfo;
-			 return new PageImpl(roles,rs.getPageable(),rs.getTotalElements());
+			// return new PageImpl(roles,rs.getPageable(),rs.getTotalElements());
 		}
 		return null;
 	}

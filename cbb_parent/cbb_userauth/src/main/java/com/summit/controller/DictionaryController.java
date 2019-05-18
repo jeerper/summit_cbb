@@ -22,12 +22,13 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import com.summit.common.entity.DictionaryBean;
+import com.summit.common.entity.LogBean;
 import com.summit.common.entity.ResponseCodeEnum;
 import com.summit.common.entity.RestfulEntityBySummit;
 import com.summit.common.util.ResultBuilder;
-import com.summit.domain.log.LogBean;
 import com.summit.service.dictionary.DictionaryService;
-import com.summit.service.log.ILogUtil;
+import com.summit.service.log.LogUtilImpl;
+
 import org.springframework.data.domain.Page;
 import com.summit.util.SysConstants;
 
@@ -46,19 +47,20 @@ public class DictionaryController {
 	@Autowired
 	private DictionaryService dictionaryService;
 	@Autowired
-	ILogUtil logUtil;
+	LogUtilImpl logUtil;
 
 	@ApiOperation(value = "新增数据字典", notes = "编码(code),名称(name)都是必输项")
     @PostMapping(value = "/add")
 	public  RestfulEntityBySummit<String> add(@RequestBody DictionaryBean dictionaryBean) {
-		LogBean logBean = new LogBean();
 		try {
 			//HttpServletRequest request = ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest();
-			logBean = logUtil.insertLog("1", "数据字典新增");
+			
 			ResponseCodeEnum responseCodeEnum=dictionaryService.add(dictionaryBean);
 			if(responseCodeEnum!=null){
 				return ResultBuilder.buildError(responseCodeEnum);
 			}
+			LogBean logBean = new LogBean("数据字典管理","共享用户组件","新增数据字典："+dictionaryBean,"1");
+		    logUtil.insertLog(logBean);
 			return ResultBuilder.buildSuccess();
 		} catch (Exception e) {
 			logger.error("操作失败", e);
@@ -71,13 +73,11 @@ public class DictionaryController {
 	@DeleteMapping("del")
 	public RestfulEntityBySummit<String> del(
 			@RequestParam(value = "codes") String codes ) {
-		LogBean logBean = new LogBean();
 		try {
-			HttpServletRequest request = ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest();
-			logBean = logUtil.insertLog("1", "数据字典删除");
 			dictionaryService.del(codes);
+			LogBean logBean = new LogBean("数据字典管理","共享用户组件","删除数据字典："+codes,"3");
+		    logUtil.insertLog(logBean);
 			return ResultBuilder.buildSuccess();
-			//return new RestfulEntityBySummit<String>(,null);
 		} catch (Exception e) {
 			logger.error("操作失败", e);
 			return ResultBuilder.buildError(ResponseCodeEnum.CODE_9999);
@@ -87,11 +87,10 @@ public class DictionaryController {
 	@ApiOperation(value = "数据字典修改", notes = "编码(code),名称(name)都是必输项")
 	@PutMapping("edit")
 	public RestfulEntityBySummit<String> edit(@RequestBody DictionaryBean dictionaryBean) {
-		LogBean logBean = new LogBean();
 		try {
-			HttpServletRequest request = ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest();
-			logBean = logUtil.insertLog("1", "数据字典修改");
 			dictionaryService.edit(dictionaryBean);
+			LogBean logBean = new LogBean("数据字典管理","共享用户组件","修改数据字典信息："+dictionaryBean,"2");
+		    logUtil.insertLog(logBean);
 			return ResultBuilder.buildSuccess();
 		} catch (Exception e) {
 			logger.error("操作失败", e);

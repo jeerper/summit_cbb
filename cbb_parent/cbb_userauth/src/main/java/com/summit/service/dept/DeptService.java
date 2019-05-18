@@ -240,8 +240,8 @@ public class DeptService {
         		index++;
         	}
         }
-		//Page<JSONObject>  rs =null;
-		Page<Object> rs =  ur.queryByCustomPage(sql.toString(), start, limit, linkedMap);
+		Page<JSONObject>  rs =null;
+		//Page<Object> rs =  ur.queryByCustomPage(sql.toString(), start, limit, linkedMap);
        // Page<JSONObject>  rs = ur.queryByCustomPage(sql.toString(), start, limit);
 		if(rs!=null){
 			 ArrayList<DeptBean> depts = JSON.parseObject(rs.getContent().toString(), new TypeReference<ArrayList<DeptBean>>() {});

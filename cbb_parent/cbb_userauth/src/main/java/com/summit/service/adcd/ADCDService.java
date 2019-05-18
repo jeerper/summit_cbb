@@ -1,26 +1,26 @@
 package com.summit.service.adcd;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.TypeReference;
-import com.summit.common.entity.ADCDBean;
-import com.summit.common.entity.ADCDTreeBean;
-import com.summit.common.entity.ResponseCodeEnum;
-import com.summit.domain.adcd.ADCDBeanRowMapper;
-import com.summit.repository.UserRepository;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-import net.sf.json.JSONObject;
 import org.apache.commons.collections.map.LinkedMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.TypeReference;
+import com.summit.cbb.utils.page.Page;
+import com.summit.common.entity.ADCDBean;
+import com.summit.common.entity.ADCDTreeBean;
+import com.summit.common.entity.ResponseCodeEnum;
+import com.summit.domain.adcd.ADCDBeanRowMapper;
+import com.summit.repository.UserRepository;
+
+import net.sf.json.JSONObject;
 
 
 @Service
@@ -302,7 +302,8 @@ public class ADCDService {
 		Page<Object> rs = ur.queryByCustomPage(sql, start, limit, linkedMap);
 		if(rs!=null){
 			 ArrayList<ADCDBean> adcds = JSON.parseObject(rs.getContent().toString(), new TypeReference<ArrayList<ADCDBean>>() {});
-			 return new PageImpl(adcds,rs.getPageable(),rs.getTotalElements());
+			// return new PageImpl(adcds,rs.getPageable(),rs.getTotalElements());
+			 return new Page<ADCDBean>(adcds,rs.getPageable());
 		}
 		return null;
 	}

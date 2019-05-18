@@ -1,29 +1,24 @@
 package com.summit.controller;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 
-import com.summit.common.entity.ADCDTreeBean;
 import com.summit.common.entity.DeptBean;
 import com.summit.common.entity.DeptTreeBean;
+import com.summit.common.entity.LogBean;
 import com.summit.common.entity.ResponseCodeEnum;
 import com.summit.common.entity.RestfulEntityBySummit;
 import com.summit.common.util.ResultBuilder;
-import com.summit.domain.log.LogBean;
 import com.summit.service.dept.DeptService;
-import com.summit.service.log.ILogUtil;
-import org.springframework.data.domain.Page;
+import com.summit.service.log.LogUtilImpl;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -43,7 +38,7 @@ public class DeptController {
 	@Autowired
 	private DeptService ds;
 	@Autowired
-	ILogUtil logUtil;
+	LogUtilImpl logUtil;
 	/**
 	 * 查询部门树
 	 * @return
@@ -51,15 +46,12 @@ public class DeptController {
 	@ApiOperation(value = "查询部门树")
 	@RequestMapping(value = "/queryTree",method = RequestMethod.GET)
 	public RestfulEntityBySummit<DeptBean> queryTree(@RequestParam(value = "pid",required = false) String pid) {
-		
 	     try {
 	           return ResultBuilder.buildSuccess(ds.queryDeptTree(pid));
 	     } catch (Exception e) {
 	    	    logger.error("查询部门树失败：", e);
 	            return ResultBuilder.buildError(ResponseCodeEnum.CODE_9999);
 	     }
-	    // logUtil.updateLog(logBean, "1");
-		//return list;
 	}
 	
 	@ApiOperation(value = "查询部门--JSON 数据直接生成树结构", notes = "用于application/json格式")
@@ -73,6 +65,7 @@ public class DeptController {
 	            return ResultBuilder.buildError(ResponseCodeEnum.CODE_9999);
 	     }
 	}
+	
 	/**
 	 * 
 	 * 根据id查询（分页）
@@ -141,12 +134,11 @@ public class DeptController {
 	@ApiOperation(value = "部门新增",notes="编码(deptCode),部门名称(deptName),上级部门(pid)都是必输项,没有上级部门为pid='-1'")
 	@RequestMapping(value = "/add",method = RequestMethod.POST)
 	public RestfulEntityBySummit<String> add(@RequestBody  DeptBean deptBean) {
-		HttpServletRequest request = ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest();
-		LogBean logBean = logUtil.insertLog("1", "部门新增");
-		//Map<String, Object> list = null;
 		try {
 			//list = ds.add(deptBean);
 			ResponseCodeEnum responseCodeEnum=ds.add(deptBean);
+			LogBean logBean = new LogBean("部门管理","共享用户组件","新增部门信息："+deptBean,"1");
+		    logUtil.insertLog(logBean);
 			if(responseCodeEnum!=null){ 
 				return ResultBuilder.buildError(responseCodeEnum);
 			}else{
@@ -164,12 +156,11 @@ public class DeptController {
 	@ApiOperation(value = "部门编辑",notes="id,编码(deptCode),部门名称(deptName),上级部门(pid)都是必输项,没有上级部门为pid='-1'")
 	@RequestMapping(value = "/edit",method = RequestMethod.POST)
 	public RestfulEntityBySummit<String> edit(@RequestBody DeptBean deptBean) {
-		HttpServletRequest request = ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest();
-		LogBean logBean = logUtil.insertLog("1", "部门编辑");
-		//Map<String, Object> list = null;
 		try {
 			//list = ds.edit(deptBean);
 			ds.edit(deptBean);
+			LogBean logBean = new LogBean("部门管理","共享用户组件","部门编辑信息："+deptBean,"2");
+		    logUtil.insertLog(logBean);
 			return ResultBuilder.buildSuccess();
 		} catch (Exception e) {
 			//e.printStackTrace();
@@ -183,11 +174,10 @@ public class DeptController {
 	@ApiOperation(value = "部门删除")
 	@RequestMapping(value = "/del",method = RequestMethod.DELETE)
 	public RestfulEntityBySummit<String> del(@RequestParam(value = "ids") String ids) {
-		HttpServletRequest request = ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest();
-		LogBean logBean = logUtil.insertLog("1", "部门删除");
 		try {
-			//list = ds.del(ids);
 			ds.del(ids);
+			LogBean logBean = new LogBean("部门管理","共享用户组件","部门删除信息："+ids,"3");
+		    logUtil.insertLog(logBean);
 			return ResultBuilder.buildSuccess();
 		} catch (Exception e) {
 			logger.error("操作失败：", e);

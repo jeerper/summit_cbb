@@ -4,10 +4,13 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.collections.map.LinkedMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,67 +20,48 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.TypeReference;
+import com.summit.cbb.utils.page.Page;
+import com.summit.common.entity.LogBean;
+import com.summit.common.entity.QueryLogBean;
 import com.summit.common.entity.UserInfo;
 import com.summit.common.web.filter.UserContextHolder;
-import com.summit.domain.log.LogBean;
 import com.summit.repository.UserRepository;
 import com.summit.util.SummitTools;
+import com.summit.util.SysConstants;
+
+import net.sf.json.JSONObject;
 
 @Component
 @Service
-public class LogUtilImpl implements ILogUtil {
+public class LogUtilImpl  {
 	private static final Logger logger = LoggerFactory.getLogger(LogUtilImpl.class);
 	@Autowired
 	public UserRepository ur;
 	
 	@Autowired
 	private JdbcTemplate jdbcTemplate;
-
 	/**
-	 * 
 	 * 新增日志方法
-	 * @param request
-	 * @param logType:日志类型  1：系统日志  2：运行日志
-	 * @param funName:访问的模块名称
-	 * @return LogBean:日志实体类
-	 * 
+	 * @param logBean
+	 * @return
 	 */
-	public  LogBean insertLog(String logType,String funName) {
+	public  void insertLog(LogBean logBean) {
 		HttpServletRequest request = ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest();
 		String userName="";
 		UserInfo userInfo=UserContextHolder.getUserInfo();
 		if(userInfo!=null){
 			   userName=userInfo.getUserName();
 		}
-		
-		LogBean lg = null;
-		if(request !=null && logType!=null && logType.trim().length()>0 && funName!=null && funName.trim().length()>0){
+		if(request !=null  && logBean.getFunName()!=null && logBean.getFunName().trim().length()>0){
 			String id = SummitTools.getKey();
 			String callerIP = "";
 			String sTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.sss").format(new Date());
-			String insertLogSql = "";
-			String dbName = "";
-			if("1".equals(logType)){
-				callerIP = getIPFromHttp(request);
-				dbName = "SYS_LOG";
-			}
-			insertLogSql = "INSERT INTO "+dbName+"(id,userName,callerIP,funName,sTime) VALUES (?,?,?,?,?) ";
-			int insertLogCount = jdbcTemplate.update(insertLogSql, id,userName,callerIP,funName,sTime);
-			if(insertLogCount>0){
-				logger.debug("插入日志记录成功！");
-				lg = new LogBean();
-				lg.setId(id);
-				lg.setUserName(userName);
-				lg.setsTime(sTime);
-				lg.setCallerIP(callerIP);
-				lg.setFunName(funName);
-				// 默认成功，当失败时将该值修改为0
-				lg.setActionFlag("1");
-			}else{
-				logger.debug("插入日志记录失败！");
-			}
+			String insertLogSql = "INSERT INTO SYS_LOG(id,userName,callerIP,funName,stime,systemName,describe,actionFlag) VALUES (?,?,?,?,?,?,?) ";
+			jdbcTemplate.update(insertLogSql, id,userName,callerIP,logBean.getFunName(),sTime,logBean.getSystemName(),logBean.getDescribe(),"0");
+				
 		}
-		return lg;
 	}
 	
 	/**
@@ -87,44 +71,80 @@ public class LogUtilImpl implements ILogUtil {
 	 * @return int :更新成功的数量
 	 * 
 	 */
-	public int updateLog(LogBean logBean,String logType) {
-		if(logBean!=null && logType!=null && logType.trim().length()>0){
+	public void updateLog(LogBean logBean) {
+		if(logBean!=null && logBean.getId()!=null && logBean.getId().trim().length()>0){
 			SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.sss");
-			String sTime = logBean.getsTime();
-			String eTime = sf.format(new Date());
-			String dbName = "";
-			int actionTime=  0;
-			if("1".equals(logType)){
-				dbName = "SYS_LOG";
-			}else if("2".equals(logType)){
-				dbName = "WF_DATA_SERVICESLOG";
-			}
-			try {
-			    actionTime = (int) (sf.parse(eTime).getTime()-sf.parse(sTime).getTime());
-			} catch (ParseException e) {
-				//e.printStackTrace();
-				logger.error("记录日志功能时间转换失败！");
-			}
-			logBean.seteTime(eTime);
-			logBean.setActionTime(actionTime+"");
-			String updateLogSql = "UPDATE "+dbName+" SET eTime=?,actionTime =?,actionFlag = ?,erroInfo = ? WHERE id = ? ";
-			int upfateoLgCount = jdbcTemplate.update(
+			
+			String updateTime = sf.format(new Date());
+			String updateLogSql = "UPDATE SYS_LOG SET updateTime=?,actionFlag = ?,erroInfo = ?,systemName=?,describe=? WHERE id = ? ";
+			jdbcTemplate.update(
 					updateLogSql,
-					eTime,
-					actionTime,
+					updateTime,
 					logBean.getActionFlag(),
 					logBean.getErroInfo(),
 					logBean.getId()
 			);
-			if(upfateoLgCount>0){
-				logger.debug("更新日志记录成功！");
-			}else{
-				logger.error("更新日志记录失败！");
-			}
 		}
-		
-		return 0;
 	}
+	
+	
+	public void delLog(String startDate,String endDate) {
+		if(startDate!=null &&  startDate.trim().length()>0 && endDate!=null &&  endDate.trim().length()>0){
+			String delLogSql = "delete from SYS_LOG where  stime between ? and  ? ";
+			jdbcTemplate.update(delLogSql,startDate,endDate
+			);
+		}
+	}
+	
+	
+	  public Page<QueryLogBean> queryByPage(int start, int limit, JSONObject paramJson) throws Exception {
+			LinkedMap linkedMap=new LinkedMap();
+			Integer index = 1;
+			StringBuilder sb = new StringBuilder("select syslog.id,syslog.username,callerIP,funName,DATE_FORMAT(stime, '%Y-%m-%d %H:%i:%s')AS stime,erroInfo,");
+			sb.append(" DATE_FORMAT(updateTime, '%Y-%m-%d %H:%i:%s')AS updateTime,actionFlag, user1.NAME ");
+			sb.append(" from sys_log syslog  inner join sys_user user1");
+			sb.append(" on syslog.username=user1.username where 1=1 ");
+            
+			if (paramJson.containsKey("name")) {
+				sb.append(" AND user1.NAME LIKE ? ");
+				linkedMap.put(index,"%" + paramJson.get("name") + "%");
+	    		index++;
+			}
+			if (paramJson.containsKey("systemName")) {
+				sb.append(" AND systemName LIKE ? ");
+				linkedMap.put(index,"%" + paramJson.get("systemName") + "%");
+	    		index++;
+			}
+			if (paramJson.containsKey("funName")) {
+				sb.append(" AND funName LIKE ? ");
+				linkedMap.put(index, "%" + paramJson.get("funName")+ "%");
+	    		index++;
+			}
+			if (paramJson.containsKey("startDate")) {
+				sb.append(" AND stime >=  ? ");
+				linkedMap.put(index, paramJson.get("startDate"));
+	    		index++;
+			}
+			if (paramJson.containsKey("endDate")) {
+				sb.append(" AND stime <=  ? ");
+				linkedMap.put(index, paramJson.get("endDate"));
+	    		index++;
+			}
+			sb.append(" order by stime desc");
+			Page<Object> page= ur.queryByCustomPage(sb.toString(), start, limit,linkedMap);
+			if(page!=null){
+				List<QueryLogBean> queryLogBeanList=new ArrayList<QueryLogBean>();
+				if(page.getContent()!=null && page.getContent().size()>0){
+					  for(Object o:page.getContent()){
+						 QueryLogBean queryLogBean=JSON.parseObject(o.toString(), new TypeReference<QueryLogBean>() {});
+						 queryLogBeanList.add(queryLogBean);
+					 }
+				}
+				return new Page<QueryLogBean>(queryLogBeanList,page.getPageable());
+				// return new PageImpl(userInfoList,page.getPageable(),page.getTotalElements());
+			}
+			return null;
+		}
 	
 	
 	/**

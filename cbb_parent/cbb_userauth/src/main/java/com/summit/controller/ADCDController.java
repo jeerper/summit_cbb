@@ -3,7 +3,6 @@ package com.summit.controller;
 import java.util.List;
 import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,17 +14,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 
 import com.summit.common.entity.ADCDBean;
 import com.summit.common.entity.ADCDTreeBean;
+import com.summit.common.entity.LogBean;
 import com.summit.common.entity.ResponseCodeEnum;
 import com.summit.common.entity.RestfulEntityBySummit;
 import com.summit.common.util.ResultBuilder;
-import com.summit.domain.log.LogBean;
 import com.summit.service.adcd.ADCDService;
-import com.summit.service.log.ILogUtil;
+import com.summit.service.log.LogUtilImpl;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -46,7 +43,7 @@ public class ADCDController {
 	private ADCDService adcdService;
 	
 	@Autowired
-	ILogUtil logUtil;
+	LogUtilImpl logUtil;
 	/**
 	 * 查询adcd树
 	 * @return
@@ -54,7 +51,7 @@ public class ADCDController {
 	@ApiOperation(value = "查询行政区划树", notes = "用于application/json格式")
 	@GetMapping(value = "/queryAdTree")
 	public RestfulEntityBySummit<ADCDBean> queryTree(@RequestParam(value = "pid",required = false)  String pid,
-			@RequestParam(value = "isQueryAll",required = false)  boolean isQueryAll) {
+			@RequestParam(value = "isQueryAll",required = false,defaultValue="true")  boolean isQueryAll) {
 	        try {
 	           ADCDBean ADCDBean=adcdService.queryAdcdTree(pid,isQueryAll);
 	           return ResultBuilder.buildSuccess(ADCDBean);
@@ -69,7 +66,7 @@ public class ADCDController {
 	@ApiOperation(value = "查询行政区划树--JSON 数据直接生成树结构", notes = "用于application/json格式")
 	@GetMapping(value = "/queryAdcdJsonTree")
 	public RestfulEntityBySummit<ADCDTreeBean> queryJsonTree(@RequestParam(value = "pid",required = false)  String pid,
-			@RequestParam(value = "isQueryAll",required = false)  boolean isQueryAll) {
+			@RequestParam(value = "isQueryAll",required = false,defaultValue="true")  boolean isQueryAll) {
 		// HttpServletRequest request = ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest();
 	     try {
 	           ADCDTreeBean adcdBean=adcdService.queryJsonAdcdTree(pid,isQueryAll);
@@ -152,7 +149,7 @@ public class ADCDController {
             @RequestParam(value = "padcd",required = false) String padcd) {
 		Page<ADCDBean> list = null;
 		try {
-			list = adcdService.queryByPage(page, pageSize, padcd);
+			// list = adcdService.queryByPage(page, pageSize, padcd);
 			return ResultBuilder.buildSuccess(list);
 		} catch (Exception e) {
 			logger.error("数据查询失败！", e);
@@ -168,11 +165,11 @@ public class ADCDController {
 	@ApiOperation(value = "行政区划新增",notes="编码(ADCD),行政区划名称(ADNM),padcd(父节点)都是必输项")
 	@RequestMapping(value = "/add",method = RequestMethod.POST)
 	public RestfulEntityBySummit<String> add(@RequestBody ADCDBean adcdBean) {
-		HttpServletRequest request = ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest();
-		logUtil.insertLog("1", "行政区划新增");
 		try {
 			//list = adcdService.add(adcdBean);
 			ResponseCodeEnum responseCodeEnum=adcdService.add(adcdBean);
+			LogBean logBean = new LogBean("行政区划管理","共享用户组件","新增行政区划信息："+adcdBean.toString(),"1");
+	        logUtil.insertLog(logBean);
 			if(responseCodeEnum!=null){
 				return ResultBuilder.buildError(responseCodeEnum);
 			}else{
@@ -190,20 +187,15 @@ public class ADCDController {
 	@ApiOperation(value = "行政区划编辑",notes="编码(ADCD),行政区划名称(ADNM),padcd(父节点)都是必输项")
 	@RequestMapping(value = "/edit",method = RequestMethod.POST)
 	public RestfulEntityBySummit<?> edit(@RequestBody ADCDBean adcdBean) {
-		HttpServletRequest request = ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest();
-		LogBean logBean = logUtil.insertLog("1", "行政区划编辑");
-		//Map<String, Object> list = null;
 		try {
 			adcdService.edit(adcdBean);
+			LogBean logBean = new LogBean("行政区划管理","共享用户组件","修改行政区划信息："+adcdBean.toString(),"2");
+	        logUtil.insertLog(logBean);
 			return ResultBuilder.buildSuccess();
 		} catch (Exception e) {
-			//e.printStackTrace();
 			logger.error("行政区划编辑失败！", e);
 			 return ResultBuilder.buildError(ResponseCodeEnum.CODE_9999);
 		}
-		//logUtil.updateLog(logBean,"1");
-		
-		//return list;
 	}
 	/**
 	 * 删除
@@ -211,10 +203,10 @@ public class ADCDController {
 	@ApiOperation(value = "行政区划删除")
 	@RequestMapping(value = "/del",method = RequestMethod.DELETE)
 	public RestfulEntityBySummit<?> del(@RequestParam(value = "ids") String ids) {
-		HttpServletRequest request = ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest();
-		LogBean logBean = logUtil.insertLog("1", "行政区划删除");
 		try {
 			 adcdService.del(ids);
+			 LogBean logBean = new LogBean("行政区划管理","共享用户组件","删除行政区划信息："+ids,"3");
+		     logUtil.insertLog(logBean);
 			return ResultBuilder.buildSuccess();
 		} catch (Exception e) {
 			//e.printStackTrace();

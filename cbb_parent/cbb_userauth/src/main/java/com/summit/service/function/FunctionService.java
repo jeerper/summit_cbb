@@ -13,8 +13,7 @@ import org.apache.commons.collections.map.LinkedMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
+import com.summit.cbb.utils.page.Page;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -241,7 +240,7 @@ public class FunctionService {
 		Page<Object> rs = ur.queryByCustomPage(sql.toString(), start, limit, linkedMap);
 		if(rs!=null){
 			 ArrayList<FunctionBean> functions = JSON.parseObject(rs.getContent().toString(), new TypeReference<ArrayList<FunctionBean>>() {});
-			 return new PageImpl(functions,rs.getPageable(),rs.getTotalElements());
+			// return new PageImpl(functions,rs.getPageable(),rs.getTotalElements());
 		}
 		return null;
 	}
@@ -275,7 +274,7 @@ public class FunctionService {
 //			 for(FunctionBean functionBean:valueList){
 //				 System.out.println("====:"+functionBean.getId()+","+functionBean.getName()+","+functionBean.getPid());	
 //			 }
-			 return valueList;
+			// return valueList;
 		}
 		return null;
 	}
