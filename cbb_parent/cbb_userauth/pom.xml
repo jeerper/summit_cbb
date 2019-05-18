@@ -11,13 +11,17 @@
 	<packaging>jar</packaging>
 
  	<build>
- 		<finalName>backend</finalName>
+ 		<finalName>cbb_userauth</finalName>
  	</build>
 
 	<dependencies>
 		<dependency>
 			<groupId>com.summit</groupId>
 			<artifactId>cbb_common</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.summit</groupId>
+			<artifactId>cbb_utils</artifactId>
 		</dependency>
 		<!--mybatis -->
 		<dependency>
