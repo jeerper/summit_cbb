@@ -347,7 +347,7 @@ public class UserService {
 			int i=0;
 			for (JSONObject userAdcdObject : userAdcdList) {
 				adcds[i]=st.objJsonGetString(userAdcdObject, "ADCD");
-				if(userAdcdObject.containsKey("ADNM")  &&  st.stringIsNull(userAdcdObject.getString("ADNM"))){
+				if(userAdcdObject.containsKey("ADNM")  &&  !st.stringIsNull(userAdcdObject.getString("ADNM"))){
 				   adnms+=st.objJsonGetString(userAdcdObject, "ADNM")+",";
 				}
 				i++;
@@ -371,7 +371,7 @@ public class UserService {
 			int i=0;
 			for (JSONObject userdeptObject : userDeltList) {
 				deptIds[i]=st.objJsonGetString(userdeptObject, "DEPTID");
-				if(userdeptObject.containsKey("DEPTNAME")  &&  st.stringIsNull(userdeptObject.getString("DEPTNAME"))){
+				if(userdeptObject.containsKey("DEPTNAME")  &&  !st.stringIsNull(userdeptObject.getString("DEPTNAME"))){
 				   deptnames+=st.objJsonGetString(userdeptObject, "DEPTNAME")+",";
 				}
 				i++;
