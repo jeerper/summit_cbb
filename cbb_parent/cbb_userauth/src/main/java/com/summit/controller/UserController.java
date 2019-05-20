@@ -6,6 +6,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -51,15 +52,19 @@ public class UserController {
     private UserService us;
     @Autowired
     UserInfoCache userInfoCache;
+    
+    @Value("${password.encode.key}")
+    private String key;
 
     @PostMapping("/add")
     @ApiOperation(value = "新增用户",  notes = "昵称(name)，用户名(userName),密码(password)都是必输项")
     public RestfulEntityBySummit<String> add(@RequestBody UserInfo userInfo) {
         try {
-            ResponseCodeEnum c=us.add(userInfo);
+            ResponseCodeEnum c=us.add(userInfo,key);
             if(c!=null){
             	 return ResultBuilder.buildError(c);
             }
+            userInfoCache.setUserInfo(userInfo.getUserName(),userInfo);
             LogBean logBean = new LogBean("用户管理","共享用户组件","新增用户信息："+userInfo.toString(),"1");
         	logUtil.insertLog(logBean);
             return ResultBuilder.buildSuccess();
@@ -102,9 +107,11 @@ public class UserController {
     @PostMapping("/edit")
     public RestfulEntityBySummit<String> edit(@RequestBody UserInfo userInfo) {
         try {
-        	
+            ResponseCodeEnum c=us.edit(userInfo,key);
+            if(c!=null){
+            	 return ResultBuilder.buildError(c);
+            }
             userInfoCache.setUserInfo(userInfo.getUserName(),userInfo);
-            us.edit(userInfo);
             LogBean logBean = new LogBean("用户管理","共享用户组件","修改用户信息："+userInfo,"2");
             logUtil.insertLog(logBean);
             return ResultBuilder.buildSuccess();
@@ -140,14 +147,14 @@ public class UserController {
         }
     }*/
 
-    @ApiOperation(value = "修改密码")
+    @ApiOperation(value = "修改密码",  notes = "旧密码和新密码必须是加密后的数据")
     @PutMapping("/editPassword")
     public RestfulEntityBySummit<String> editPassword(@RequestBody UserPassWordInfo userPassWordInfo) {
         try {
             if(!userPassWordInfo.getPassword().equals(userPassWordInfo.getRepeatPassword())){
                 return ResultBuilder.buildError(ResponseCodeEnum.CODE_4013);
             }
-            ResponseCodeEnum ub=us.editPassword(userPassWordInfo.getUserName(),userPassWordInfo.getOldPassword(), userPassWordInfo.getPassword(), userPassWordInfo.getRepeatPassword());
+            ResponseCodeEnum ub=us.editPassword(userPassWordInfo.getUserName(),userPassWordInfo.getOldPassword(), userPassWordInfo.getPassword(), userPassWordInfo.getRepeatPassword(),key);
             if(ub!=null){
             	return ResultBuilder.buildError(ub);
             }

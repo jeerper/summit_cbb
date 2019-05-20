@@ -10,6 +10,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.beans.factory.annotation.Value;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
@@ -24,6 +25,11 @@ import com.summit.util.SysConstants;
 
 import net.sf.json.JSONObject;
 
+import javax.crypto.Cipher;
+import javax.crypto.spec.IvParameterSpec;
+import javax.crypto.spec.SecretKeySpec;
+import cn.hutool.core.codec.Base64;
+import cn.hutool.core.util.CharsetUtil;
 @Service
 @Transactional
 public class UserService {
@@ -37,9 +43,13 @@ public class UserService {
 	@Autowired
 	private UserInfoRowMapper ubr;
 
+	private static final String KEY_ALGORITHM = "AES";
+    private static final String DEFAULT_CIPHER_ALGORITHM = "AES/CBC/NOPadding";
+    
+   
 
 	@Transactional
-	public ResponseCodeEnum add(UserInfo userInfo) {
+	public ResponseCodeEnum add(UserInfo userInfo,String key) {
 		//保存用户
         BCryptPasswordEncoder encoder =new BCryptPasswordEncoder();
 		String sql = "SELECT * FROM SYS_USER WHERE USERNAME = ?";
@@ -49,6 +59,14 @@ public class UserService {
 		}
 		if(userInfo.getIsEnabled()==null){
 			userInfo.setIsEnabled(1);
+		}
+		if(userInfo.getPassword()!=null && !"".equals(userInfo.getPassword())){
+			 //解密
+	        try {
+	        	userInfo.setPassword(decryptAES(userInfo.getPassword(), key).trim());
+	        } catch (Exception e) {
+	        	return ResponseCodeEnum.CODE_4014;
+	        }	
 		}
 		sql = "INSERT INTO SYS_USER (USERNAME,NAME,SEX,PASSWORD,IS_ENABLED,EMAIL,PHONE_NUMBER,STATE,NOTE,LAST_UPDATE_TIME) VALUES ( ?,?, ?, ?, ?, ?, ?, ?, ?,now())";
 		jdbcTemplate.update(sql,
@@ -95,22 +113,18 @@ public class UserService {
 		return null;
 	}
 
-	@Transactional
-	public void  del(String userNames) {
-		userNames = userNames.replaceAll(",", "','");
-		String sql = "UPDATE SYS_USER SET STATE = 0, LAST_UPDATE_TIME = ? WHERE USERNAME <> '"+ SysConstants.SUPER_USERNAME+ "' AND USERNAME IN ('"+ userNames + "')";
-		jdbcTemplate.update(sql,new Date());
-		delUserRoleByUserName(userNames);
-		
-		String adcdSql=" delete from sys_user_adcd where USERNAME  IN ('"+userNames+"') ";
-		jdbcTemplate.update(adcdSql);
-		
-		String deptSql=" delete from SYS_USER_DEPT where USERNAME  IN ('"+userNames+"') ";
-		jdbcTemplate.update(deptSql);
-	}
+
 
 	@Transactional
-	public void edit(UserInfo userInfo) {
+	public ResponseCodeEnum edit(UserInfo userInfo,String key) {
+		if(userInfo.getPassword()!=null && !"".equals(userInfo.getPassword())){
+			 //解密
+	        try {
+	        	userInfo.setPassword(decryptAES(userInfo.getPassword(), key).trim());
+	        } catch (Exception e) {
+	        	return ResponseCodeEnum.CODE_4014;
+	        }	
+		}
 		String sql = "UPDATE SYS_USER SET NAME = ?,SEX=?, EMAIL = ?, PHONE_NUMBER =?, NOTE = ?, IS_ENABLED = ?, LAST_UPDATE_TIME = now() WHERE USERNAME = ? AND STATE = 1";
 		jdbcTemplate.update(sql, userInfo.getName(), userInfo.getSex(), userInfo.getEmail(),
 				userInfo.getPhoneNumber(), userInfo.getNote(), userInfo
@@ -150,27 +164,56 @@ public class UserService {
 	        }
 	        jdbcTemplate.batchUpdate(insertAdcdSql,userdeptParams);
 		}
+		return null;
 	}
 
+	
 	public ResponseCodeEnum editPassword(String userName, String oldPassword,
-			String password, String repeatPassword) {
+			String password, String repeatPassword,String key)  {
 		
 		UserInfo ub = queryByUserName(userName);
         if (ub == null) {
         	 return ResponseCodeEnum.CODE_4023;
         }
+        String decodePasswordOld ="";
+        //解密
+        try {
+           decodePasswordOld = decryptAES(oldPassword, key).trim();
+        } catch (Exception e) {
+        	return ResponseCodeEnum.CODE_4014;
+        }
+        
         //验证旧密码是否正确
-        BCryptPasswordEncoder encoder =new BCryptPasswordEncoder();
-        if(!ub.getPassword().equals(encoder.encode(oldPassword))){
+        BCryptPasswordEncoder encoder =new BCryptPasswordEncoder(); 
+        if(!encoder.matches(decodePasswordOld, ub.getPassword())){
         	 return ResponseCodeEnum.CODE_4009;
         }
         
-        //此处需要新密码解密后再加密保存
+        try {
+			password=decryptAES(password, key).trim();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
         
+        //此处需要新密码解密后再加密保存
 		String sql = "UPDATE SYS_USER SET PASSWORD = ?, LAST_UPDATE_TIME = ? WHERE USERNAME = ? AND STATE = 1";
 		jdbcTemplate.update(sql, encoder.encode(password), new Date(),userName );
 		
 		return null;
+	}
+	
+	@Transactional
+	public void  del(String userNames) {
+		userNames = userNames.replaceAll(",", "','");
+		String sql = "UPDATE SYS_USER SET STATE = 0, LAST_UPDATE_TIME = ? WHERE USERNAME <> '"+ SysConstants.SUPER_USERNAME+ "' AND USERNAME IN ('"+ userNames + "')";
+		jdbcTemplate.update(sql,new Date());
+		delUserRoleByUserName(userNames);
+		
+		String adcdSql=" delete from sys_user_adcd where USERNAME  IN ('"+userNames+"') ";
+		jdbcTemplate.update(adcdSql);
+		
+		String deptSql=" delete from SYS_USER_DEPT where USERNAME  IN ('"+userNames+"') ";
+		jdbcTemplate.update(deptSql);
 	}
 
 	public UserInfo queryByUserName(String userName) {
@@ -297,14 +340,16 @@ public class UserService {
 	
 	public JSONObject queryAdcdByUserName(String userName) {
 		String sql = "SELECT USERADCD.ADCD, ADCDS.ADNM FROM SYS_USER_ADCD USERADCD inner join SYS_AD_CD ADCDS  ON USERADCD.ADCD=ADCDS.ADCD  WHERE USERNAME = ?";
-		List<JSONObject> l = ur.queryAllCustom(sql, userName);
-		if(l!=null && l.size()>0){
+		List<JSONObject> userAdcdList= ur.queryAllCustom(sql, userName);
+		if(userAdcdList!=null && userAdcdList.size()>0){
 			String adnms="";
-			String[] adcds=  new String [l.size()];
+			String[] adcds=  new String [userAdcdList.size()];
 			int i=0;
-			for (JSONObject o : l) {
-				adcds[i]=st.objJsonGetString(o, "ADCD");
-				adnms+=st.objJsonGetString(o, "ADNM")+",";
+			for (JSONObject userAdcdObject : userAdcdList) {
+				adcds[i]=st.objJsonGetString(userAdcdObject, "ADCD");
+				if(userAdcdObject.containsKey("ADNM")  &&  st.stringIsNull(userAdcdObject.getString("ADNM"))){
+				   adnms+=st.objJsonGetString(userAdcdObject, "ADNM")+",";
+				}
 				i++;
 			}
 			JSONObject jsonobject=new JSONObject();
@@ -319,16 +364,16 @@ public class UserService {
 	
 	public JSONObject queryDeptByUserName(String userName) {
 		String sql = "SELECT DEPTID,DEPTNAME FROM SYS_USER_DEPT userdept inner join sys_dept dept on userdept.DEPTID=dept.ID WHERE USERNAME = ?";
-		List<JSONObject> l = ur.queryAllCustom(sql, userName);
-		if(l!=null && l.size()>0){
+		List<JSONObject> userDeltList = ur.queryAllCustom(sql, userName);
+		if(userDeltList!=null && userDeltList.size()>0){
 			String deptnames="";
-			String[] deptIds=  new String [l.size()];
+			String[] deptIds=  new String [userDeltList.size()];
 			int i=0;
-			for (JSONObject o : l) {
-				deptIds[i]=st.objJsonGetString(o, "DEPTID");
-				if(i!=l.size()-1){
-					deptnames+=st.objJsonGetString(o, "DEPTNAME")+",";
-			    }
+			for (JSONObject userdeptObject : userDeltList) {
+				deptIds[i]=st.objJsonGetString(userdeptObject, "DEPTID");
+				if(userdeptObject.containsKey("DEPTNAME")  &&  st.stringIsNull(userdeptObject.getString("DEPTNAME"))){
+				   deptnames+=st.objJsonGetString(userdeptObject, "DEPTNAME")+",";
+				}
 				i++;
 			}
 			JSONObject jsonobject=new JSONObject();
@@ -379,5 +424,14 @@ public class UserService {
 		}
 		return null;
 	}
+	
+   private static String decryptAES(String data, String pass) throws Exception {
+	        Cipher cipher = Cipher.getInstance(DEFAULT_CIPHER_ALGORITHM);
+	        SecretKeySpec keyspec = new SecretKeySpec(pass.getBytes(), KEY_ALGORITHM);
+	        IvParameterSpec ivspec = new IvParameterSpec(pass.getBytes());
+	        cipher.init(Cipher.DECRYPT_MODE, keyspec, ivspec);
+	        byte[] result = cipher.doFinal(Base64.decode(data.getBytes(CharsetUtil.UTF_8)));
+	        return new String(result, CharsetUtil.UTF_8);
+  }
 
 }
