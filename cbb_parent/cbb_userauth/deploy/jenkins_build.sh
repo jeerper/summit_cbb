@@ -1,3 +1,5 @@
+#!/bin/sh -l
+set -e
 #项目名称
 projectName="cbb_userauth"
 #组件名称
@@ -21,7 +23,6 @@ sed -i 's,${Registry_Center_Port},'${Registry_Center_Port}',g' ${WORKSPACE}/cbb_
 sed -i 's,${Registry_Center_URL},'${Registry_Center_URL}',g' ./.env
 
 sed -i 's,${Registry_Center_IP},'${Registry_Center_IP}',g' ./.env
-
 
 
 echo "编译"${projectName}
