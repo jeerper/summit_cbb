@@ -25,7 +25,6 @@ sed -i 's,${Registry_Center_URL},'${Registry_Center_URL}',g' ./.env
 sed -i 's,${Registry_Center_IP},'${Registry_Center_IP}',g' ./.env
 
 
-
 echo "编译"${projectName}
 
 cd ${WORKSPACE}/cbb_parent
