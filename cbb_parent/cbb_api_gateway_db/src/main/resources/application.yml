@@ -18,6 +18,8 @@ mybatis-plus:
   mapper-locations: classpath*:**/dao/mapper/*.xml
   config-location: classpath:mybatis-config.xml
 
+my-white-list: /**/*.jpg,/**/*.png
+
 zuul:
   ignoredServices:
     - 'cbb-api-gateway-db'

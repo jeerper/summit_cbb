@@ -3,6 +3,7 @@ package com.summit.config;
 import com.summit.handle.SummitAccessDeniedHandler;
 import com.summit.handle.SummitResourceAuthExceptionEntryPoint;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -28,6 +29,9 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
     @Autowired
     private SummitAccessDeniedHandler summitAccessDeniedHandler;
 
+    @Value("${my-white-list}")
+    private String myWhiteList;
+
     @Override
     public void configure(HttpSecurity http) throws Exception {
         //允许使用iframe 嵌套，避免swagger-ui 不被加载的问题
@@ -37,6 +41,7 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
         http.authorizeRequests()
                 .antMatchers(HttpMethod.OPTIONS).permitAll()
                 .antMatchers(WebSecurityConfigurer.AUTH_WHITELIST).permitAll()
+                .antMatchers(myWhiteList.split(",")).permitAll()
                 .anyRequest().authenticated();
     }
 
