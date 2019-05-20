@@ -50,8 +50,8 @@ public class RoleController {
 	public RestfulEntityBySummit<String> add(@RequestBody RoleBean roleBean) {
 		try {
 			ResponseCodeEnum responseCodeEnum=rs.add(roleBean);
-			LogBean logBean = new LogBean("角色管理","共享用户组件","修改角色信息："+roleBean,"1");
-		    logUtil.insertLog(logBean);
+			//LogBean logBean = new LogBean("角色管理","共享用户组件","修改角色信息："+roleBean,"1");
+		    //logUtil.insertLog(logBean);
 			if(responseCodeEnum!=null){
 				return ResultBuilder.buildError(responseCodeEnum);
 			}
@@ -68,8 +68,8 @@ public class RoleController {
 			@RequestParam(value = "codes") String codes) {
 		try {
 			rs.del(codes);
-			LogBean logBean = new LogBean("角色管理","共享用户组件","删除角色信息："+codes,"3");
-		    logUtil.insertLog(logBean);
+			//LogBean logBean = new LogBean("角色管理","共享用户组件","删除角色信息："+codes,"3");
+		    //logUtil.insertLog(logBean);
 			return ResultBuilder.buildSuccess();
 		} catch (Exception e) {
 			logger.error("操作失败！", e);
@@ -82,8 +82,8 @@ public class RoleController {
 	public RestfulEntityBySummit<String> edit(@RequestBody RoleBean roleBean) {
 		try {
 			rs.edit(roleBean);
-			LogBean logBean = new LogBean("角色管理","共享用户组件","修改角色信息："+roleBean,"2");
-		    logUtil.insertLog(logBean);
+			//LogBean logBean = new LogBean("角色管理","共享用户组件","修改角色信息："+roleBean,"2");
+		    //logUtil.insertLog(logBean);
 			return ResultBuilder.buildSuccess();
 		} catch (Exception e) {
 			logger.error("操作失败！", e);

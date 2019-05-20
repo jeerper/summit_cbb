@@ -137,8 +137,8 @@ public class DeptController {
 		try {
 			//list = ds.add(deptBean);
 			ResponseCodeEnum responseCodeEnum=ds.add(deptBean);
-			LogBean logBean = new LogBean("部门管理","共享用户组件","新增部门信息："+deptBean,"1");
-		    logUtil.insertLog(logBean);
+			//LogBean logBean = new LogBean("部门管理","共享用户组件","新增部门信息："+deptBean,"1");
+		    //logUtil.insertLog(logBean);
 			if(responseCodeEnum!=null){ 
 				return ResultBuilder.buildError(responseCodeEnum);
 			}else{
@@ -159,8 +159,8 @@ public class DeptController {
 		try {
 			//list = ds.edit(deptBean);
 			ds.edit(deptBean);
-			LogBean logBean = new LogBean("部门管理","共享用户组件","部门编辑信息："+deptBean,"2");
-		    logUtil.insertLog(logBean);
+			//LogBean logBean = new LogBean("部门管理","共享用户组件","部门编辑信息："+deptBean,"2");
+		   // logUtil.insertLog(logBean);
 			return ResultBuilder.buildSuccess();
 		} catch (Exception e) {
 			//e.printStackTrace();
@@ -176,8 +176,8 @@ public class DeptController {
 	public RestfulEntityBySummit<String> del(@RequestParam(value = "ids") String ids) {
 		try {
 			ds.del(ids);
-			LogBean logBean = new LogBean("部门管理","共享用户组件","部门删除信息："+ids,"3");
-		    logUtil.insertLog(logBean);
+			//LogBean logBean = new LogBean("部门管理","共享用户组件","部门删除信息："+ids,"3");
+		    //logUtil.insertLog(logBean);
 			return ResultBuilder.buildSuccess();
 		} catch (Exception e) {
 			logger.error("操作失败：", e);

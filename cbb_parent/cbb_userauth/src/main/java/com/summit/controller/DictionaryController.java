@@ -59,8 +59,8 @@ public class DictionaryController {
 			if(responseCodeEnum!=null){
 				return ResultBuilder.buildError(responseCodeEnum);
 			}
-			LogBean logBean = new LogBean("数据字典管理","共享用户组件","新增数据字典："+dictionaryBean,"1");
-		    logUtil.insertLog(logBean);
+			//LogBean logBean = new LogBean("数据字典管理","共享用户组件","新增数据字典："+dictionaryBean,"1");
+		    //logUtil.insertLog(logBean);
 			return ResultBuilder.buildSuccess();
 		} catch (Exception e) {
 			logger.error("操作失败", e);
@@ -75,8 +75,8 @@ public class DictionaryController {
 			@RequestParam(value = "codes") String codes ) {
 		try {
 			dictionaryService.del(codes);
-			LogBean logBean = new LogBean("数据字典管理","共享用户组件","删除数据字典："+codes,"3");
-		    logUtil.insertLog(logBean);
+			//LogBean logBean = new LogBean("数据字典管理","共享用户组件","删除数据字典："+codes,"3");
+		    //logUtil.insertLog(logBean);
 			return ResultBuilder.buildSuccess();
 		} catch (Exception e) {
 			logger.error("操作失败", e);
@@ -89,8 +89,8 @@ public class DictionaryController {
 	public RestfulEntityBySummit<String> edit(@RequestBody DictionaryBean dictionaryBean) {
 		try {
 			dictionaryService.edit(dictionaryBean);
-			LogBean logBean = new LogBean("数据字典管理","共享用户组件","修改数据字典信息："+dictionaryBean,"2");
-		    logUtil.insertLog(logBean);
+			//LogBean logBean = new LogBean("数据字典管理","共享用户组件","修改数据字典信息："+dictionaryBean,"2");
+		    //logUtil.insertLog(logBean);
 			return ResultBuilder.buildSuccess();
 		} catch (Exception e) {
 			logger.error("操作失败", e);

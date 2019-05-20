@@ -65,8 +65,8 @@ public class UserController {
             	 return ResultBuilder.buildError(c);
             }
             userInfoCache.setUserInfo(userInfo.getUserName(),userInfo);
-            LogBean logBean = new LogBean("用户管理","共享用户组件","新增用户信息："+userInfo.toString(),"1");
-        	logUtil.insertLog(logBean);
+            //LogBean logBean = new LogBean("用户管理","共享用户组件","新增用户信息："+userInfo.toString(),"1");
+        	//logUtil.insertLog(logBean);
             return ResultBuilder.buildSuccess();
         } catch (Exception e) {
             logger.error("新增用户失败", e);
@@ -94,8 +94,8 @@ public class UserController {
             	}
             }
             us.del(userNames);
-            LogBean logBean = new LogBean("用户管理","共享用户组件","删除用户信息："+userNames,"3");
-            logUtil.insertLog(logBean);
+            //LogBean logBean = new LogBean("用户管理","共享用户组件","删除用户信息："+userNames,"3");
+            //logUtil.insertLog(logBean);
             return ResultBuilder.buildSuccess();
         } catch (Exception e) {
             logger.error("删除用户信息", e);
@@ -112,8 +112,8 @@ public class UserController {
             	 return ResultBuilder.buildError(c);
             }
             userInfoCache.setUserInfo(userInfo.getUserName(),userInfo);
-            LogBean logBean = new LogBean("用户管理","共享用户组件","修改用户信息："+userInfo,"2");
-            logUtil.insertLog(logBean);
+            //LogBean logBean = new LogBean("用户管理","共享用户组件","修改用户信息："+userInfo,"2");
+           // logUtil.insertLog(logBean);
             return ResultBuilder.buildSuccess();
         } catch (Exception e) {
             logger.error("修改用户失败:", e);
@@ -158,8 +158,8 @@ public class UserController {
             if(ub!=null){
             	return ResultBuilder.buildError(ub);
             }
-            LogBean logBean = new LogBean("用户管理","共享用户组件","修改密码："+userPassWordInfo,"2");
-            logUtil.insertLog(logBean);
+            //LogBean logBean = new LogBean("用户管理","共享用户组件","修改密码："+userPassWordInfo,"2");
+            //logUtil.insertLog(logBean);
             return ResultBuilder.buildSuccess();
         } catch (Exception e) {
             logger.error("修改密码失败:", e);
@@ -334,8 +334,8 @@ public class UserController {
     		@RequestParam(value = "userName") String userName) {
         try {
         	us.resetPassword(userName);
-            LogBean logBean = new LogBean("用户管理","共享用户组件","重置密码："+userName,"2");
-            logUtil.insertLog(logBean);
+            //LogBean logBean = new LogBean("用户管理","共享用户组件","重置密码："+userName,"2");
+            //logUtil.insertLog(logBean);
             return ResultBuilder.buildSuccess();
         } catch (Exception e) {
             logger.error("重置密码失败：", e);
@@ -391,8 +391,8 @@ public class UserController {
             	return ResultBuilder.buildError(ResponseCodeEnum.CODE_4023);
             }
             us.grantRole(userName,role);
-            LogBean logBean = new LogBean("用户管理","共享用户组件","授权权限："+userName+",角色信息:"+role,"4");
-            logUtil.insertLog(logBean);
+            //LogBean logBean = new LogBean("用户管理","共享用户组件","授权权限："+userName+",角色信息:"+role,"4");
+            //logUtil.insertLog(logBean);
             return ResultBuilder.buildSuccess();
         } catch (Exception e) {
             logger.error("授权权限失败：", e);

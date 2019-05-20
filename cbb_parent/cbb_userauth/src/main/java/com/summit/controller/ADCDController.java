@@ -168,8 +168,8 @@ public class ADCDController {
 		try {
 			//list = adcdService.add(adcdBean);
 			ResponseCodeEnum responseCodeEnum=adcdService.add(adcdBean);
-			LogBean logBean = new LogBean("行政区划管理","共享用户组件","新增行政区划信息："+adcdBean.toString(),"1");
-	        logUtil.insertLog(logBean);
+			//LogBean logBean = new LogBean("行政区划管理","共享用户组件","新增行政区划信息："+adcdBean.toString(),"1");
+	        //logUtil.insertLog(logBean);
 			if(responseCodeEnum!=null){
 				return ResultBuilder.buildError(responseCodeEnum);
 			}else{
@@ -189,8 +189,8 @@ public class ADCDController {
 	public RestfulEntityBySummit<?> edit(@RequestBody ADCDBean adcdBean) {
 		try {
 			adcdService.edit(adcdBean);
-			LogBean logBean = new LogBean("行政区划管理","共享用户组件","修改行政区划信息："+adcdBean.toString(),"2");
-	        logUtil.insertLog(logBean);
+			//LogBean logBean = new LogBean("行政区划管理","共享用户组件","修改行政区划信息："+adcdBean.toString(),"2");
+	        //logUtil.insertLog(logBean);
 			return ResultBuilder.buildSuccess();
 		} catch (Exception e) {
 			logger.error("行政区划编辑失败！", e);
@@ -205,8 +205,8 @@ public class ADCDController {
 	public RestfulEntityBySummit<?> del(@RequestParam(value = "ids") String ids) {
 		try {
 			 adcdService.del(ids);
-			 LogBean logBean = new LogBean("行政区划管理","共享用户组件","删除行政区划信息："+ids,"3");
-		     logUtil.insertLog(logBean);
+			 //LogBean logBean = new LogBean("行政区划管理","共享用户组件","删除行政区划信息："+ids,"3");
+		     //logUtil.insertLog(logBean);
 			return ResultBuilder.buildSuccess();
 		} catch (Exception e) {
 			//e.printStackTrace();

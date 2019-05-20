@@ -32,8 +32,8 @@ public class FunctionController {
 	public RestfulEntityBySummit<String> add(@RequestBody FunctionBean functionBean) {
 		try {
 			fs.add(functionBean);
-			LogBean logBean = new LogBean("功能管理","共享用户组件","修改功能信息："+functionBean,"1");
-		    logUtil.insertLog(logBean);
+			//LogBean logBean = new LogBean("功能管理","共享用户组件","修改功能信息："+functionBean,"1");
+		    //logUtil.insertLog(logBean);
 			return ResultBuilder.buildSuccess();
 		} catch (Exception e) {
 			logger.error("操作失败！", e);
@@ -47,8 +47,8 @@ public class FunctionController {
 			@RequestParam(value = "ids") String ids) {
 		try {
 			fs.del(ids);
-			LogBean logBean = new LogBean("功能管理","共享用户组件","删除功能信息："+ids,"3");
-		    logUtil.insertLog(logBean);
+			//LogBean logBean = new LogBean("功能管理","共享用户组件","删除功能信息："+ids,"3");
+		    //logUtil.insertLog(logBean);
 			return ResultBuilder.buildSuccess();
 		} catch (Exception e) {
 			logger.error("操作失败！", e);
@@ -61,8 +61,8 @@ public class FunctionController {
 	public RestfulEntityBySummit<String> edit(@RequestBody FunctionBean functionBean) {
 		try {
 			fs.edit(functionBean);
-			LogBean logBean = new LogBean("功能管理","共享用户组件","修改功能信息："+functionBean,"2");
-		    logUtil.insertLog(logBean);
+			//LogBean logBean = new LogBean("功能管理","共享用户组件","修改功能信息："+functionBean,"2");
+		    //logUtil.insertLog(logBean);
 			return ResultBuilder.buildSuccess();
 		} catch (Exception e) {
 			logger.error("操作失败！", e);
