@@ -19,7 +19,7 @@ public class QueryLogBean  implements Serializable {
 	@ApiModelProperty(value="操作者姓名",name="name")
 	private String name;
 	
-	@ApiModelProperty(value="操作类型(1：新增,  2：修改,   3：删除,   4：查询 )",name="operType")
+	@ApiModelProperty(value="操作类型(1：新增,  2：修改,   3：删除,  4：授权 ,  5：查询  )",name="operType")
 	private String operType;
 	
 	@ApiModelProperty(value="访问机器IP",name="callerIP")
@@ -30,6 +30,12 @@ public class QueryLogBean  implements Serializable {
 	
 	@ApiModelProperty(value="访问开始时间",name="stime")
 	private String stime;
+	
+	@ApiModelProperty(value="访问结束时间",name="stime")
+	private String etime;
+	
+	@ApiModelProperty(value="访问时长",name="actiontime")
+	private String actiontime;
 	
 	@ApiModelProperty(value="错误信息",name="erroInfo")
 	private String erroInfo;
@@ -142,4 +148,22 @@ public class QueryLogBean  implements Serializable {
 	public void setOperType(String operType) {
 		this.operType = operType;
 	}
+
+	public String getEtime() {
+		return etime;
+	}
+
+	public void setEtime(String etime) {
+		this.etime = etime;
+	}
+
+	public String getActiontime() {
+		return actiontime;
+	}
+
+	public void setActiontime(String actiontime) {
+		this.actiontime = actiontime;
+	}
+	
+	
 }

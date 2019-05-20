@@ -14,6 +14,18 @@ public class LogBean  implements Serializable {
 	@ApiModelProperty(value="主键id(添加自动生成,修改必填)",name="id")
 	private String id;
 	
+	@ApiModelProperty(value="访问机器IP",name="callerIP")
+	private String callerIP;
+	
+	@ApiModelProperty(value="访问开始时间",name="stime")
+	private String stime;
+	
+	@ApiModelProperty(value="访问结束时间",name="stime")
+	private String etime;
+	
+	@ApiModelProperty(value="访问时长",name="actiontime")
+	private String actiontime;
+	
 	@ApiModelProperty(value="功能模块",name="funName",required=true)
 	private String funName;
 	
@@ -31,6 +43,8 @@ public class LogBean  implements Serializable {
 	
 	@ApiModelProperty(value="操作描述",name="describe")
 	private String describe;
+	
+	
 
 	
 	public LogBean() {
@@ -43,13 +57,17 @@ public class LogBean  implements Serializable {
 	 * @param describe
 	 * @param operType
 	 */
-	public LogBean(String funName,String systemName,String describe,String operType) {
+	public LogBean(String funName,String systemName,String describe,String operType,String callerIP,String stime,String etime,String actiontime,String actionFlag) {
 		super();
 		this.funName = funName;
 		this.systemName = systemName;
 		this.describe = describe;
 		this.systemName = systemName;
 		this.operType=operType;
+		this.callerIP=callerIP;
+		this.stime=etime;
+		this.actiontime=actiontime;
+		this.actionFlag=actionFlag;
 	}
 	
 	/**
@@ -127,6 +145,30 @@ public class LogBean  implements Serializable {
 	}
 	public void setOperType(String operType) {
 		this.operType = operType;
+	}
+	public String getStime() {
+		return stime;
+	}
+	public void setStime(String stime) {
+		this.stime = stime;
+	}
+	public String getEtime() {
+		return etime;
+	}
+	public void setEtime(String etime) {
+		this.etime = etime;
+	}
+	public String getActiontime() {
+		return actiontime;
+	}
+	public void setActiontime(String actiontime) {
+		this.actiontime = actiontime;
+	}
+	public String getCallerIP() {
+		return callerIP;
+	}
+	public void setCallerIP(String callerIP) {
+		this.callerIP = callerIP;
 	}
 	
 	
