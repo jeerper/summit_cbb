@@ -1,3 +1,5 @@
+#!/bin/sh -l
+set -e
 #项目名称
 projectName="cbb_userauth"
 #组件名称
