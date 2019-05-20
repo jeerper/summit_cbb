@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
 import com.summit.common.entity.FunctionBean;
 import com.summit.common.entity.FunctionTreeBean;
+import com.summit.common.entity.UserInfo;
 import com.summit.domain.function.FunctionBeanRowMapper;
 import com.summit.repository.UserRepository;
 import com.summit.util.SummitTools;
@@ -227,7 +228,7 @@ public class FunctionService {
 	public Page<FunctionBean> queryByPage(int start, int limit, String pId,String userName) throws Exception {
 		StringBuffer sql=new StringBuffer("SELECT * FROM SYS_FUNCTION where 1=1 ");
 		 LinkedMap linkedMap=null;
-          if(!"root".equals(pId)){ 
+          if(!"root".equals(pId) && SummitTools.stringNotNull(pId)){ 
 			if (isSuperUser(userName)) {
 				sql.append(" and PID = ? ");
 			}else{
@@ -240,7 +241,8 @@ public class FunctionService {
 		Page<Object> rs = ur.queryByCustomPage(sql.toString(), start, limit, linkedMap);
 		if(rs!=null){
 			 ArrayList<FunctionBean> functions = JSON.parseObject(rs.getContent().toString(), new TypeReference<ArrayList<FunctionBean>>() {});
-			// return new PageImpl(functions,rs.getPageable(),rs.getTotalElements());
+			 return new Page<FunctionBean>(functions,rs.getPageable());
+			 // return new PageImpl(functions,rs.getPageable(),rs.getTotalElements());
 		}
 		return null;
 	}

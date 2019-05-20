@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
+import com.summit.cbb.utils.page.Page;
 import com.summit.common.entity.DictionaryBean;
 import com.summit.common.entity.LogBean;
 import com.summit.common.entity.ResponseCodeEnum;
@@ -29,7 +30,6 @@ import com.summit.common.util.ResultBuilder;
 import com.summit.service.dictionary.DictionaryService;
 import com.summit.service.log.LogUtilImpl;
 
-import org.springframework.data.domain.Page;
 import com.summit.util.SysConstants;
 
 import io.swagger.annotations.Api;

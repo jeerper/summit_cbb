@@ -2,8 +2,10 @@ package com.summit.service.dept;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
+import com.summit.cbb.utils.page.Page;
 import com.summit.common.entity.DeptBean;
 import com.summit.common.entity.DeptTreeBean;
+import com.summit.common.entity.FunctionBean;
 import com.summit.common.entity.ResponseCodeEnum;
 import com.summit.domain.dept.DeptBeanRowMapper;
 import com.summit.repository.UserRepository;
@@ -11,8 +13,6 @@ import com.summit.util.SummitTools;
 import net.sf.json.JSONObject;
 import org.apache.commons.collections.map.LinkedMap;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -240,12 +240,10 @@ public class DeptService {
         		index++;
         	}
         }
-		Page<JSONObject>  rs =null;
-		//Page<Object> rs =  ur.queryByCustomPage(sql.toString(), start, limit, linkedMap);
-       // Page<JSONObject>  rs = ur.queryByCustomPage(sql.toString(), start, limit);
+		Page<Object> rs = ur.queryByCustomPage(sql.toString(), start, limit, linkedMap);
 		if(rs!=null){
 			 ArrayList<DeptBean> depts = JSON.parseObject(rs.getContent().toString(), new TypeReference<ArrayList<DeptBean>>() {});
-			 return new PageImpl(depts,rs.getPageable(),rs.getTotalElements());
+			 return new Page<DeptBean>(depts,rs.getPageable());
 		}
 		return null;
 	}

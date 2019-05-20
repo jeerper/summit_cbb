@@ -14,12 +14,14 @@ import org.springframework.transaction.annotation.Transactional;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.TypeReference;
+import com.summit.cbb.utils.page.Page;
+import com.summit.cbb.utils.page.Pageable;
 import com.summit.common.entity.DictionaryBean;
 import com.summit.common.entity.ResponseCodeEnum;
+import com.summit.common.entity.UserInfo;
 import com.summit.domain.dictionary.DictionaryBeanRowMapper;
 import com.summit.repository.UserRepository;
 import com.summit.service.cache.DictionaryCacheImpl;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 
@@ -190,17 +192,34 @@ public class DictionaryService {
 	public Page<DictionaryBean> queryByPage(int start, int limit, String pId) {
 //		List<DictionaryBean> list = SysDicMap.getChildList(pId);
 		List<DictionaryBean> list = dictionaryCacheImpl.findChildList(pId);
-		List<DictionaryBean> l =null;
+		List<DictionaryBean> dicList =null;
 		if(list.size()>limit){
-			l =  list.subList((start-1)*limit, ((start-1)*limit)+limit);
+			dicList =  list.subList((start-1)*limit, ((start-1)*limit)+limit);
 		}else{
-			l=list;
+			dicList=list;
 		}
 		PageRequest pr = PageUtil.createPageRequest(start, limit, null);
-		return new PageImpl(l,pr,list.size());
+		Pageable pageable=new Pageable();
+		pageable.setCurPage(start);
+		pageable.setPageCount(getPageCount(list.size(),limit));
+		pageable.setPageSize(limit);
+		pageable.setRowsCount(list.size());
+		pageable.setPageRowsCount(dicList.size());
+		return new Page<DictionaryBean>(dicList,pageable);
 		//return new Page<DictionaryBean>(l, list.size());
 	}
 	
+	public int getPageCount(long rowsCount,int pageSize) {
+		if (rowsCount == 0)
+			return 0;
+		if (pageSize == 0)
+			return 1;
+		double tmpD = (double) rowsCount / pageSize;
+		int tmpI = (int) tmpD;
+		if (tmpD > tmpI)
+			tmpI++;
+		return tmpI;
+	}
 	public List<DictionaryBean> queryByPid(String pId){
 		return dictionaryCacheImpl.findChildList(pId);
 	}

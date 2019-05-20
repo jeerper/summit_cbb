@@ -168,8 +168,8 @@ public class RoleController {
 			@RequestParam(value = "funIds") String funIds) {
 		try {
 			rs.roleAuthorization(roleCode, funIds);
-			LogBean logBean = new LogBean("角色管理","共享用户组件","角色授权："+roleCode+",funIds"+funIds,"4");
-		    logUtil.insertLog(logBean);
+			//LogBean logBean = new LogBean("角色管理","共享用户组件","角色授权："+roleCode+",funIds"+funIds,"4");
+		    //logUtil.insertLog(logBean);
 			return ResultBuilder.buildSuccess();
 		} catch (Exception e) {
 			logger.error("数据查询失败！", e);

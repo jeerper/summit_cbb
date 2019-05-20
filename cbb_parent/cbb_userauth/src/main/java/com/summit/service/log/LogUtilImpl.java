@@ -41,6 +41,9 @@ public class LogUtilImpl  {
 	public UserRepository ur;
 	
 	@Autowired
+	private SummitTools st;
+	
+	@Autowired
 	private JdbcTemplate jdbcTemplate;
 	/**
 	 * 新增日志方法
@@ -57,9 +60,17 @@ public class LogUtilImpl  {
 		if(request !=null  && logBean.getFunName()!=null && logBean.getFunName().trim().length()>0){
 			String id = SummitTools.getKey();
 			String callerIP = "";
-			String sTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.sss").format(new Date());
-			String insertLogSql = "INSERT INTO SYS_LOG(id,userName,callerIP,funName,stime,systemName,describe,actionFlag,operType) VALUES (?,?,?,?,?,?,?) ";
-			jdbcTemplate.update(insertLogSql, id,userName,callerIP,logBean.getFunName(),sTime,logBean.getSystemName(),logBean.getDescribe(),"0",logBean.getOperType());
+			if(SummitTools.stringIsNull(logBean.getCallerIP())){
+				callerIP=getIPFromHttp(request);
+			}else{
+				callerIP=logBean.getCallerIP();
+			}
+			String insertLogSql = "INSERT INTO SYS_LOG(id,userName,callerIP,funName,stime,etime,actiontime,systemName,describe,actionFlag,operType) VALUES (?,?,?,?,?,?,?,?,?,?,?) ";
+			jdbcTemplate.update(insertLogSql,
+					id,userName,callerIP,logBean.getFunName(),logBean.getStime(),
+					logBean.getEtime(),logBean.getActiontime(),
+					logBean.getSystemName(),logBean.getDescribe(),
+					logBean.getActionFlag(),logBean.getOperType());
 				
 		}
 	}
