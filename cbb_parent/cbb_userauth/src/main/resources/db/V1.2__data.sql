@@ -148,4 +148,3 @@ INSERT INTO `sys_user_dept` VALUES ('1', 'admin', '1', null);
 
 INSERT INTO `sys_user_adcd` VALUES ('1', 'admin', '650000000000', null);
 
-INSERT INTO `sys_log` VALUES ('369f18760be44c25a935b71809718a24', 'admin', '192.168.141.107', '根据padcd查询下面所有的子节点', '2019-05-14 21:00:19', null, null, null, null);
