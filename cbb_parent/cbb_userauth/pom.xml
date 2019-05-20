@@ -7,11 +7,11 @@
 		<artifactId>cbb_parent</artifactId>
 		<version>1.0.0.RELEASE</version>
 	</parent>
-	<artifactId>backend</artifactId>
+	<artifactId>cbb_userauth</artifactId>
 	<packaging>jar</packaging>
 
  	<build>
- 		<finalName>cbb_userauth</finalName>
+ 		<finalName>backend</finalName>
  	</build>
 
 	<dependencies>
