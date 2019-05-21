@@ -41,11 +41,8 @@ public class LogBean  implements Serializable {
 	@ApiModelProperty(value="系统名称",name="systemName")
 	private String systemName;
 	
-	@ApiModelProperty(value="操作描述",name="describe")
-	private String describe;
-	
-	
-
+	@ApiModelProperty(value="操作描述",name="operInfo")
+	private String operInfo;
 	
 	public LogBean() {
 		super();
@@ -57,11 +54,11 @@ public class LogBean  implements Serializable {
 	 * @param describe
 	 * @param operType
 	 */
-	public LogBean(String funName,String systemName,String describe,String operType,String callerIP,String stime,String etime,String actiontime,String actionFlag) {
+	public LogBean(String funName,String systemName,String operInfo,String operType,String callerIP,String stime,String etime,String actiontime,String actionFlag) {
 		super();
 		this.funName = funName;
 		this.systemName = systemName;
-		this.describe = describe;
+		this.operInfo = operInfo;
 		this.systemName = systemName;
 		this.operType=operType;
 		this.callerIP=callerIP;
@@ -79,12 +76,12 @@ public class LogBean  implements Serializable {
 	 * @param erroInfo
 	 * @param actionFlag
 	 */
-	public LogBean(String id, String funName,String systemName,String describe, String erroInfo, String actionFlag,String operType) {
+	public LogBean(String id, String funName,String systemName,String operInfo, String erroInfo, String actionFlag,String operType) {
 		super();
 		this.id = id;
 		this.funName = funName;
 		this.systemName = systemName;
-		this.describe = describe;
+		this.operInfo = operInfo;
 		this.erroInfo = erroInfo;
 		this.systemName = systemName;
 		this.actionFlag = actionFlag;
@@ -116,14 +113,14 @@ public class LogBean  implements Serializable {
 		this.systemName = systemName;
 	}
 
-	public String getDescribe() {
-		return describe;
+	public String getOperInfo() {
+		return operInfo;
 	}
-
-	public void setDescribe(String describe) {
-		this.describe = describe;
+	public void setOperInfo(String operInfo) {
+		this.operInfo = operInfo;
 	}
-
+	
+	
 	public String getId() {
 		return id;
 	}

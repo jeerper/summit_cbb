@@ -49,8 +49,8 @@ public class QueryLogBean  implements Serializable {
 	@ApiModelProperty(value="系统名称",name="systemName")
 	private String systemName;
 	
-	@ApiModelProperty(value="操作描述",name="describe")
-	private String describe;
+	@ApiModelProperty(value="操作描述",name="operInfo")
+	private String operInfo;
 	
 
 	public String getFunName() {
@@ -77,12 +77,12 @@ public class QueryLogBean  implements Serializable {
 		this.systemName = systemName;
 	}
 
-	public String getDescribe() {
-		return describe;
+	public String getOperInfo() {
+		return operInfo;
 	}
 
-	public void setDescribe(String describe) {
-		this.describe = describe;
+	public void setOperInfo(String operInfo) {
+		this.operInfo = operInfo;
 	}
 
 	public String getId() {
