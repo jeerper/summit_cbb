@@ -2,12 +2,12 @@ server:
   port: 22224
 spring:
   profiles:
-    active: dev
+    active: pro
   application:
     name: "cbb-userauth"
   flyway:
     # 如果启动的时候需要flyway管理sql脚本的话，将enabled设置为true
-    enabled: false
+    enabled: true
     baseline-on-migrate: true
     locations: classpath:db
     encoding: UTF-8
@@ -43,15 +43,15 @@ feign:
       enabled: true
     response:
       enabled: true
-#登录密码密钥必须是16字节长度的
-password:
-  encode:
-    key: summitsummitsumm
-    
+
 mybatis-plus:
   mapper-locations: classpath:com/summit/dao/*.xml
   config-location: classpath:mybatis-config.xml
 
+#登录密码密钥必须是16字节长度的
+password:
+  encode:
+    key: summitsummitsumm
 management:
   endpoints:
     web:

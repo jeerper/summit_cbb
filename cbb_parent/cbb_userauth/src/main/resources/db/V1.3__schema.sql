@@ -12,6 +12,6 @@ CREATE TABLE `sys_log` (
   `updateTime` datetime(3) DEFAULT NULL COMMENT '修改日期',
   `actionFlag` varchar(1) DEFAULT NULL COMMENT '调用是否成功标志  1：成功  0：失败',
   `systemName` varchar(100) DEFAULT NULL COMMENT '系统名称',
-  `describe` varchar(500) DEFAULT NULL COMMENT '操作描述',
+  `operInfo` varchar(1000) DEFAULT NULL COMMENT '操作说明',
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE=InnoDB DEFAULT character set utf8 collate utf8_bin;
