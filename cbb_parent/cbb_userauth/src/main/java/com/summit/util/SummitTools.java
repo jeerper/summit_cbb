@@ -588,7 +588,7 @@ public class SummitTools {
 	}
 	
 	
-	public static Object setBeanNullStringToNull(Object obj) throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, InstantiationException, NoSuchFieldException{
+	public static Object setBeanNullStringToNull(Object obj) throws Exception {
 		if(obj!=null){
 			 // 获取实体类的所有属性，返回Field数组
 	        Field[] field = obj.getClass().getDeclaredFields();

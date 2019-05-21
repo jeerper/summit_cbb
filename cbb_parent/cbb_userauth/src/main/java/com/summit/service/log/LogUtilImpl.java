@@ -2,7 +2,6 @@ package com.summit.service.log;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -29,7 +28,6 @@ import com.summit.common.entity.UserInfo;
 import com.summit.common.web.filter.UserContextHolder;
 import com.summit.repository.UserRepository;
 import com.summit.util.SummitTools;
-import com.summit.util.SysConstants;
 
 import net.sf.json.JSONObject;
 
@@ -65,11 +63,11 @@ public class LogUtilImpl  {
 			}else{
 				callerIP=logBean.getCallerIP();
 			}
-			String insertLogSql = "INSERT INTO SYS_LOG(id,userName,callerIP,funName,stime,etime,actiontime,systemName,describe,actionFlag,operType) VALUES (?,?,?,?,?,?,?,?,?,?,?) ";
+			String insertLogSql = "INSERT INTO SYS_LOG(id,userName,callerIP,funName,stime,etime,actiontime,systemName,operInfo,actionFlag,operType) VALUES (?,?,?,?,?,?,?,?,?,?,?) ";
 			jdbcTemplate.update(insertLogSql,
 					id,userName,callerIP,logBean.getFunName(),logBean.getStime(),
 					logBean.getEtime(),logBean.getActiontime(),
-					logBean.getSystemName(),logBean.getDescribe(),
+					logBean.getSystemName(),logBean.getOperInfo(),
 					logBean.getActionFlag(),logBean.getOperType());
 				
 		}
@@ -87,7 +85,7 @@ public class LogUtilImpl  {
 			SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.sss");
 			
 			String updateTime = sf.format(new Date());
-			String updateLogSql = "UPDATE SYS_LOG SET updateTime=?,actionFlag = ?,erroInfo = ?,systemName=?,describe=? ,operType=? WHERE id = ? ";
+			String updateLogSql = "UPDATE SYS_LOG SET updateTime=?,actionFlag = ?,erroInfo = ?,systemName=?,operInfo=? ,operType=? WHERE id = ? ";
 			jdbcTemplate.update(
 					updateLogSql,
 					updateTime,
@@ -113,7 +111,7 @@ public class LogUtilImpl  {
 			LinkedMap linkedMap=new LinkedMap();
 			Integer index = 1;
 			StringBuilder sb = new StringBuilder("select syslog.id,syslog.username,callerIP,funName,DATE_FORMAT(stime, '%Y-%m-%d %H:%i:%s')AS stime,erroInfo,");
-			sb.append(" DATE_FORMAT(updateTime, '%Y-%m-%d %H:%i:%s')AS updateTime,actionFlag, user1.NAME,operType ");
+			sb.append(" DATE_FORMAT(etime, '%Y-%m-%d %H:%i:%s')AS etime,actionFlag, user1.NAME,operType,operInfo,actiontime ");
 			sb.append(" from sys_log syslog  inner join sys_user user1");
 			sb.append(" on syslog.username=user1.username where 1=1 ");
             
@@ -138,7 +136,7 @@ public class LogUtilImpl  {
 	    		index++;
 			}
 			if (paramJson.containsKey("endDate")) {
-				sb.append(" AND stime <=  ? ");
+				sb.append(" AND etime <=  ? ");
 				linkedMap.put(index, paramJson.get("endDate"));
 	    		index++;
 			}
@@ -153,7 +151,6 @@ public class LogUtilImpl  {
 					 }
 				}
 				return new Page<QueryLogBean>(queryLogBeanList,page.getPageable());
-				// return new PageImpl(userInfoList,page.getPageable(),page.getTotalElements());
 			}
 			return null;
 		}

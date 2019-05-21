@@ -75,7 +75,8 @@ public class UserController {
             logger.error("新增用户失败", e);
         }
         logBean.setEtime(SummitTools.DTFormat("yyyy-MM-dd HH:mm:ss",new Date()));
-        logBean.setDescribe("新增用户信息"+JSONObject.fromObject(userInfo).toString());
+        userInfo.setPassword(null);
+        logBean.setOperInfo("新增用户信息："+JSONObject.fromObject(userInfo).toString());
         logBean.setOperType("1");
         this.getLogBean(logBean);
         logUtil.insertLog(logBean);
@@ -417,6 +418,7 @@ public class UserController {
     	if(logBean!=null){
     		logBean.setSystemName("共享用户组件");
     		logBean.setFunName("用户管理");
+    		
     	}
     	return logBean; 
     }
