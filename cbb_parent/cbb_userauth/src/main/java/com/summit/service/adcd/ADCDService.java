@@ -59,6 +59,7 @@ public class ADCDService {
 			List<ADCDBean> list=generateOrgMapToTree(null,ADCDBeanTree.getAdcd(),isQueryAll);
 			if(list!=null && list.size()>0){
 				ADCDBeanTree.setChildren(list);
+				ADCDBeanTree.setHasChild(true);
 			}
 		}
 		return ADCDBeanTree;
@@ -66,9 +67,13 @@ public class ADCDService {
 	
    public List<ADCDBean> generateOrgMapToTree(Map<String, List<Object>>  orgMaps, String pid,boolean isQueryAll) throws Exception  {
         if (null == orgMaps || orgMaps.size() == 0) {//a.ADLEVEL as LEVELa ,b.ADLEVEL as LEVELb
-        	StringBuffer querySql = new StringBuffer("SELECT a.ADCD, a.ADNM,a.PADCD, b.ADCD AS CHILD_ID, b.ADNM AS CHILD_NAME FROM SYS_AD_CD AS a  ");
-        	querySql.append(" JOIN SYS_AD_CD AS b ON b.PADCD = a.ADCD ");
+        	StringBuffer querySql = new StringBuffer(" SELECT a.ADCD, a.ADNM,a.PADCD, b.ADCD AS CHILD_ID, b.ADNM AS CHILD_NAME ");
         	LinkedMap whereMap = new LinkedMap();
+        	if(!isQueryAll){
+        		querySql.append(" ,(select count(*) from SYS_AD_CD where padcd=b.ADCD ) countChildren ");
+        	}
+        	querySql.append(" FROM SYS_AD_CD AS a  ");
+        	querySql.append(" JOIN SYS_AD_CD AS b ON b.PADCD = a.ADCD ");
         	if(!isQueryAll){
         		querySql.append(" where b.padcd=? ");
         		whereMap.put(1, pid);
@@ -114,6 +119,13 @@ public class ADCDService {
             	adcdBean.setPadcd(pid);
             	if(json.containsKey("LEVELb")){
             		adcdBean.setLevel(json.getString("LEVELb"));
+             	}
+            	if(json.containsKey("countChildren")){
+            		if(json.getString("countChildren")!=null && json.getInt("countChildren")>0){
+            		  adcdBean.setHasChild(true);
+            		}else{
+            			adcdBean.setHasChild(false);
+            		}
              	}
             	//if(isQueryAll){
 	            	List<ADCDBean> children = generateOrgMapToTree(orgMaps, json.get("CHILD_ID").toString(),isQueryAll);

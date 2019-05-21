@@ -18,6 +18,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+import com.summit.common.entity.LogBean;
+
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import net.sf.json.xml.XMLSerializer;
@@ -689,4 +691,16 @@ public class SummitTools {
 		int i = adcd.lastIndexOf("0000000000")> 0 ? adcd.lastIndexOf("0000000000") : adcd.lastIndexOf("00000000") > 0 ? adcd.lastIndexOf("00000000") : adcd.lastIndexOf("000000") > 0 ? adcd.lastIndexOf("000000") : 0;
 		return adcd = adcd.substring(0, i);
 	}
+	
+   public static LogBean getLogBean(LogBean logBean,String funName,String operInfo ,String operType){
+	    	if(logBean!=null){
+	    		logBean.setSystemName("共享用户组件");
+	    		logBean.setFunName(funName);
+	    		logBean.setEtime(SummitTools.DTFormat("yyyy-MM-dd HH:mm:ss",new Date()));
+	            logBean.setOperInfo(operInfo);
+	            logBean.setOperType(operType);
+	    		
+	   }
+	   return logBean; 
+ }
 }

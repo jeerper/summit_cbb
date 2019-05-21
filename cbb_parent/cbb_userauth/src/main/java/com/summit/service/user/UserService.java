@@ -313,7 +313,7 @@ public class UserService {
 		userNames = userNames.replaceAll(",", "','");
         BCryptPasswordEncoder encoder =new BCryptPasswordEncoder();
 		String sql = "UPDATE SYS_USER SET PASSWORD = ?, LAST_UPDATE_TIME = ? WHERE USERNAME = ?";
-		jdbcTemplate.update(sql, encoder.encode("888888"),  new Date(),
+		jdbcTemplate.update(sql, encoder.encode(SysConstants.USERNAMEPASSWORD),  new Date(),
 				userNames);
 	}
 

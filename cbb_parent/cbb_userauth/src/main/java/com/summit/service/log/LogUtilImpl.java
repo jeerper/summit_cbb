@@ -110,7 +110,7 @@ public class LogUtilImpl  {
 	  public Page<QueryLogBean> queryByPage(int start, int limit, JSONObject paramJson) throws Exception {
 			LinkedMap linkedMap=new LinkedMap();
 			Integer index = 1;
-			StringBuilder sb = new StringBuilder("select syslog.id,syslog.username,callerIP,funName,DATE_FORMAT(stime, '%Y-%m-%d %H:%i:%s')AS stime,erroInfo,");
+			StringBuilder sb = new StringBuilder("select syslog.id,syslog.username as usernname,callerIP,funName,DATE_FORMAT(stime, '%Y-%m-%d %H:%i:%s')AS stime,erroInfo,");
 			sb.append(" DATE_FORMAT(etime, '%Y-%m-%d %H:%i:%s')AS etime,actionFlag, user1.NAME,operType,operInfo,actiontime ");
 			sb.append(" from sys_log syslog  inner join sys_user user1");
 			sb.append(" on syslog.username=user1.username where 1=1 ");

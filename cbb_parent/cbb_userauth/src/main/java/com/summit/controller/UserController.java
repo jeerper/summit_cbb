@@ -74,11 +74,8 @@ public class UserController {
         	logBean.setErroInfo(e.getMessage());
             logger.error("新增用户失败", e);
         }
-        logBean.setEtime(SummitTools.DTFormat("yyyy-MM-dd HH:mm:ss",new Date()));
         userInfo.setPassword(null);
-        logBean.setOperInfo("新增用户信息："+JSONObject.fromObject(userInfo).toString());
-        logBean.setOperType("1");
-        this.getLogBean(logBean);
+        SummitTools.getLogBean(logBean,"用户管理","新增用户信息："+JSONObject.fromObject(userInfo).toString(),"1");
         logUtil.insertLog(logBean);
         if("1".equals(logBean.getActionFlag())){
         	 return ResultBuilder.buildError(ResponseCodeEnum.CODE_9999);
@@ -97,6 +94,8 @@ public class UserController {
     @DeleteMapping("/del")
     public RestfulEntityBySummit<String> del(
     		@RequestParam(value = "userNames") String userNames) {
+    	 LogBean logBean =new  LogBean();
+    	 logBean.setStime(SummitTools.DTFormat("yyyy-MM-dd HH:mm:ss",new Date()));
         try {
             if(userNames.contains(",")){
             	for(String username:userNames.split(",")){
@@ -108,62 +107,54 @@ public class UserController {
             	}
             }
             us.del(userNames);
-            //LogBean logBean = new LogBean("用户管理","共享用户组件","删除用户信息："+userNames,"3");
-            //logUtil.insertLog(logBean);
-            return ResultBuilder.buildSuccess();
+            logBean.setActionFlag("0");
         } catch (Exception e) {
             logger.error("删除用户信息", e);
-            return ResultBuilder.buildError(ResponseCodeEnum.CODE_9999);
+            logBean.setActionFlag("1");
+        	logBean.setErroInfo(e.getMessage());
         }
+        SummitTools.getLogBean(logBean,"用户管理","删除用户:"+userNames,"3");
+        logUtil.insertLog(logBean);
+        if("1".equals(logBean.getActionFlag())){
+        	 return ResultBuilder.buildError(ResponseCodeEnum.CODE_9999);
+        }else{
+        	 return ResultBuilder.buildSuccess();
+        }
+        
     }
 
     @ApiOperation(value = "修改用户",  notes = "昵称(name)，用户名(userName),密码(password)都是必输项")
     @PostMapping("/edit")
     public RestfulEntityBySummit<String> edit(@RequestBody UserInfo userInfo) {
+    	 LogBean logBean =new  LogBean();
+    	 logBean.setStime(SummitTools.DTFormat("yyyy-MM-dd HH:mm:ss",new Date()));
         try {
             ResponseCodeEnum c=us.edit(userInfo,key);
             if(c!=null){
             	 return ResultBuilder.buildError(c);
             }
             userInfoCache.setUserInfo(userInfo.getUserName(),userInfo);
-            //LogBean logBean = new LogBean("用户管理","共享用户组件","修改用户信息："+userInfo,"2");
-           // logUtil.insertLog(logBean);
-            return ResultBuilder.buildSuccess();
+            logBean.setActionFlag("0");
         } catch (Exception e) {
             logger.error("修改用户失败:", e);
-            return ResultBuilder.buildError(ResponseCodeEnum.CODE_9999);
+            logBean.setActionFlag("1");
+        	logBean.setErroInfo(e.getMessage());
+        }
+        SummitTools.getLogBean(logBean,"用户管理","修改用户:"+JSONObject.fromObject(userInfo).toString(),"2");
+        logUtil.insertLog(logBean);
+        if("1".equals(logBean.getActionFlag())){
+        	 return ResultBuilder.buildError(ResponseCodeEnum.CODE_9999);
+        }else{
+        	 return ResultBuilder.buildSuccess();
         }
     }
 
-   /* @ApiOperation(value = "修改密码")
-    @PutMapping("/editPassword")
-    public RestfulEntityBySummit<String> editPassword(
-    		@RequestParam(value = "oldPassword")  String oldPassword,
-    		@RequestParam(value = "password")  String password, 
-    		@RequestParam(value = "repeatPassword")  String repeatPassword,
-    		@RequestParam(value = "userName")  String userName) {
-        LogBean logBean = new LogBean();
-        try {
-        	if(!password.equals(repeatPassword)){
-        		return ResultBuilder.buildError(ResponseCodeEnum.CODE_4013); 
-        	}
-        	HttpServletRequest request = ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest();
-            logBean = logUtil.insertLog(request, "1", "修改密码", userName);
-            us.editPassword(userName,oldPassword, password, repeatPassword);
-            return ResultBuilder.buildSuccess();
-        } catch (Exception e) {
-            //e.printStackTrace();
-            logBean.setActionFlag("0");
-            logBean.setErroInfo(e.toString());
-            logUtil.updateLog(logBean, "1");
-            logger.error("修改密码失败:", e);
-            return ResultBuilder.buildError(ResponseCodeEnum.CODE_9999);
-        }
-    }*/
 
     @ApiOperation(value = "修改密码",  notes = "旧密码和新密码必须是加密后的数据")
     @PutMapping("/editPassword")
     public RestfulEntityBySummit<String> editPassword(@RequestBody UserPassWordInfo userPassWordInfo) {
+    	 LogBean logBean =new  LogBean();
+    	 logBean.setStime(SummitTools.DTFormat("yyyy-MM-dd HH:mm:ss",new Date()));
         try {
             if(!userPassWordInfo.getPassword().equals(userPassWordInfo.getRepeatPassword())){
                 return ResultBuilder.buildError(ResponseCodeEnum.CODE_4013);
@@ -172,12 +163,18 @@ public class UserController {
             if(ub!=null){
             	return ResultBuilder.buildError(ub);
             }
-            //LogBean logBean = new LogBean("用户管理","共享用户组件","修改密码："+userPassWordInfo,"2");
-            //logUtil.insertLog(logBean);
-            return ResultBuilder.buildSuccess();
+            logBean.setActionFlag("0");
         } catch (Exception e) {
             logger.error("修改密码失败:", e);
-            return ResultBuilder.buildError(ResponseCodeEnum.CODE_9999);
+            logBean.setActionFlag("1");
+        	logBean.setErroInfo(e.getMessage());
+        }
+        SummitTools.getLogBean(logBean,"用户管理","修改密码:"+JSONObject.fromObject(userPassWordInfo).toString(),"2");
+        logUtil.insertLog(logBean);
+        if("1".equals(logBean.getActionFlag())){
+        	 return ResultBuilder.buildError(ResponseCodeEnum.CODE_9999);
+        }else{
+        	 return ResultBuilder.buildSuccess();
         }
     }
 
@@ -346,14 +343,21 @@ public class UserController {
     @PutMapping("/resetPassword")
     public RestfulEntityBySummit<String> resetPassword(
     		@RequestParam(value = "userName") String userName) {
+    	 LogBean logBean =new  LogBean();
+    	 logBean.setStime(SummitTools.DTFormat("yyyy-MM-dd HH:mm:ss",new Date()));
         try {
         	us.resetPassword(userName);
-            //LogBean logBean = new LogBean("用户管理","共享用户组件","重置密码："+userName,"2");
-            //logUtil.insertLog(logBean);
-            return ResultBuilder.buildSuccess();
+        	logBean.setActionFlag("0");
         } catch (Exception e) {
             logger.error("重置密码失败：", e);
-            return ResultBuilder.buildError(ResponseCodeEnum.CODE_9999);
+            logBean.setActionFlag("1");
+        }
+        SummitTools.getLogBean(logBean,"用户管理","重置密码:用户名 "+userName,"2");
+        logUtil.insertLog(logBean);
+        if("1".equals(logBean.getActionFlag())){
+        	 return ResultBuilder.buildError(ResponseCodeEnum.CODE_9999);
+        }else{
+        	 return ResultBuilder.buildSuccess();
         }
     }
 
@@ -399,27 +403,29 @@ public class UserController {
     public RestfulEntityBySummit<String>  grantRole(
     		@RequestParam(value = "userName") String userName,
     		@RequestParam(value = "role",required = false) String[] role) {
+    	 LogBean logBean =new  LogBean();
+    	 logBean.setStime(SummitTools.DTFormat("yyyy-MM-dd HH:mm:ss",new Date()));
         try {
         	UserInfo ub = us.queryByUserName(userName);
             if (ub == null) {
             	return ResultBuilder.buildError(ResponseCodeEnum.CODE_4023);
             }
             us.grantRole(userName,role);
-            //LogBean logBean = new LogBean("用户管理","共享用户组件","授权权限："+userName+",角色信息:"+role,"4");
-            //logUtil.insertLog(logBean);
-            return ResultBuilder.buildSuccess();
+            logBean.setActionFlag("0");
         } catch (Exception e) {
+        	logBean.setActionFlag("1");
+        	logBean.setErroInfo(e.getMessage());
             logger.error("授权权限失败：", e);
             return ResultBuilder.buildError(ResponseCodeEnum.CODE_9999);
         }
+        SummitTools.getLogBean(logBean,"用户管理","授权权限："+userName+",角色信息:"+role,"4");
+        logUtil.insertLog(logBean);
+        if("1".equals(logBean.getActionFlag())){
+        	 return ResultBuilder.buildError(ResponseCodeEnum.CODE_9999);
+        }else{
+        	 return ResultBuilder.buildSuccess();
+        }
     }
 
-    private LogBean getLogBean(LogBean logBean){
-    	if(logBean!=null){
-    		logBean.setSystemName("共享用户组件");
-    		logBean.setFunName("用户管理");
-    		
-    	}
-    	return logBean; 
-    }
+ 
 }
