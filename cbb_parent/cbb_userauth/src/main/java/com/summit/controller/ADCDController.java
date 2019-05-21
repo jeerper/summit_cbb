@@ -7,7 +7,6 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.summit.cbb.utils.page.Page;
 import com.summit.common.entity.ADCDBean;
 import com.summit.common.entity.ADCDTreeBean;
 import com.summit.common.entity.LogBean;
@@ -149,7 +149,7 @@ public class ADCDController {
             @RequestParam(value = "padcd",required = false) String padcd) {
 		Page<ADCDBean> list = null;
 		try {
-			// list = adcdService.queryByPage(page, pageSize, padcd);
+			 list = adcdService.queryByPage(page, pageSize, padcd);
 			return ResultBuilder.buildSuccess(list);
 		} catch (Exception e) {
 			logger.error("数据查询失败！", e);

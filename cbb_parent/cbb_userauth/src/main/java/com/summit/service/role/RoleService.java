@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.TypeReference;
 import com.summit.common.entity.ResponseCodeEnum;
 import com.summit.common.entity.RoleBean;
+import com.summit.common.entity.ADCDBean;
 import com.summit.common.entity.AntdJsonBean;
 import com.summit.domain.role.RoleBeanRowMapper;
 import com.summit.repository.UserRepository;
@@ -82,7 +83,8 @@ public class RoleService {
 		Page<Object> rs = ur.queryByCustomPage(sb.toString(), start, limit,linkedMap);
 		if(rs!=null){
 			 ArrayList<RoleBean> roles = JSON.parseObject(rs.getContent().toString(), new TypeReference<ArrayList<RoleBean>>() {});
-			// pageRoleBeanInfo.setContent(students);
+			 return new Page<RoleBean>(roles,rs.getPageable());
+			 // pageRoleBeanInfo.setContent(students);
 			 ///pageRoleBeanInfo.setTotalElements(rs.getTotalElements());
 			 //return pageRoleBeanInfo;
 			// return new PageImpl(roles,rs.getPageable(),rs.getTotalElements());
