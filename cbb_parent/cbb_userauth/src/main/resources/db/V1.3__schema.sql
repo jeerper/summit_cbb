@@ -1,4 +1,4 @@
-﻿DROP TABLE `sys_log`
+﻿drop table if exists `sys_log`;
 CREATE TABLE `sys_log` (
   `id` varchar(40) NOT NULL COMMENT '主键',
   `userName` varchar(100) DEFAULT NULL COMMENT '登录用户名',
