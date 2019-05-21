@@ -44,7 +44,7 @@ public class UserInfo implements Serializable {
     /**
      * 启用状态 
      */
-    @ApiModelProperty(value="启用状态:1是，0否 ,添加默认为启用",name="isEnabled")
+    @ApiModelProperty(value="启用状态:1是，0否 ,添加默认为启用",name="isEnabled" )
     private Integer isEnabled;
     /**
      * 最后一次更新时间
@@ -85,7 +85,7 @@ public class UserInfo implements Serializable {
     /**
      * 角色集合
      */
-    @ApiModelProperty(value="角色集合，查询用",name="roles")
+    @ApiModelProperty(value="角色集合",name="roles")
     private String[] roles;
 
    

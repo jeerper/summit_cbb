@@ -23,6 +23,9 @@ public class ADCDBean  implements Serializable {
 	@ApiModelProperty(value="下级行政区划集合",name="children")
 	private List<ADCDBean> children;
 	
+	@ApiModelProperty(value="是否有子集",name="hasChild")
+	private boolean hasChild;
+	
 	public ADCDBean() {
 		super();
 	}
@@ -87,6 +90,12 @@ public class ADCDBean  implements Serializable {
 	public void setPadnm(String padnm) {
 		this.padnm = padnm;
 	}
-	
-	
+
+	public boolean isHasChild() {
+		return hasChild;
+	}
+
+	public void setHasChild(boolean hasChild) {
+		this.hasChild = hasChild;
+	}
 }
