@@ -190,11 +190,17 @@ public class DictionaryService {
 
 
 	public Page<DictionaryBean> queryByPage(int start, int limit, String pId) {
-//		List<DictionaryBean> list = SysDicMap.getChildList(pId);
+//		List<DictionaryBean> list = SysDicMap.getChildList(pId);    
 		List<DictionaryBean> list = dictionaryCacheImpl.findChildList(pId);
 		List<DictionaryBean> dicList =null;
-		if(list.size()>limit){
-			dicList =  list.subList((start-1)*limit, ((start-1)*limit)+limit);
+		if(list.size()>(start-1)*limit){
+			 int endcount=((start-1)*limit)+limit;
+			 if(list.size()>endcount){
+				 dicList =  list.subList((start-1)*limit, endcount);	 
+			 }else{
+				 dicList =  list.subList((start-1)*limit,list.size());
+			 }
+			
 		}else{
 			dicList=list;
 		}
