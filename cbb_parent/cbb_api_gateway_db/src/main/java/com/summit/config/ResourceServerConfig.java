@@ -3,7 +3,6 @@ package com.summit.config;
 import com.summit.handle.SummitAccessDeniedHandler;
 import com.summit.handle.SummitResourceAuthExceptionEntryPoint;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -28,9 +27,10 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
     private OAuth2WebSecurityExpressionHandler oAuth2WebSecurityExpressionHandler;
     @Autowired
     private SummitAccessDeniedHandler summitAccessDeniedHandler;
+    @Autowired
+    AppConfig appConfig;
 
-    @Value("${my-white-list}")
-    private String myWhiteList;
+
 
     @Override
     public void configure(HttpSecurity http) throws Exception {
@@ -40,8 +40,7 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
         http.cors();
         http.authorizeRequests()
                 .antMatchers(HttpMethod.OPTIONS).permitAll()
-                .antMatchers(WebSecurityConfigurer.AUTH_WHITELIST).permitAll()
-                .antMatchers(myWhiteList.split(",")).permitAll()
+                .antMatchers(appConfig.getAuthWhiteList()).permitAll()
                 .anyRequest().authenticated();
     }
 

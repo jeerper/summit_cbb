@@ -13,12 +13,27 @@ spring:
     encoding: UTF-8
     # 验证错误时 是否自动清除数据库 高危操作!
     clean-on-validation-error: true
+app:
+  auth-white-list:
+    # business url
+    - '/**/*.jpg'
+    - '/**/*.png'
+    # actuator url
+    - '/actuator/**'
+    # swagger ui
+    - '/v2/api-docs'
+    - '/**/v2/api-docs'
+    - '/swagger-resources/**'
+    - '/swagger-ui.html'
+    - '/swagger/api-docs'
+    - '/webjars/**'
+
+
 
 mybatis-plus:
   mapper-locations: classpath*:**/dao/mapper/*.xml
   config-location: classpath:mybatis-config.xml
 
-my-white-list: /**/*.jpg,/**/*.png
 
 zuul:
   ignoredServices:
