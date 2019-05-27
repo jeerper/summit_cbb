@@ -31,9 +31,11 @@ public class AccessFilter extends ZuulFilter {
     @Override
     public Object run() {
         RequestContext requestContext = RequestContext.getCurrentContext();
-
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null) {
+            if(authentication.getName().equals("anonymousUser")){
+                return null;
+            }
             requestContext.addZuulRequestHeader(CommonConstant.USER_HEADER, authentication.getName());
         }
         return null;
