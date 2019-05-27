@@ -131,13 +131,13 @@ public class FunctionController {
 	
 	@ApiOperation(value = "根据用户名查询分配的菜单-树展示")
 	@GetMapping("getFunInfoByUserName")
-	public RestfulEntityBySummit<List<FunctionBean>> getFunInfoByUserName() {
+	public RestfulEntityBySummit<List<FunctionBean>> getFunInfoByUserName(@RequestParam(value = "userName" ,required = true)  String userName) {
 		try {
-			String userName="";
-			UserInfo userInfo=UserContextHolder.getUserInfo();
-			if(userInfo!=null){
-				userName=userInfo.getUserName();
-			}
+			//String userName="";
+//			UserInfo userInfo=UserContextHolder.getUserInfo();
+//			if(userInfo!=null){
+//				userName=userInfo.getUserName();
+//			}
 			return ResultBuilder.buildSuccess(fs.getFunInfoByUserName(userName));
 		} catch (Exception e) {
 			logger.error("查询失败！", e);

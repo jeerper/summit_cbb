@@ -276,7 +276,7 @@ public class FunctionService {
 //			 for(FunctionBean functionBean:valueList){
 //				 System.out.println("====:"+functionBean.getId()+","+functionBean.getName()+","+functionBean.getPid());	
 //			 }
-			// return valueList;
+			 return valueList;
 		}
 		return null;
 	}

@@ -229,8 +229,14 @@ public class UserService {
 		LinkedMap linkedMap=new LinkedMap();
 		Integer index = 1;
 		StringBuilder sb = new StringBuilder(
-				"SELECT USERNAME,NAME,SEX,IS_ENABLED,EMAIL,PHONE_NUMBER,STATE,NOTE FROM SYS_USER WHERE USERNAME <> '"
-						+ SysConstants.SUPER_USERNAME + "'");
+				"SELECT user1.USERNAME,NAME,SEX,IS_ENABLED,EMAIL,PHONE_NUMBER,STATE,NOTE,USERADCD.ADCD,useradcd.adnms,userdept.DEPTID,userdept.deptNames FROM SYS_USER user1 ");
+		sb.append(" left join (SELECT username,GROUP_CONCAT(useradcd.`adcd`)AS adcd ,GROUP_CONCAT(`adnm`)AS adnms ");
+		sb.append(" FROM sys_user_adcd useradcd inner join sys_ad_cd ad on useradcd.adcd=ad.adcd GROUP BY username)useradcd on useradcd.username=user1.USERNAME");
+		sb.append(" left join (SELECT username,GROUP_CONCAT(userdept.`deptid`)AS DEPTID,GROUP_CONCAT(dept.`deptname`)AS deptNames FROM sys_user_dept userdept ");
+		sb.append(" inner join sys_dept dept on userdept.deptid=dept.id GROUP BY username)userdept on userdept.username=user1.USERNAME");
+		sb.append(" WHERE user1.USERNAME <> '");
+		sb.append(SysConstants.SUPER_USERNAME );
+		sb.append("'");
 		if (paramJson.containsKey("name")) {
 			sb.append(" AND NAME LIKE ? ");
 			linkedMap.put(index,"%" + paramJson.get("name") + "%");
@@ -251,6 +257,17 @@ public class UserService {
 			linkedMap.put(index, paramJson.get("state"));
     		index++;
 		}
+		if (paramJson.containsKey("adcd")) {
+			sb.append(" AND USERADCD.ADCD =  ? ");
+			linkedMap.put(index, paramJson.get("adcd"));
+    		index++;
+		}
+		if (paramJson.containsKey("deptName")) {
+			sb.append(" AND dept.detpName  like   ? ");
+			linkedMap.put(index,"%" + paramJson.get("deptName") + "%");
+    		index++;
+		}
+		
 		Page<Object> page= ur.queryByCustomPage(sb.toString(), start, limit,linkedMap);
 		if(page!=null){
 			List<UserInfo> userInfoList=new ArrayList<UserInfo>();
@@ -278,8 +295,8 @@ public class UserService {
 		sb.append(" left join (SELECT username,GROUP_CONCAT(useradcd.`adcd`)AS adcd ,GROUP_CONCAT(`adnm`)AS adnms ");
 		sb.append(" FROM sys_user_adcd useradcd inner join sys_ad_cd ad on useradcd.adcd=ad.adcd GROUP BY username)useradcd on useradcd.username=user1.USERNAME");
 		sb.append(" left join (SELECT username,GROUP_CONCAT(userdept.`deptid`)AS DEPTID,GROUP_CONCAT(dept.`deptname`)AS deptNames FROM sys_user_dept userdept ");
-		sb.append(" inner join sys_dept dept on userdept.deptid=dept.id)userdept on userdept.username=user1.USERNAME");
-		sb.append(" WHERE user1.USERNAME <> ' ");
+		sb.append(" inner join sys_dept dept on userdept.deptid=dept.id  GROUP BY username)userdept on userdept.username=user1.USERNAME");
+		sb.append(" WHERE user1.USERNAME <> '");
 		sb.append(SysConstants.SUPER_USERNAME );
 		sb.append("'");
 		if (paramJson.containsKey("name")) {

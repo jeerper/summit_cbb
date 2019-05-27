@@ -68,16 +68,16 @@ public class UserController {
             	 return ResultBuilder.buildError(c);
             }
             userInfoCache.setUserInfo(userInfo.getUserName(),userInfo);
-            logBean.setActionFlag("0");
+            logBean.setActionFlag("1");
         } catch (Exception e) {
-        	logBean.setActionFlag("1");
+        	logBean.setActionFlag("0");
         	logBean.setErroInfo(e.getMessage());
             logger.error("新增用户失败", e);
         }
         userInfo.setPassword(null);
         SummitTools.getLogBean(logBean,"用户管理","新增用户信息："+JSONObject.fromObject(userInfo).toString(),"1");
         logUtil.insertLog(logBean);
-        if("1".equals(logBean.getActionFlag())){
+        if("0".equals(logBean.getActionFlag())){
         	 return ResultBuilder.buildError(ResponseCodeEnum.CODE_9999);
         }else{
         	 return ResultBuilder.buildSuccess();
@@ -107,15 +107,15 @@ public class UserController {
             	}
             }
             us.del(userNames);
-            logBean.setActionFlag("0");
+            logBean.setActionFlag("1");
         } catch (Exception e) {
             logger.error("删除用户信息", e);
-            logBean.setActionFlag("1");
+            logBean.setActionFlag("0");
         	logBean.setErroInfo(e.getMessage());
         }
         SummitTools.getLogBean(logBean,"用户管理","删除用户:"+userNames,"3");
         logUtil.insertLog(logBean);
-        if("1".equals(logBean.getActionFlag())){
+        if("0".equals(logBean.getActionFlag())){
         	 return ResultBuilder.buildError(ResponseCodeEnum.CODE_9999);
         }else{
         	 return ResultBuilder.buildSuccess();
@@ -134,15 +134,15 @@ public class UserController {
             	 return ResultBuilder.buildError(c);
             }
             userInfoCache.setUserInfo(userInfo.getUserName(),userInfo);
-            logBean.setActionFlag("0");
+            logBean.setActionFlag("1");
         } catch (Exception e) {
             logger.error("修改用户失败:", e);
-            logBean.setActionFlag("1");
+            logBean.setActionFlag("0");
         	logBean.setErroInfo(e.getMessage());
         }
         SummitTools.getLogBean(logBean,"用户管理","修改用户:"+JSONObject.fromObject(userInfo).toString(),"2");
         logUtil.insertLog(logBean);
-        if("1".equals(logBean.getActionFlag())){
+        if("0".equals(logBean.getActionFlag())){
         	 return ResultBuilder.buildError(ResponseCodeEnum.CODE_9999);
         }else{
         	 return ResultBuilder.buildSuccess();
@@ -163,15 +163,15 @@ public class UserController {
             if(ub!=null){
             	return ResultBuilder.buildError(ub);
             }
-            logBean.setActionFlag("0");
+            logBean.setActionFlag("1");
         } catch (Exception e) {
             logger.error("修改密码失败:", e);
-            logBean.setActionFlag("1");
+            logBean.setActionFlag("0");
         	logBean.setErroInfo(e.getMessage());
         }
         SummitTools.getLogBean(logBean,"用户管理","修改密码:"+JSONObject.fromObject(userPassWordInfo).toString(),"2");
         logUtil.insertLog(logBean);
-        if("1".equals(logBean.getActionFlag())){
+        if("0".equals(logBean.getActionFlag())){
         	 return ResultBuilder.buildError(ResponseCodeEnum.CODE_9999);
         }else{
         	 return ResultBuilder.buildSuccess();
@@ -311,7 +311,9 @@ public class UserController {
             @RequestParam(value = "name",required = false) String name,
             @RequestParam(value = "userName",required = false) String userName,
             @RequestParam(value = "isEnabled",required = false) String isEnabled,
-            @RequestParam(value = "state",required = false) String state) {
+            @RequestParam(value = "state",required = false) String state,
+            @RequestParam(value = "adcd",required = false) String adcd,
+            @RequestParam(value = "deptName",required = false) String deptName) {
         try {
         	page = (page == 0) ? 1 : page;
             pageSize = (pageSize == 0) ? SysConstants.PAGE_SIZE : pageSize;
@@ -328,6 +330,9 @@ public class UserController {
             }
             if(!SummitTools.stringIsNull(state)){
                 paramJson.put("state",state);
+            }
+            if(!SummitTools.stringIsNull(adcd)){
+                paramJson.put("adcd",adcd);
             }
             Page<UserInfo> pageList=us.queryByPage(page, pageSize, paramJson);
             return ResultBuilder.buildSuccess(pageList);
@@ -347,14 +352,14 @@ public class UserController {
     	 logBean.setStime(SummitTools.DTFormat("yyyy-MM-dd HH:mm:ss",new Date()));
         try {
         	us.resetPassword(userName);
-        	logBean.setActionFlag("0");
+        	logBean.setActionFlag("1");
         } catch (Exception e) {
             logger.error("重置密码失败：", e);
-            logBean.setActionFlag("1");
+            logBean.setActionFlag("0");
         }
         SummitTools.getLogBean(logBean,"用户管理","重置密码:用户名 "+userName,"2");
         logUtil.insertLog(logBean);
-        if("1".equals(logBean.getActionFlag())){
+        if("0".equals(logBean.getActionFlag())){
         	 return ResultBuilder.buildError(ResponseCodeEnum.CODE_9999);
         }else{
         	 return ResultBuilder.buildSuccess();
@@ -411,16 +416,16 @@ public class UserController {
             	return ResultBuilder.buildError(ResponseCodeEnum.CODE_4023);
             }
             us.grantRole(userName,role);
-            logBean.setActionFlag("0");
+            logBean.setActionFlag("1");
         } catch (Exception e) {
-        	logBean.setActionFlag("1");
+        	logBean.setActionFlag("0");
         	logBean.setErroInfo(e.getMessage());
             logger.error("授权权限失败：", e);
             return ResultBuilder.buildError(ResponseCodeEnum.CODE_9999);
         }
         SummitTools.getLogBean(logBean,"用户管理","授权权限："+userName+",角色信息:"+role,"4");
         logUtil.insertLog(logBean);
-        if("1".equals(logBean.getActionFlag())){
+        if("0".equals(logBean.getActionFlag())){
         	 return ResultBuilder.buildError(ResponseCodeEnum.CODE_9999);
         }else{
         	 return ResultBuilder.buildSuccess();
