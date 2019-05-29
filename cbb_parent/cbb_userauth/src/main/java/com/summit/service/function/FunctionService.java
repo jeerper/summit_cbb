@@ -265,8 +265,10 @@ public class FunctionService {
 	        			 }
 	        			 functionBeancChildren.add(functionBean);
 	        			 FunctionBean functionBean1=map.get(functionBean.getPid());
-	        			 functionBean1.setChildren(functionBeancChildren);
-	        			 map.put(functionBean.getPid(), functionBean1);
+	        			 if(functionBean1!=null){
+		        			 functionBean1.setChildren(functionBeancChildren);
+		        			 map.put(functionBean.getPid(), functionBean1);
+	        			 }
 	        			 pid=functionBean.getPid();
 	        		 }
 	        	 }

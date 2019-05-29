@@ -200,6 +200,23 @@ public class UserController {
             	funList.toArray(funArray);
             	ub.setPermissions(funArray);
             }
+            
+            JSONObject objcet= us.queryAdcdByUserName(userName);
+            
+            if(objcet!=null){
+            	String[] adcdsArray = JSON.parseObject(objcet.get("adcds").toString(), new TypeReference<String[]>() {});
+            	ub.setAdcds(adcdsArray);
+            	String adnms=objcet.getString("adnms");
+            	ub.setAdnms(adnms);
+            }
+            
+            JSONObject objcetdept=  us.queryDeptByUserName(userName);
+            if(objcetdept!=null ){
+            	String[] deptsArray = JSON.parseObject(objcetdept.get("deptIds").toString(), new TypeReference<String[]>() {});
+            	ub.setDepts(deptsArray);
+            	String deptnames=objcetdept.getString("deptnames");
+            	ub.setDeptNames(deptnames);
+            }
             return ResultBuilder.buildSuccess(ub);
         } catch (Exception e) {
             logger.error("根据用户名查询用户信息失败-对内接口：", e);
