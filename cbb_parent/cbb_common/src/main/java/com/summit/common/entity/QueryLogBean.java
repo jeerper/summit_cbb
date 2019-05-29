@@ -14,7 +14,7 @@ public class QueryLogBean  implements Serializable {
 	@ApiModelProperty(value="主键id",name="id")
 	private String id;
 	@ApiModelProperty(value="用户名",name="usernname")
-	private String usernname;
+	private String username;
 	
 	@ApiModelProperty(value="操作者姓名",name="name")
 	private String name;
@@ -92,13 +92,12 @@ public class QueryLogBean  implements Serializable {
 	public void setId(String id) {
 		this.id = id;
 	}
-
-	public String getUsernname() {
-		return usernname;
+	public String getUsername() {
+		return username;
 	}
 
-	public void setUsernname(String usernname) {
-		this.usernname = usernname;
+	public void setUsername(String username) {
+		this.username = username;
 	}
 
 	public String getName() {
