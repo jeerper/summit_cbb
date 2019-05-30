@@ -243,7 +243,7 @@ public class UserService {
     		index++;
 		}
 		if (paramJson.containsKey("userName")) {
-			sb.append(" AND USERNAME LIKE ? ");
+			sb.append(" AND user1.USERNAME LIKE ? ");
 			linkedMap.put(index,"%" + paramJson.get("userName") + "%");
     		index++;
 		}
@@ -285,7 +285,7 @@ public class UserService {
 			// return new PageImpl(userInfoList,page.getPageable(),page.getTotalElements());
 		}
 		return null;
-	}
+	} 
 	
 	
 
