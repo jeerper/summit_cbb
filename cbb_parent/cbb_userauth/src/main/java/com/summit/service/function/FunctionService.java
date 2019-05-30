@@ -195,7 +195,6 @@ public class FunctionService {
 				.getIsEnabled(), fb.getFurl(), fb.getImgUlr(), fb.getNote(), fb
 				.getId());
 	}
-
 	private boolean isSuperUser(String userName) {
 		if (SummitTools.stringEquals(SysConstants.SUPER_USERNAME, userName)) {
 			return true;

@@ -258,8 +258,8 @@ public class UserService {
     		index++;
 		}
 		if (paramJson.containsKey("adcd")) {
-			sb.append(" AND USERADCD.ADCD =  ? ");
-			linkedMap.put(index, paramJson.get("adcd"));
+			sb.append(" AND USERADCD.ADCD like  ? ");
+			linkedMap.put(index, "%" + paramJson.get("adcd") + "%");
     		index++;
 		}
 		if (paramJson.containsKey("deptName")) {
