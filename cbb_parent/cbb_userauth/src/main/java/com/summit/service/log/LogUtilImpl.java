@@ -140,6 +140,21 @@ public class LogUtilImpl  {
 				linkedMap.put(index, paramJson.get("endDate"));
 	    		index++;
 			}
+			if (paramJson.containsKey("operIp")) {
+				sb.append(" AND callerIP like  ? ");
+				linkedMap.put(index, "%" + paramJson.get("operIp")+ "%" );
+	    		index++;
+			}
+			if (paramJson.containsKey("operType")) {
+				sb.append(" AND operType =  ? ");
+				linkedMap.put(index, paramJson.get("operType"));
+	    		index++;
+			}
+			if (paramJson.containsKey("actionFlag")) {
+				sb.append(" AND actionFlag =  ? ");
+				linkedMap.put(index, paramJson.get("actionFlag"));
+	    		index++;
+			}
 			sb.append(" order by stime desc");
 			Page<Object> page= ur.queryByCustomPage(sb.toString(), start, limit,linkedMap);
 			if(page!=null){

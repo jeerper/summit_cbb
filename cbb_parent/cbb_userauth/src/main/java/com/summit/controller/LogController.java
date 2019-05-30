@@ -95,7 +95,10 @@ public class LogController {
             @RequestParam(value = "funName",required = false) String funName,
             @RequestParam(value = "name",required = false) String name,
             @RequestParam(value = "startDate",required = false) String startDate,
-    		@RequestParam(value = "endDate",required = false) String endDate) {
+    		@RequestParam(value = "endDate",required = false) String endDate,
+    		@RequestParam(value = "callerIP",required = false) String callerIP,
+    		@RequestParam(value = "actionFlag",required = false) String actionFlag,
+    		@RequestParam(value = "operType",required = false) String operType) {
         try {
         	page = (page == 0) ? 1 : page;
             pageSize = (pageSize == 0) ? SysConstants.PAGE_SIZE : pageSize;
@@ -115,6 +118,15 @@ public class LogController {
             }
             if(!SummitTools.stringIsNull(endDate)){
                 paramJson.put("endDate",endDate);
+            }
+            if(!SummitTools.stringIsNull(callerIP)){
+                paramJson.put("operIp",callerIP);
+            }
+            if(!SummitTools.stringIsNull(actionFlag)){
+                paramJson.put("actionFlag",actionFlag);
+            }
+            if(!SummitTools.stringIsNull(operType)){
+                paramJson.put("operType",operType);
             }
             Page<QueryLogBean> pageList=logUtil.queryByPage(page, pageSize, paramJson);
             return ResultBuilder.buildSuccess(pageList);
