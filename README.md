@@ -178,11 +178,15 @@ mvn install
 - 并修改`application-dev.yml`配置文件中的:
     ``` yml
     spring:
-      redis: localhost --改为localhost地址
+      redis:
+        host: 192.168.140.155 --改为localhost地址
+        port: 10001 --改为本机redis端口
     eureka:
       client:
         serviceUrl:
-          defaultZone: "http://ucp:Summit2018@localhost:8761/eureka/" --注册中心组件默认端口是8761，所以注册中心组件无需配置，所以直接启动即可
+          #注册中心本地启动模式的默认端口是8761,无需修改,其他组件的注册地址需要改为
+          #"http://ucp:Summit2018@localhost:8761/eureka/"
+          defaultZone: "http://ucp:Summit2018@192.168.140.155:45000/eureka/"
     ```
 
 - 根据上述组件启动清单，依次启动组件，运行`MainAction.java`
@@ -220,6 +224,18 @@ mvn install
         name: "liuyuan-cbb-demo" -- 分隔符必须用'-' (不能与服务器平台中已经运行的组件应用程序重名)
         
     ```
+- 并修改`application-dev.yml`配置文件中的:
+    ``` yml
+    spring:
+      redis:
+        host: 192.168.140.155 --改为自己项目的服务器IP地址
+        port: 10001 --改为自己项目的服务上的redis端口
+    eureka:
+      client:
+        serviceUrl:
+          #改为自己项目的服务器上的注册中心的地址
+          #"http://ucp:Summit2018@xxx.xxx.xxx.xxx:45000/eureka/"
+          defaultZone: "http://ucp:Summit2018@192.168.140.155:45000/eureka/"
     
     <font color=red size=5px>注意：</font>上图的组件应用程序名称不能与服务器平台中已经运行的组件应用程序重名，一旦重名，平台会认为是同一个组件的多个实例，网关在调用组件接口时，Ribbon负载均衡器会根据负载均衡算法，自动路由到相同的应用程序名称的组件的其中一个，造成<font color=red size=5px>从网关过来的请求无法到达你本地开发机</font>的问题。
 
