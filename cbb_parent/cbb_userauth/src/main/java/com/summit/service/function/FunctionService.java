@@ -1,6 +1,7 @@
 package com.summit.service.function;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.TypeReference;
 import com.summit.common.entity.FunctionBean;
 import com.summit.common.entity.FunctionTreeBean;
@@ -246,8 +247,17 @@ public class FunctionService {
 		return null;
 	}
 	
-	public List<FunctionBean> getFunInfoByUserName(String userName){
-		String sql = "SELECT  SF.* FROM SYS_USER_ROLE SUR INNER JOIN SYS_ROLE_FUNCTION SRF ON ( SUR.ROLE_CODE = SRF.ROLE_CODE ) INNER JOIN SYS_FUNCTION SF ON (SRF.FUNCTION_ID = SF.ID) WHERE SF.IS_ENABLED = '1'  AND SUR.USERNAME = ? and SF.id!='root' order by	pid desc,FDESC";
+	public List<FunctionBean> getFunInfoByUserName(String userName) throws Exception{
+		String rootSql = "SELECT  * FROM  SYS_FUNCTION  where pid='root' order by	FDESC";
+		List<Object> functionList= ur.queryAllCustom(rootSql, new LinkedMap());
+		Map<String,FunctionBean> mapFunctionBean=new HashMap<String,FunctionBean>();
+		if(functionList!=null && functionList.size()>0){
+			ArrayList<FunctionBean> functions = JSON.parseObject(functionList.toString(), new TypeReference<ArrayList<FunctionBean>>() {});
+			for(FunctionBean functionBean:functions){
+				mapFunctionBean.put(functionBean.getId(), functionBean);
+			}
+		}
+		String sql = "SELECT  SF.* FROM SYS_USER_ROLE SUR INNER JOIN SYS_ROLE_FUNCTION SRF ON ( SUR.ROLE_CODE = SRF.ROLE_CODE ) INNER JOIN SYS_FUNCTION SF ON (SRF.FUNCTION_ID = SF.ID) WHERE SF.IS_ENABLED = '1'  AND SUR.USERNAME = ? and SF.id!='root' and SF.pid!='root' order by FDESC, pid DESC";
 		List<JSONObject>list= ur.queryAllCustom(sql, userName);
 		if(list!=null){
 			 ArrayList<FunctionBean> functionBeans = JSON.parseObject(list.toString(), new TypeReference<ArrayList<FunctionBean>>() {});
@@ -255,22 +265,35 @@ public class FunctionService {
 			 Map<String,FunctionBean> map=new LinkedHashMap<String,FunctionBean>();
 			 if(functionBeans!=null && functionBeans.size()>0){
 				 String pid="";
-	        	 for(FunctionBean functionBean:functionBeans){
-	        		 if("root".equals(functionBean.getPid())){
-	        			 map.put(functionBean.getId(), functionBean);
-	        		 }else{
-	        			 if("".equals(pid) || !pid.equals(functionBean.getPid())){
-	        				 functionBeancChildren=new ArrayList<FunctionBean>();
-	        			 }
-	        			 functionBeancChildren.add(functionBean);
-	        			 FunctionBean functionBean1=map.get(functionBean.getPid());
-	        			 if(functionBean1!=null){
-		        			 functionBean1.setChildren(functionBeancChildren);
-		        			 map.put(functionBean.getPid(), functionBean1);
-	        			 }
-	        			 pid=functionBean.getPid();
+//	        	 for(FunctionBean functionBean:functionBeans){
+//	        		 if("root".equals(functionBean.getPid())){
+//	        			 map.put(functionBean.getId(), functionBean);
+//	        		 }else{
+//	        			 if("".equals(pid) || !pid.equals(functionBean.getPid())){
+//	        				 functionBeancChildren=new ArrayList<FunctionBean>();
+//	        			 }
+//	        			 functionBeancChildren.add(functionBean);
+//	        			 FunctionBean functionBean1=map.get(functionBean.getPid());
+//	        			 if(functionBean1!=null){
+//		        			 functionBean1.setChildren(functionBeancChildren);
+//		        			 map.put(functionBean.getPid(), functionBean1);
+//	        			 }
+//	        			 pid=functionBean.getPid();
+//	        		 }
+//	        	 }
+				 for(FunctionBean functionBean:functionBeans){
+	        		 if("".equals(pid) || !pid.equals(functionBean.getPid())){
+	        			 functionBeancChildren=new ArrayList<FunctionBean>();
 	        		 }
-	        	 }
+	        		 functionBeancChildren.add(functionBean);
+	        		 FunctionBean functionBean1=mapFunctionBean.get(functionBean.getPid());
+	        		 if(functionBean1!=null){
+		        		 functionBean1.setChildren(functionBeancChildren);
+		        		 map.put(functionBean.getPid(), functionBean1);
+	        		 }
+	        			 pid=functionBean.getPid();
+	        		}
+	        	 
 	         }
 			 Collection<FunctionBean> valueCollection = map.values();
 			 List<FunctionBean> valueList = new ArrayList<FunctionBean>(valueCollection);

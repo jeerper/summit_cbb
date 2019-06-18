@@ -124,7 +124,7 @@ public class DeptService {
    
    public DeptTreeBean queryJsonAdcdTree(String pid) throws Exception {
 		LinkedMap linkedMap=new LinkedMap();
-		StringBuffer sql = new StringBuffer("SELECT ID as value,PID as pid,DEPTCODE,DEPTNAME as title,REMARK FROM SYS_DEPT  where 1=1");
+		StringBuffer sql = new StringBuffer("SELECT ID as value,ID as 'key',PID as pid,DEPTCODE,DEPTNAME as title,REMARK FROM SYS_DEPT  where 1=1");
 		if(pid==null || "".equals(pid)){
 			sql.append(" and (pid is null  or pid='-1' )");
 		}else{
@@ -197,6 +197,12 @@ public class DeptService {
 		String sql = "SELECT ID,PID,DEPTCODE,DEPTNAME,DEPT.ADCD,AD.ADNM,DEPT.REMARK FROM SYS_DEPT DEPT LEFT JOIN  SYS_AD_CD AD ON DEPT.ADCD=AD.ADCD  WHERE id = ?";
 		List<DeptBean> l = ur.queryAllCustom(sql, atm, id);
 		return l.get(0);
+	}
+	
+	public List<DeptBean> queryDeptByAdcd(String adcd) {
+		String sql = "SELECT ID,PID,DEPTCODE,DEPTNAME,DEPT.ADCD,AD.ADNM,DEPT.REMARK FROM SYS_DEPT DEPT LEFT JOIN  SYS_AD_CD AD ON DEPT.ADCD=AD.ADCD  WHERE DEPT.adcd = ?";
+		List<DeptBean> deptList = ur.queryAllCustom(sql, atm, adcd);
+		return deptList;
 	}
 
 	/**

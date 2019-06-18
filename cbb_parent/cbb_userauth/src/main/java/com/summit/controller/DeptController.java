@@ -1,5 +1,7 @@
 package com.summit.controller;
 
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,7 +58,8 @@ public class DeptController {
 	
 	@ApiOperation(value = "查询部门--JSON 数据直接生成树结构", notes = "用于application/json格式")
 	@GetMapping(value = "/queryDeptJsonTree")
-	public RestfulEntityBySummit<DeptTreeBean> queryJsonTree(@RequestParam(value = "pid",required = false)  String pid) {
+	public RestfulEntityBySummit<DeptTreeBean> queryJsonTree(@RequestParam(value = "pid",required = false)  String pid
+		) {
 	     try {
 	           DeptTreeBean adcdBean=ds.queryJsonAdcdTree(pid);
 	           return ResultBuilder.buildSuccess(adcdBean);
@@ -98,6 +101,17 @@ public class DeptController {
 		}
 		
 		//return list;
+	}
+	
+	@ApiOperation(value = "根据adcd查询部门信息")
+	@RequestMapping(value = "/queryDeptByAdcd",method = RequestMethod.GET)
+	public RestfulEntityBySummit<List<DeptBean>> queryDeptByAdcd(@RequestParam(value = "adcd",required = false)  String adcd){
+		try {
+			return ResultBuilder.buildSuccess(ds.queryDeptByAdcd(adcd));
+		} catch (Exception e) {
+			logger.error("查询失败：", e);
+			return ResultBuilder.buildError(ResponseCodeEnum.CODE_9999);
+		}
 	}
 	
 	@ApiOperation(value = "根据pid查询分页")
