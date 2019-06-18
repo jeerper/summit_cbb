@@ -5,9 +5,9 @@ cd ${WORKSPACE}/cbb_parent/${projectName}/deploy
 
 sed -i 's,${projectName},'${projectName}',g' ./.env
 
-sed -i 's,${WebServer_Port},'${Weather_Port}',g' ./.env
+sed -i 's,${WebServer_Port},'${WebServer_Port}',g' ./.env
 
-sed -i 's,${WebServer_Port},'${Weather_Port}',g' ${WORKSPACE}/cbb_parent/${projectName}/src/main/resources/application-pro.yml
+sed -i 's,${WebServer_Port},'${WebServer_Port}',g' ${WORKSPACE}/cbb_parent/${projectName}/src/main/resources/application-pro.yml
 
 sed -i 's,${Registry_Center_Port},'${Registry_Center_Port}',g' ${WORKSPACE}/cbb_parent/${projectName}/src/main/resources/application-pro.yml
 

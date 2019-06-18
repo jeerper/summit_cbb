@@ -11,4 +11,6 @@ component_tag=${projectName}
 
 source ${WORKSPACE}/cbb_parent/env/env.sh
 
+WebServer_Port=${Weather_Port}
+
 source ${WORKSPACE}/cbb_parent/env/build_wrapper.sh
