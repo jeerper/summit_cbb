@@ -52,6 +52,11 @@ docker-compose -p ${projectName} down  --rmi all
 
 docker-compose -p ${projectName} up  -d
 
+if [ ! -d ${java_service_wrapper_template_path} ]
+then
+    exit 0
+fi
+
 
 echo "打包"${projectName}"(Windows版本)"
 
