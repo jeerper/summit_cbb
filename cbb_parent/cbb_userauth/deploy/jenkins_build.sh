@@ -9,67 +9,10 @@ component_description="用户,角色,菜单管理组件"
 #组件标签
 component_tag=${projectName}
 
+
+
 source ${WORKSPACE}/cbb_parent/env/env.sh
 
-sed -i 's,${projectName},'${projectName}',g' ./.env
+WebServer_Port=${UserAuth_Port}
 
-sed -i 's,${WebServer_Port},'${UserAuth_Port}',g' ./.env
-
-sed -i 's,${WebServer_Port},'${UserAuth_Port}',g' ${WORKSPACE}/cbb_parent/${projectName}/src/main/resources/application-pro.yml
-
-sed -i 's,${Registry_Center_Port},'${Registry_Center_Port}',g' ${WORKSPACE}/cbb_parent/${projectName}/src/main/resources/application-pro.yml
-
-
-sed -i 's,${Registry_Center_URL},'${Registry_Center_URL}',g' ./.env
-
-sed -i 's,${Registry_Center_IP},'${Registry_Center_IP}',g' ./.env
-
-
-echo "编译"${projectName}
-
-cd ${WORKSPACE}/cbb_parent
-
-mvn clean
-
-mvn deploy
-
-
-if [ $? = 0 ]
-then
- echo "maven构建成功"
-else
- exit 1
-fi
-
-
-cd ${WORKSPACE}/cbb_parent/${projectName}/deploy
-
-echo "部署"${projectName}"(Docker版本)"
-
-
-docker-compose -p ${projectName} down  --rmi all
-
-docker-compose -p ${projectName} up  -d
-
-
-echo "打包"${projectName}"(Windows版本)"
-
-if [ ! -d ${fileStoragePath}/${projectName} ]
-then
-  echo "装载java后台启动程序包装模板"
-  cp -rf ${java_service_wrapper_template_path} ${fileStoragePath}/${projectName}
-  sed -i 's,${AppName},'${projectName}',g' ${fileStoragePath}/${projectName}/conf/wrapper.conf
-fi
-
-cd ${WORKSPACE}/cbb_parent/${projectName}/target
-
-rm -rf ${fileStoragePath}/${projectName}/bin/backend.jar
-rm -rf ${fileStoragePath}/${projectName}/bin/lib
-rm -rf ${fileStoragePath}/${projectName}/bin/config
-
-cp -rf backend.jar ${fileStoragePath}/${projectName}/bin
-cp -rf lib ${fileStoragePath}/${projectName}/bin/
-cp -rf config ${fileStoragePath}/${projectName}/bin/
-
-echo "推送组件信息到组件货架上"
-curl -X POST "http://${Cbb_Store_Server_Url}/api/component/pushComponentInfo" -H "accept: */*" -H "Content-Type: application/json;charset=UTF-8" -d "{ \"description\": \"${component_description}\", \"name\": \"${component_name}\", \"tag\": \"${component_tag}\"}"
+source ${WORKSPACE}/cbb_parent/env/build_wrapper.sh
