@@ -3,6 +3,7 @@ server:
 spring:
   profiles:
     active: pro
+    include: common
   application:
     name: "cbb-api-gateway-db"
   flyway:
@@ -41,55 +42,10 @@ zuul:
     - 'cbb-register-center'
   prefix: /api
 
-#当zuul.routes的配置用指定url进行路由时,是zuul.host.connect-timeout-millis,zuul.host.socket-timeout-millis这两个配生效，
-#当zuul.routes的配置用serviceId进行路由时,是ribbon.ReadTimeout,ribbon.SocketTimeout生效。
-#熔断器超时时间要大于负载均衡器超时时间
-#值设置的计算公式
-#timeoutInMilliseconds = (ribbonReadTimeout + ribbonConnectTimeout) * (maxAutoRetries + 1) * (maxAutoRetriesNextServer + 1);
-hystrix:
-  command:
-    default:
-      execution:
-        isolation:
-          strategy: SEMAPHORE
-          thread:
-            timeoutInMilliseconds: 40000
 
-ribbon:
-  # 请求连接的超时时间
-  ConnectTimeout: 10000
-  # 请求处理的超时时间
-  ReadTimeout: 10000
-  httpclient:
-    enable: false
-  okhttp:
-    enabled: true
-
-feign:
-  httpclient:
-    enabled: false
-  okhttp:
-    enabled: true
-  hystrix:
-    enabled: true
-  compression:
-    request:
-      enabled: true
-    response:
-      enabled: true
 
 #登录密码密钥必须是16字节长度的
 password:
   encode:
     key: summitsummitsumm
 
-management:
-  endpoints:
-    web:
-      exposure:
-        include: "*"
-  endpoint:
-    health:
-      show-details: ALWAYS
-logging:
-  file: logs/all.log
