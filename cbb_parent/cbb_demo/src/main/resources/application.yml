@@ -3,6 +3,7 @@ server:
 spring:
   profiles:
     active: pro
+    include: common
   application:
     name: "cbb-demo"
   flyway:
@@ -12,50 +13,6 @@ spring:
     locations: classpath:db
     encoding: UTF-8
 
-
-#熔断器超时时间要大于负载均衡器超时时间
-#值设置的计算公式
-#timeoutInMilliseconds = (ribbonReadTimeout + ribbonConnectTimeout) * (maxAutoRetries + 1) * (maxAutoRetriesNextServer + 1);
-hystrix:
-  command:
-    default:
-      execution:
-        isolation:
-          strategy: SEMAPHORE
-          thread:
-            timeoutInMilliseconds: 40000
-
-ribbon:
-  # 请求连接的超时时间
-  ConnectTimeout: 10000
-  # 请求处理的超时时间
-  ReadTimeout: 10000
-
-
-feign:
-  httpclient:
-    enabled: false
-  okhttp:
-    enabled: true
-  hystrix:
-    enabled: true
-  compression:
-    request:
-      enabled: true
-    response:
-      enabled: true
-
 mybatis-plus:
   mapper-locations: classpath:com/summit/dao/*.xml
   config-location: classpath:mybatis-config.xml
-
-management:
-  endpoints:
-    web:
-      exposure:
-        include: "*"
-  endpoint:
-    health:
-      show-details: ALWAYS
-logging:
-  file: logs/all.log
