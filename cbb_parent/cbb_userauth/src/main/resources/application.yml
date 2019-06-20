@@ -17,8 +17,3 @@ spring:
 mybatis-plus:
   mapper-locations: classpath:com/summit/dao/*.xml
   config-location: classpath:mybatis-config.xml
-
-#登录密码密钥必须是16字节长度的
-password:
-  encode:
-    key: summitsummitsumm
