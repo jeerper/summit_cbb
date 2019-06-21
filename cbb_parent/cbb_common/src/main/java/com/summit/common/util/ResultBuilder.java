@@ -44,4 +44,18 @@ public class ResultBuilder {
 		result.setData(null);
 		return result;
 	}
+
+	/**
+	 * 出现异常,且需要设置data时使用
+	 * @param code 返回码
+	 * @param t 返回数据
+	 * @return
+	 */
+	public static <T> RestfulEntityBySummit<T> buildError(ResponseCode code,T t) {
+		RestfulEntityBySummit<T> result = new RestfulEntityBySummit<>();
+		result.setCode(code.getCode());
+		result.setMsg(code.getMessage());
+		result.setData(t);
+		return result;
+	}
 }

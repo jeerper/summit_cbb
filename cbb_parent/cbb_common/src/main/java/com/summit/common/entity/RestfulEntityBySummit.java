@@ -1,9 +1,9 @@
 package com.summit.common.entity;
 
-import java.io.Serializable;
-
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+
+import java.io.Serializable;
 
 /**
  * 响应信息主体
@@ -23,10 +23,10 @@ public class RestfulEntityBySummit<T> implements Serializable {
 //    @ApiModelProperty(value = "返回码", name = "code", example = "CODE_0000")
 //    private String code = ResponseCodeBySummit.CODE_0000.name();
 
-//    @ApiModelProperty(value = "返回信息", name = "msg", example = "操作成功")
-//    private String msg = ResponseCodeBySummit.CODE_0000.getDescription();
+//    @ApiModelProperty(value = "返回信息", name = "msginfo", example = "操作成功")
+//    private String msginfo = ResponseCodeBySummit.CODE_0000.getDescription();
     
-    @ApiModelProperty(value = "返回信息", name = "msg", example = "操作成功")
+    @ApiModelProperty(value = "返回信息", name = "msginfo", example = "操作成功")
     private String msg;
 
     @ApiModelProperty(value = "返回数据", name = "data")
@@ -49,16 +49,16 @@ public class RestfulEntityBySummit<T> implements Serializable {
     /**
      *
      * @param data
-     * @param msg
+     * @param msginfo
      */
-//    public RestfulEntityBySummit(T data, String msg) {
+//    public RestfulEntityBySummit(T data, String msginfo) {
 //        this.data = data;
-//        this.msg = msg;
+//        this.msginfo = msginfo;
 //        this.code=getCode();
 //    }
-//    public RestfulEntityBySummit(T data, String msg,String code) {
+//    public RestfulEntityBySummit(T data, String msginfo,String code) {
 //        this.data = data;
-//        this.msg = msg;
+//        this.msginfo = msginfo;
 //        this.code=code;
 //    }
     /**
@@ -68,7 +68,7 @@ public class RestfulEntityBySummit<T> implements Serializable {
      */
 //    public RestfulEntityBySummit(ResponseCodeBySummit responseCodeBySummit) {
 //        this.code = responseCodeBySummit.name();
-//        this.msg = responseCodeBySummit.getDescription();
+//        this.msginfo = responseCodeBySummit.getDescription();
 //    }
     /**
      * 自定义响应消息
@@ -78,7 +78,7 @@ public class RestfulEntityBySummit<T> implements Serializable {
      */
 //    public RestfulEntityBySummit(ResponseCodeBySummit responseCodeBySummit, T data) {
 //        this.code = responseCodeBySummit.name();
-//        this.msg = responseCodeBySummit.getDescription();
+//        this.msginfo = responseCodeBySummit.getDescription();
 //        this.data = data;
 //    }
 
@@ -89,7 +89,7 @@ public class RestfulEntityBySummit<T> implements Serializable {
      */
 //    public RestfulEntityBySummit(Throwable e) {
 //        this.code = ResponseCodeBySummit.CODE_9999.name();
-//        this.msg = ResponseCodeBySummit.CODE_9999.getDescription() + ":" + e.getMessage();
+//        this.msginfo = ResponseCodeBySummit.CODE_9999.getDescription() + ":" + e.getMessage();
 //    }
 
     public String getCode() {
@@ -118,7 +118,7 @@ public class RestfulEntityBySummit<T> implements Serializable {
 
 //    public static final class RestFulEntityBySummitBuilder<T> {
 //        private String code = ResponseCodeBySummit.CODE_0000.name();
-//        private String msg = ResponseCodeBySummit.CODE_0000.getDescription();
+//        private String msginfo = ResponseCodeBySummit.CODE_0000.getDescription();
 //        private T data;
 //
 //        private RestFulEntityBySummitBuilder() {
@@ -133,8 +133,8 @@ public class RestfulEntityBySummit<T> implements Serializable {
 //            return this;
 //        }
 //
-//        public RestFulEntityBySummitBuilder withMsg(String msg) {
-//            this.msg = msg;
+//        public RestFulEntityBySummitBuilder withMsg(String msginfo) {
+//            this.msginfo = msginfo;
 //            return this;
 //        }
 //
@@ -146,7 +146,7 @@ public class RestfulEntityBySummit<T> implements Serializable {
 //        public RestfulEntityBySummit build() {
 //            RestfulEntityBySummit restFulEntityBySummit = new RestfulEntityBySummit();
 //            restFulEntityBySummit.setCode(code);
-//            restFulEntityBySummit.setMsg(msg);
+//            restFulEntityBySummit.setMsg(msginfo);
 //            restFulEntityBySummit.setData(data);
 //            return restFulEntityBySummit;
 //        }

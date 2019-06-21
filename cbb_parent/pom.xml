@@ -249,7 +249,8 @@
 		<module>cbb_api_gateway_db</module>
 		<module>cbb_userauth</module>
 		<module>cbb_utils</module>
-	</modules>
+        <module>cbb_notification</module>
+    </modules>
 
 	<repositories>
 		<repository>

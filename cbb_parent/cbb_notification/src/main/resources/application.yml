@@ -1,0 +1,82 @@
+server:
+  port: 22229
+spring:
+  profiles:
+    active: dev
+  application:
+    name: "cbb-notification"
+  mail:
+    host: smtp.qq.com
+    username: 3421988273@qq.com
+    password: fdgeeukxcdncdaeg
+    default-encoding: UTF-8
+    properties:
+      mail:
+        smtp:
+          auth: true
+  #thymeleaf
+  #默认到resource/templates目录下寻找
+  thymeleaf:
+    suffix: .html
+    check-template-location: true
+    encoding: UTF-8
+    content-type: text/html
+    cache: false
+    mode: LEGACYHTML5
+  flyway:
+    # 如果启动的时候需要flyway管理sql脚本的话，将enabled设置为true
+    enabled: true
+    baseline-on-migrate: true
+    locations: classpath:db
+    encoding: UTF-8
+
+#熔断器超时时间要大于负载均衡器超时时间
+#值设置的计算公式
+#timeoutInMilliseconds = (ribbonReadTimeout + ribbonConnectTimeout) * (maxAutoRetries + 1) * (maxAutoRetriesNextServer + 1);
+hystrix:
+  command:
+    default:
+      execution:
+        isolation:
+          strategy: SEMAPHORE
+          thread:
+            timeoutInMilliseconds: 40000
+
+ribbon:
+  # 请求连接的超时时间
+  ConnectTimeout: 10000
+  # 请求处理的超时时间
+  ReadTimeout: 10000
+
+
+feign:
+  httpclient:
+    enabled: false
+  okhttp:
+    enabled: true
+  hystrix:
+    enabled: true
+  compression:
+    request:
+      enabled: true
+    response:
+      enabled: true
+
+mybatis-plus:
+  mapper-locations: classpath:com/summit/dao/*.xml
+  config-location: classpath:mybatis-config.xml
+
+#登录密码密钥必须是16字节长度的
+password:
+  encode:
+    key: summitsummitsumm
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      show-details: ALWAYS
+logging:
+  file: logs/all.log
