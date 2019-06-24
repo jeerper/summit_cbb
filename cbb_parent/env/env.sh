@@ -27,7 +27,10 @@ spring_boot_admin_username="ucp"
 spring_boot_admin_password="Summit2018"
 
 #服务器网卡名称
-networkCardName="ens192"
+networkCardName="`ip addr | sed -r -n ' s/^[0-9]+: (.*):.*/\1/p' | grep en`"
+
+echo "networkCardName：${networkCardName}"
+
 #注册中心IP
 Registry_Center_IP="`ifconfig ${networkCardName} | grep "inet 1" | awk '{print $2}'`"
 echo "Registry_Center_IP：${Registry_Center_IP}"
