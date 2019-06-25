@@ -5,6 +5,8 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.util.List;
+import java.util.Map;
 
 @Data
 @ApiModel(value="短信发送类", description="发送短信所需的所有信息")
@@ -18,8 +20,8 @@ public class SendSms  implements Serializable {
     private String[] signNames;
     @ApiModelProperty(value="模板号",name="templateCode",required = true)
     private String templateCode;
-    @ApiModelProperty(value="模板参数，用冒号隔开",name="templateVars",required = true)
-    private String[] templateVars;
+    @ApiModelProperty(value="模板参数，模板key和value的键值对",name="templateVars",required = true)
+    private List<Map<String,Object>> templateVars;
 
 
 }
