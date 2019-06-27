@@ -2,7 +2,6 @@ package com.summit.send.controller;
 
 import com.summit.common.entity.RestfulEntityBySummit;
 import com.summit.common.entity.notification.EmailInfo;
-import com.summit.common.entity.notification.MyIntFile;
 import com.summit.common.entity.notification.SendEmail;
 import com.summit.common.util.ResultBuilder;
 import com.summit.send.service.SendEmailService;
@@ -156,13 +155,6 @@ public class SendEmailController {
 
     @RequestMapping(value = "/test9",method = RequestMethod.POST)
     public String  sendMail(@Param(value = "fileObj") MultipartFile fileObj){
-        log.info("==========");
-        HttpServletRequest request = ((ServletRequestAttributes) (RequestContextHolder.currentRequestAttributes())).getRequest();
-
-        return "success";
-    }
-    @RequestMapping(value = "/test10",method = RequestMethod.POST)
-    public String  sendMail(/*@RequestBody*/ MyIntFile fileObj){
         log.info("==========");
         HttpServletRequest request = ((ServletRequestAttributes) (RequestContextHolder.currentRequestAttributes())).getRequest();
 
