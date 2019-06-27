@@ -11,7 +11,7 @@ component_tag=${projectName}
 
 source ${WORKSPACE}/cbb_parent/env/env.sh
 
-WebServer_Port=${Demo_Port}
+WebServer_Port=${Notification_Port}
 
 source ${WORKSPACE}/cbb_parent/env/build_wrapper.sh
 
