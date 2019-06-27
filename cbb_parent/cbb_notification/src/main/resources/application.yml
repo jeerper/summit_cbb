@@ -30,3 +30,8 @@ spring:
     baseline-on-migrate: true
     locations: classpath:db
     encoding: UTF-8
+
+#短信AccessKeyID
+access-key-id: LTAI7t9ncYG6msbg
+#AccessKeySecret
+access-key-secret: nnTrlyuApboyM2vkY5SMqZkxCsUQA0
