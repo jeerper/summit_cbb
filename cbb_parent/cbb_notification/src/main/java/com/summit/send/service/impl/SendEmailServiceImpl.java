@@ -2,9 +2,9 @@ package com.summit.send.service.impl;
 
 import com.summit.common.entity.ResponseCodeEnum;
 import com.summit.common.entity.RestfulEntityBySummit;
+import com.summit.common.entity.notification.SendEmail;
 import com.summit.common.util.ResultBuilder;
 import com.summit.send.enums.MailContentType;
-import com.summit.send.pojo.SendEmail;
 import com.summit.send.service.SendEmailService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

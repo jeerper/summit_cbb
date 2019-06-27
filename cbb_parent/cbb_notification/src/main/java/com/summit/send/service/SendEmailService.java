@@ -1,7 +1,7 @@
 package com.summit.send.service;
 
 import com.summit.common.entity.RestfulEntityBySummit;
-import com.summit.send.pojo.SendEmail;
+import com.summit.common.entity.notification.SendEmail;
 
 
 public interface SendEmailService {
