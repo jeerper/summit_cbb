@@ -53,12 +53,12 @@ public interface NotificationService {
     @RequestMapping(value = "/msg/test8",method = RequestMethod.POST)
     RestfulEntityBySummit sendMail8(@Param("emailInfoAndAttachFiles") Map<String,  ?> emailInfoAndAttachFiles);
 
-    @RequestMapping(value = "/msg/test9",method = RequestMethod.POST, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE}, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+//    @RequestMapping(value = "/msg/test9",method = RequestMethod.POST, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE}, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 //    @RequestLine("POST /msg/test8")
-    RestfulEntityBySummit sendMail(@RequestPart("fileObj") MultipartFile fileObj);
-
-    @RequestMapping(value = "/msg/test10",method = RequestMethod.POST)
-    RestfulEntityBySummit sendMail(@RequestBody MyIntFile fileObj);
+//    RestfulEntityBySummit sendMail(@RequestPart("fileObj") MultipartFile fileObj);
+//
+//    @RequestMapping(value = "/msg/test10",method = RequestMethod.POST)
+//    RestfulEntityBySummit sendMail(@RequestBody MyIntFile fileObj);
 
     @RequestMapping(value = "/msg/test11",method = RequestMethod.POST)
     RestfulEntityBySummit sendMail(@RequestParam("aaa") int[] aaa);
