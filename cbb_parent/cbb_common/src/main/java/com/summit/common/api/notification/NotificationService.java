@@ -2,7 +2,6 @@ package com.summit.common.api.notification;
 
 import org.springframework.cloud.openfeign.FeignClient;
 import com.summit.common.entity.RestfulEntityBySummit;
-import com.summit.common.entity.notification.MyIntFile;
 import com.summit.common.entity.notification.SendSms;
 import feign.Param;
 import org.springframework.http.MediaType;
