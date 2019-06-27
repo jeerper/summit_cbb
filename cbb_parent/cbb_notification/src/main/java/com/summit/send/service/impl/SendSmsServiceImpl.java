@@ -133,7 +133,6 @@ public class SendSmsServiceImpl implements SendSmsService {
             try {
                 CommonResponse response = client.getCommonResponse(request);
                 log.info("response data is {}",response.getData());
-                result = response.getData() + "; ";
             } catch (ServerException e) {
                 failCount++;
                 log.info("发送短信失败,服务端异常{}",e);
