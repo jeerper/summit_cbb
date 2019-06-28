@@ -250,6 +250,7 @@
 		<module>cbb_userauth</module>
 		<module>cbb_utils</module>
         <module>cbb_notification</module>
+		<module>cbb_video</module>
     </modules>
 
 	<repositories>
