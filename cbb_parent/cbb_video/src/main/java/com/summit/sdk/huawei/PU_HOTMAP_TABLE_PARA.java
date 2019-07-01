@@ -38,7 +38,7 @@ public class PU_HOTMAP_TABLE_PARA extends Structure {
 	public hotMapTable_union hotMapTable;
 	/** C type : CHAR[32] */
 	public byte[] szReserved = new byte[32];
-	/** <i>native declaration : E:\video\HWPuSDK.h:10606</i> */
+	/** <i>native declaration : E:\video\HWPuSDK.h:10616</i> */
 	public static class hotMapTable_union extends Union {
 		/**
 		 * \ufffd\ufffd\u04e6\ufffd\ufffd\u046f\ufffd\ufffd\ufffd\ufffd\u03aaTYPE_HOTMAP_SPACE<br>

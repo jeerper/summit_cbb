@@ -15,7 +15,7 @@ public class PU_UserData extends Structure {
 	public int eType;
 	/** C type : _unMetadata */
 	public _unMetadata unMetaData;
-	/** <i>native declaration : E:\video\HWPuSDK.h:3182</i> */
+	/** <i>native declaration : E:\video\HWPuSDK.h:3192</i> */
 	public static class _unMetadata extends Union {
 		public boolean bBoolValue;
 		public byte charValue;

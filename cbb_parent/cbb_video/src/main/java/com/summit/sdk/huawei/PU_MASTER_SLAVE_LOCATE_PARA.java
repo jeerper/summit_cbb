@@ -21,7 +21,7 @@ public class PU_MASTER_SLAVE_LOCATE_PARA extends Structure {
 	public int enType;
 	/** C type : config_union */
 	public config_union config;
-	/** <i>native declaration : E:\video\HWPuSDK.h:10071</i> */
+	/** <i>native declaration : E:\video\HWPuSDK.h:10081</i> */
 	public static class config_union extends Union {
 		/**
 		 * \ufffd\u3da8\u03bb\ufffd\ufffd\ufffd\ufffd<br>

@@ -15,7 +15,7 @@ public class PU_HOTMAP_TABLE_TIME extends Structure {
 	public short usHotMapRecordNum;
 	/** C type : map_union */
 	public map_union map;
-	/** <i>native declaration : E:\video\HWPuSDK.h:10588</i> */
+	/** <i>native declaration : E:\video\HWPuSDK.h:10598</i> */
 	public static class map_union extends Union {
 		/**
 		 * \ufffd\uac68\ufffd\uddf5\ufffd\u063d\ufffd\ufffd<br>

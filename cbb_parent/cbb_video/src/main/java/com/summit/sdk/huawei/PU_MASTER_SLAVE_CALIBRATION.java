@@ -33,7 +33,7 @@ public class PU_MASTER_SLAVE_CALIBRATION extends Structure {
 	public config_union config;
 	/** C type : CHAR[32] */
 	public byte[] szReserved = new byte[32];
-	/** <i>native declaration : E:\video\HWPuSDK.h:10133</i> */
+	/** <i>native declaration : E:\video\HWPuSDK.h:10143</i> */
 	public static class config_union extends Union {
 		/**
 		 * \ufffd\u05b6\ufffd\ufffd\uada8\ufffd\ufffd\ufffd\ufffd<br>
