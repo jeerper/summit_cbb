@@ -11,12 +11,38 @@
     <packaging>jar</packaging>
     <build>
         <finalName>backend</finalName>
+        <resources>
+            <resource>
+                <directory>src/main/native</directory>
+            </resource>
+            <resource>
+                <directory>src/main/resources</directory>
+            </resource>
+        </resources>
+<!--        <plugins>-->
+<!--            <plugin>-->
+<!--                <groupId>org.apache.maven.plugins</groupId>-->
+<!--                <artifactId>maven-surefire-plugin</artifactId>-->
+<!--                <configuration>-->
+<!--                    <skip>true</skip>-->
+<!--                    <systemPropertyVariables>-->
+<!--                        <org.hyperic.sigar.path>${project.build.directory}/lib</org.hyperic.sigar.path>-->
+<!--                    </systemPropertyVariables>-->
+<!--                    <parallel>classes</parallel>-->
+<!--                </configuration>-->
+<!--            </plugin>-->
+<!--        </plugins>-->
     </build>
 
     <dependencies>
         <dependency>
             <groupId>com.summit</groupId>
             <artifactId>cbb_common</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>net.java.dev.jna</groupId>
+            <artifactId>jna</artifactId>
+            <version>5.3.1</version>
         </dependency>
     </dependencies>
 
