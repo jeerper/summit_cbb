@@ -12,6 +12,8 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 public class MainAction {
 
 	public static void main(String[] args){
+		System.setProperty("jna.debug_load", "true");
+		System.setProperty("jna.debug_load.jna", "true");
 		SpringApplication.run(MainAction.class, args);
 	}
 
