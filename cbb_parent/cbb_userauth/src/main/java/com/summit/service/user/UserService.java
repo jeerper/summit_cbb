@@ -229,7 +229,7 @@ public class UserService {
 		LinkedMap linkedMap=new LinkedMap();
 		Integer index = 1;
 		StringBuilder sb = new StringBuilder(
-				"SELECT user1.USERNAME,NAME,SEX,IS_ENABLED,EMAIL,PHONE_NUMBER,STATE,NOTE,USERADCD.ADCD,useradcd.adnms,userdept.DEPTID,userdept.deptNames FROM SYS_USER user1 ");
+				"SELECT user1.USERNAME,NAME,SEX,IS_ENABLED,EMAIL,PHONE_NUMBER,STATE,NOTE,USERADCD.ADCD,useradcd.adnms,userdept.DEPTID,userdept.deptNames,LAST_UPDATE_TIME as lastUpdateTime FROM SYS_USER user1 ");
 		sb.append(" left join (SELECT username,GROUP_CONCAT(useradcd.`adcd`)AS adcd ,GROUP_CONCAT(`adnm`)AS adnms ");
 		sb.append(" FROM sys_user_adcd useradcd inner join sys_ad_cd ad on useradcd.adcd=ad.adcd GROUP BY username)useradcd on useradcd.username=user1.USERNAME");
 		sb.append(" left join (SELECT username,GROUP_CONCAT(userdept.`deptid`)AS DEPTID,GROUP_CONCAT(dept.`deptname`)AS deptNames FROM sys_user_dept userdept ");

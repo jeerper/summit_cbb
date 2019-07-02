@@ -63,12 +63,12 @@ public class LogUtilImpl  {
 			}else{
 				callerIP=logBean.getCallerIP();
 			}
-			String insertLogSql = "INSERT INTO SYS_LOG(id,userName,callerIP,funName,stime,etime,actiontime,systemName,operInfo,actionFlag,operType) VALUES (?,?,?,?,?,?,?,?,?,?,?) ";
+			String insertLogSql = "INSERT INTO SYS_LOG(id,userName,callerIP,funName,stime,etime,actiontime,systemName,operInfo,actionFlag,operType,erroInfo) VALUES (?,?,?,?,?,?,?,?,?,?,?,?) ";
 			jdbcTemplate.update(insertLogSql,
 					id,userName,callerIP,logBean.getFunName(),logBean.getStime(),
 					logBean.getEtime(),logBean.getActiontime(),
 					logBean.getSystemName(),logBean.getOperInfo(),
-					logBean.getActionFlag(),logBean.getOperType());
+					logBean.getActionFlag(),logBean.getOperType(),logBean.getErroInfo());
 				
 		}
 	}
@@ -91,6 +91,8 @@ public class LogUtilImpl  {
 					updateTime,
 					logBean.getActionFlag(),
 					logBean.getErroInfo(),
+					logBean.getSystemName(),
+					logBean.getOperInfo(),
 					logBean.getOperType(),
 					logBean.getId()
 			);
