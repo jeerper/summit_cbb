@@ -12890,7 +12890,7 @@ public interface HWPuSDKLibrary extends Library {
 	 * Original signature : <code>BOOL IVS_PU_Init(ULONG, CHAR*, ULONG)</code><br>
 	 * <i>native declaration : E:\video\HWPuSDK.h:10810</i>
 	 */
-	boolean IVS_PU_Init(NativeLong ulLinkMode, ByteBuffer szLocalIP, NativeLong ulLocalPort);
+	boolean IVS_PU_Init(NativeLong ulLinkMode, String szLocalIP, NativeLong ulLocalPort);
 	/**
 	 * Original signature : <code>BOOL IVS_PU_InitEx(ULONG, CHAR*, ULONG, ULONG, PU_CERT_FILE_PATH_PARA_S*)</code><br>
 	 * <i>native declaration : E:\video\HWPuSDK.h:10811</i><br>
@@ -12942,7 +12942,7 @@ public interface HWPuSDKLibrary extends Library {
 	 * Original signature : <code>ULONG IVS_PU_Login(CHAR*, ULONG, CHAR*, CHAR*)</code><br>
 	 * <i>native declaration : E:\video\HWPuSDK.h:10819</i>
 	 */
-	NativeLong IVS_PU_Login(ByteBuffer szLoginIP, NativeLong ulLoginPort, ByteBuffer szUserName, ByteBuffer szPasswd);
+	NativeLong IVS_PU_Login(String szLoginIP, NativeLong ulLoginPort, String szUserName, String szPasswd);
 	/**
 	 * login to device<br>
 	 * Original signature : <code>BOOL IVS_PU_LoginByID(ULONG, CHAR*, CHAR*)</code><br>
@@ -12998,7 +12998,8 @@ public interface HWPuSDKLibrary extends Library {
 	 * Original signature : <code>CHAR* IVS_PU_GetErrorMsg(ULONG)</code><br>
 	 * <i>native declaration : E:\video\HWPuSDK.h:10846</i>
 	 */
-	Pointer IVS_PU_GetErrorMsg(NativeLong ulErrorNo);
+//	Pointer IVS_PU_GetErrorMsg(NativeLong ulErrorNo);
+	String IVS_PU_GetErrorMsg(NativeLong ulErrorNo);
 	/**
 	 * get device log info<br>
 	 * Original signature : <code>BOOL IVS_PU_GetDeviceLogInfo(ULONG, PU_LOG_TYPE_E, LPPU_LOG_REQ_PARA_S, LPPU_LOG_INFO_S)</code><br>
