@@ -1,7 +1,5 @@
 package com.summit.mobilePush.controller;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -13,22 +11,18 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartFile;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.summit.common.entity.ResponseCodeEnum;
 import com.summit.common.entity.RestfulEntityBySummit;
 import com.summit.common.util.ResultBuilder;
 
-import cn.jiguang.common.resp.APIConnectionException;
-import cn.jiguang.common.resp.APIRequestException;
 import cn.jpush.api.JPushClient;
-import cn.jpush.api.push.PushResult;
 import cn.jpush.api.push.model.Message;
 import cn.jpush.api.push.model.Options;
 import cn.jpush.api.push.model.Platform;
@@ -36,7 +30,6 @@ import cn.jpush.api.push.model.PushPayload;
 import cn.jpush.api.push.model.audience.Audience;
 import cn.jpush.api.push.model.notification.Notification;
 import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import sun.misc.BASE64Encoder;
 /**
@@ -75,8 +68,18 @@ public class JiguangJpushController {
 			 @RequestParam(value = "发送的内容",required = true)  String message,
 			 @RequestParam(value = "发送的标题",required = true)  String title,
 			 @RequestParam(value = "推送类型：1:所有用户，2 :指定别名，3：指定标签",required = true) String pushType,
-	         @RequestParam(value = "别名或者标签,推送类型是2或3该参数必填,一次推送最多 20 个。",required = false) List<String> aliasArray){
-		     String result = push("android",pushUrl,pushType,aliasArray,message,title,appkey,masterSecret,apns_production,liveTime);
+	         @RequestParam(value = "别名或者标签,推送类型是2或3该参数必填,别名一次推送最多 1000 个，标签一次推送最多 20 个。",required = false) List<String> aliasArray,
+	         @RequestParam(value = "扩展字段,格式为:JSONObject格式",required = false) String extras){
+		     JSONObject extrasparam =null;
+		     if(extras!=null ){
+		    	 try{
+		    	    extrasparam= JSON.parseObject(extras);
+		    	 }catch (Exception e) {
+					 log.info("格式转换出错！错误信息为："+extras+"，不是JSONObject格式");
+		             return ResultBuilder.buildError(ResponseCodeEnum.CODE_9993);
+				} 
+		     }
+		     String result = push("android",pushUrl,pushType,aliasArray,message,title,appkey,masterSecret,apns_production,liveTime,extrasparam);
 	         JSONObject resData = JSONObject.parseObject(result);
 	         if(resData.containsKey("error")){
 	        	 JSONObject error = JSONObject.parseObject(resData.getString("error"));
@@ -103,21 +106,33 @@ public class JiguangJpushController {
 	 public RestfulEntityBySummit<String> jiguangAndroidPushBySDK(
 			 @RequestParam(value = "发送的内容",required = true)  String message,
 			 @RequestParam(value = "发送的标题",required = true)  String title,
-			 @RequestParam(value = "推送类型：1:所有用户，2 :指定别名，3：指定标签",required = true) String pushType,
-	         @RequestParam(value = "别名或者标签,推送类型是2或3该参数必填,一次推送最多 20 个。",required = false) List<String> aliasArray){
-		     Audience audience=Audience.all();
+			 @RequestParam(value = "推送类型：1:所有用户，2:指定别名，3：指定标签",required = true) String pushType,
+	         @RequestParam(value = "别名或者标签,推送类型是2或3该参数必填,一次推送最多 20 个。",required = false) List<String> aliasArray,
+	         @RequestParam(value = "扩展字段,格式为:JSONObject格式",required = false) String extras){
+		     Map<String, String> extraMap;
+		     try{
+		    	 JSONObject extrasparam= JSON.parseObject(extras);
+		    	 extraMap = JSONObject.toJavaObject(extrasparam, Map.class);
+	    	 }catch (Exception e) {
+				 log.info("格式转换出错！错误信息为："+extras+"，不是JSONObject格式");
+	             return ResultBuilder.buildError(ResponseCodeEnum.CODE_9993);
+			 } 
+		     Audience audience=null;
 		     if("1".equals(pushType)){
 		    	 audience=Audience.all();//项目中的所有用户
 			 }else if("2".equals(pushType) ){
 				 audience=Audience.alias(aliasArray);//指定别名
 			 }else if( "3".equals(pushType)){
 				 audience=Audience.tag(aliasArray);//指定标签
+			 }else{
+				 log.info("非法的请求参数！错误信息为："+pushType+" ");
+	             return ResultBuilder.buildError(ResponseCodeEnum.CODE_9993);
 			 }
 		     JPushClient jpushClient = new JPushClient(masterSecret, appkey);
 		     PushPayload payload = PushPayload.newBuilder()
 						.setPlatform(Platform.android())//指定android平台的用户
 						.setAudience(audience)
-						.setNotification(Notification.android(message, title, null))
+						.setNotification(Notification.android(message, title,extraMap ))
 						//发送内容
 						.setOptions(Options.newBuilder().setApnsProduction(false).build())
 						//这里是指定开发环境,不用设置也没关系
@@ -145,10 +160,10 @@ public class JiguangJpushController {
 	     * @param alert
 	     * @return result
 	     */
-	    public static String push(String platformType,String reqUrl,String pushType,List<String> alias,String alert,String title,String appKey,String masterSecret,boolean apns_production,int time_to_live){
+	    public static String push(String platformType,String reqUrl,String pushType,List<String> alias,String alert,String title,String appKey,String masterSecret,boolean apns_production,int time_to_live,JSONObject extrasparam){
 	        String base64_auth_string = encryptBASE64(appKey + ":" + masterSecret);
 	        String authorization = "Basic " + base64_auth_string;
-	        return sendPostRequest(reqUrl,generateJson(platformType,pushType,alias,alert,title,apns_production,time_to_live).toString(),"UTF-8",authorization);
+	        return sendPostRequest(reqUrl,generateJson(platformType,pushType,alias,alert,title,apns_production,time_to_live,extrasparam).toString(),"UTF-8",authorization);
 	    }
 		
 	    /**
@@ -185,7 +200,7 @@ public class JiguangJpushController {
 	     * @param alert
 	     * @return json
 	     */
-	    public static JSONObject generateJson(String platformType,String pushType,List<String> alias,String alert,String title,boolean apns_production,int time_to_live){
+	    public static JSONObject generateJson(String platformType,String pushType,List<String> alias,String alert,String title,boolean apns_production,int time_to_live,JSONObject extrasparam){
 	        JSONObject json = new JSONObject();
 	        JSONArray platform = new JSONArray();//平台
 	        //platform.add(platformType);
@@ -208,9 +223,9 @@ public class JiguangJpushController {
 	        android.put("alert", alert);
 	        android.put("title", title);
 	        android.put("builder_id", 1);
-	        JSONObject android_extras = new JSONObject();//android额外参数
-	        android_extras.put("type", "infomation");
-	        android.put("extras", android_extras);
+	       // JSONObject android_extras = new JSONObject();//android额外参数
+	       // android_extras.put("type", "infomation");
+	        android.put("extras", extrasparam);
 	        notification.put("android", android);
 	        
 //	        JSONObject ios = new JSONObject();//ios通知内容
