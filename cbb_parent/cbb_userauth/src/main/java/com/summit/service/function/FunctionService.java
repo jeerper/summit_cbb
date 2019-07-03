@@ -257,7 +257,7 @@ public class FunctionService {
 				mapFunctionBean.put(functionBean.getId(), functionBean);
 			}
 		}
-		String sql = "SELECT  SF.* FROM SYS_USER_ROLE SUR INNER JOIN SYS_ROLE_FUNCTION SRF ON ( SUR.ROLE_CODE = SRF.ROLE_CODE ) INNER JOIN SYS_FUNCTION SF ON (SRF.FUNCTION_ID = SF.ID) WHERE SF.IS_ENABLED = '1'  AND SUR.USERNAME = ? and SF.id!='root' and SF.pid!='root' order by FDESC, pid DESC";
+		String sql = "SELECT  DISTINCT SF.* FROM SYS_USER_ROLE SUR INNER JOIN SYS_ROLE_FUNCTION SRF ON ( SUR.ROLE_CODE = SRF.ROLE_CODE ) INNER JOIN SYS_FUNCTION SF ON (SRF.FUNCTION_ID = SF.ID) WHERE SF.IS_ENABLED = '1'  AND SUR.USERNAME = ? and SF.id!='root'  order by FDESC, pid DESC";
 		List<JSONObject>list= ur.queryAllCustom(sql, userName);
 		if(list!=null){
 			 ArrayList<FunctionBean> functionBeans = JSON.parseObject(list.toString(), new TypeReference<ArrayList<FunctionBean>>() {});
@@ -282,6 +282,9 @@ public class FunctionService {
 //	        		 }
 //	        	 }
 				 for(FunctionBean functionBean:functionBeans){
+					 if("586b65b2188c49d6933f0f354f0b23c9".equals(functionBean.getId())){
+						 System.out.println("==========");
+					 }
 	        		 if("".equals(pid) || !pid.equals(functionBean.getPid())){
 	        			 functionBeancChildren=new ArrayList<FunctionBean>();
 	        		 }
@@ -290,10 +293,11 @@ public class FunctionService {
 	        		 if(functionBean1!=null){
 		        		 functionBean1.setChildren(functionBeancChildren);
 		        		 map.put(functionBean.getPid(), functionBean1);
+	        		 }else{
+	        			 map.put(functionBean.getId(), functionBean);
 	        		 }
 	        			 pid=functionBean.getPid();
 	        		}
-	        	 
 	         }
 			 Collection<FunctionBean> valueCollection = map.values();
 			 List<FunctionBean> valueList = new ArrayList<FunctionBean>(valueCollection);
