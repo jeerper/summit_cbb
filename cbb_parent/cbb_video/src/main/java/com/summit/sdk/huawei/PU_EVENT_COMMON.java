@@ -22,6 +22,7 @@ public class PU_EVENT_COMMON extends Structure {
 	public PU_EVENT_COMMON() {
 		super();
 	}
+	@Override
 	protected List<String > getFieldOrder() {
 		return Arrays.asList("enEventType", "ulIdentifyID", "ulChannelId");
 	}

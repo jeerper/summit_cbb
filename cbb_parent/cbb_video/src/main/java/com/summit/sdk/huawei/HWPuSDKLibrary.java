@@ -12843,7 +12843,8 @@ public interface HWPuSDKLibrary extends Library {
 	};
 	/** <i>native declaration : E:\video\HWPuSDK.h</i> */
 	public interface pfGetEventInfoCallBack extends Callback {
-		NativeLong apply(Pointer arg);
+//		NativeLong invoke(Pointer arg);
+		NativeLong apply(PU_EVENT_COMMON arg);
 	};
 	/** <i>native declaration : E:\video\HWPuSDK.h</i> */
 	public interface pfUpgradeScheduleCallBack extends Callback {
