@@ -7,7 +7,7 @@
 #define WINAPI
 
 #define CONST const
-// #include "stdafx.h"
+#include "stdafx.h"
 #define PU_TRUE TRUE
 #define PU_FALSE FALSE
 
