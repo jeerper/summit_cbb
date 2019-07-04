@@ -26,6 +26,7 @@ public class PU_EVENT_REGISTER extends Structure {
 	public PU_EVENT_REGISTER() {
 		super();
 	}
+	@Override
 	protected List<String > getFieldOrder() {
 		return Arrays.asList("stPuEventCommon", "szDeviceId", "szDeviceIp", "szDeviceType", "szReserved");
 	}
@@ -55,6 +56,7 @@ public class PU_EVENT_REGISTER extends Structure {
 	}
 	public PU_EVENT_REGISTER(Pointer peer) {
 		super(peer);
+		read();
 	}
 	public static class ByReference extends PU_EVENT_REGISTER implements Structure.ByReference {
 		

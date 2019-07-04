@@ -1,7 +1,9 @@
 package com.summit.sdk.huawei;
+
 import com.sun.jna.NativeLong;
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
+
 import java.util.Arrays;
 import java.util.List;
 /**
@@ -39,6 +41,7 @@ public class PU_EVENT_COMMON extends Structure {
 	}
 	public PU_EVENT_COMMON(Pointer peer) {
 		super(peer);
+		read();
 	}
 	public static class ByReference extends PU_EVENT_COMMON implements Structure.ByReference {
 		

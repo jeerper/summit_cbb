@@ -10,7 +10,7 @@ import java.util.List;
  * a tool written by <a href="http://ochafik.com/">Olivier Chafik</a> that <a href="http://code.google.com/p/jnaerator/wiki/CreditsAndLicense">uses a few opensource projects.</a>.<br>
  * For help, please visit <a href="http://nativelibs4java.googlecode.com/">NativeLibs4Java</a> , <a href="http://rococoa.dev.java.net/">Rococoa</a>, or <a href="http://jna.dev.java.net/">JNA</a>.
  */
-public class PU_DEVICE_REGISTER_RSP extends Structure {
+public class PU_DEVICE_REGISTER_RSP extends Structure  {
 	/** C type : PU_ERROR_CODE_E */
 	public int enErrorCode;
 	/** C type : CHAR[16] */
@@ -24,6 +24,11 @@ public class PU_DEVICE_REGISTER_RSP extends Structure {
 	protected List<String > getFieldOrder() {
 		return Arrays.asList("enErrorCode", "szRedirectIp", "ulRedirectPort", "szReserved");
 	}
+	public PU_DEVICE_REGISTER_RSP(int enErrorCode, NativeLong ulRedirectPort) {
+		super();
+		this.enErrorCode = enErrorCode;
+		this.ulRedirectPort = ulRedirectPort;
+	}
 	/**
 	 * @param enErrorCode C type : PU_ERROR_CODE_E<br>
 	 * @param szRedirectIp C type : CHAR[16]<br>
@@ -32,11 +37,11 @@ public class PU_DEVICE_REGISTER_RSP extends Structure {
 	public PU_DEVICE_REGISTER_RSP(int enErrorCode, byte szRedirectIp[], NativeLong ulRedirectPort, byte szReserved[]) {
 		super();
 		this.enErrorCode = enErrorCode;
-		if ((szRedirectIp.length != this.szRedirectIp.length)) 
+		if ((szRedirectIp.length != this.szRedirectIp.length))
 			throw new IllegalArgumentException("Wrong array size !");
 		this.szRedirectIp = szRedirectIp;
 		this.ulRedirectPort = ulRedirectPort;
-		if ((szReserved.length != this.szReserved.length)) 
+		if ((szReserved.length != this.szReserved.length))
 			throw new IllegalArgumentException("Wrong array size !");
 		this.szReserved = szReserved;
 	}

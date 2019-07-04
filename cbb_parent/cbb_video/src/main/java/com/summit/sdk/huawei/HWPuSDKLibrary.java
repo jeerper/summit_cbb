@@ -2,7 +2,6 @@ package com.summit.sdk.huawei;
 
 import com.summit.sdk.huawei.PU_META_DATA.ByReference;
 import com.sun.jna.Callback;
-import com.sun.jna.Library;
 import com.sun.jna.Native;
 import com.sun.jna.NativeLibrary;
 import com.sun.jna.NativeLong;
@@ -10,7 +9,9 @@ import com.sun.jna.Pointer;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.NativeLongByReference;
 import com.sun.jna.ptr.PointerByReference;
+import com.sun.jna.win32.StdCallLibrary;
 
+import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 /**
@@ -19,7 +20,7 @@ import java.nio.IntBuffer;
  * a tool written by <a href="http://ochafik.com/">Olivier Chafik</a> that <a href="http://code.google.com/p/jnaerator/wiki/CreditsAndLicense">uses a few opensource projects.</a>.<br>
  * For help, please visit <a href="http://nativelibs4java.googlecode.com/">NativeLibs4Java</a> , <a href="http://rococoa.dev.java.net/">Rococoa</a>, or <a href="http://jna.dev.java.net/">JNA</a>.
  */
-public interface HWPuSDKLibrary extends Library {
+public interface HWPuSDKLibrary extends StdCallLibrary  {
 	public static final String JNA_LIBRARY_NAME = "HWPuSDK";
 	public static final NativeLibrary JNA_NATIVE_LIB = NativeLibrary.getInstance(HWPuSDKLibrary.JNA_LIBRARY_NAME);
 	public static final HWPuSDKLibrary INSTANCE = (HWPuSDKLibrary)Native.loadLibrary(HWPuSDKLibrary.JNA_LIBRARY_NAME, HWPuSDKLibrary.class);
@@ -12842,8 +12843,7 @@ public interface HWPuSDKLibrary extends Library {
 		NativeLong apply(NativeLong ulIdentifyID, PU_PU_AI_TRANS_DATA_PARAM pstTransData, Pointer ctx);
 	};
 	/** <i>native declaration : E:\video\HWPuSDK.h</i> */
-	public interface pfGetEventInfoCallBack extends Callback {
-//		NativeLong invoke(Pointer arg);
+	public interface pfGetEventInfoCallBack extends StdCallLibrary.StdCallCallback  {
 		NativeLong apply(PU_EVENT_COMMON arg);
 	};
 	/** <i>native declaration : E:\video\HWPuSDK.h</i> */
@@ -12957,7 +12957,7 @@ public interface HWPuSDKLibrary extends Library {
 	 * Original signature : <code>BOOL IVS_PU_LoginByID(ULONG, CHAR*, CHAR*)</code><br>
 	 * <i>native declaration : E:\video\HWPuSDK.h:10822</i>
 	 */
-	boolean IVS_PU_LoginByID(NativeLong ulIdentifyID, ByteBuffer szUserName, ByteBuffer szPasswd);
+	boolean IVS_PU_LoginByID(NativeLong ulIdentifyID, String szUserName, String szPasswd);
 	/**
 	 * logout from device<br>
 	 * Original signature : <code>BOOL IVS_PU_Logout(ULONG)</code><br>
