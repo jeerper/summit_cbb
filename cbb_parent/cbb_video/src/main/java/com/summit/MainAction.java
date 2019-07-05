@@ -10,12 +10,7 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 @EnableEurekaClient
 @EnableFeignClients
 public class MainAction {
-
-	public static void main(String[] args){
-		System.setProperty("jna.debug_load", "true");
-		System.setProperty("jna.debug_load.jna", "true");
-//		System.setProperty("jna.library.path", "E:\\video\\HWPuSDK.dll");
-		SpringApplication.run(MainAction.class, args);
-	}
-
+    public static void main(String[] args) {
+        SpringApplication.run(MainAction.class, args);
+    }
 }
