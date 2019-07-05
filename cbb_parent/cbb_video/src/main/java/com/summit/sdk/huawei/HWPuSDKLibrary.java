@@ -23,7 +23,7 @@ import java.nio.IntBuffer;
 public interface HWPuSDKLibrary extends StdCallLibrary  {
 	public static final String JNA_LIBRARY_NAME = "HWPuSDK";
 	public static final NativeLibrary JNA_NATIVE_LIB = NativeLibrary.getInstance(HWPuSDKLibrary.JNA_LIBRARY_NAME);
-	public static final HWPuSDKLibrary INSTANCE = (HWPuSDKLibrary)Native.loadLibrary(HWPuSDKLibrary.JNA_LIBRARY_NAME, HWPuSDKLibrary.class);
+	public static final HWPuSDKLibrary INSTANCE = (HWPuSDKLibrary)Native.load(HWPuSDKLibrary.JNA_LIBRARY_NAME, HWPuSDKLibrary.class);
 	/**
 	 * <i>native declaration : E:\video\HWPuSDK.h</i><br>
 	 * enum values

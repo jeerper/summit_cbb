@@ -1,4 +1,4 @@
-package com.summit.utils;
+package com.summit.sdk.huawei.api;
 
 import cn.hutool.core.util.StrUtil;
 import com.summit.sdk.huawei.HWPuSDKLibrary;
@@ -16,7 +16,7 @@ import javax.annotation.PreDestroy;
 
 @Slf4j
 @Component
-public class Demo {
+public class HuaWeiSdkApi {
 
     private long sdkPort = 6060;
     private String sdkUserName = "admin";
