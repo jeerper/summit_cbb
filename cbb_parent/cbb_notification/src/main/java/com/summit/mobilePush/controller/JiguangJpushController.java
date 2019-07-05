@@ -62,14 +62,14 @@ public class JiguangJpushController {
 	  * java后台极光推送方式一：使用Http API
 	  * 此种方式需要自定义http请求发送客户端:HttpClient
 	  */
-	 @ApiOperation(value = "Android:通过API推送")
+	 @ApiOperation(value = "Android:通过API推送", notes = "message(发送的内容),title(发送的标题),pushType(推送类型：1:所有用户，2 :指定别名，3：指定标签),pushArray(别名或者标签,推送类型是2或3该参数必填,别名一次推送最多 1000 个，标签一次推送最多 20 个。),extras(扩展字段,格式为:JSONObject格式)")
 	 @GetMapping("/jiguangAndroidPushByAPI")
 	 public RestfulEntityBySummit<String> jiguangAndroidPushByAPI(
-			 @RequestParam(value = "发送的内容",required = true)  String message,
-			 @RequestParam(value = "发送的标题",required = true)  String title,
-			 @RequestParam(value = "推送类型：1:所有用户，2 :指定别名，3：指定标签",required = true) String pushType,
-	         @RequestParam(value = "别名或者标签,推送类型是2或3该参数必填,别名一次推送最多 1000 个，标签一次推送最多 20 个。",required = false) List<String> aliasArray,
-	         @RequestParam(value = "扩展字段,格式为:JSONObject格式",required = false) String extras){
+			 @RequestParam(value = "message",required = true)  String message,//message
+			 @RequestParam(value = "title",required = true)  String title,//发送的标题
+			 @RequestParam(value = "pushType",required = true) String pushType,//推送类型：1:所有用户，2 :指定别名，3：指定标签
+	         @RequestParam(value = "pushArray",required = false) List<String> pushArray,//别名或者标签,推送类型是2或3该参数必填,别名一次推送最多 1000 个，标签一次推送最多 20 个。
+	         @RequestParam(value = "extras",required = false) String extras){//扩展字段,格式为:JSONObject格式
 		     JSONObject extrasparam =null;
 		     if(extras!=null ){
 		    	 try{
@@ -79,7 +79,7 @@ public class JiguangJpushController {
 		             return ResultBuilder.buildError(ResponseCodeEnum.CODE_9993);
 				} 
 		     }
-		     String result = push("android",pushUrl,pushType,aliasArray,message,title,appkey,masterSecret,apns_production,liveTime,extrasparam);
+		     String result = push("android",pushUrl,pushType,pushArray,message,title,appkey,masterSecret,apns_production,liveTime,extrasparam);
 	         JSONObject resData = JSONObject.parseObject(result);
 	         if(resData.containsKey("error")){
 	        	 JSONObject error = JSONObject.parseObject(resData.getString("error"));
@@ -101,14 +101,14 @@ public class JiguangJpushController {
 	  * @param aliasArray
 	  * @return
 	  */
-	 @ApiOperation(value = "Android:通过SDK推送")
+	 @ApiOperation(value = "Android:通过SDK推送", notes = "message(发送的内容),title(发送的标题),pushType(推送类型：1:所有用户，2 :指定别名，3：指定标签),pushArray(别名或者标签,推送类型是2或3该参数必填,别名一次推送最多 1000 个，标签一次推送最多 20 个。),extras(扩展字段,格式为:JSONObject格式)")
 	 @GetMapping("/jiguangAndroidPushBySDK")
 	 public RestfulEntityBySummit<String> jiguangAndroidPushBySDK(
-			 @RequestParam(value = "发送的内容",required = true)  String message,
-			 @RequestParam(value = "发送的标题",required = true)  String title,
-			 @RequestParam(value = "推送类型：1:所有用户，2:指定别名，3：指定标签",required = true) String pushType,
-	         @RequestParam(value = "别名或者标签,推送类型是2或3该参数必填,一次推送最多 20 个。",required = false) List<String> aliasArray,
-	         @RequestParam(value = "扩展字段,格式为:JSONObject格式",required = false) String extras){
+			 @RequestParam(value = "message",required = true)  String message,//发送的内容
+			 @RequestParam(value = "title",required = true)  String title,//发送的标题
+			 @RequestParam(value = "pushType",required = true) String pushType,//推送类型：1:所有用户，2 :指定别名，3：指定标签
+	         @RequestParam(value = "pushArray",required = false) List<String> pushArray,//别名或者标签,推送类型是2或3该参数必填,别名一次推送最多 1000 个，标签一次推送最多 20 个。
+	         @RequestParam(value = "extras",required = false) String extras){//扩展字段,格式为:JSONObject格式
 		     Map<String, String> extraMap;
 		     try{
 		    	 JSONObject extrasparam= JSON.parseObject(extras);
@@ -121,9 +121,9 @@ public class JiguangJpushController {
 		     if("1".equals(pushType)){
 		    	 audience=Audience.all();//项目中的所有用户
 			 }else if("2".equals(pushType) ){
-				 audience=Audience.alias(aliasArray);//指定别名
+				 audience=Audience.alias(pushArray);//指定别名
 			 }else if( "3".equals(pushType)){
-				 audience=Audience.tag(aliasArray);//指定标签
+				 audience=Audience.tag(pushArray);//指定标签
 			 }else{
 				 log.info("非法的请求参数！错误信息为："+pushType+" ");
 	             return ResultBuilder.buildError(ResponseCodeEnum.CODE_9993);
