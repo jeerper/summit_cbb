@@ -1,6 +1,7 @@
 package com.summit.send.util;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -81,4 +82,9 @@ public class JSONUtil {
 	}
 
 
+    public static Map<String, Object> parseJsonToMap(String responseData) {
+		Map<String, Object> result = new HashMap<>();
+		result = JSON.parseObject(responseData);
+		return result;
+    }
 }

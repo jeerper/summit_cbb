@@ -32,12 +32,14 @@ import com.aliyuncs.http.FormatType;
 import com.aliyuncs.http.HttpResponse;
 import com.aliyuncs.profile.DefaultProfile;
 import com.aliyuncs.profile.IClientProfile;
+import org.springframework.util.StringUtils;
 
 import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
+import java.util.Map;
 import java.util.UUID;
 import java.util.ArrayList;
 import java.util.List;
@@ -59,11 +61,12 @@ public class SendSmsServiceImpl implements SendSmsService {
 
     @Override
     public RestfulEntityBySummit sendSms(SendSms sendSms) {
-        if(sendSms.getTemplateVars() == null || sendSms.getTemplateVars().size() == 0){
-            return sendSmsByForeach(sendSms);
-        }else {
-            return sendSmsByJson(sendSms);
-        }
+//        if(sendSms.getTemplateVars() == null || sendSms.getTemplateVars().size() == 0){
+//            return sendSmsByForeach(sendSms);
+//        }else {
+//            return sendSmsByJson(sendSms);
+//        }
+        return sendSmsByForeach(sendSms);
     }
 
 
@@ -90,8 +93,17 @@ public class SendSmsServiceImpl implements SendSmsService {
 
         try {
             CommonResponse response = client.getCommonResponse(request);
-            log.info("response data is {}",response.getData());
-            result = "发送短信完成";
+            String responseData = response.getData();
+            Map<String , Object> repMap = JSONUtil.parseJsonToMap(responseData);
+            if("OK".equals(repMap.get("Code"))){
+                log.info("返回数据为 {}", responseData);
+                result = "发送短信完成";
+            }else{
+                log.error("返回数据为 {}", responseData);
+                result = "发送短信失败";
+                return ResultBuilder.buildError(ResponseCodeEnum.CODE_4025 ,result,null);
+            }
+
         } catch (ServerException e) {
             log.info("发送短信失败,服务端异常{}",e);
             result = "发送短信失败";
@@ -111,6 +123,11 @@ public class SendSmsServiceImpl implements SendSmsService {
      */
     public RestfulEntityBySummit sendSmsByForeach(SendSms sendSms){
         String result = "";
+        if(sendSms == null){
+            log.error("短信不能为空");
+            result = "发送短信失败";
+            return ResultBuilder.buildError(ResponseCodeEnum.CODE_4025 ,result,null);
+        }
         DefaultProfile profile = DefaultProfile.getProfile("default", accessKeyId, secret);
         IAcsClient client = new DefaultAcsClient(profile);
 
@@ -121,40 +138,72 @@ public class SendSmsServiceImpl implements SendSmsService {
         request.setAction("SendSms");
 
         String[] phoneNumbers = sendSms.getPhoneNumbers();
-        String[] signNames = sendSms.getSignNames();
-        String templateCode = sendSms.getTemplateCode();
+        if(phoneNumbers == null || phoneNumbers.length == 0){
+            log.error("号码不能为空");
+            result = "发送短信失败";
+            return ResultBuilder.buildError(ResponseCodeEnum.CODE_4025 ,result,null);
+        }
         int len  = phoneNumbers.length;
+        String[] signNames = sendSms.getSignNames();
+        if(signNames == null || signNames.length == 0){
+            log.error("短信签名不能为空");
+            result = "发送短信失败";
+            return ResultBuilder.buildError(ResponseCodeEnum.CODE_4025 ,result,null);
+        }
+        if(signNames.length != len){
+            log.error("短信签名个数与号码个数不匹配");
+            result = "发送短信失败";
+            return ResultBuilder.buildError(ResponseCodeEnum.CODE_4025 ,result,null);
+        }
+        String templateCode = sendSms.getTemplateCode();
+        if(StringUtils.isEmpty(templateCode)){
+            log.error("模板号不能为空");
+            result = "发送短信失败";
+            return ResultBuilder.buildError(ResponseCodeEnum.CODE_4025 ,result,null);
+        }
+        List<Map<String, Object>> templateVars = sendSms.getTemplateVars();
+        if(templateVars != null && templateVars.size() != len){
+            log.error("模板变量组数与号码个数不匹配");
+            result = "发送短信失败";
+            return ResultBuilder.buildError(ResponseCodeEnum.CODE_4025 ,result,null);
+        }
         int failCount = 0;
         for (int i = 0;i < len;i++){
             request.putQueryParameter("PhoneNumbers", phoneNumbers[i]);
             request.putQueryParameter("SignName", signNames[i]);
             request.putQueryParameter("TemplateCode",templateCode);
 //            request.putQueryParameter("TemplateParam", "{\"code\": \"6666666\"}");
+            Map<String, Object> varsMap;
+
+            if(templateVars != null && (varsMap = templateVars.get(i)) != null){
+                request.putQueryParameter("TemplateParam",JSONUtil.parseObjToJson(varsMap));
+            }
             try {
                 CommonResponse response = client.getCommonResponse(request);
-                log.info("response data is {}",response.getData());
+                String responseData = response.getData();
+                Map<String , Object> repMap = JSONUtil.parseJsonToMap(responseData);
+                if("OK".equals(repMap.get("Code"))){
+                    log.info("返回数据为 {}", responseData);
+//                    result = "发送短信完成";
+                }else{
+                    log.error("返回数据为 {}", responseData);
+//                    result = "发送短信失败";
+                    failCount++;
+                }
             } catch (ServerException e) {
                 failCount++;
-                log.info("发送短信失败,服务端异常{}",e);
-                result = "发送短信失败";
-
-                return ResultBuilder.buildError(ResponseCodeEnum.CODE_4025 ,result,null);
+                log.error("发送短信失败,服务端异常{}",e);
             } catch (ClientException e) {
                 failCount++;
-                log.info("发送短信失败,客户端异常{}",e);
-                result = "发送短信失败";
-                return ResultBuilder.buildError(ResponseCodeEnum.CODE_4025 ,result,null);
+                log.error("发送短信失败,客户端异常{}",e);
             }
         }
         if(failCount == len){
             result = "发送短信失败";
             return ResultBuilder.buildError(ResponseCodeEnum.CODE_4025 ,result,null);
-        }else {
-            result = "发送短信完成";
-            return ResultBuilder.buildError(ResponseCodeEnum.CODE_0000 ,result,null);
         }
-
-
+        result = "发送短信完成";
+        return ResultBuilder.buildError(ResponseCodeEnum.CODE_0000 ,result,null);
     }
 
 
