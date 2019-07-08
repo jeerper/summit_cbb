@@ -17,7 +17,7 @@ import java.util.concurrent.CountDownLatch;
 public class Test1 {
     public static HWPuSDKLibrary.pfGetEventInfoCallBack pfGetEventInfoCallBack = new HWPuSDKLibrary.pfGetEventInfoCallBack() {
                 @Override
-                public NativeLong apply(PU_EVENT_COMMON arg) {
+                public void apply(PU_EVENT_COMMON arg) {
                     if (arg.enEventType == 2) {
 
                         PU_EVENT_REGISTER registerEvent = new PU_EVENT_REGISTER(arg.getPointer());
@@ -41,7 +41,6 @@ public class Test1 {
 
 //                    log.debug("时间获取状态:" + timeGetStatus);
                     }
-                    return null;
                 }
             };
 

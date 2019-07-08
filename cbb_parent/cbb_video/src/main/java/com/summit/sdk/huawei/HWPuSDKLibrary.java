@@ -11,7 +11,6 @@ import com.sun.jna.ptr.NativeLongByReference;
 import com.sun.jna.ptr.PointerByReference;
 import com.sun.jna.win32.StdCallLibrary;
 
-import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 /**
@@ -12844,7 +12843,7 @@ public interface HWPuSDKLibrary extends StdCallLibrary  {
 	};
 	/** <i>native declaration : E:\video\HWPuSDK.h</i> */
 	public interface pfGetEventInfoCallBack extends StdCallLibrary.StdCallCallback  {
-		NativeLong apply(PU_EVENT_COMMON arg);
+		void apply(PU_EVENT_COMMON arg);
 	};
 	/** <i>native declaration : E:\video\HWPuSDK.h</i> */
 	public interface pfUpgradeScheduleCallBack extends Callback {

@@ -12,6 +12,8 @@ import com.sun.jna.NativeLong;
 import lombok.extern.slf4j.Slf4j;
 import org.joda.time.DateTime;
 
+import java.util.concurrent.ConcurrentHashMap;
+
 
 @Slf4j
 public class EventInfoCallBack implements HWPuSDKLibrary.pfGetEventInfoCallBack {
@@ -19,32 +21,40 @@ public class EventInfoCallBack implements HWPuSDKLibrary.pfGetEventInfoCallBack 
     private long sdkPort;
     private String sdkUserName;
     private String sdkPassword;
+    private ConcurrentHashMap<String, NativeLong> deviceMap;
 
-    public EventInfoCallBack(long sdkPort, String sdkUserName, String sdkPassword) {
+    public EventInfoCallBack(long sdkPort, String sdkUserName, String sdkPassword, ConcurrentHashMap<String, NativeLong> deviceMap) {
         this.sdkPort = sdkPort;
         this.sdkUserName = sdkUserName;
         this.sdkPassword = sdkPassword;
+        this.deviceMap = deviceMap;
     }
 
     @Override
-    public NativeLong apply(PU_EVENT_COMMON arg) {
+    public void apply(PU_EVENT_COMMON arg) {
         if (arg.enEventType == 2) {
             log.debug("发现设备主动注册");
             PU_EVENT_REGISTER registerEvent = new PU_EVENT_REGISTER(arg.getPointer());
-            log.debug("设备类型:" + StrUtil.str(registerEvent.szDeviceType, "").trim());
-            log.debug("设备ID:" + StrUtil.str(registerEvent.szDeviceId, "").trim().substring(0, 16));
-            log.debug("设备IP地址:" + StrUtil.str(registerEvent.szDeviceIp, "").trim());
+            String deviceType = StrUtil.str(registerEvent.szDeviceType, "").trim();
+            String deviceId = StrUtil.str(registerEvent.szDeviceId, "").trim().substring(0, 16);
+            String deviceIp = StrUtil.str(registerEvent.szDeviceIp, "").trim();
+            log.debug("设备类型:" + deviceType);
+            log.debug("设备ID:" + deviceId);
+            log.debug("设备IP地址:" + deviceIp);
             boolean responseRegisterStatus = HWPuSDKLibrary.INSTANCE.IVS_PU_ResponseDeviceRegister(arg.ulIdentifyID,
                     new PU_DEVICE_REGISTER_RSP(0, new NativeLong(sdkPort)));
             log.debug("响应设备主动注册:" + responseRegisterStatus);
             if (!responseRegisterStatus) {
                 HuaWeiSdkApi.printReturnMsg();
+                return;
             }
             boolean loginStatus = HWPuSDKLibrary.INSTANCE.IVS_PU_LoginByID(arg.ulIdentifyID, sdkUserName, sdkPassword);
             log.debug("设备登录状态:" + loginStatus);
             if (!loginStatus) {
                 HuaWeiSdkApi.printReturnMsg();
+                return;
             }
+            deviceMap.put(deviceIp, arg.ulIdentifyID);
             PU_SYSTEM_TIME time = new PU_SYSTEM_TIME();
             boolean timeGetStatus = HWPuSDKLibrary.INSTANCE.IVS_PU_GetDeviceTime(arg.ulIdentifyID, time);
             log.debug("时间获取状态:" + timeGetStatus);
@@ -63,6 +73,5 @@ public class EventInfoCallBack implements HWPuSDKLibrary.pfGetEventInfoCallBack 
                 log.debug("设备时间:" + timeString);
             }
         }
-        return new NativeLong(0);
     }
 }
