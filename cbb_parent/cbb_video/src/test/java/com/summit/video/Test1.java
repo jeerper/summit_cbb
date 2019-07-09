@@ -80,8 +80,7 @@ public class Test1 {
     public void init() {
         System.setProperty("jna.debug_load", "true");
         System.setProperty("jna.debug_load.jna", "true");
-        boolean initStatus = HWPuSDKLibrary.INSTANCE.IVS_PU_Init(new NativeLong(3), (String) null,
-                new NativeLong(sdkPort));
+        boolean initStatus = HWPuSDKLibrary.INSTANCE.IVS_PU_Init(new NativeLong(3), (String) null, new NativeLong(sdkPort));
         log.debug("SDK加载状态:" + initStatus);
         NativeLongByReference longNative = new NativeLongByReference();
         HWPuSDKLibrary.INSTANCE.IVS_PU_GetVersion(longNative);
