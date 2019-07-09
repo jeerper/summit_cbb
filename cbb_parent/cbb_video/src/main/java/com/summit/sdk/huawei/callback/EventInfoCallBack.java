@@ -22,12 +22,14 @@ public class EventInfoCallBack implements HWPuSDKLibrary.pfGetEventInfoCallBack 
     private String sdkUserName;
     private String sdkPassword;
     private ConcurrentHashMap<String, NativeLong> deviceMap;
+    private HWPuSDKLibrary.pfGetAlarmInfoCallBack pfGetAlarmInfoCallBack;
 
     public EventInfoCallBack(long sdkPort, String sdkUserName, String sdkPassword, ConcurrentHashMap<String, NativeLong> deviceMap) {
         this.sdkPort = sdkPort;
         this.sdkUserName = sdkUserName;
         this.sdkPassword = sdkPassword;
         this.deviceMap = deviceMap;
+        this.pfGetAlarmInfoCallBack = new AlarmInfoCallBack();
     }
 
     @Override
@@ -58,6 +60,8 @@ public class EventInfoCallBack implements HWPuSDKLibrary.pfGetEventInfoCallBack 
                     HuaWeiSdkApi.printReturnMsg();
                     break;
                 }
+                //boolean callBackBindStatus = HWPuSDKLibrary.INSTANCE.IVS_PU_AlarmInfoStatesCallBack(pfGetAlarmInfoCallBack);
+
                 deviceMap.put(deviceIp, arg.ulIdentifyID);
                 PU_SYSTEM_TIME time = new PU_SYSTEM_TIME();
                 boolean timeGetStatus = HWPuSDKLibrary.INSTANCE.IVS_PU_GetDeviceTime(arg.ulIdentifyID, time);

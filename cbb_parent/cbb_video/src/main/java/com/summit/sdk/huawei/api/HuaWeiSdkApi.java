@@ -21,6 +21,7 @@ public class HuaWeiSdkApi {
     private String sdkPassword = "HuaWei123";
     private HWPuSDKLibrary.pfGetEventInfoCallBack pfGetEventInfoCallBack;
 
+
     public static void printReturnMsg() {
         NativeLong errorCode = HWPuSDKLibrary.INSTANCE.IVS_PU_GetLastError();
         String errorMsg = HWPuSDKLibrary.INSTANCE.IVS_PU_GetErrorMsg(errorCode);
@@ -46,6 +47,7 @@ public class HuaWeiSdkApi {
         if (!callBackBindStatus) {
             printReturnMsg();
         }
+
     }
 
     @PreDestroy
