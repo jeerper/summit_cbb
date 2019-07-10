@@ -8,7 +8,9 @@ import com.summit.sdk.huawei.PU_EVENT_REGISTER;
 import com.summit.sdk.huawei.PU_SYSTEM_TIME;
 import com.summit.sdk.huawei.PU_TIME;
 import com.summit.sdk.huawei.api.HuaWeiSdkApi;
+import com.sun.jna.Memory;
 import com.sun.jna.NativeLong;
+import com.sun.jna.Pointer;
 import lombok.extern.slf4j.Slf4j;
 import org.joda.time.DateTime;
 
@@ -23,6 +25,7 @@ public class EventInfoCallBack implements HWPuSDKLibrary.pfGetEventInfoCallBack 
     private String sdkPassword;
     private ConcurrentHashMap<String, NativeLong> deviceMap;
     private HWPuSDKLibrary.pfGetAlarmInfoCallBack pfGetAlarmInfoCallBack;
+
 
     public EventInfoCallBack(long sdkPort, String sdkUserName, String sdkPassword, ConcurrentHashMap<String, NativeLong> deviceMap) {
         this.sdkPort = sdkPort;
@@ -60,7 +63,12 @@ public class EventInfoCallBack implements HWPuSDKLibrary.pfGetEventInfoCallBack 
                     HuaWeiSdkApi.printReturnMsg();
                     break;
                 }
-                //boolean callBackBindStatus = HWPuSDKLibrary.INSTANCE.IVS_PU_AlarmInfoStatesCallBack(pfGetAlarmInfoCallBack);
+
+                Pointer deviceIpPointer = new Memory(deviceIp.length() + 1);
+                deviceIpPointer.setString(0, deviceIp);
+
+                boolean alarmCallBackBindStatus = HWPuSDKLibrary.INSTANCE.IVS_PU_AlarmInfoStatesCallBack(arg.ulIdentifyID, pfGetAlarmInfoCallBack, deviceIpPointer);
+                log.debug("告警上报回调函数绑定:" + alarmCallBackBindStatus);
 
                 deviceMap.put(deviceIp, arg.ulIdentifyID);
                 PU_SYSTEM_TIME time = new PU_SYSTEM_TIME();

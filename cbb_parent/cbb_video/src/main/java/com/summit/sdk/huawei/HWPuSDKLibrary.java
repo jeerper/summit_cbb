@@ -12863,7 +12863,7 @@ public interface HWPuSDKLibrary extends StdCallLibrary  {
 	};
 	/** <i>native declaration : E:\video\HWPuSDK.h</i> */
 	public interface pfGetAlarmInfoCallBack extends StdCallLibrary.StdCallCallback {
-		NativeLong apply(PU_ALARM_REPORT pstAlarmReport, Pointer pUsrData);
+		void apply(PU_ALARM_REPORT pstAlarmReport, Pointer pUsrData);
 	};
 	/** <i>native declaration : E:\video\HWPuSDK.h</i> */
 	public interface pfGetAlarmInfoCallBack_V20 extends Callback {
