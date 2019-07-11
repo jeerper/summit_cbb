@@ -8,12 +8,15 @@ import com.summit.sdk.huawei.PU_EVENT_REGISTER;
 import com.summit.sdk.huawei.PU_SYSTEM_TIME;
 import com.summit.sdk.huawei.PU_TIME;
 import com.summit.sdk.huawei.api.HuaWeiSdkApi;
+import com.summit.sdk.huawei.model.DeviceInfo;
 import com.sun.jna.Memory;
 import com.sun.jna.NativeLong;
 import com.sun.jna.Pointer;
 import lombok.extern.slf4j.Slf4j;
 import org.joda.time.DateTime;
 
+import java.util.Iterator;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 
@@ -23,11 +26,12 @@ public class EventInfoCallBack implements HWPuSDKLibrary.pfGetEventInfoCallBack 
     private long sdkPort;
     private String sdkUserName;
     private String sdkPassword;
-    private ConcurrentHashMap<String, NativeLong> deviceMap;
+    private ConcurrentHashMap<String, DeviceInfo> deviceMap;
     private HWPuSDKLibrary.pfGetAlarmInfoCallBack pfGetAlarmInfoCallBack;
     private HWPuSDKLibrary.pfRealDataCallBack pfRealDataCallBack;
 
-    public EventInfoCallBack(long sdkPort, String sdkUserName, String sdkPassword, ConcurrentHashMap<String, NativeLong> deviceMap) {
+
+    public EventInfoCallBack(long sdkPort, String sdkUserName, String sdkPassword, ConcurrentHashMap<String, DeviceInfo> deviceMap) {
         this.sdkPort = sdkPort;
         this.sdkUserName = sdkUserName;
         this.sdkPassword = sdkPassword;
@@ -84,8 +88,9 @@ public class EventInfoCallBack implements HWPuSDKLibrary.pfGetEventInfoCallBack 
                     log.debug("设备时间:" + timeString);
                 }
 
-                Pointer deviceIpPointer = new Memory(deviceIp.length()+1);
+                Pointer deviceIpPointer = new Memory(deviceIp.length() + 1);
                 deviceIpPointer.setString(0, deviceIp);
+                deviceMap.put(deviceIp, new DeviceInfo(deviceIpPointer, arg.ulIdentifyID));
 
                 boolean alarmCallBackBindStatus = HWPuSDKLibrary.INSTANCE.IVS_PU_AlarmInfoStatesCallBack(arg.ulIdentifyID, pfGetAlarmInfoCallBack,
                         deviceIpPointer);
@@ -93,11 +98,12 @@ public class EventInfoCallBack implements HWPuSDKLibrary.pfGetEventInfoCallBack 
 
 
 //                PU_REAL_PLAY_INFO realPlayInfo = new PU_REAL_PLAY_INFO();
-//                NativeLong realDataCallBackBindStatus = HWPuSDKLibrary.INSTANCE.IVS_PU_RealPlay(arg.ulIdentifyID, realPlayInfo,pfRealDataCallBack, deviceIpPointer);
+//                NativeLong realDataCallBackBindStatus = HWPuSDKLibrary.INSTANCE.IVS_PU_RealPlay(arg.ulIdentifyID, realPlayInfo,
+//                pfRealDataCallBack, deviceIpPointer);
 //                log.debug("实况播放回调函数绑定:" + realDataCallBackBindStatus.longValue());
 //                HuaWeiSdkApi.printReturnMsg();
 
-                deviceMap.put(deviceIp, arg.ulIdentifyID);
+
                 break;
             case 3:
                 log.debug("设备主动连接后未注册");
@@ -105,22 +111,22 @@ public class EventInfoCallBack implements HWPuSDKLibrary.pfGetEventInfoCallBack 
             case 4:
                 log.debug("设备主动注销");
                 HWPuSDKLibrary.INSTANCE.IVS_PU_Logout(arg.ulIdentifyID);
-                deviceMap.values().remove(arg.ulIdentifyID);
+                removeDeviceMapByUlIdentifyId(arg.ulIdentifyID);
                 break;
             case 5:
                 log.debug("设备网络连接断开");
                 HWPuSDKLibrary.INSTANCE.IVS_PU_Logout(arg.ulIdentifyID);
-                deviceMap.values().remove(arg.ulIdentifyID);
+                removeDeviceMapByUlIdentifyId(arg.ulIdentifyID);
                 break;
             case 6:
                 log.debug("发送或接收失败");
                 HWPuSDKLibrary.INSTANCE.IVS_PU_Logout(arg.ulIdentifyID);
-                deviceMap.values().remove(arg.ulIdentifyID);
+                removeDeviceMapByUlIdentifyId(arg.ulIdentifyID);
                 break;
             case 7:
                 log.debug("设备保活失败");
                 HWPuSDKLibrary.INSTANCE.IVS_PU_Logout(arg.ulIdentifyID);
-                deviceMap.values().remove(arg.ulIdentifyID);
+                removeDeviceMapByUlIdentifyId(arg.ulIdentifyID);
                 break;
             case 8:
                 log.debug("流套餐变更");
@@ -166,6 +172,17 @@ public class EventInfoCallBack implements HWPuSDKLibrary.pfGetEventInfoCallBack 
                 break;
             default:
                 break;
+        }
+    }
+
+    private void removeDeviceMapByUlIdentifyId(NativeLong deviceUlIdentifyId) {
+        Iterator<Map.Entry<String, DeviceInfo>> iter = deviceMap.entrySet().iterator();
+        while (iter.hasNext()) {
+            Map.Entry<String, DeviceInfo> entry = iter.next();
+            NativeLong ulIdentifyId = entry.getValue().getUlIdentifyId();
+            if (ulIdentifyId.equals(deviceUlIdentifyId)) {
+                iter.remove();
+            }
         }
     }
 }

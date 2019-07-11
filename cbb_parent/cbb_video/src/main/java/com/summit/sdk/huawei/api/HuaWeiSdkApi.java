@@ -2,6 +2,7 @@ package com.summit.sdk.huawei.api;
 
 import com.summit.sdk.huawei.HWPuSDKLibrary;
 import com.summit.sdk.huawei.callback.EventInfoCallBack;
+import com.summit.sdk.huawei.model.DeviceInfo;
 import com.sun.jna.NativeLong;
 import com.sun.jna.ptr.NativeLongByReference;
 import lombok.extern.slf4j.Slf4j;
@@ -15,7 +16,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @Component
 public class HuaWeiSdkApi {
 
-    private static final ConcurrentHashMap<String, NativeLong> DEVICE_MAP = new ConcurrentHashMap<String, NativeLong>();
+    private static final ConcurrentHashMap<String, DeviceInfo> DEVICE_MAP = new ConcurrentHashMap<>();
     private long sdkPort = 6060;
     private String sdkUserName = "admin";
     private String sdkPassword = "HuaWei123";
@@ -58,7 +59,7 @@ public class HuaWeiSdkApi {
     }
 
     public boolean rebootCamera(String cameraIp) {
-        NativeLong identifyId = DEVICE_MAP.get(cameraIp);
+        NativeLong identifyId = DEVICE_MAP.get(cameraIp).getUlIdentifyId();
         if (identifyId == null) {
             log.debug("设备没有上线");
             return false;
