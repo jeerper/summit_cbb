@@ -23,7 +23,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-resources-plugin</artifactId>
-                <configuration combine.self="override">
+                <configuration>
                     <encoding>UTF-8</encoding>
                 </configuration>
                 <executions>
@@ -33,7 +33,7 @@
                         <goals>
                             <goal>copy-resources</goal>
                         </goals>
-                        <configuration combine.self="override">
+                        <configuration>
                             <encoding>UTF-8</encoding>
                             <outputDirectory>${project.build.directory}/config</outputDirectory>
                             <!--将以下文件复制到config文件夹下 -->
@@ -56,7 +56,7 @@
                         <goals>
                             <goal>copy-resources</goal>
                         </goals>
-                        <configuration combine.self="override">
+                        <configuration>
                             <!--拷贝时不需要转码的文件-->
                             <nonFilteredFileExtensions>
                                 <nonFilteredFileExtension>dll</nonFilteredFileExtension>
@@ -82,7 +82,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
-                <configuration combine.self="override">
+                <configuration>
                     <archive>
                         <manifest>
                             <addClasspath>true</addClasspath>
@@ -90,7 +90,7 @@
                             <classpathPrefix>lib/</classpathPrefix>
                         </manifest>
                         <manifestEntries>
-                            <Class-Path>config/</Class-Path>
+                            <Class-Path>config/ lib/</Class-Path>
                         </manifestEntries>
                     </archive>
                     <excludes>
@@ -103,22 +103,10 @@
                         <exclude>*.dylib</exclude>
                         <exclude>*.lib</exclude>
                         <exclude>*.h</exclude>
-                        <exclude>**/win32-x86/**</exclude>
+                        <exclude>win32*/**</exclude>
                     </excludes>
                 </configuration>
             </plugin>
-            <!--            <plugin>-->
-            <!--                <groupId>org.apache.maven.plugins</groupId>-->
-            <!--                <artifactId>maven-surefire-plugin</artifactId>-->
-            <!--                <configuration>-->
-            <!--                    <skip>true</skip>-->
-            <!--                    <systemPropertyVariables>-->
-            <!--                        <jna.debug_load>true</jna.debug_load>-->
-            <!--                        <jna.debug_load.jna>true</jna.debug_load.jna>-->
-            <!--                    </systemPropertyVariables>-->
-            <!--                    <parallel>classes</parallel>-->
-            <!--                </configuration>-->
-            <!--            </plugin>-->
         </plugins>
     </build>
 
