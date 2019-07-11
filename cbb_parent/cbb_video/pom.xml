@@ -88,6 +88,7 @@
                             <addClasspath>true</addClasspath>
                             <mainClass>com.summit.MainAction</mainClass>
                             <classpathPrefix>lib/</classpathPrefix>
+                            <useUniqueVersions>false</useUniqueVersions>
                         </manifest>
                         <manifestEntries>
                             <Class-Path>config/ lib/</Class-Path>
