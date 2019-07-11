@@ -25,7 +25,7 @@ public class EventInfoCallBack implements HWPuSDKLibrary.pfGetEventInfoCallBack 
     private String sdkPassword;
     private ConcurrentHashMap<String, NativeLong> deviceMap;
     private HWPuSDKLibrary.pfGetAlarmInfoCallBack pfGetAlarmInfoCallBack;
-
+    private HWPuSDKLibrary.pfRealDataCallBack pfRealDataCallBack;
 
     public EventInfoCallBack(long sdkPort, String sdkUserName, String sdkPassword, ConcurrentHashMap<String, NativeLong> deviceMap) {
         this.sdkPort = sdkPort;
@@ -33,6 +33,7 @@ public class EventInfoCallBack implements HWPuSDKLibrary.pfGetEventInfoCallBack 
         this.sdkPassword = sdkPassword;
         this.deviceMap = deviceMap;
         this.pfGetAlarmInfoCallBack = new AlarmInfoCallBack();
+        this.pfRealDataCallBack = new RealDataCallBack();
     }
 
     @Override
@@ -64,13 +65,7 @@ public class EventInfoCallBack implements HWPuSDKLibrary.pfGetEventInfoCallBack 
                     break;
                 }
 
-                Pointer deviceIpPointer = new Memory(deviceIp.length() + 1);
-                deviceIpPointer.setString(0, deviceIp);
 
-                boolean alarmCallBackBindStatus = HWPuSDKLibrary.INSTANCE.IVS_PU_AlarmInfoStatesCallBack(arg.ulIdentifyID, pfGetAlarmInfoCallBack, deviceIpPointer);
-                log.debug("告警上报回调函数绑定:" + alarmCallBackBindStatus);
-
-                deviceMap.put(deviceIp, arg.ulIdentifyID);
                 PU_SYSTEM_TIME time = new PU_SYSTEM_TIME();
                 boolean timeGetStatus = HWPuSDKLibrary.INSTANCE.IVS_PU_GetDeviceTime(arg.ulIdentifyID, time);
                 log.debug("时间获取状态:" + timeGetStatus);
@@ -88,6 +83,21 @@ public class EventInfoCallBack implements HWPuSDKLibrary.pfGetEventInfoCallBack 
                     String timeString = new DateTime(year, month, day, hour + timeZone, minute, second).toString("yyyy-MM-dd HH:mm:ss");
                     log.debug("设备时间:" + timeString);
                 }
+
+                Pointer deviceIpPointer = new Memory(deviceIp.length()+1);
+                deviceIpPointer.setString(0, deviceIp);
+
+                boolean alarmCallBackBindStatus = HWPuSDKLibrary.INSTANCE.IVS_PU_AlarmInfoStatesCallBack(arg.ulIdentifyID, pfGetAlarmInfoCallBack,
+                        deviceIpPointer);
+                log.debug("告警上报回调函数绑定:" + alarmCallBackBindStatus);
+
+
+//                PU_REAL_PLAY_INFO realPlayInfo = new PU_REAL_PLAY_INFO();
+//                NativeLong realDataCallBackBindStatus = HWPuSDKLibrary.INSTANCE.IVS_PU_RealPlay(arg.ulIdentifyID, realPlayInfo,pfRealDataCallBack, deviceIpPointer);
+//                log.debug("实况播放回调函数绑定:" + realDataCallBackBindStatus.longValue());
+//                HuaWeiSdkApi.printReturnMsg();
+
+                deviceMap.put(deviceIp, arg.ulIdentifyID);
                 break;
             case 3:
                 log.debug("设备主动连接后未注册");

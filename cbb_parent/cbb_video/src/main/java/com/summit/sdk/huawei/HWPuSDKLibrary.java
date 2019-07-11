@@ -12850,7 +12850,7 @@ public interface HWPuSDKLibrary extends StdCallLibrary  {
 		boolean apply(PU_UPGRADE_CALLBACK pstUpgradeData, Pointer pUsrData);
 	};
 	/** <i>native declaration : E:\video\HWPuSDK.h</i> */
-	public interface pfRealDataCallBack extends Callback {
+	public interface pfRealDataCallBack extends StdCallLibrary.StdCallCallback {
 		void apply(Pointer szBuffer, NativeLong lSize, Pointer pUsrData);
 	};
 	/** <i>native declaration : E:\video\HWPuSDK.h</i> */

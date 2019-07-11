@@ -12,7 +12,11 @@ public class AlarmInfoCallBack implements HWPuSDKLibrary.pfGetAlarmInfoCallBack 
 
         log.debug("告警设备ID:"+pstAlarmReport.ulDeviceId.longValue());
         log.debug("告警类型:"+pstAlarmReport.enAlarmType);
-        log.debug("设备IP:"+pUsrData.getString(0));
-
+//        log.debug("设备IP:"+ StrUtil.str(pUsrData.getByteArray(0,16), "UTF-8").trim());
+        try {
+            log.debug("设备IP:"+new String(pUsrData.getByteArray(0,15)).trim());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

@@ -34,6 +34,8 @@ public class PU_ALARM_REPORT extends Structure {
 	public byte[] szReserve = new byte[32];
 	public PU_ALARM_REPORT() {
 		super();
+		this.setAlignType(ALIGN_NONE);
+
 	}
 	protected List<String > getFieldOrder() {
 		return Arrays.asList("ulDeviceId", "enAlarmType", "stTime", "enAction", "ulAlarmId", "szReserve");
@@ -51,6 +53,7 @@ public class PU_ALARM_REPORT extends Structure {
 	 */
 	public PU_ALARM_REPORT(NativeLong ulDeviceId, int enAlarmType, PU_TIME stTime, int enAction, NativeLong ulAlarmId, byte szReserve[]) {
 		super();
+		this.setAlignType(ALIGN_NONE);
 		this.ulDeviceId = ulDeviceId;
 		this.enAlarmType = enAlarmType;
 		this.stTime = stTime;
@@ -62,6 +65,7 @@ public class PU_ALARM_REPORT extends Structure {
 	}
 	public PU_ALARM_REPORT(Pointer peer) {
 		super(peer);
+		this.setAlignType(ALIGN_NONE);
 	}
 	public static class ByReference extends PU_ALARM_REPORT implements Structure.ByReference {
 		
