@@ -59,12 +59,12 @@ public class HuaWeiSdkApi {
     }
 
     public boolean rebootCamera(String cameraIp) {
-        NativeLong identifyId = DEVICE_MAP.get(cameraIp).getUlIdentifyId();
-        if (identifyId == null) {
+        DeviceInfo deviceInfo = DEVICE_MAP.get(cameraIp);
+        if (deviceInfo == null) {
             log.debug("设备没有上线");
             return false;
         }
-        boolean rebootStatus = HWPuSDKLibrary.INSTANCE.IVS_PU_Reboot(identifyId);
+        boolean rebootStatus = HWPuSDKLibrary.INSTANCE.IVS_PU_Reboot(deviceInfo.getUlIdentifyId());
         log.debug("设备重启状态:" + rebootStatus);
         if (!rebootStatus) {
             printReturnMsg();
