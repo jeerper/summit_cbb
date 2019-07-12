@@ -3,6 +3,9 @@ package com.summit.send.service;
 
 import com.summit.common.entity.RestfulEntityBySummit;
 import com.summit.common.entity.notification.SendSms;
+import com.summit.send.pojo.SmsEntity;
+
+import java.util.List;
 
 public interface SendSmsService {
 
@@ -20,4 +23,7 @@ public interface SendSmsService {
      */
 //    RestfulEntityBySummit sendSmsByOldVersion(SendSms sendSms);
 
+    List<SmsEntity> querySmsRecordByPhone(String resPhone);
+
+    SmsEntity querySmsRecordByBizId(String bizId);
 }

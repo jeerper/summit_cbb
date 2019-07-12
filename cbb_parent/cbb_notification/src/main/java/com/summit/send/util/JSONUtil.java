@@ -87,4 +87,11 @@ public class JSONUtil {
 		result = JSON.parseObject(responseData);
 		return result;
     }
+
+    public static JSONArray parseResponseDataToMap(String responseData) {
+		JSONObject data = JSON.parseObject(responseData);
+		JSONObject smsSendDetailDTOss = (JSONObject) data.get("SmsSendDetailDTOs");
+		JSONArray smsSendDetailDTOs = smsSendDetailDTOss.getJSONArray("SmsSendDetailDTO");
+		return smsSendDetailDTOs;
+    }
 }

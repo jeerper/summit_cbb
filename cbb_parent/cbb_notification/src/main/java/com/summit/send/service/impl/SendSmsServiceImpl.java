@@ -1,5 +1,7 @@
 package com.summit.send.service.impl;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.aliyuncs.CommonRequest;
 import com.aliyuncs.CommonResponse;
 import com.aliyuncs.DefaultAcsClient;
@@ -15,9 +17,13 @@ import com.summit.common.entity.ResponseCodeEnum;
 import com.summit.common.entity.RestfulEntityBySummit;
 import com.summit.common.entity.notification.SendSms;
 import com.summit.common.util.ResultBuilder;
+import com.summit.send.dao.SmsDao;
+import com.summit.send.dao.SmsTemplateDao;
+import com.summit.send.pojo.SmsEntity;
 import com.summit.send.service.SendSmsService;
 import com.summit.send.util.JSONUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import com.aliyuncs.DefaultAcsClient;
@@ -36,28 +42,31 @@ import org.springframework.util.StringUtils;
 
 import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.Map;
-import java.util.UUID;
-import java.util.ArrayList;
-import java.util.List;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
 
 @Service
 @Slf4j
 public class SendSmsServiceImpl implements SendSmsService {
 
-    @Value("${access-key-id}")
+    @Value("${ccb_msg.sms.access-key-id}")
     private String accessKeyId;
-    @Value("${access-key-secret}")
+    @Value("${ccb_msg.sms.access-key-secret}")
     private String secret;
+    @Value("${ccb_msg.sms.period}")
+    private int period;
+
 
     //产品名称:云通信短信API产品,开发者无需替换
     static final String product = "Dysmsapi";
     //产品域名,开发者无需替换
     static final String domain = "dysmsapi.aliyuncs.com";
 
+    @Autowired
+    private SmsDao smsDao;
+    @Autowired
+    private SmsTemplateDao smsTemplateDao;
 
     @Override
     public RestfulEntityBySummit sendSms(SendSms sendSms) {
@@ -156,6 +165,8 @@ public class SendSmsServiceImpl implements SendSmsService {
             return ResultBuilder.buildError(ResponseCodeEnum.CODE_4025 ,result,null);
         }
         String templateCode = sendSms.getTemplateCode();
+        //名字暂未改，实际传过来的应该是templateId,去数据库查询出templateCode
+        templateCode = smsTemplateDao.queryTmpalteCodeById(templateCode);
         if(StringUtils.isEmpty(templateCode)){
             log.error("模板号不能为空");
             result = "发送短信失败";
@@ -168,9 +179,13 @@ public class SendSmsServiceImpl implements SendSmsService {
             return ResultBuilder.buildError(ResponseCodeEnum.CODE_4025 ,result,null);
         }
         int failCount = 0;
+        //用于存放号码和bizid的对应关系
+        Map<String,String> bizIdMap = new HashMap<>();
         for (int i = 0;i < len;i++){
-            request.putQueryParameter("PhoneNumbers", phoneNumbers[i]);
-            request.putQueryParameter("SignName", signNames[i]);
+            String phone = phoneNumbers[i];
+            request.putQueryParameter("PhoneNumbers", phone);
+            String signName = signNames[i];
+            request.putQueryParameter("SignName", signName);
             request.putQueryParameter("TemplateCode",templateCode);
 //            request.putQueryParameter("TemplateParam", "{\"code\": \"6666666\"}");
             Map<String, Object> varsMap;
@@ -185,11 +200,93 @@ public class SendSmsServiceImpl implements SendSmsService {
                 if("OK".equals(repMap.get("Code"))){
                     log.info("返回数据为 {}", responseData);
 //                    result = "发送短信完成";
+                    //TODO 插库
+                    SmsEntity smsEntity = new SmsEntity();
+                    String bizId = (String) repMap.get("BizId");
+                    bizIdMap.put(phone,bizId);
+                    //目前默认将smsId设为bizId
+                    smsEntity.setSmsId(bizId);
+                    smsEntity.setBizId(bizId);
+                    //状态为发送中
+                    smsEntity.setSendState(1);
+                    //目前将传过来的templateCode当做templateId
+                    smsEntity.setTemplateId(sendSms.getTemplateCode());
+                    smsEntity.setResPhone(phone);
+                    smsEntity.setSmsSignname(signName);
+                    smsEntity.setSmsContent("");
+                    Date date = new Date();
+                    smsEntity.setCreateTime(date);
+                    smsEntity.setUpdateTime(date);
+                    smsDao.insertSms(smsEntity);
+                    //发送完成后启动定时任务，查询阿里短信接口，获取发送结果
+                    Timer timer = new Timer();
+
+                    TimerTask timerTask = new TimerTask() {
+                        @Override
+                        public void run() {
+                            /*DefaultProfile profile = DefaultProfile.getProfile("default", "<accessKeyId>", "<accessSecret>");
+                            IAcsClient client = new DefaultAcsClient(profile);*/
+
+                            try {
+                                CommonRequest queryRequest = new CommonRequest();
+                                queryRequest.setMethod(MethodType.POST);
+                                queryRequest.setDomain("dysmsapi.aliyuncs.com");
+                                queryRequest.setVersion("2017-05-25");
+                                queryRequest.setAction("QuerySendDetails");
+                                queryRequest.putQueryParameter("PhoneNumber", phone);
+                                String queryDate = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+                                queryRequest.putQueryParameter("BizId", bizId);
+                                queryRequest.putQueryParameter("SendDate", queryDate);
+                                queryRequest.putQueryParameter("PageSize", "1");
+                                queryRequest.putQueryParameter("CurrentPage", "1");
+                                CommonResponse response = client.getCommonResponse(queryRequest);
+                                log.info(response.getData());
+                                JSONArray results = JSONUtil.parseResponseDataToMap(response.getData());
+
+                                if(results.size() == 0){
+                                    log.info("暂无结果");
+                                    return;
+                                }
+                                //如果成功或失败，则插库并停止定时任务。若是发送中，则继续查询
+                                JSONObject result = (JSONObject)results.get(0);
+                                int sendStatus = result.getInteger("SendStatus");
+                                String content = result.getString("Content");
+                                if(sendStatus == 3){
+                                    log.info("发送成功");
+                                    //更新状态和内容
+                                    SmsEntity sms = new SmsEntity();
+                                    sms.setBizId(bizId);
+                                    sms.setSendState(3);
+                                    sms.setSmsContent(content);
+                                    sms.setUpdateTime(new Date());
+                                    smsDao.updateSms(sms);
+                                    timer.cancel();
+                                }else if(sendStatus == 2){
+                                    log.info("发送失败");
+                                    //更新状态
+                                    SmsEntity sms = new SmsEntity();
+                                    sms.setBizId(bizId);
+                                    sms.setSendState(2);
+                                    sms.setSmsContent(content);
+                                    sms.setUpdateTime(new Date());
+                                    smsDao.updateSms(sms);
+                                    timer.cancel();
+                                }else if(sendStatus == 1){
+                                    log.info("发送中...");
+                                }
+
+                            } catch (ClientException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    };
+                    timer.schedule(timerTask,50,period);
                 }else{
                     log.error("返回数据为 {}", responseData);
 //                    result = "发送短信失败";
                     failCount++;
                 }
+
             } catch (ServerException e) {
                 failCount++;
                 log.error("发送短信失败,服务端异常{}",e);
@@ -200,51 +297,56 @@ public class SendSmsServiceImpl implements SendSmsService {
         }
         if(failCount == len){
             result = "发送短信失败";
-            return ResultBuilder.buildError(ResponseCodeEnum.CODE_4025 ,result,null);
+            return ResultBuilder.buildError(ResponseCodeEnum.CODE_4025 ,result,bizIdMap);
         }
         result = "发送短信完成";
-        return ResultBuilder.buildError(ResponseCodeEnum.CODE_0000 ,result,null);
+        return ResultBuilder.buildError(ResponseCodeEnum.CODE_0000 ,result,bizIdMap);
     }
 
 
 
 //    @Override
-    public RestfulEntityBySummit sendSmsByOldVersion(SendSms sendSms) {
-        List<String> result = new ArrayList<String>();
-        //可自助调整超时时间
-        System.setProperty("sun.net.client.defaultConnectTimeout", "10000");
-        System.setProperty("sun.net.client.defaultReadTimeout", "10000");
+//    public RestfulEntityBySummit sendSmsByOldVersion(SendSms sendSms) {
+//        List<String> result = new ArrayList<String>();
+//        //可自助调整超时时间
+//        System.setProperty("sun.net.client.defaultConnectTimeout", "10000");
+//        System.setProperty("sun.net.client.defaultReadTimeout", "10000");
+//
+//        //初始化acsClient,暂不支持region化
+//        IClientProfile profile = DefaultProfile.getProfile("cn-hangzhou", accessKeyId, secret);
+//        try {
+//            DefaultProfile.addEndpoint("cn-hangzhou", "cn-hangzhou", product, domain);
+//        } catch (ClientException e) {
+//            e.printStackTrace();
+//        }
+//        IAcsClient acsClient = new DefaultAcsClient(profile);
+//        //组装请求对象
+//        SendBatchSmsRequest request = new SendBatchSmsRequest();
+//        //使用post提交
+//        request.setMethod(MethodType.POST);
+//        request.setPhoneNumberJson(JSONUtil.parseObjToJson(sendSms.getPhoneNumbers()));
+//        request.setSignNameJson(JSONUtil.parseObjToJson(sendSms.getSignNames()));
+//        request.setTemplateCode(sendSms.getTemplateCode());
+//        request.setTemplateParamJson(JSONUtil.parseObjToJson(sendSms.getTemplateVars()));
+//        SendBatchSmsResponse sendSmsResponse = null;
+//        try {
+//            sendSmsResponse = acsClient.getAcsResponse(request);
+//        } catch (ClientException e) {
+//            e.printStackTrace();
+//        }
+//        if(sendSmsResponse.getCode() != null && sendSmsResponse.getCode().equals("OK")) {
+//            //请求成功
+//            log.info(sendSmsResponse.getCode());
+//        }
+//
+//        return ResultBuilder.buildError(ResponseCodeEnum.CODE_0000 ,result);
+//    }
 
-        //初始化acsClient,暂不支持region化
-        IClientProfile profile = DefaultProfile.getProfile("cn-hangzhou", accessKeyId, secret);
-        try {
-            DefaultProfile.addEndpoint("cn-hangzhou", "cn-hangzhou", product, domain);
-        } catch (ClientException e) {
-            e.printStackTrace();
-        }
-        IAcsClient acsClient = new DefaultAcsClient(profile);
-        //组装请求对象
-        SendBatchSmsRequest request = new SendBatchSmsRequest();
-        //使用post提交
-        request.setMethod(MethodType.POST);
-        request.setPhoneNumberJson(JSONUtil.parseObjToJson(sendSms.getPhoneNumbers()));
-        request.setSignNameJson(JSONUtil.parseObjToJson(sendSms.getSignNames()));
-        request.setTemplateCode(sendSms.getTemplateCode());
-        request.setTemplateParamJson(JSONUtil.parseObjToJson(sendSms.getTemplateVars()));
-        SendBatchSmsResponse sendSmsResponse = null;
-        try {
-            sendSmsResponse = acsClient.getAcsResponse(request);
-        } catch (ClientException e) {
-            e.printStackTrace();
-        }
-        if(sendSmsResponse.getCode() != null && sendSmsResponse.getCode().equals("OK")) {
-            //请求成功
-            System.out.println(sendSmsResponse.getCode());
-            System.out.println(sendSmsResponse);
-        }
-
-        return ResultBuilder.buildError(ResponseCodeEnum.CODE_0000 ,result);
+    public List<SmsEntity> querySmsRecordByPhone(String resPhone){
+        return smsDao.querySmsRecordByPhone(resPhone);
     }
 
-
+    public SmsEntity querySmsRecordByBizId(String bizId){
+        return smsDao.querySmsRecordByBizId(bizId);
+    }
 }

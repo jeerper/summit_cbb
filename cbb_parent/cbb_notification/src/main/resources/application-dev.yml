@@ -3,6 +3,12 @@ spring:
   redis:
     host: 127.0.0.1
     port: 6379
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/ccb_notification?useOldAliasMetadataBehavior=true&createDatabaseIfNotExist=true&useSSL=false&useUnicode=yes&characterEncoding=UTF-8
+    username: root
+    password: 333
+
 eureka:
   instance:
     #使用IP注册服务
