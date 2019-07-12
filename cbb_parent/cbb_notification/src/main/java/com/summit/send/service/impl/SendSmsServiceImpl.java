@@ -56,6 +56,8 @@ public class SendSmsServiceImpl implements SendSmsService {
     private String secret;
     @Value("${ccb_msg.sms.period}")
     private int period;
+    @Value("${ccb_msg.sms.max-polling-count}")
+    private int maxPollingCount;
 
 
     //产品名称:云通信短信API产品,开发者无需替换
@@ -222,11 +224,20 @@ public class SendSmsServiceImpl implements SendSmsService {
                     Timer timer = new Timer();
 
                     TimerTask timerTask = new TimerTask() {
+//                        private int count = 0;
+                        private ThreadLocal<Integer> count = new ThreadLocal<Integer>(){
+                            @Override
+                            protected Integer initialValue() {
+                                return 0;
+                            }
+                        };
                         @Override
                         public void run() {
                             /*DefaultProfile profile = DefaultProfile.getProfile("default", "<accessKeyId>", "<accessSecret>");
                             IAcsClient client = new DefaultAcsClient(profile);*/
-
+                            count.set(count.get() + 1);;
+                            if(count.get() > maxPollingCount)
+                                timer.cancel();
                             try {
                                 CommonRequest queryRequest = new CommonRequest();
                                 queryRequest.setMethod(MethodType.POST);
@@ -303,7 +314,50 @@ public class SendSmsServiceImpl implements SendSmsService {
         return ResultBuilder.buildError(ResponseCodeEnum.CODE_0000 ,result,bizIdMap);
     }
 
+    public int directToAliQueryState(String bizId){
+        SmsEntity smsRecord = smsDao.querySmsRecordByBizId(bizId);
 
+        DefaultProfile profile = DefaultProfile.getProfile("default", accessKeyId, secret);
+        IAcsClient client = new DefaultAcsClient(profile);
+
+        CommonRequest queryRequest = new CommonRequest();
+        queryRequest.setMethod(MethodType.POST);
+        queryRequest.setDomain("dysmsapi.aliyuncs.com");
+        queryRequest.setVersion("2017-05-25");
+        queryRequest.setAction("QuerySendDetails");
+        queryRequest.putQueryParameter("PhoneNumber", smsRecord.getResPhone());
+        String queryDate = new SimpleDateFormat("yyyyMMdd").format(smsRecord.getUpdateTime());
+        queryRequest.putQueryParameter("BizId", bizId);
+        queryRequest.putQueryParameter("SendDate", queryDate);
+        queryRequest.putQueryParameter("PageSize", "-1");
+        queryRequest.putQueryParameter("CurrentPage", "-1");
+        CommonResponse response = null;
+        try {
+            response = client.getCommonResponse(queryRequest);
+        } catch (ClientException e) {
+            e.printStackTrace();
+        }
+        log.info(response.getData());
+        JSONArray results = JSONUtil.parseResponseDataToMap(response.getData());
+
+        if(results.size() == 0){
+            log.info("暂无结果");
+            return -1;
+        }
+        //如果成功或失败，则插库并停止定时任务。若是发送中，则继续查询
+        JSONObject result = (JSONObject)results.get(0);
+        int sendStatus = result.getInteger("SendStatus");
+        if(sendStatus == 2 || sendStatus == 3){
+            //若查询出成功或失败，更新数据库
+            SmsEntity sms = new SmsEntity();
+            sms.setBizId(bizId);
+            sms.setSendState(sendStatus);
+            sms.setSmsContent(result.getString("Content"));
+            sms.setUpdateTime(new Date());
+            smsDao.updateSms(sms);
+        }
+        return sendStatus;
+    }
 
 //    @Override
 //    public RestfulEntityBySummit sendSmsByOldVersion(SendSms sendSms) {

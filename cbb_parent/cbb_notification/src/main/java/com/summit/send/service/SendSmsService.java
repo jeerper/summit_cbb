@@ -26,4 +26,7 @@ public interface SendSmsService {
     List<SmsEntity> querySmsRecordByPhone(String resPhone);
 
     SmsEntity querySmsRecordByBizId(String bizId);
+
+    int directToAliQueryState(String bizId);
+
 }

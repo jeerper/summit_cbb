@@ -48,6 +48,8 @@ ccb_msg:
     access-key-secret: nnTrlyuApboyM2vkY5SMqZkxCsUQA0
     #查询短信状态周期
     period: 1000
+    #查询短信状态最大轮询次数
+    max-polling-count: 100
 
 
 mybatis:

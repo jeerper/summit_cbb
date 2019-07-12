@@ -9,10 +9,7 @@ import com.summit.send.service.SendSmsService;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -33,19 +30,27 @@ public class SendSmsController {
 
     }
     @ApiOperation(value = "根据手机号查询短信发送结果",  notes = "用接收者号码查询，返回data为一个短信记录集合")
-    @PostMapping("/querySmsRecordByPhone")
+    @GetMapping("/querySmsRecordByPhone")
     public RestfulEntityBySummit querySmsRecordByPhone(String resPhone){
         log.info("###SendSmsController.querySmsRecordByPhone");
         List<SmsEntity> smsEntities = sendSmsService.querySmsRecordByPhone(resPhone);
         return ResultBuilder.buildError(ResponseCodeEnum.CODE_0000 ,smsEntities);
 
     }
-    @ApiOperation(value = "根据短信回执号查询唯一短信发送结果",  notes = "回执id在发送邮件接口返回数据中，返回data为一条确定的短信记录")
-    @PostMapping("/querySmsRecordByBizId")
+    @ApiOperation(value = "根据短信回执号查询短信发送结果",  notes = "回执id在发送邮件接口返回数据中，返回data为一条确定的短信记录")
+    @GetMapping("/querySmsRecordByBizId")
     public RestfulEntityBySummit querySmsRecordByBizId(String bizId){
         log.info("###SendSmsController.querySmsRecordByBizId");
         SmsEntity smsEntity = sendSmsService.querySmsRecordByBizId(bizId);
         return ResultBuilder.buildError(ResponseCodeEnum.CODE_0000 ,smsEntity);
+
+    }
+    @ApiOperation(value = "直接查询阿里的短信状态记录",  notes = "根据短信回执号直接查询阿里的短信状态，获取短信发送结果,1为发送中，2为发送失败，3为发送成功，-1表示阿里暂未结果记录")
+    @GetMapping("/queryStateDirectToAli")
+    public RestfulEntityBySummit queryStateDirectToAli(String bizId){
+        log.info("###SendSmsController.querySmsRecordByBizId");
+        int state = sendSmsService.directToAliQueryState(bizId);
+        return ResultBuilder.buildError(ResponseCodeEnum.CODE_0000 ,state);
 
     }
 }
