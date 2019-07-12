@@ -16,12 +16,15 @@ spring:
     host: smtp.qq.com
     username: 3421988273@qq.com
     password: fdgeeukxcdncdaeg
-    port: 465
+#    port: 465
     default-encoding: UTF-8
     properties:
       mail:
         smtp:
           auth: true
+          socketFactory:
+            class: javax.net.ssl.SSLSocketFactory
+            port: 465
 jpush:
   appKey: 43d2500b962982d568d6d000
   masterSecret: 44a6260c4afd4be02f95d808
