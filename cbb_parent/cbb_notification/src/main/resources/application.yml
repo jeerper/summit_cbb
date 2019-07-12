@@ -16,6 +16,7 @@ spring:
     host: smtp.qq.com
     username: 3421988273@qq.com
     password: fdgeeukxcdncdaeg
+    port: 465
     default-encoding: UTF-8
     properties:
       mail:
@@ -44,6 +45,7 @@ ccb_msg:
     access-key-secret: nnTrlyuApboyM2vkY5SMqZkxCsUQA0
     #查询短信状态周期
     period: 1000
+
 
 mybatis:
   mapper-locations: classpath:mapper/*Mapper.xml
