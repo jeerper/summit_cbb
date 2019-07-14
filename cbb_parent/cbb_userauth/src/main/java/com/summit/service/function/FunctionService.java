@@ -228,7 +228,7 @@ public class FunctionService {
 	public Page<FunctionBean> queryByPage(int start, int limit, String pId,String userName) throws Exception {
 		StringBuffer sql=new StringBuffer("SELECT * FROM SYS_FUNCTION where 1=1 ");
 		 LinkedMap linkedMap=null;
-          if(!"root".equals(pId) && SummitTools.stringNotNull(pId)){ 
+          if(SummitTools.stringNotNull(pId)){ 
 			if (isSuperUser(userName)) {
 				sql.append(" and PID = ? ");
 			}else{
