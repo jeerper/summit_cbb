@@ -2,9 +2,9 @@ package com.summit.send.service.impl;
 
 import com.summit.common.entity.ResponseCodeEnum;
 import com.summit.common.entity.RestfulEntityBySummit;
+import com.summit.common.entity.notification.MailContentType;
 import com.summit.common.entity.notification.SendEmail;
 import com.summit.common.util.ResultBuilder;
-import com.summit.send.enums.MailContentType;
 import com.summit.send.service.SendEmailService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -122,16 +122,16 @@ public class SendEmailServiceImpl implements SendEmailService {
 
             //若有图片则添加
             //Image[] images = sendEmail.getImages();
-            MultipartFile[] images = sendEmail.getImagesMultipartFiles();
-            if(images != null){
-                for (MultipartFile image : images) {
-                    //FileSystemResource img = new FileSystemResource(new File(image.getPath()));
-                    helper.addInline(image.getOriginalFilename(), image ,image.getContentType());
-                }
-            }
+//            MultipartFile[] images = sendEmail.getImagesMultipartFiles();
+//            if(images != null){
+//                for (MultipartFile image : images) {
+//                    //FileSystemResource img = new FileSystemResource(new File(image.getPath()));
+//                    helper.addInline(image.getOriginalFilename(), image ,image.getContentType());
+//                }
+//            }
             //若有附件则添加
             //AttachFile[] attachFiles = sendEmail.getAttachFiles();
-            MultipartFile[] attachFiles = sendEmail.getAttachMultipartFiles();
+            MultipartFile[] attachFiles = sendEmail.getAttachFiles();
             if(attachFiles != null){
                 for (MultipartFile attachFile : attachFiles) {
                     //FileSystemResource file = new FileSystemResource(new File(attachFile.getPath()));
@@ -203,16 +203,16 @@ public class SendEmailServiceImpl implements SendEmailService {
             helper.setText(htmlContent, true);
             //若有图片则添加
             //Image[] images = sendEmail.getImages();
-            MultipartFile[] images = sendEmail.getImagesMultipartFiles();
-            if(images != null){
-                for (MultipartFile image : images) {
-                    //FileSystemResource img = new FileSystemResource(new File(image.getPath()));
-                    helper.addInline(image.getOriginalFilename(), image ,image.getContentType());
-                }
-            }
+//            MultipartFile[] images = sendEmail.getImagesMultipartFiles();
+//            if(images != null){
+//                for (MultipartFile image : images) {
+//                    //FileSystemResource img = new FileSystemResource(new File(image.getPath()));
+//                    helper.addInline(image.getOriginalFilename(), image ,image.getContentType());
+//                }
+//            }
             //若有附件则添加
             //AttachFile[] attachFiles = sendEmail.getAttachFiles();
-            MultipartFile[] attachFiles = sendEmail.getAttachMultipartFiles();
+            MultipartFile[] attachFiles = sendEmail.getAttachFiles();
             if(attachFiles != null){
                 for (MultipartFile attachFile : attachFiles) {
                     //FileSystemResource file = new FileSystemResource(new File(attachFile.getPath()));

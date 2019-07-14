@@ -2,14 +2,16 @@ package com.summit.common.entity.notification;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import java.io.Serializable;
 
+@AllArgsConstructor
 @Data
 @ApiModel(value="邮件信息类", description="包含邮件所含信息，用来接收参数，不包含附件和图片参数")
 public class EmailInfo  implements Serializable {
-
+    public EmailInfo(){}
     //邮件编号
     @ApiModelProperty(value="邮件编号",name="emailId")
     private String emailId;
@@ -24,9 +26,9 @@ public class EmailInfo  implements Serializable {
     private String contentType;
 
     //模板名称
-    @ApiModelProperty(value="模板名称",name="templateName")
+//    @ApiModelProperty(value="模板名称。简单邮件和html邮件无需传递此参数",name="templateName")
     private String templateName;
     //模板变量替换,键和值用冒号隔开
-    @ApiModelProperty(value="模板变量替换,键和值用冒号隔开",name="templateVars")
+//    @ApiModelProperty(value="模板变量。键和值用冒号隔开。简单邮件和html邮件无需传递此参数",name="templateVars")
     private String[] templateVars;
 }

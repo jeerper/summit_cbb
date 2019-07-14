@@ -1,4 +1,4 @@
-package com.summit.send.enums;
+package com.summit.common.entity.notification;
 
 public enum MailContentType {
 
