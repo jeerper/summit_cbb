@@ -15,7 +15,6 @@ public class RealDataCallBack implements HWPuSDKLibrary.pfRealDataCallBack {
     @Override
     public void apply(Pointer szBuffer, NativeLong lSize, Pointer pUsrData) {
         PointerByReference pu_meta_data_pointer_pointer = new PointerByReference(Pointer.NULL);
-//        PointerByReference pu_meta_data_pointer_pointer = new PointerByReference(Pointer.NULL);
         HWPuSDKLibrary.INSTANCE.IVS_User_GetMetaData(szBuffer, lSize, 1, pu_meta_data_pointer_pointer);
         PU_META_DATA data = Structure.newInstance(PU_META_DATA.class, pu_meta_data_pointer_pointer.getValue());
         data.read();
