@@ -71,7 +71,7 @@ public class SendSmsServiceImpl implements SendSmsService {
     private SmsTemplateDao smsTemplateDao;
 
     @Override
-    public RestfulEntityBySummit sendSms(SendSms sendSms) {
+    public RestfulEntityBySummit<Map<String,String>> sendSms(SendSms sendSms) {
 //        if(sendSms.getTemplateVars() == null || sendSms.getTemplateVars().size() == 0){
 //            return sendSmsByForeach(sendSms);
 //        }else {
@@ -132,7 +132,7 @@ public class SendSmsServiceImpl implements SendSmsService {
      * @param sendSms 发送短信所需信息
      * @return RestfulEntityBySummit结果对象
      */
-    public RestfulEntityBySummit sendSmsByForeach(SendSms sendSms){
+    public RestfulEntityBySummit<Map<String,String>> sendSmsByForeach(SendSms sendSms){
         String result = "";
         if(sendSms == null){
             log.error("短信不能为空");
