@@ -20,7 +20,7 @@ public interface NotificationService {
     RestfulEntityBySummit sendSms(@RequestBody SendSms sendSms);
 
     @PostMapping(value = "/msg/email", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    RestfulEntityBySummit<String> sendEmail(@RequestPart("attachFiles") MultipartFile[] attachFiles ,
+    RestfulEntityBySummit sendEmail(@RequestPart("attachFiles") MultipartFile[] attachFiles ,
                                            @RequestParam("emailId") String emailId ,
                                            @RequestParam("toEmails") String[] toEmails ,
                                            @RequestParam("title") String title ,
@@ -28,7 +28,7 @@ public interface NotificationService {
                                            @RequestParam("contentType") String contentType);
 
     @PostMapping(value = "/msg/templateEmail", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    RestfulEntityBySummit<String> sendEmail(@RequestPart("attachFiles") MultipartFile[] attachFiles ,
+    RestfulEntityBySummit sendEmail(@RequestPart("attachFiles") MultipartFile[] attachFiles ,
                                            @RequestParam("emailId") String emailId ,
                                            @RequestParam("toEmails") String[] toEmails ,
                                            @RequestParam("title") String title ,

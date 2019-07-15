@@ -25,7 +25,7 @@ public class SendEmailController {
 
     @ApiOperation(value = "发送邮件，可以添加附件，支持html格式")
     @PostMapping(value = "/email", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public RestfulEntityBySummit<String> sendEmail(
+    public RestfulEntityBySummit sendEmail(
             @RequestPart("attachFiles") MultipartFile[] attachFiles ,
             @RequestParam("emailId") String emailId ,
             @RequestParam("toEmails") String[] toEmails ,
@@ -36,7 +36,7 @@ public class SendEmailController {
         log.info("###收到发送邮件请求");
         EmailInfo emailInfo = new EmailInfo(emailId,toEmails,title,content,contentType,null,null);
         SendEmail sendEmail = assign(emailInfo,attachFiles);
-        RestfulEntityBySummit<String> result = sendEmailService.sendMail(sendEmail);
+        RestfulEntityBySummit result = sendEmailService.sendMail(sendEmail);
 
         return  result;
     }
@@ -44,7 +44,7 @@ public class SendEmailController {
 
 //    @ApiOperation(value = "发送邮件，可以添加附件，支持html和thymeleaf模板格式")
     @PostMapping(value = "/templateEmail", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public RestfulEntityBySummit<String> sendEmail(
+    public RestfulEntityBySummit sendEmail(
             @RequestPart("attachFiles") MultipartFile[] attachFiles ,
             @RequestParam("emailId") String emailId ,
             @RequestParam("toEmails") String[] toEmails ,
@@ -57,7 +57,7 @@ public class SendEmailController {
         log.info("###收到发送邮件请求");
         EmailInfo emailInfo = new EmailInfo(emailId,toEmails,title,content,contentType,templateName,templateVars);
         SendEmail sendEmail = assign(emailInfo,attachFiles);
-        RestfulEntityBySummit<String> result = sendEmailService.sendMail(sendEmail);
+        RestfulEntityBySummit result = sendEmailService.sendMail(sendEmail);
 
         return  result;
     }

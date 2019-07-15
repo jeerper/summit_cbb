@@ -1,6 +1,7 @@
 package com.summit.weather.controller;
 
 import com.summit.common.api.notification.NotificationService;
+import com.summit.common.entity.RestfulEntityBySummit;
 import com.summit.common.entity.notification.EmailInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -15,7 +16,7 @@ public class TestController {
     private NotificationService notificationService;
 
     @PostMapping(value = "/sendEmail")
-    public String sendEmail(EmailInfo emailInfo, MultipartFile[] attachFiles){
+    public RestfulEntityBySummit sendEmail(EmailInfo emailInfo, MultipartFile[] attachFiles){
         String emailId = emailInfo.getEmailId();
         String[] toEmails = emailInfo.getToEmails();
         String title = emailInfo.getTitle();
@@ -24,9 +25,9 @@ public class TestController {
         String templateName = emailInfo.getTemplateName();
         String[] templateVars = emailInfo.getTemplateVars();
 
-        notificationService.sendEmail(attachFiles,emailId,toEmails,title,content,contentType,templateName,templateVars);
+        RestfulEntityBySummit result = notificationService.sendEmail(attachFiles, emailId, toEmails, title, content, contentType);
 
-        return "success";
+        return result;
     }
 
 
