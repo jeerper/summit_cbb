@@ -1,0 +1,1 @@
+﻿alter table sys_user add column IMEI varchar(50) CHARACTER SET utf8 COLLATE utf8_bin COMMENT '移动设备识别码,用于发送短信';
