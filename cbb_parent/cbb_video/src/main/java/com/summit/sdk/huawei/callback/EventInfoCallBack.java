@@ -5,6 +5,7 @@ import com.summit.sdk.huawei.HWPuSDKLibrary;
 import com.summit.sdk.huawei.PU_DEVICE_REGISTER_RSP;
 import com.summit.sdk.huawei.PU_EVENT_COMMON;
 import com.summit.sdk.huawei.PU_EVENT_REGISTER;
+import com.summit.sdk.huawei.PU_REAL_PLAY_INFO;
 import com.summit.sdk.huawei.PU_SYSTEM_TIME;
 import com.summit.sdk.huawei.PU_TIME;
 import com.summit.sdk.huawei.api.HuaWeiSdkApi;
@@ -97,12 +98,21 @@ public class EventInfoCallBack implements HWPuSDKLibrary.pfGetEventInfoCallBack 
                 log.debug("告警上报回调函数绑定:" + alarmCallBackBindStatus);
 
 
-//                PU_REAL_PLAY_INFO realPlayInfo = new PU_REAL_PLAY_INFO();
-//                NativeLong realDataCallBackBindStatus = HWPuSDKLibrary.INSTANCE.IVS_PU_RealPlay(arg.ulIdentifyID, realPlayInfo,
-//                pfRealDataCallBack, deviceIpPointer);
-//                log.debug("实况播放回调函数绑定:" + realDataCallBackBindStatus.longValue());
-//                HuaWeiSdkApi.printReturnMsg();
-
+                PU_REAL_PLAY_INFO realPlayInfo = new PU_REAL_PLAY_INFO();
+                realPlayInfo.ulChannelId = new NativeLong(101);
+                realPlayInfo.hPlayWnd =Pointer.NULL;
+                realPlayInfo.enStreamType = HWPuSDKLibrary.PU_STREAM_TYPE.PU_VIDEO_MAIN_STREAM;
+                realPlayInfo.enVideoType = HWPuSDKLibrary.PU_VIDEO_TYPE.PU_VIDEO_TYPE_META;
+                realPlayInfo.enProtocolType = HWPuSDKLibrary.PU_PROTOCOL_TYPE.PU_PROTOCOL_TYPE_TCP;
+                realPlayInfo.enMediaCallbackType = HWPuSDKLibrary.PU_MEDIA_CALLBACK_TYPE.PU_MEDIA_CALLBACK_TYPE_META_FRAME;
+                byte[] localIpBytes = StrUtil.bytes("192.168.141.222");
+                System.arraycopy(localIpBytes, 0, realPlayInfo.szLocalIp, 0, localIpBytes.length);
+                realPlayInfo.bKeepLive = true;
+                realPlayInfo.szReserved[22] = 1;
+                NativeLong realDataCallBackBindStatus = HWPuSDKLibrary.INSTANCE.IVS_PU_RealPlay(arg.ulIdentifyID, realPlayInfo,
+                        pfRealDataCallBack, deviceIpPointer);
+                log.debug("实况播放回调函数绑定:" + realDataCallBackBindStatus.longValue());
+                HuaWeiSdkApi.printReturnMsg();
 
                 break;
             case 3:
@@ -110,21 +120,25 @@ public class EventInfoCallBack implements HWPuSDKLibrary.pfGetEventInfoCallBack 
                 break;
             case 4:
                 log.debug("设备主动注销");
+                HWPuSDKLibrary.INSTANCE.IVS_PU_StopAllRealPlay(arg.ulIdentifyID);
                 HWPuSDKLibrary.INSTANCE.IVS_PU_Logout(arg.ulIdentifyID);
                 removeDeviceMapByUlIdentifyId(arg.ulIdentifyID);
                 break;
             case 5:
                 log.debug("设备网络连接断开");
+                HWPuSDKLibrary.INSTANCE.IVS_PU_StopAllRealPlay(arg.ulIdentifyID);
                 HWPuSDKLibrary.INSTANCE.IVS_PU_Logout(arg.ulIdentifyID);
                 removeDeviceMapByUlIdentifyId(arg.ulIdentifyID);
                 break;
             case 6:
                 log.debug("发送或接收失败");
+                HWPuSDKLibrary.INSTANCE.IVS_PU_StopAllRealPlay(arg.ulIdentifyID);
                 HWPuSDKLibrary.INSTANCE.IVS_PU_Logout(arg.ulIdentifyID);
                 removeDeviceMapByUlIdentifyId(arg.ulIdentifyID);
                 break;
             case 7:
                 log.debug("设备保活失败");
+                HWPuSDKLibrary.INSTANCE.IVS_PU_StopAllRealPlay(arg.ulIdentifyID);
                 HWPuSDKLibrary.INSTANCE.IVS_PU_Logout(arg.ulIdentifyID);
                 removeDeviceMapByUlIdentifyId(arg.ulIdentifyID);
                 break;
@@ -145,6 +159,7 @@ public class EventInfoCallBack implements HWPuSDKLibrary.pfGetEventInfoCallBack 
                 break;
             case 13:
                 log.debug("实况异常");
+                HuaWeiSdkApi.printReturnMsg();
                 break;
             case 14:
                 log.debug("上报可视化信息");

@@ -16816,7 +16816,7 @@ public interface HWPuSDKLibrary extends StdCallLibrary  {
 	 * <i>native declaration : E:\video\HWPuSDK.h:12272</i><br>
 	 * @deprecated use the safer methods {@link #IVS_User_GetMetaData(java.nio.ByteBuffer, com.sun.jna.NativeLong, int, com.summit.sdk.huawei.PU_META_DATA.ByReference[])} and {@link #IVS_User_GetMetaData(com.sun.jna.Pointer, com.sun.jna.NativeLong, int, com.summit.sdk.huawei.PU_META_DATA.ByReference[])} instead
 	 */
-	@Deprecated 
+
 	boolean IVS_User_GetMetaData(Pointer pFBuffer, NativeLong ulFBLength, int eLayTwo, PointerByReference pstMetaData);
 	/**
 	 * /<br>
@@ -16835,7 +16835,6 @@ public interface HWPuSDKLibrary extends StdCallLibrary  {
 	 * <i>native declaration : E:\video\HWPuSDK.h:12273</i><br>
 	 * @deprecated use the safer method {@link #IVS_User_FreeMetaData(com.summit.sdk.huawei.PU_META_DATA.ByReference[])} instead
 	 */
-	@Deprecated 
 	void IVS_User_FreeMetaData(PointerByReference ppstMetaData);
 	/**
 	 * Original signature : <code>VOID IVS_User_FreeMetaData(PU_META_DATA**)</code><br>

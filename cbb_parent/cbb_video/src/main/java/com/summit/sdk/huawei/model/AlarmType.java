@@ -2,8 +2,8 @@ package com.summit.sdk.huawei.model;
 
 public enum AlarmType {
 
-    FACE_DETECTION(10, "人脸检测"),
-    HUMAN_COUNT(119, "过线统计检测");
+   
+    FACE_DETECTION(119, "人脸检测");
 
     private int alarmCode;
     private String alarmDescription;
