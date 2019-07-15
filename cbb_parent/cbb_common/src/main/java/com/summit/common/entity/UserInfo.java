@@ -56,6 +56,15 @@ public class UserInfo implements Serializable {
      */
     @ApiModelProperty(hidden = true)
     private int state;
+    
+    /**
+     * 移动设备
+     */
+    @ApiModelProperty(value="移动设备识别码 ,用于发送短信验证用",name="imei" )
+    private String imei;
+    
+    
+    
 
     /**
      * 备注
@@ -217,4 +226,14 @@ public class UserInfo implements Serializable {
 	public void setDeptNames(String deptNames) {
 		this.deptNames = deptNames;
 	}
+
+	public String getImei() {
+		return imei;
+	}
+
+	public void setImei(String imei) {
+		this.imei = imei;
+	}
+	
+	
 }

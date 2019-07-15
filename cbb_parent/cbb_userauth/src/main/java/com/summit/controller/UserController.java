@@ -178,6 +178,34 @@ public class UserController {
         }
     }
 
+   // public ResponseCodeEnum editImei(String imei,String username)
+    
+
+    @ApiOperation(value = "根据用户名修改移动设备识别码")
+    @PutMapping("/editImei")
+    public RestfulEntityBySummit<String> editImei(@RequestBody UserInfo userInfo) {
+    	 LogBean logBean =new  LogBean();
+    	 logBean.setStime(SummitTools.DTFormat("yyyy-MM-dd HH:mm:ss",new Date()));
+        try {
+            ResponseCodeEnum ub=us.editImei(userInfo.getUserName(),userInfo.getImei());
+            if(ub!=null){
+            	return ResultBuilder.buildError(ub);
+            }
+            logBean.setActionFlag("1");
+        } catch (Exception e) {
+            logger.error("修改移动设备识别码失败:", e);
+            logBean.setActionFlag("0");
+        	logBean.setErroInfo(e.getMessage());
+        }
+        SummitTools.getLogBean(logBean,"用户管理","根据用户名修改移动设备识别码:"+userInfo.getImei(),"2");
+        logUtil.insertLog(logBean);
+        if("0".equals(logBean.getActionFlag())){
+        	 return ResultBuilder.buildError(ResponseCodeEnum.CODE_9999);
+        }else{
+        	 return ResultBuilder.buildSuccess();
+        }
+    }
+    
     @ApiOperation(value = "根据用户名查询用户信息(对内接口),该接口只供注册中心使用")
     @GetMapping("/queryUserInfoByUserNameService")
     public RestfulEntityBySummit<UserInfo> queryUserInfoByUserNameService(

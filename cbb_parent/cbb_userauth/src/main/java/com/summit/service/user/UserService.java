@@ -167,6 +167,12 @@ public class UserService {
 		return null;
 	}
 
+	public ResponseCodeEnum editImei(String username,String imei) {
+		String sql = "UPDATE SYS_USER SET imei = ? WHERE USERNAME = ? AND STATE = 1";
+		jdbcTemplate.update(sql, imei, username);
+		return null;
+	}
+	
 	
 	public ResponseCodeEnum editPassword(String userName, String oldPassword,
 			String password, String repeatPassword,String key)  {
@@ -217,7 +223,7 @@ public class UserService {
 	}
 
 	public UserInfo queryByUserName(String userName) {
-		String sql = "SELECT USERNAME ,NAME ,SEX,PASSWORD ,IS_ENABLED ,EMAIL ,PHONE_NUMBER ,STATE ,NOTE ,LAST_UPDATE_TIME FROM SYS_USER WHERE STATE = 1 AND USERNAME = ?";
+		String sql = "SELECT USERNAME ,NAME ,SEX,PASSWORD ,IS_ENABLED ,EMAIL ,PHONE_NUMBER ,STATE ,NOTE ,LAST_UPDATE_TIME,IMEI FROM SYS_USER WHERE STATE = 1 AND USERNAME = ?";
 		List<UserInfo> l = ur.queryAllCustom(sql, ubr, userName);
 		if (st.collectionNotNull(l)) {
 			return l.get(0);
