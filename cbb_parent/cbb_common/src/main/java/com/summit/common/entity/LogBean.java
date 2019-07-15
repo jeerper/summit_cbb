@@ -54,7 +54,7 @@ public class LogBean  implements Serializable {
 	 * @param describe
 	 * @param operType
 	 */
-	public LogBean(String funName,String systemName,String operInfo,String operType,String callerIP,String stime,String etime,String actiontime,String actionFlag) {
+	public LogBean(String funName,String systemName,String operInfo,String operType,String callerIP,String stime,String etime,String actiontime,String actionFlag,String erroInfo) {
 		super();
 		this.funName = funName;
 		this.systemName = systemName;
@@ -65,6 +65,7 @@ public class LogBean  implements Serializable {
 		this.stime=etime;
 		this.actiontime=actiontime;
 		this.actionFlag=actionFlag;
+		this.erroInfo=erroInfo;
 	}
 	
 	/**
