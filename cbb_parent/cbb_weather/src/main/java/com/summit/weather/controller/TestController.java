@@ -3,18 +3,22 @@ package com.summit.weather.controller;
 import com.summit.common.api.notification.NotificationService;
 import com.summit.common.entity.RestfulEntityBySummit;
 import com.summit.common.entity.notification.EmailInfo;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+@Api(tags = "邮件测试接口", value = "email_test")
 @RestController
 @RequestMapping("/msg")
 public class TestController {
     @Autowired
     private NotificationService notificationService;
 
+    @ApiOperation(value = "测试邮件发送")
     @PostMapping(value = "/sendEmail")
     public RestfulEntityBySummit sendEmail(EmailInfo emailInfo, MultipartFile[] attachFiles){
         String emailId = emailInfo.getEmailId();

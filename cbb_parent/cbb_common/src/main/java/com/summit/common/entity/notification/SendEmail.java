@@ -12,7 +12,7 @@ import java.io.Serializable;
 public class SendEmail extends EmailInfo implements Serializable{
 	
 	private static final long serialVersionUID = 1L;
-    @ApiModelProperty(value="邮件附件，可传多个 ",name="attachFiles")
+    @ApiModelProperty(value="邮件附件，可传多个 ",name="attachFiles",required = false)
     private MultipartFile[] attachFiles;
 //    @ApiModelProperty(value="邮件图片，可传多个",name="imagesMultipartFiles")
 //    private MultipartFile[] imagesMultipartFiles;
