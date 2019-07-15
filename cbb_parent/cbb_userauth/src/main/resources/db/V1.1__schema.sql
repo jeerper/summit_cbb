@@ -1,4 +1,4 @@
-﻿CREATE TABLE `sys_ad_cd` (
+﻿CREATE TABLE IF NOT EXISTS `sys_ad_cd` (
   `ADCD` varchar(15) NOT NULL COMMENT '行政区划编码',
   `ADNM` varchar(100) DEFAULT NULL COMMENT '行政区划名称',
   `PADCD` varchar(15) DEFAULT NULL COMMENT '父节点',
@@ -6,7 +6,7 @@
   PRIMARY KEY (`ADCD`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-CREATE TABLE `sys_dept` (
+CREATE TABLE IF NOT EXISTS `sys_dept` (
   `ID` varchar(40) NOT NULL COMMENT '主键id',
   `PID` varchar(40) DEFAULT NULL COMMENT '上级部门id',
   `DEPTCODE` varchar(20) DEFAULT NULL COMMENT '部门编号',
@@ -16,7 +16,7 @@ CREATE TABLE `sys_dept` (
   PRIMARY KEY (`ID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-CREATE TABLE `sys_dictionary` (
+CREATE TABLE IF NOT EXISTS `sys_dictionary` (
   `CODE` varchar(50) NOT NULL COMMENT '编码',
   `PCODE` varchar(50) DEFAULT NULL COMMENT '上级编号',
   `NAME` varchar(50) NOT NULL COMMENT '名称',
@@ -26,7 +26,7 @@ CREATE TABLE `sys_dictionary` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
-CREATE TABLE `sys_function` (
+CREATE TABLE IF NOT EXISTS `sys_function` (
   `ID` varchar(40) NOT NULL COMMENT '主键',
   `PID` varchar(40) DEFAULT NULL COMMENT '上级菜单id',
   `NAME` varchar(40) NOT NULL COMMENT '菜单名称',
@@ -39,7 +39,7 @@ CREATE TABLE `sys_function` (
   PRIMARY KEY (`ID`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-CREATE TABLE `sys_role` (
+CREATE TABLE IF NOT EXISTS `sys_role` (
   `CODE` varchar(40) NOT NULL COMMENT '角色编号，自动生成ROLE_XXX',
   `NAME` varchar(40) NOT NULL COMMENT '角色名称',
   `NOTE` text COMMENT '备注',
@@ -47,14 +47,14 @@ CREATE TABLE `sys_role` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
-CREATE TABLE `sys_role_function` (
+CREATE TABLE  IF NOT EXISTS `sys_role_function` (
   `ID` varchar(40) NOT NULL COMMENT '主键',
   `ROLE_CODE` varchar(40) DEFAULT NULL COMMENT '角色code',
   `FUNCTION_ID` varchar(40) DEFAULT NULL COMMENT '菜单id',
   PRIMARY KEY (`ID`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-CREATE TABLE `sys_user` (
+CREATE TABLE IF NOT EXISTS `sys_user` (
   `USERNAME` varchar(50) NOT NULL COMMENT '用户登录名',
   `NAME` varchar(50) NOT NULL COMMENT '用户姓名',
   `SEX` varchar(2) DEFAULT NULL COMMENT '性别 1男 2女',
@@ -69,7 +69,7 @@ CREATE TABLE `sys_user` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
-CREATE TABLE `sys_user_adcd` (
+CREATE TABLE IF NOT EXISTS `sys_user_adcd` (
   `ID` varchar(42) NOT NULL COMMENT '主键',
   `USERNAME` varchar(50) DEFAULT NULL COMMENT '用户名',
   `ADCD` varchar(30) DEFAULT NULL COMMENT '行政区划编码',
@@ -77,7 +77,7 @@ CREATE TABLE `sys_user_adcd` (
   PRIMARY KEY (`ID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-CREATE TABLE `sys_user_dept` (
+CREATE TABLE IF NOT EXISTS `sys_user_dept` (
   `ID` varchar(40) NOT NULL COMMENT '主键',
   `USERNAME` varchar(50) DEFAULT NULL COMMENT '用户名',
   `DEPTID` varchar(40) DEFAULT NULL COMMENT '部门id',
@@ -85,7 +85,7 @@ CREATE TABLE `sys_user_dept` (
   PRIMARY KEY (`ID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-CREATE TABLE `sys_user_role` (
+CREATE TABLE IF NOT EXISTS `sys_user_role` (
   `ID` varchar(40) NOT NULL COMMENT '主键',
   `USERNAME` varchar(40) DEFAULT NULL COMMENT '用户名',
   `ROLE_CODE` varchar(40) DEFAULT NULL COMMENT '角色code',
@@ -93,19 +93,19 @@ CREATE TABLE `sys_user_role` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
-CREATE TABLE `sys_log` (
+CREATE TABLE IF NOT EXISTS `sys_log` (
   `id` varchar(40) NOT NULL COMMENT '主键',
   `userName` varchar(100) DEFAULT NULL COMMENT '登录用户名',
   `callerIP` varchar(100) DEFAULT NULL COMMENT '访问机器IP',
   `funName` varchar(255) DEFAULT NULL COMMENT '访问模块名称',
-  `sTime` datetime(3) DEFAULT NULL COMMENT '访问开始时间',
-  `actionTime` int(11) DEFAULT NULL COMMENT '执行时间',
-  `erroInfo` longtext COMMENT '错误信息',
-  `eTime` datetime(3) DEFAULT NULL,
+  `operType` varchar(1) DEFAULT NULL COMMENT '操作类型(1：新增,  2：修改,   3：删除,  4：授权 ,  5：查询  )',
+  `stime` datetime DEFAULT NULL COMMENT '访问开始时间',
+  `etime` datetime DEFAULT NULL COMMENT '访问结束时间',
+  `actiontime` varchar(10) DEFAULT NULL COMMENT '访问时长(mm)',
+  `erroInfo` longtext COMMENT '异常信息',
+  `updateTime` datetime DEFAULT NULL COMMENT '修改日期',
   `actionFlag` varchar(1) DEFAULT NULL COMMENT '调用是否成功标志  1：成功  0：失败',
-  PRIMARY KEY (`id`) USING BTREE,
-  KEY `index_sTimeasc` (`sTime`) USING BTREE,
-  KEY `index_sTimedesc` (`sTime`) USING BTREE,
-  KEY `index_eTimeasc` (`eTime`) USING BTREE,
-  KEY `index_eTimedesc` (`eTime`) USING BTREE
+  `systemName` varchar(100) DEFAULT NULL COMMENT '系统名称',
+  `operInfo` varchar(1000) DEFAULT NULL COMMENT '操作说明',
+  PRIMARY KEY (`id`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
