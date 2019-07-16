@@ -97,8 +97,14 @@ public class SendSmsServiceImpl implements SendSmsService {
         request.setVersion("2017-05-25");
         request.setAction("SendBatchSms");
 
-        request.putQueryParameter("PhoneNumberJson", JSONUtil.parseObjToJson(sendSms.getPhoneNumbers()));
-        request.putQueryParameter("SignNameJson", JSONUtil.parseObjToJson(sendSms.getSignNames()));
+        String[] phoneNumbers = sendSms.getPhoneNumbers();
+        request.putQueryParameter("PhoneNumberJson", JSONUtil.parseObjToJson(phoneNumbers));
+        String signName = sendSms.getSignName();
+        String[] signNames = new String[phoneNumbers.length];
+        for (int i = 0; i < signNames.length; i++) {
+            signNames[i] = signName;
+        }
+        request.putQueryParameter("SignNameJson", JSONUtil.parseObjToJson(signNames));
         request.putQueryParameter("TemplateCode", sendSms.getTemplateCode());
         request.putQueryParameter("TemplateParamJson", JSONUtil.parseObjToJson(sendSms.getTemplateVars()));
 
@@ -155,14 +161,9 @@ public class SendSmsServiceImpl implements SendSmsService {
             return ResultBuilder.buildError(ResponseCodeEnum.CODE_4025 ,result,null);
         }
         int len  = phoneNumbers.length;
-        String[] signNames = sendSms.getSignNames();
-        if(signNames == null || signNames.length == 0){
+        String signName = sendSms.getSignName();
+        if(signName == null){
             log.error("短信签名不能为空");
-            result = "发送短信失败";
-            return ResultBuilder.buildError(ResponseCodeEnum.CODE_4025 ,result,null);
-        }
-        if(signNames.length != len){
-            log.error("短信签名个数与号码个数不匹配");
             result = "发送短信失败";
             return ResultBuilder.buildError(ResponseCodeEnum.CODE_4025 ,result,null);
         }
@@ -174,26 +175,19 @@ public class SendSmsServiceImpl implements SendSmsService {
             result = "发送短信失败";
             return ResultBuilder.buildError(ResponseCodeEnum.CODE_4025 ,result,null);
         }
-        List<Map<String, Object>> templateVars = sendSms.getTemplateVars();
-        if(templateVars != null && templateVars.size() != len){
-            log.error("模板变量组数与号码个数不匹配");
-            result = "发送短信失败";
-            return ResultBuilder.buildError(ResponseCodeEnum.CODE_4025 ,result,null);
-        }
+        Map<String, Object> templateVars = sendSms.getTemplateVars();
         int failCount = 0;
         //用于存放号码和bizid的对应关系
         Map<String,String> bizIdMap = new HashMap<>();
         for (int i = 0;i < len;i++){
             String phone = phoneNumbers[i];
             request.putQueryParameter("PhoneNumbers", phone);
-            String signName = signNames[i];
             request.putQueryParameter("SignName", signName);
             request.putQueryParameter("TemplateCode",templateCode);
 //            request.putQueryParameter("TemplateParam", "{\"code\": \"6666666\"}");
-            Map<String, Object> varsMap;
 
-            if(templateVars != null && (varsMap = templateVars.get(i)) != null){
-                request.putQueryParameter("TemplateParam",JSONUtil.parseObjToJson(varsMap));
+            if(templateVars != null){
+                request.putQueryParameter("TemplateParam",JSONUtil.parseObjToJson(templateVars));
             }
             try {
                 CommonResponse response = client.getCommonResponse(request);
@@ -236,8 +230,10 @@ public class SendSmsServiceImpl implements SendSmsService {
                             /*DefaultProfile profile = DefaultProfile.getProfile("default", "<accessKeyId>", "<accessSecret>");
                             IAcsClient client = new DefaultAcsClient(profile);*/
                             count.set(count.get() + 1);;
-                            if(count.get() > maxPollingCount)
+                            if(count.get() > maxPollingCount){
+                                log.info("获取发送结果超时，停止轮询");
                                 timer.cancel();
+                            }
                             try {
                                 CommonRequest queryRequest = new CommonRequest();
                                 queryRequest.setMethod(MethodType.POST);

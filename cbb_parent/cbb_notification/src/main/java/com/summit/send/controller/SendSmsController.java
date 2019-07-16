@@ -57,13 +57,12 @@ public class SendSmsController {
 
         SendSms sendSms = new SendSms();
         sendSms.setPhoneNumbers(new String[]{phoneNumber});
-        sendSms.setSignNames(new String[]{signName});
+        sendSms.setSignName(signName);
         sendSms.setTemplateCode(templateCode);
-        ArrayList<Map<String,Object>> templateVars = new ArrayList<>();
-        Map<String,Object> varsMap = new HashMap<>();
-        varsMap.put("code",verificationCode);
-        templateVars.add(varsMap);
-        sendSms.setTemplateVars(templateVars);
+        Map<String,Object> templateVarsMap = new HashMap<>();
+        templateVarsMap.put("code",verificationCode);
+
+        sendSms.setTemplateVars(templateVarsMap);
 
         return sendSmsService.sendSms(sendSms);
     }

@@ -49,7 +49,7 @@ ccb_msg:
     #查询短信状态周期
     period: 1000
     #查询短信状态最大轮询次数
-    max-polling-count: 100
+    max-polling-count: 300
     #验证码超时时间，单位秒，默认10分钟
     vcod-timeout: 600
 

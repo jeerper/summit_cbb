@@ -16,12 +16,13 @@ public class SendSms  implements Serializable {
     private String smsId;
     @ApiModelProperty(value="接收者号码，可传多个",name="phoneNumbers",required = true)
     private String[] phoneNumbers;
-    @ApiModelProperty(value="签名，可传多个，和号码一一对应",name="signNames",required = true)
-    private String[] signNames;
+    @ApiModelProperty(value="签名",name="signName",required = true)
+    private String signName;
     @ApiModelProperty(value="模板号",name="templateCode",required = true)
     private String templateCode;
     @ApiModelProperty(value="模板参数，模板key和value的键值对",name="templateVars",required = true)
-    private List<Map<String,Object>> templateVars;
+//    private List<Map<String,Object>> templateVars;
+    private Map<String,Object> templateVars;
 
 
 }
