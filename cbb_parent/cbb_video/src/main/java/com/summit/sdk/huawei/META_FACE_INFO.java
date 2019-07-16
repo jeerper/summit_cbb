@@ -40,7 +40,7 @@ public class META_FACE_INFO extends Structure {
 	 */
 	public byte[] cardID = new byte[32];
 	public META_FACE_INFO() {
-		super();
+		this.setAlignType(ALIGN_NONE);
 	}
 	protected List<String > getFieldOrder() {
 		return Arrays.asList("name", "iGender", "birthday", "province", "city", "iCardType", "cardID");

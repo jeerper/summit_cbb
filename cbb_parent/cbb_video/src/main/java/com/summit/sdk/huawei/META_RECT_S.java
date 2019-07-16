@@ -19,7 +19,7 @@ public class META_RECT_S extends Structure {
 	/** \ufffd\ufffd\ufffd\u03b8\ufffd */
 	public short usHeight;
 	public META_RECT_S() {
-		super();
+		this.setAlignType(ALIGN_NONE);
 	}
 	protected List<String > getFieldOrder() {
 		return Arrays.asList("usX", "usY", "usWidth", "usHeight");

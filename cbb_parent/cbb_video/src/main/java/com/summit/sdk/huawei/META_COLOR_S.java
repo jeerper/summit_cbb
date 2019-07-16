@@ -27,7 +27,7 @@ public class META_COLOR_S extends Structure {
 	 */
 	public byte[] auc_ColorID = new byte[3];
 	public META_COLOR_S() {
-		super();
+		this.setAlignType(ALIGN_NONE);
 	}
 	protected List<String > getFieldOrder() {
 		return Arrays.asList("auc_r", "auc_g", "auc_b", "auc_ConfLev", "auc_ColorID");

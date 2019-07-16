@@ -54,7 +54,7 @@ public class META_HUMAN_ATTRIBUTES extends Structure {
 	 */
 	public int enMoveSpeed;
 	public META_HUMAN_ATTRIBUTES() {
-		super();
+		this.setAlignType(ALIGN_NONE);
 	}
 	protected List<String > getFieldOrder() {
 		return Arrays.asList("isVaild", "age", "gender", "upperStyle", "upperColor", "upperTexture", "lowerStyle", "lowerColor", "shape", "mouthmask", "hair", "backpack", "carry", "satchel", "umbrella", "frontpack", "luggage", "enMoveDirect", "enMoveSpeed");

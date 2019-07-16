@@ -21,7 +21,7 @@ public class META_LINE_S extends Structure {
 	 */
 	public META_POINT_S stEndPoint;
 	public META_LINE_S() {
-		super();
+		this.setAlignType(ALIGN_NONE);
 	}
 	protected List<String > getFieldOrder() {
 		return Arrays.asList("stStartPoint", "stEndPoint");

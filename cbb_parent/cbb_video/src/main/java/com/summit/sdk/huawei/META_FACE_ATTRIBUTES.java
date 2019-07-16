@@ -22,7 +22,7 @@ public class META_FACE_ATTRIBUTES extends Structure {
 	/** \ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd{\u03a2\u0426\ufffd\ufffd\ufffd\ufffd\u016d\ufffd\ufffd\ufffd\ufffd\ufffd\u02e1\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd} */
 	public int expression;
 	public META_FACE_ATTRIBUTES() {
-		super();
+		this.setAlignType(ALIGN_NONE);
 	}
 	protected List<String > getFieldOrder() {
 		return Arrays.asList("isVaild", "glasses", "gender", "age", "mouthmask", "expression");

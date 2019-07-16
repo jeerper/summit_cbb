@@ -15,7 +15,7 @@ public class ST_BINARY extends Structure {
 	/** C type : UCHAR* */
 	public Pointer pBinaryData;
 	public ST_BINARY() {
-		super();
+		this.setAlignType(ALIGN_NONE);
 	}
 	protected List<String > getFieldOrder() {
 		return Arrays.asList("ulBinaryLenth", "pBinaryData");

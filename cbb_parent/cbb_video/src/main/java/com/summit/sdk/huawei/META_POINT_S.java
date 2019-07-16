@@ -15,7 +15,7 @@ public class META_POINT_S extends Structure {
 	/** y */
 	public short usY;
 	public META_POINT_S() {
-		super();
+		this.setAlignType(ALIGN_NONE);
 	}
 	protected List<String > getFieldOrder() {
 		return Arrays.asList("usX", "usY");

@@ -15,7 +15,7 @@ public class META_POLYGON_S extends Structure {
 	/** C type : META_POINT_S[(10)] */
 	public META_POINT_S[] astPts = new META_POINT_S[10];
 	public META_POLYGON_S() {
-		super();
+		this.setAlignType(ALIGN_NONE);
 	}
 	protected List<String > getFieldOrder() {
 		return Arrays.asList("uPointNum", "astPts");
