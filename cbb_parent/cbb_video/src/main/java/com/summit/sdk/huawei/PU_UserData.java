@@ -48,7 +48,7 @@ public class PU_UserData extends Structure {
 		/** C type : CHAR[1] */
 		public byte[] szUserData = new byte[1];
 		public _unMetadata() {
-			super();
+			this.setAlignType(ALIGN_NONE);
 		}
 		public _unMetadata(boolean bBoolValue) {
 			super();
@@ -149,7 +149,7 @@ public class PU_UserData extends Structure {
 		};
 	};
 	public PU_UserData() {
-		super();
+		this.setAlignType(ALIGN_NONE);
 	}
 	protected List<String > getFieldOrder() {
 		return Arrays.asList("eType", "unMetaData");
@@ -165,6 +165,7 @@ public class PU_UserData extends Structure {
 	}
 	public PU_UserData(Pointer peer) {
 		super(peer);
+		read();
 	}
 	public static class ByReference extends PU_UserData implements Structure.ByReference {
 		

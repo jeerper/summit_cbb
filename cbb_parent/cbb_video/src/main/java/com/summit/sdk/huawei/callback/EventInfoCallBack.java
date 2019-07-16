@@ -89,7 +89,7 @@ public class EventInfoCallBack implements HWPuSDKLibrary.pfGetEventInfoCallBack 
                     log.debug("设备时间:" + timeString);
                 }
 
-                Pointer deviceIpPointer = new Memory(deviceIp.length() + 1);
+                Pointer deviceIpPointer = new Memory(1024);
                 deviceIpPointer.setString(0, deviceIp);
                 deviceMap.put(deviceIp, new DeviceInfo(deviceIpPointer, arg.ulIdentifyID));
 

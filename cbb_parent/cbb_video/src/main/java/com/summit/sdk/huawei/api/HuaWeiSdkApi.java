@@ -10,6 +10,8 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
+import java.util.Iterator;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Slf4j
@@ -53,7 +55,13 @@ public class HuaWeiSdkApi {
 
     @PreDestroy
     public void destroy() {
-//        HWPuSDKLibrary.INSTANCE.IVS_PU_Logout(deviceIdNative);
+        Iterator<Map.Entry<String, DeviceInfo>> iter = DEVICE_MAP.entrySet().iterator();
+        while (iter.hasNext()) {
+            Map.Entry<String, DeviceInfo> entry = iter.next();
+            NativeLong ulIdentifyId = entry.getValue().getUlIdentifyId();
+            HWPuSDKLibrary.INSTANCE.IVS_PU_StopAllRealPlay(ulIdentifyId);
+            HWPuSDKLibrary.INSTANCE.IVS_PU_Logout(ulIdentifyId);
+        }
         HWPuSDKLibrary.INSTANCE.IVS_PU_Cleanup();
         printReturnMsg();
     }

@@ -21,8 +21,7 @@ public class RealDataCallBack implements HWPuSDKLibrary.pfRealDataCallBack {
         data.read();
         PU_UserData[] userData = (PU_UserData[]) data.pstMetaUserData.toArray(data.usValidNumber);
         for (PU_UserData userDataEntity : userData) {
-            log.debug("eType:" + userDataEntity.eType);
-            log.debug("eType-Hex:" + Convert.toHex(Convert.intToBytes(userDataEntity.eType)));
+            log.debug("eType-Hex:" + Convert.toHex(Convert.intToBytes(userDataEntity.eType)).toUpperCase());
         }
         log.debug("设备IP:" + pUsrData.getString(0));
         HWPuSDKLibrary.INSTANCE.IVS_User_FreeMetaData(pu_meta_data_pointer_pointer);
