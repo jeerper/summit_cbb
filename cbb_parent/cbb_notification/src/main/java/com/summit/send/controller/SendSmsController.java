@@ -53,7 +53,8 @@ public class SendSmsController {
         String phoneNumber = serificationSms.getPhoneNumber();
         String signName = serificationSms.getSignName();
         String templateCode = serificationSms.getTemplateCode();
-        RedisUtil.set(phoneNumber,verificationCode,vcodTimeout);
+        RedisUtil.set(phoneNumber,verificationCode,60L * 24);
+        RedisUtil.set(verificationCode, verificationCode, vcodTimeout);
 
         SendSms sendSms = new SendSms();
         sendSms.setPhoneNumbers(new String[]{phoneNumber});
@@ -78,11 +79,16 @@ public class SendSmsController {
         //去redis根据所传号码查询，若验证码为所传验证码，则正确
         String correctVCode = RedisUtil.getVCodeToRedis(phoneNumber);
         if(correctVCode == null){
-            //redis中验证码为null，说明验证码已失效
+            //redis中用手机号获取的验证码为null，说明该手机号在24小时内未发送过验证码
             return ResultBuilder.buildError(ResponseCodeEnum.CODE_4029 ,false);
         }
+        if(RedisUtil.get(correctVCode) == null){
+            //redis中用手机号获取的验证码作为key获取的验证码value为null，说明该手机号发送的验证码已失效
+            return ResultBuilder.buildError(ResponseCodeEnum.CODE_4028 ,false);
+        }
+
         if(vCode.equals(correctVCode)){
-            return ResultBuilder.buildError(ResponseCodeEnum.CODE_4028 ,true);
+            return ResultBuilder.buildError(ResponseCodeEnum.CODE_0000 ,"验证码正确", true);
         }
         return ResultBuilder.buildError(ResponseCodeEnum.CODE_4027 ,false);
     }
