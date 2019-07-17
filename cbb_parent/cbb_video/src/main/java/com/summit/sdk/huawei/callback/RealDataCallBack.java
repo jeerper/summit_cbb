@@ -36,17 +36,29 @@ public class RealDataCallBack implements HWPuSDKLibrary.pfRealDataCallBack {
                 case HWPuSDKLibrary.LAYER_THREE_TYPE.FACE_INFO:
                     log.debug("================人脸信息业务处理=================");
                     log.debug("名字:" + StrUtil.str(userDataEntity.unMetaData.stFaceInfo.name, "").trim());
-                    if (userDataEntity.unMetaData.stFaceInfo.iGender == 1) {
-                        log.debug("性别:女");
-                    } else if (userDataEntity.unMetaData.stFaceInfo.iGender == 2) {
+                    if (userDataEntity.unMetaData.stFaceInfo.iGender == HWPuSDKLibrary.PU_GENDER.PU_MALE) {
                         log.debug("性别:男");
+                    } else if (userDataEntity.unMetaData.stFaceInfo.iGender == HWPuSDKLibrary.PU_GENDER.PU_FEMALE) {
+                        log.debug("性别:女");
                     } else {
                         log.debug("性别:未知");
                     }
                     log.debug("生日:" + StrUtil.str(userDataEntity.unMetaData.stFaceInfo.birthday, "").trim());
                     log.debug("省级:" + StrUtil.str(userDataEntity.unMetaData.stFaceInfo.province, "").trim());
                     log.debug("地市:" + StrUtil.str(userDataEntity.unMetaData.stFaceInfo.city, "").trim());
-                    log.debug("证件类型:" + userDataEntity.unMetaData.stFaceInfo.iCardType);
+                    int iCardType = userDataEntity.unMetaData.stFaceInfo.iCardType;
+                    if (iCardType == HWPuSDKLibrary.PU_CARDTYPE.IDENTITY) {
+                        log.debug("证件类型:身份证");
+                    } else if (iCardType == HWPuSDKLibrary.PU_CARDTYPE.PASSPORT) {
+                        log.debug("证件类型:护照");
+                    } else if (iCardType == HWPuSDKLibrary.PU_CARDTYPE.OFFICER) {
+                        log.debug("证件类型:军官证");
+                    } else if (iCardType == HWPuSDKLibrary.PU_CARDTYPE.DRIVING) {
+                        log.debug("证件类型:驾驶证");
+                    } else if (iCardType == HWPuSDKLibrary.PU_CARDTYPE.OTHERS) {
+                        log.debug("证件类型:其他");
+                    }
+
                     log.debug("证件号:" + StrUtil.str(userDataEntity.unMetaData.stFaceInfo.cardID, "").trim());
                     break;
                 default:
