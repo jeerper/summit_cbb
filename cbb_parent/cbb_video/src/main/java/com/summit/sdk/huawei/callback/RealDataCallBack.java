@@ -1,9 +1,12 @@
 package com.summit.sdk.huawei.callback;
 
+import cn.hutool.core.convert.Convert;
 import cn.hutool.core.util.StrUtil;
 import com.summit.sdk.huawei.HWPuSDKLibrary;
 import com.summit.sdk.huawei.PU_META_DATA;
 import com.summit.sdk.huawei.PU_UserData;
+import com.summit.sdk.huawei.model.CardType;
+import com.summit.sdk.huawei.model.Gender;
 import com.sun.jna.NativeLong;
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
@@ -33,36 +36,79 @@ public class RealDataCallBack implements HWPuSDKLibrary.pfRealDataCallBack {
         PU_UserData[] userData = (PU_UserData[]) data.pstMetaUserData.toArray(data.usValidNumber);
         for (PU_UserData userDataEntity : userData) {
             switch (userDataEntity.eType) {
+                case HWPuSDKLibrary.LAYER_THREE_TYPE.PTS:
+                    log.debug("时间戳:" + userDataEntity.unMetaData.uLonglongValue);
+                    break;
+                //人脸ID
+                case HWPuSDKLibrary.LAYER_THREE_TYPE.FACE_ID:
+                    log.debug("人脸ID：" + userDataEntity.unMetaData.uIntValue);
+                    break;
+                //人脸信息,对应摄像头的人脸库信息
                 case HWPuSDKLibrary.LAYER_THREE_TYPE.FACE_INFO:
                     log.debug("================人脸信息业务处理=================");
                     log.debug("名字:" + StrUtil.str(userDataEntity.unMetaData.stFaceInfo.name, "").trim());
-                    if (userDataEntity.unMetaData.stFaceInfo.iGender == HWPuSDKLibrary.PU_GENDER.PU_MALE) {
+
+                    Gender gender = Gender.codeOf(userDataEntity.unMetaData.stFaceInfo.iGender);
+
+                    if (gender == Gender.PU_MALE) {
                         log.debug("性别:男");
-                    } else if (userDataEntity.unMetaData.stFaceInfo.iGender == HWPuSDKLibrary.PU_GENDER.PU_FEMALE) {
+                    } else if (gender == Gender.PU_FEMALE) {
                         log.debug("性别:女");
-                    } else {
+                    } else if (gender == Gender.PU_GENDER_UNKNOW) {
                         log.debug("性别:未知");
                     }
                     log.debug("生日:" + StrUtil.str(userDataEntity.unMetaData.stFaceInfo.birthday, "").trim());
                     log.debug("省级:" + StrUtil.str(userDataEntity.unMetaData.stFaceInfo.province, "").trim());
                     log.debug("地市:" + StrUtil.str(userDataEntity.unMetaData.stFaceInfo.city, "").trim());
-                    int iCardType = userDataEntity.unMetaData.stFaceInfo.iCardType;
-                    if (iCardType == HWPuSDKLibrary.PU_CARDTYPE.IDENTITY) {
+                    CardType iCardType = CardType.codeOf(userDataEntity.unMetaData.stFaceInfo.iCardType);
+                    if (iCardType == CardType.IDENTITY) {
                         log.debug("证件类型:身份证");
-                    } else if (iCardType == HWPuSDKLibrary.PU_CARDTYPE.PASSPORT) {
+                    } else if (iCardType == CardType.PASSPORT) {
                         log.debug("证件类型:护照");
-                    } else if (iCardType == HWPuSDKLibrary.PU_CARDTYPE.OFFICER) {
+                    } else if (iCardType == CardType.OFFICER) {
                         log.debug("证件类型:军官证");
-                    } else if (iCardType == HWPuSDKLibrary.PU_CARDTYPE.DRIVING) {
+                    } else if (iCardType == CardType.DRIVING) {
                         log.debug("证件类型:驾驶证");
-                    } else if (iCardType == HWPuSDKLibrary.PU_CARDTYPE.OTHERS) {
+                    } else if (iCardType == CardType.OTHERS) {
                         log.debug("证件类型:其他");
                     }
 
                     log.debug("证件号:" + StrUtil.str(userDataEntity.unMetaData.stFaceInfo.cardID, "").trim());
                     break;
+                //人脸特征属性
+                case HWPuSDKLibrary.LAYER_THREE_TYPE.FACE_FEATURE:
+                    break;
+                //人脸识别全景图
+                case HWPuSDKLibrary.LAYER_THREE_TYPE.FACE_PANORAMA:
+                    System.out.println("dataHandler 全景图： " + userDataEntity.unMetaData.stBinay.ulBinaryLenth);
+//                    realDataImpl.saveJPG(userData[i].unMetaData.stBinay, 3);
+                    break;
+                //人脸识别抠图
+                case HWPuSDKLibrary.LAYER_THREE_TYPE.FACE_PIC:
+                    break;
+                //人脸识别和人脸库中匹配的图片
+                case HWPuSDKLibrary.LAYER_THREE_TYPE.FACE_MATCH:
+                    break;
+                //相机通道号
+                case HWPuSDKLibrary.LAYER_THREE_TYPE.CHANNEL_ID:
+                    break;
+                //人脸位置(实时位置框)
+                case HWPuSDKLibrary.LAYER_THREE_TYPE.FACE_POS:
+                    break;
+                //target类型，当前用于区分人脸后处理抠图和人脸识别以及人脸识别多机协同
+                case HWPuSDKLibrary.LAYER_THREE_TYPE.TARGET_TYPE:
+                    break;
+                //车辆类型
+                case HWPuSDKLibrary.LAYER_THREE_TYPE.VEHICLE_TYPE:
+                    break;
+                //C50车辆类型
+                case HWPuSDKLibrary.LAYER_THREE_TYPE.VEHICLE_TYPE_EXT:
+                    break;
+                //人体位置(实时位置框)
+                case HWPuSDKLibrary.LAYER_THREE_TYPE.HUMAN_RECT:
+                    break;
                 default:
-//                    log.debug("未知数据类型eType-Hex: 0x" + Convert.toHex(Convert.intToBytes(userDataEntity.eType)).toUpperCase());
+                    log.debug("未知数据类型eType-Hex: 0x" + Convert.toHex(Convert.intToBytes(userDataEntity.eType)).toUpperCase());
                     break;
             }
         }
