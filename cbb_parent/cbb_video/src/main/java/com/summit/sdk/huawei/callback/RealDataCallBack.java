@@ -1,6 +1,7 @@
 package com.summit.sdk.huawei.callback;
 
 import cn.hutool.core.convert.Convert;
+import cn.hutool.core.date.DateTime;
 import cn.hutool.core.util.StrUtil;
 import com.summit.sdk.huawei.HWPuSDKLibrary;
 import com.summit.sdk.huawei.PU_META_DATA;
@@ -78,6 +79,9 @@ public class RealDataCallBack implements HWPuSDKLibrary.pfRealDataCallBack {
                 //人脸特征属性
                 case HWPuSDKLibrary.LAYER_THREE_TYPE.FACE_FEATURE:
                     break;
+                //人体特征属性
+                case HWPuSDKLibrary.LAYER_THREE_TYPE.HUMAN_FEATURE:
+                    break;
                 //人脸识别全景图
                 case HWPuSDKLibrary.LAYER_THREE_TYPE.FACE_PANORAMA:
                     System.out.println("dataHandler 全景图： " + userDataEntity.unMetaData.stBinay.ulBinaryLenth);
@@ -88,6 +92,14 @@ public class RealDataCallBack implements HWPuSDKLibrary.pfRealDataCallBack {
                     break;
                 //人脸识别和人脸库中匹配的图片
                 case HWPuSDKLibrary.LAYER_THREE_TYPE.FACE_MATCH:
+                    break;
+                //抓拍时间
+                case HWPuSDKLibrary.LAYER_THREE_TYPE.PIC_SNAPSHOT_TIME:
+                    DateTime time = new DateTime(userDataEntity.unMetaData.IntValue * 1000L);
+                    log.debug("抓怕时间:" + time.toString("yyyy-MM-dd HH:mm:ss"));
+                    break;
+                //名单库中的人脸ID，用来维持特征 record的一致性
+                case HWPuSDKLibrary.LAYER_THREE_TYPE.FACELIB_RECORDID:
                     break;
                 //相机通道号
                 case HWPuSDKLibrary.LAYER_THREE_TYPE.CHANNEL_ID:
