@@ -77,6 +77,11 @@ public class RealDataCallBack implements HWPuSDKLibrary.pfRealDataCallBack {
 
                     log.debug("证件号:" + StrUtil.str(userDataEntity.unMetaData.stFaceInfo.cardID, "").trim());
                     break;
+                //人脸匹配率
+                case HWPuSDKLibrary.LAYER_THREE_TYPE.FACE_MATCHRATE:
+                    float matchScores = userDataEntity.unMetaData.IntValue / 100f;
+                    log.debug("人脸匹配率:{}%", matchScores);
+                    break;
                 //人脸特征属性
                 case HWPuSDKLibrary.LAYER_THREE_TYPE.FACE_FEATURE:
                     break;
