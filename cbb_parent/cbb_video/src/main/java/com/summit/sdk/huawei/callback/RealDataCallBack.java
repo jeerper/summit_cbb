@@ -1,6 +1,5 @@
 package com.summit.sdk.huawei.callback;
 
-import cn.hutool.core.convert.Convert;
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.util.StrUtil;
 import com.summit.sdk.huawei.HWPuSDKLibrary;
@@ -37,14 +36,6 @@ public class RealDataCallBack implements HWPuSDKLibrary.pfRealDataCallBack {
         PU_UserData[] userData = (PU_UserData[]) data.pstMetaUserData.toArray(data.usValidNumber);
         for (PU_UserData userDataEntity : userData) {
             switch (userDataEntity.eType) {
-                //时间戳
-                case HWPuSDKLibrary.LAYER_THREE_TYPE.PTS:
-//                    log.debug("时间戳:" + userDataEntity.unMetaData.uLonglongValue);
-                    break;
-                //人脸ID
-                case HWPuSDKLibrary.LAYER_THREE_TYPE.FACE_ID:
-//                    log.debug("人脸ID：" + userDataEntity.unMetaData.uIntValue);
-                    break;
                 //人脸信息,对应摄像头的人脸库信息
                 case HWPuSDKLibrary.LAYER_THREE_TYPE.FACE_INFO:
                     log.debug("================人脸信息业务处理=================");
@@ -126,7 +117,7 @@ public class RealDataCallBack implements HWPuSDKLibrary.pfRealDataCallBack {
                 case HWPuSDKLibrary.LAYER_THREE_TYPE.HUMAN_RECT:
                     break;
                 default:
-                    log.debug("未知数据类型eType-Hex: 0x" + Convert.toHex(Convert.intToBytes(userDataEntity.eType)).toUpperCase());
+//                    log.debug("未知数据类型eType-Hex: 0x" + Convert.toHex(Convert.intToBytes(userDataEntity.eType)).toUpperCase());
                     break;
             }
         }
