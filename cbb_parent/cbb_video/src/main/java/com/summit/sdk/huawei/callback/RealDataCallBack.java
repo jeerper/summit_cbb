@@ -37,12 +37,13 @@ public class RealDataCallBack implements HWPuSDKLibrary.pfRealDataCallBack {
         PU_UserData[] userData = (PU_UserData[]) data.pstMetaUserData.toArray(data.usValidNumber);
         for (PU_UserData userDataEntity : userData) {
             switch (userDataEntity.eType) {
+                //时间戳
                 case HWPuSDKLibrary.LAYER_THREE_TYPE.PTS:
-                    log.debug("时间戳:" + userDataEntity.unMetaData.uLonglongValue);
+//                    log.debug("时间戳:" + userDataEntity.unMetaData.uLonglongValue);
                     break;
                 //人脸ID
                 case HWPuSDKLibrary.LAYER_THREE_TYPE.FACE_ID:
-                    log.debug("人脸ID：" + userDataEntity.unMetaData.uIntValue);
+//                    log.debug("人脸ID：" + userDataEntity.unMetaData.uIntValue);
                     break;
                 //人脸信息,对应摄像头的人脸库信息
                 case HWPuSDKLibrary.LAYER_THREE_TYPE.FACE_INFO:
