@@ -10,7 +10,6 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.beans.factory.annotation.Value;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
@@ -18,7 +17,6 @@ import com.summit.cbb.utils.page.Page;
 import com.summit.common.entity.FunctionBean;
 import com.summit.common.entity.ResponseCodeEnum;
 import com.summit.common.entity.UserInfo;
-import com.summit.domain.user.UserInfoRowMapper;
 import com.summit.repository.UserRepository;
 import com.summit.util.SummitTools;
 import com.summit.util.SysConstants;
@@ -40,8 +38,6 @@ public class UserService {
 	private SummitTools st;
 	@Autowired
 	public JdbcTemplate jdbcTemplate;
-	@Autowired
-	private UserInfoRowMapper ubr;
 
 	private static final String KEY_ALGORITHM = "AES";
     private static final String DEFAULT_CIPHER_ALGORITHM = "AES/CBC/NOPadding";
@@ -175,7 +171,7 @@ public class UserService {
 	
 	
 	public ResponseCodeEnum editPassword(String userName, String oldPassword,
-			String password, String repeatPassword,String key)  {
+			String password, String repeatPassword,String key) throws Exception  {
 		
 		UserInfo ub = queryByUserName(userName);
         if (ub == null) {
@@ -222,11 +218,14 @@ public class UserService {
 		jdbcTemplate.update(deptSql);
 	}
 
-	public UserInfo queryByUserName(String userName) {
+	public UserInfo queryByUserName(String userName) throws Exception {
 		String sql = "SELECT USERNAME ,NAME ,SEX,PASSWORD ,IS_ENABLED ,EMAIL ,PHONE_NUMBER ,STATE ,NOTE ,LAST_UPDATE_TIME,IMEI FROM SYS_USER WHERE STATE = 1 AND USERNAME = ?";
-		List<UserInfo> l = ur.queryAllCustom(sql, ubr, userName);
-		if (st.collectionNotNull(l)) {
-			return l.get(0);
+		LinkedMap linkedMap=new LinkedMap();
+		linkedMap.put(1,userName);
+		List<Object> dataList = ur.queryAllCustom(sql, linkedMap);
+		if(dataList!=null && dataList.size()>0){
+			UserInfo userInfo=JSON.parseObject(dataList.get(0).toString(), new TypeReference<UserInfo>() {});	
+			return userInfo;
 		}
 		return null;
 	}
