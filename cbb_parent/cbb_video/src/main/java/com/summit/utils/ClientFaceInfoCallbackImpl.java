@@ -1,13 +1,20 @@
 package com.summit.utils;
 
+import com.summit.entity.LockRequest;
 import com.summit.sdk.huawei.callback.ClientFaceInfoCallback;
 import com.summit.sdk.huawei.model.FaceInfo;
+import com.summit.sdk.huawei.model.FaceLibType;
+import com.summit.service.impl.NBLockServiceImpl;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Slf4j
 @Component
 public class ClientFaceInfoCallbackImpl implements ClientFaceInfoCallback {
+
+    @Autowired
+    private NBLockServiceImpl unLockService;
     @Override
     public void invoke(FaceInfo faceInfo) {
         log.debug("============客户端调用开始=============");
@@ -22,5 +29,11 @@ public class ClientFaceInfoCallbackImpl implements ClientFaceInfoCallback {
         log.debug("人脸匹配率:{}%", faceInfo.getFaceMatchRate());
         log.debug("名单库名称:{}", faceInfo.getFaceLibName());
         log.debug("名单库类型:{}", faceInfo.getFaceLibType().getFaceLibTypeDescription());
+        FaceLibType faceLibType = faceInfo.getFaceLibType();
+        if(faceLibType.equals(FaceLibType.FACE_LIB_WHITE)){
+            unLockService.toUnLock(new LockRequest("NB100001" , "张三"));
+        }
     }
+
+
 }
