@@ -26,8 +26,8 @@ spring:
             class: javax.net.ssl.SSLSocketFactory
             port: 465
 jpush:
-  appKey: 43d2500b962982d568d6d000
-  masterSecret: 44a6260c4afd4be02f95d808
+  appKey: 39220bed9a417c2f58f86d48
+  masterSecret: d456a6cf5c93a1867cfa838a
   liveTime: 300000
   
   #thymeleaf
