@@ -22,13 +22,15 @@ public class HuaWeiSdkApi {
     private String sdkUserName;
 
     private String sdkPassword;
+    private String  sdkLocalhost;
     private HWPuSDKLibrary.pfGetEventInfoCallBack pfGetEventInfoCallBack;
     private ClientFaceInfoCallback clientFaceInfoCallback;
 
-    public HuaWeiSdkApi(long sdkPort, String sdkUserName, String sdkPassword, ClientFaceInfoCallback clientFaceInfoCallback) {
+    public HuaWeiSdkApi(long sdkPort, String sdkUserName, String sdkPassword,String sdkLocalhost, ClientFaceInfoCallback clientFaceInfoCallback) {
         this.sdkPort = sdkPort;
         this.sdkUserName = sdkUserName;
         this.sdkPassword = sdkPassword;
+        this.sdkLocalhost=sdkLocalhost;
         this.clientFaceInfoCallback = clientFaceInfoCallback;
     }
 
@@ -53,7 +55,7 @@ public class HuaWeiSdkApi {
         HWPuSDKLibrary.INSTANCE.IVS_PU_GetVersion(longNative);
         log.debug("SDK版本号:" + longNative.getValue().longValue());
         //SDK注册事件回调
-        pfGetEventInfoCallBack = new EventInfoCallBack(sdkPort, sdkUserName, sdkPassword, clientFaceInfoCallback, DEVICE_MAP);
+        pfGetEventInfoCallBack = new EventInfoCallBack(sdkPort, sdkUserName, sdkPassword, sdkLocalhost,clientFaceInfoCallback, DEVICE_MAP);
         boolean callBackBindStatus = HWPuSDKLibrary.INSTANCE.IVS_PU_EventStatesCallBack(pfGetEventInfoCallBack);
         log.debug("注册事件回调函数绑定:" + callBackBindStatus);
         if (!callBackBindStatus) {

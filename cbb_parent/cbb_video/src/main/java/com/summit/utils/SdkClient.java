@@ -20,10 +20,12 @@ public class SdkClient {
     private String userName;
     @Value("${sdk.password}")
     private String password;
+    @Value("${sdk.localhost}")
+    private String localhost;
 
     @PostConstruct
     public void init() {
-        huaWeiSdkApi = new HuaWeiSdkApi(port, userName, password, clientFaceInfoCallback);
+        huaWeiSdkApi = new HuaWeiSdkApi(port, userName, password, localhost,clientFaceInfoCallback);
         huaWeiSdkApi.init();
     }
 

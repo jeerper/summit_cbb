@@ -28,15 +28,17 @@ public class EventInfoCallBack implements HWPuSDKLibrary.pfGetEventInfoCallBack 
     private long sdkPort;
     private String sdkUserName;
     private String sdkPassword;
+    private String sdkLocalhost;
     private ConcurrentHashMap<String, DeviceInfo> deviceMap;
     private HWPuSDKLibrary.pfGetAlarmInfoCallBack pfGetAlarmInfoCallBack;
     private HWPuSDKLibrary.pfRealDataCallBack pfRealDataCallBack;
 
 
-    public EventInfoCallBack(long sdkPort, String sdkUserName, String sdkPassword, ClientFaceInfoCallback clientFaceInfoCallback,ConcurrentHashMap<String, DeviceInfo> deviceMap) {
+    public EventInfoCallBack(long sdkPort, String sdkUserName, String sdkPassword,String sdkLocalhost, ClientFaceInfoCallback clientFaceInfoCallback,ConcurrentHashMap<String, DeviceInfo> deviceMap) {
         this.sdkPort = sdkPort;
         this.sdkUserName = sdkUserName;
         this.sdkPassword = sdkPassword;
+        this.sdkLocalhost=sdkLocalhost;
         this.deviceMap = deviceMap;
         this.pfGetAlarmInfoCallBack = new AlarmInfoCallBack();
         this.pfRealDataCallBack = new RealDataCallBack(clientFaceInfoCallback);
@@ -106,7 +108,7 @@ public class EventInfoCallBack implements HWPuSDKLibrary.pfGetEventInfoCallBack 
                 realPlayInfo.enVideoType = HWPuSDKLibrary.PU_VIDEO_TYPE.PU_VIDEO_TYPE_META;
                 realPlayInfo.enProtocolType = HWPuSDKLibrary.PU_PROTOCOL_TYPE.PU_PROTOCOL_TYPE_TCP;
                 realPlayInfo.enMediaCallbackType = HWPuSDKLibrary.PU_MEDIA_CALLBACK_TYPE.PU_MEDIA_CALLBACK_TYPE_META_FRAME;
-                byte[] localIpBytes = StrUtil.bytes(SystemUtil.getHostInfo().getAddress());
+                byte[] localIpBytes = StrUtil.bytes(sdkLocalhost);
                 System.arraycopy(localIpBytes, 0, realPlayInfo.szLocalIp, 0, localIpBytes.length);
                 realPlayInfo.bKeepLive = true;
                 realPlayInfo.szReserved[22] = 1;
