@@ -20,13 +20,13 @@
     </sql>
 
     <insert  id="insertSms" parameterType="com.summit.send.pojo.SmsEntity">
-        INSERT INTO ccb_notification.msg_sms
+        INSERT INTO msg_sms
         ( <include refid="Base_Column" /> ) values
         (#{smsId},#{templateId},#{resPhone},#{bizId},#{smsSignname},#{smsContent},#{sendState},#{createTime},#{updateTime})
     </insert >
 
     <update id="updateSms" parameterType="com.summit.send.pojo.SmsEntity">
-        update ccb_notification.msg_sms
+        update msg_sms
         <trim prefix="set" suffixOverrides=",">
             <if test="templateId != null"> template_id = #{templateId},</if>
             <if test="resPhone != null"> res_phone = #{resPhone},</if>
@@ -53,14 +53,14 @@
 
     <select id="queryTmpalteCodeById" resultType="java.lang.String">
 
-        select DISTINCT t.template_code from ccb_notification.msg_sms  s
-        left join ccb_notification.sms_template t on s.template_id=t.template_id;
+        select DISTINCT t.template_code from msg_sms  s
+        left join sms_template t on s.template_id=t.template_id;
 
     </select>
 
     <select id="querySmsRecordByPhone" resultMap="BaseResultMap">
 
-        select <include refid="Base_Column" />  from ccb_notification.msg_sms
+        select <include refid="Base_Column" />  from msg_sms
         <where>
             res_phone = #{resPhone}
         </where>
@@ -69,7 +69,7 @@
 
     <select id="querySmsRecordByBizId" resultMap="BaseResultMap">
 
-        select <include refid="Base_Column" />  from ccb_notification.msg_sms
+        select <include refid="Base_Column" />  from msg_sms
         <where>
             biz_id = #{bizId}
         </where>

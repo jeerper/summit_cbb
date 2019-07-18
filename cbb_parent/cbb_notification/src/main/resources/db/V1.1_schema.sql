@@ -1,9 +1,9 @@
 
-drop DATABASE if exists `ccb_notification`;
+drop DATABASE if exists `cbb_notification`;
 
-CREATE DATABASE `ccb_notification` CHARACTER SET 'utf8' COLLATE 'utf8_general_ci';
+CREATE DATABASE `cbb_notification` CHARACTER SET 'utf8' COLLATE 'utf8_general_ci';
 
-use `ccb_notification`;
+use `cbb_notification`;
 
 drop table if exists msg_email;
 /*==============================================================*/

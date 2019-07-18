@@ -17,7 +17,7 @@
     </sql>
 
     <insert  id="insertTemplate" parameterType="com.summit.send.pojo.SmsTemplateEntity">
-        INSERT INTO ccb_notification.sms_template
+        INSERT INTO sms_template
         ( <include refid="Base_Column" /> ) values
         (#{templateId},#{templateContent},#{templateCode},#{templateType},#{createTime},#{updateTime})
     </insert >
@@ -25,7 +25,7 @@
 
     <select id="queryTmpalteCodeById" resultType="java.lang.String">
 
-        select template_code from ccb_notification.sms_template
+        select template_code from sms_template
         <where>
             template_id = #{templateId}
         </where>
