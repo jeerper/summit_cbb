@@ -66,12 +66,12 @@ public class RealDataCallBack implements HWPuSDKLibrary.pfRealDataCallBack {
                 case HWPuSDKLibrary.LAYER_THREE_TYPE.FACE_LIB_NAME:
                     byte[] faceLibNameBytes = userDataEntity.unMetaData.stBinay.pBinaryData.getByteArray(0,
                             userDataEntity.unMetaData.stBinay.ulBinaryLenth.intValue());
-                    log.debug("名单库名字:{}", StrUtil.str(faceLibNameBytes, "").trim());
+                    log.debug("名单库名称:{}", StrUtil.str(faceLibNameBytes, "").trim());
                     break;
                 //名单库类型
                 case HWPuSDKLibrary.LAYER_THREE_TYPE.FACE_LIB_TYPE:
                     FaceLibType faceLibType = FaceLibType.codeOf(userDataEntity.unMetaData.uIntValue);
-                    log.debug("名单类型:{}", faceLibType.getFaceLibTypeDescription());
+                    log.debug("名单库类型:{}", faceLibType.getFaceLibTypeDescription());
                     break;
                 //人脸识别全景图
                 case HWPuSDKLibrary.LAYER_THREE_TYPE.FACE_PANORAMA:

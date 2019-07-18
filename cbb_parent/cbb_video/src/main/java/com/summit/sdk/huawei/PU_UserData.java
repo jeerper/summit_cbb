@@ -63,6 +63,10 @@ public class PU_UserData extends Structure {
                 unMetaData.setType(Integer.TYPE);
                 unMetaData.read();
                 break;
+            case HWPuSDKLibrary.LAYER_THREE_TYPE.FACE_LIB_NAME:
+                unMetaData.setType(ST_BINARY.class);
+                unMetaData.read();
+                break;
             default:
                 break;
         }
