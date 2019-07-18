@@ -6,6 +6,7 @@ import com.summit.sdk.huawei.HWPuSDKLibrary;
 import com.summit.sdk.huawei.PU_META_DATA;
 import com.summit.sdk.huawei.PU_UserData;
 import com.summit.sdk.huawei.model.CardType;
+import com.summit.sdk.huawei.model.FaceLibType;
 import com.summit.sdk.huawei.model.Gender;
 import com.sun.jna.NativeLong;
 import com.sun.jna.Pointer;
@@ -42,30 +43,12 @@ public class RealDataCallBack implements HWPuSDKLibrary.pfRealDataCallBack {
                     log.debug("名字:" + StrUtil.str(userDataEntity.unMetaData.stFaceInfo.name, "").trim());
 
                     Gender gender = Gender.codeOf(userDataEntity.unMetaData.stFaceInfo.iGender);
-
-                    if (gender == Gender.PU_MALE) {
-                        log.debug("性别:男");
-                    } else if (gender == Gender.PU_FEMALE) {
-                        log.debug("性别:女");
-                    } else if (gender == Gender.PU_GENDER_UNKNOW) {
-                        log.debug("性别:未知");
-                    }
+                    log.debug("性别:{}", gender.getGenderDescription());
                     log.debug("生日:" + StrUtil.str(userDataEntity.unMetaData.stFaceInfo.birthday, "").trim());
                     log.debug("省级:" + StrUtil.str(userDataEntity.unMetaData.stFaceInfo.province, "").trim());
                     log.debug("地市:" + StrUtil.str(userDataEntity.unMetaData.stFaceInfo.city, "").trim());
                     CardType iCardType = CardType.codeOf(userDataEntity.unMetaData.stFaceInfo.iCardType);
-                    if (iCardType == CardType.IDENTITY) {
-                        log.debug("证件类型:身份证");
-                    } else if (iCardType == CardType.PASSPORT) {
-                        log.debug("证件类型:护照");
-                    } else if (iCardType == CardType.OFFICER) {
-                        log.debug("证件类型:军官证");
-                    } else if (iCardType == CardType.DRIVING) {
-                        log.debug("证件类型:驾驶证");
-                    } else if (iCardType == CardType.OTHERS) {
-                        log.debug("证件类型:其他");
-                    }
-
+                    log.debug("证件类型:{}", iCardType.getCardTypeDescription());
                     log.debug("证件号:" + StrUtil.str(userDataEntity.unMetaData.stFaceInfo.cardID, "").trim());
                     break;
                 //人脸匹配率
@@ -78,6 +61,17 @@ public class RealDataCallBack implements HWPuSDKLibrary.pfRealDataCallBack {
                     break;
                 //人体特征属性
                 case HWPuSDKLibrary.LAYER_THREE_TYPE.HUMAN_FEATURE:
+                    break;
+                //名单库名字
+                case HWPuSDKLibrary.LAYER_THREE_TYPE.FACE_LIB_NAME:
+                    byte[] faceLibNameBytes = userDataEntity.unMetaData.stBinay.pBinaryData.getByteArray(0,
+                            userDataEntity.unMetaData.stBinay.ulBinaryLenth.intValue());
+                    log.debug("名单库名字:{}", StrUtil.str(faceLibNameBytes, "").trim());
+                    break;
+                //名单库类型
+                case HWPuSDKLibrary.LAYER_THREE_TYPE.FACE_LIB_TYPE:
+                    FaceLibType faceLibType = FaceLibType.codeOf(userDataEntity.unMetaData.uIntValue);
+                    log.debug("名单类型:{}", faceLibType.getFaceLibTypeDescription());
                     break;
                 //人脸识别全景图
                 case HWPuSDKLibrary.LAYER_THREE_TYPE.FACE_PANORAMA:
