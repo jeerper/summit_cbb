@@ -1,6 +1,7 @@
 package com.summit.video;
 
 import cn.hutool.core.date.DateTime;
+import com.summit.sdk.huawei.model.FaceInfo;
 import com.sun.jna.NativeLong;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
@@ -24,5 +25,17 @@ public class Test2 {
         String date = new java.text.SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(new java.util.Date(1563357855*1000L));
         log.debug("抓怕时间:" + time.toString("yyyy-MM-dd HH:mm:ss"));
         log.debug("抓怕时间:" +date);
+    }
+
+
+    @Test
+    public void haha2(){
+        FaceInfo faceInfo=null;
+        faceInfo= create(faceInfo);
+        log.debug(""+faceInfo);
+
+    }
+    public FaceInfo  create(FaceInfo faceInfo){
+       return  new FaceInfo();
     }
 }
