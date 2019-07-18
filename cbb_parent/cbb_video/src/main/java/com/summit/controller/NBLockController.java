@@ -26,11 +26,9 @@ import java.util.concurrent.CountDownLatch;
 @RequestMapping("/nbLock")
 public class NBLockController {
 
-    //http://47.106.35.122:8088/intf/
-    @Value("${nbLock.baseUrl}")
-    private String baseUrl = "http://47.106.35.122:8088/intf/";
 
-    private HttpClient httpClient = new HttpClient(baseUrl);
+    @Autowired
+    private HttpClient httpClient;
 
     @PostMapping(value = "/queryLockStatus")
     public RestfulEntityBySummit queryLockStatus(@RequestBody LockRequest lockRequest){

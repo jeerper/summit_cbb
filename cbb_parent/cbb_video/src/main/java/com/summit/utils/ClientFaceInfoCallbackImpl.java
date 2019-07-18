@@ -1,5 +1,6 @@
 package com.summit.utils;
 
+import com.summit.entity.LockInfo;
 import com.summit.entity.LockRequest;
 import com.summit.sdk.huawei.callback.ClientFaceInfoCallback;
 import com.summit.sdk.huawei.model.FaceInfo;
@@ -31,7 +32,8 @@ public class ClientFaceInfoCallbackImpl implements ClientFaceInfoCallback {
         log.debug("名单库类型:{}", faceInfo.getFaceLibType().getFaceLibTypeDescription());
         FaceLibType faceLibType = faceInfo.getFaceLibType();
         if(faceLibType.equals(FaceLibType.FACE_LIB_WHITE)){
-            unLockService.toUnLock(new LockRequest("NB100001" , "张三"));
+            LockInfo lockInfo = unLockService.toUnLock(new LockRequest("NB100001" , "张三"));
+            log.info("{}" ,lockInfo);
         }
     }
 

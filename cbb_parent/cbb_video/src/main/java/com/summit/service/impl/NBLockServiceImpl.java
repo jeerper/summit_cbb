@@ -4,6 +4,7 @@ import com.summit.entity.LockInfo;
 import com.summit.entity.LockRequest;
 import com.summit.util.HttpClient;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
@@ -15,10 +16,8 @@ import rx.functions.Func1;
 @Slf4j
 @Component
 public class NBLockServiceImpl {
-    @Value("${nbLock.baseUrl}")
-    private String baseUrl = "http://47.106.35.122:8088/intf/";
-
-    private HttpClient httpClient = new HttpClient(baseUrl);
+    @Autowired
+    private HttpClient httpClient;
 
     public LockInfo toUnLock(LockRequest lockRequest) {
         final LockInfo[] backLockInfo = {null};
