@@ -1,6 +1,7 @@
 package com.summit.sdk.huawei.callback;
 
 import cn.hutool.core.util.StrUtil;
+import cn.hutool.system.SystemUtil;
 import com.summit.sdk.huawei.HWPuSDKLibrary;
 import com.summit.sdk.huawei.PU_DEVICE_REGISTER_RSP;
 import com.summit.sdk.huawei.PU_EVENT_COMMON;
@@ -105,7 +106,7 @@ public class EventInfoCallBack implements HWPuSDKLibrary.pfGetEventInfoCallBack 
                 realPlayInfo.enVideoType = HWPuSDKLibrary.PU_VIDEO_TYPE.PU_VIDEO_TYPE_META;
                 realPlayInfo.enProtocolType = HWPuSDKLibrary.PU_PROTOCOL_TYPE.PU_PROTOCOL_TYPE_TCP;
                 realPlayInfo.enMediaCallbackType = HWPuSDKLibrary.PU_MEDIA_CALLBACK_TYPE.PU_MEDIA_CALLBACK_TYPE_META_FRAME;
-                byte[] localIpBytes = StrUtil.bytes("192.168.141.222");
+                byte[] localIpBytes = StrUtil.bytes(SystemUtil.getHostInfo().getAddress());
                 System.arraycopy(localIpBytes, 0, realPlayInfo.szLocalIp, 0, localIpBytes.length);
                 realPlayInfo.bKeepLive = true;
                 realPlayInfo.szReserved[22] = 1;
