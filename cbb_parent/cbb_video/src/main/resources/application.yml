@@ -16,3 +16,6 @@ spring:
     baseline-on-migrate: true
     locations: classpath:db
     encoding: UTF-8
+
+nbLock:
+  baseUrl: http://47.106.35.122:8088/intf/
