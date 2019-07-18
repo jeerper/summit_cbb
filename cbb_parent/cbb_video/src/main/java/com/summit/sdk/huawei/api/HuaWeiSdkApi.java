@@ -1,29 +1,36 @@
 package com.summit.sdk.huawei.api;
 
 import com.summit.sdk.huawei.HWPuSDKLibrary;
+import com.summit.sdk.huawei.callback.ClientFaceInfoCallback;
 import com.summit.sdk.huawei.callback.EventInfoCallBack;
 import com.summit.sdk.huawei.model.DeviceInfo;
 import com.sun.jna.NativeLong;
 import com.sun.jna.ptr.NativeLongByReference;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Slf4j
-@Component
 public class HuaWeiSdkApi {
 
     private static final ConcurrentHashMap<String, DeviceInfo> DEVICE_MAP = new ConcurrentHashMap<>();
-    private long sdkPort = 6060;
-    private String sdkUserName = "admin";
-    private String sdkPassword = "HuaWei123";
-    private HWPuSDKLibrary.pfGetEventInfoCallBack pfGetEventInfoCallBack;
 
+    private long sdkPort;
+
+    private String sdkUserName;
+
+    private String sdkPassword;
+    private HWPuSDKLibrary.pfGetEventInfoCallBack pfGetEventInfoCallBack;
+    private ClientFaceInfoCallback clientFaceInfoCallback;
+
+    public HuaWeiSdkApi(long sdkPort, String sdkUserName, String sdkPassword, ClientFaceInfoCallback clientFaceInfoCallback) {
+        this.sdkPort = sdkPort;
+        this.sdkUserName = sdkUserName;
+        this.sdkPassword = sdkPassword;
+        this.clientFaceInfoCallback = clientFaceInfoCallback;
+    }
 
     public static void printReturnMsg() {
         NativeLong errorCode = HWPuSDKLibrary.INSTANCE.IVS_PU_GetLastError();
@@ -31,7 +38,9 @@ public class HuaWeiSdkApi {
         log.debug("返回码:{},返回信息:{}", errorCode.longValue(), errorMsg);
     }
 
-    @PostConstruct
+    /**
+     * SDK初始化
+     */
     public void init() {
         System.setProperty("jna.debug_load", "true");
         System.setProperty("jna.debug_load.jna", "true");
@@ -44,7 +53,7 @@ public class HuaWeiSdkApi {
         HWPuSDKLibrary.INSTANCE.IVS_PU_GetVersion(longNative);
         log.debug("SDK版本号:" + longNative.getValue().longValue());
         //SDK注册事件回调
-        pfGetEventInfoCallBack = new EventInfoCallBack(sdkPort, sdkUserName, sdkPassword, DEVICE_MAP);
+        pfGetEventInfoCallBack = new EventInfoCallBack(sdkPort, sdkUserName, sdkPassword, clientFaceInfoCallback, DEVICE_MAP);
         boolean callBackBindStatus = HWPuSDKLibrary.INSTANCE.IVS_PU_EventStatesCallBack(pfGetEventInfoCallBack);
         log.debug("注册事件回调函数绑定:" + callBackBindStatus);
         if (!callBackBindStatus) {
@@ -53,7 +62,9 @@ public class HuaWeiSdkApi {
 
     }
 
-    @PreDestroy
+    /**
+     * SDK销毁
+     */
     public void destroy() {
         Iterator<Map.Entry<String, DeviceInfo>> iter = DEVICE_MAP.entrySet().iterator();
         while (iter.hasNext()) {

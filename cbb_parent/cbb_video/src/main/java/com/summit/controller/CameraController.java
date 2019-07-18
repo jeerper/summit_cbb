@@ -2,7 +2,7 @@ package com.summit.controller;
 
 import com.summit.common.entity.RestfulEntityBySummit;
 import com.summit.common.util.ResultBuilder;
-import com.summit.sdk.huawei.api.HuaWeiSdkApi;
+import com.summit.utils.SdkClient;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,12 +15,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/video")
 public class CameraController {
     @Autowired
-    HuaWeiSdkApi huaWeiSdkApi;
+    SdkClient sdkClient;
 
     @ApiOperation(value = "重启摄像机")
     @PutMapping(value = "/reboot")
     public RestfulEntityBySummit rebootCamera(String cameraIp) {
-        boolean rebootStatus = huaWeiSdkApi.rebootCamera(cameraIp);
+        boolean rebootStatus = sdkClient.getHuaWeiSdkApi().rebootCamera(cameraIp);
         if (rebootStatus) {
             return ResultBuilder.buildSuccess("重启成功");
         } else {

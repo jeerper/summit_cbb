@@ -14,9 +14,19 @@ import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
 import com.sun.jna.ptr.PointerByReference;
 import lombok.extern.slf4j.Slf4j;
+import rx.Observable;
+import rx.functions.Action1;
+import rx.schedulers.Schedulers;
 
 @Slf4j
 public class RealDataCallBack implements HWPuSDKLibrary.pfRealDataCallBack {
+
+    private ClientFaceInfoCallback clientFaceInfoCallback;
+
+    public RealDataCallBack(ClientFaceInfoCallback clientFaceInfoCallback) {
+        this.clientFaceInfoCallback = clientFaceInfoCallback;
+
+    }
 
     @Override
     public void apply(Pointer szBuffer, NativeLong lSize, Pointer pUsrData) {
@@ -24,11 +34,18 @@ public class RealDataCallBack implements HWPuSDKLibrary.pfRealDataCallBack {
         faceInfo = procBuffer(szBuffer, lSize, HWPuSDKLibrary.LAYER_TWO_TYPE.COMMON, faceInfo);
         faceInfo = procBuffer(szBuffer, lSize, HWPuSDKLibrary.LAYER_TWO_TYPE.TARGET, faceInfo);
         if (faceInfo != null) {
-            faceInfo.setDeviceIp(pUsrData.getString(0));
-            log.debug("准备返回设备IP:" + faceInfo.getDeviceIp());
+            if (clientFaceInfoCallback != null) {
+                faceInfo.setDeviceIp(pUsrData.getString(0));
+                Observable.just(faceInfo)
+                        .observeOn(Schedulers.io())
+                        .subscribe(new Action1<FaceInfo>() {
+                            @Override
+                            public void call(FaceInfo faceInfo) {
+                                clientFaceInfoCallback.invoke(faceInfo);
+                            }
+                        });
+            }
         }
-
-
     }
 
     private FaceInfo procBuffer(Pointer szBuffer, NativeLong lSize, int layerTwoType, FaceInfo faceInfo) {

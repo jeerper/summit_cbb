@@ -33,13 +33,13 @@ public class EventInfoCallBack implements HWPuSDKLibrary.pfGetEventInfoCallBack 
     private HWPuSDKLibrary.pfRealDataCallBack pfRealDataCallBack;
 
 
-    public EventInfoCallBack(long sdkPort, String sdkUserName, String sdkPassword, ConcurrentHashMap<String, DeviceInfo> deviceMap) {
+    public EventInfoCallBack(long sdkPort, String sdkUserName, String sdkPassword, ClientFaceInfoCallback clientFaceInfoCallback,ConcurrentHashMap<String, DeviceInfo> deviceMap) {
         this.sdkPort = sdkPort;
         this.sdkUserName = sdkUserName;
         this.sdkPassword = sdkPassword;
         this.deviceMap = deviceMap;
         this.pfGetAlarmInfoCallBack = new AlarmInfoCallBack();
-        this.pfRealDataCallBack = new RealDataCallBack();
+        this.pfRealDataCallBack = new RealDataCallBack(clientFaceInfoCallback);
     }
 
     @Override
