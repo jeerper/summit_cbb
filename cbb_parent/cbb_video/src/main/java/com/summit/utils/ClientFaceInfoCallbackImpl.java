@@ -33,7 +33,8 @@ public class ClientFaceInfoCallbackImpl implements ClientFaceInfoCallback {
         FaceLibType faceLibType = faceInfo.getFaceLibType();
         if(faceLibType.equals(FaceLibType.FACE_LIB_WHITE)){
             LockInfo lockInfo = unLockService.toUnLock(new LockRequest("NB100001" , "张三"));
-            log.info("{}" ,lockInfo);
+            log.info("rmid={},type={},content={},objx={},time={}" ,
+                    lockInfo.getRmid(),lockInfo.getType(),lockInfo.getContent(),lockInfo.getObjx(),lockInfo.getTime());
         }
     }
 
