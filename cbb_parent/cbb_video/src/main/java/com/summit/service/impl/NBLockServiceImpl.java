@@ -1,11 +1,15 @@
 package com.summit.service.impl;
 
+import com.summit.common.entity.ResponseCodeEnum;
+import com.summit.common.entity.RestfulEntityBySummit;
+import com.summit.common.util.ResultBuilder;
 import com.summit.entity.LockInfo;
 import com.summit.entity.LockRequest;
+import com.summit.entity.ReportParam;
+import com.summit.entity.SafeReportInfo;
 import com.summit.util.HttpClient;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import retrofit2.HttpException;
@@ -19,8 +23,13 @@ public class NBLockServiceImpl {
     @Autowired
     private HttpClient httpClient;
 
-    public LockInfo toUnLock(LockRequest lockRequest) {
+    public RestfulEntityBySummit toUnLock(LockRequest lockRequest) {
+        if(lockRequest == null || lockRequest.getTerminalNum() == null
+                || lockRequest.getOperName() == null){
+            return ResultBuilder.buildError(ResponseCodeEnum.CODE_9993 );
+        }
         final LockInfo[] backLockInfo = {null};
+        final ResponseCodeEnum[] resultCode = {ResponseCodeEnum.CODE_0000};
         httpClient.ubLockService.unLock(lockRequest)
                 .flatMap(new Func1<LockInfo, Observable<LockInfo>>() {
                     @Override
@@ -37,9 +46,10 @@ public class NBLockServiceImpl {
                     HttpException httpException = (HttpException) throwable;
                     if (httpException.code() == HttpStatus.NOT_FOUND.value()) {
                         log.error("404");
-                        return null;
+                        return Observable.error(throwable);
                     }
                 }
+                resultCode[0] = ResponseCodeEnum.CODE_9999;
                 return Observable.error(throwable);
             }
         }).subscribe(new Observer<LockInfo>() {
@@ -50,6 +60,7 @@ public class NBLockServiceImpl {
             }
             @Override
             public void onError(Throwable e) {
+                resultCode[0] = ResponseCodeEnum.CODE_9999;
                 log.error("请求失败", e);
             }
             @Override
@@ -57,11 +68,17 @@ public class NBLockServiceImpl {
                 log.debug("onNext");
             }
         });
-        return backLockInfo[0];
+        return ResultBuilder.buildError(resultCode[0] ,backLockInfo[0]);
     }
 
-    public LockInfo toQueryLockStatus(LockRequest lockRequest) {
+
+    public RestfulEntityBySummit toQueryLockStatus(LockRequest lockRequest) {
+        if(lockRequest == null || lockRequest.getTerminalNum() == null
+                || lockRequest.getOperName() == null){
+            return ResultBuilder.buildError(ResponseCodeEnum.CODE_9993 );
+        }
         final LockInfo[] queryLockInfo = {null};
+        final ResponseCodeEnum[] resultCode = {ResponseCodeEnum.CODE_0000};
 //        CountDownLatch count = new CountDownLatch(1);
         httpClient.ubLockService.queryLockStatus(lockRequest)
                 .flatMap(new Func1<LockInfo, Observable<LockInfo>>() {
@@ -69,11 +86,6 @@ public class NBLockServiceImpl {
                     public Observable<LockInfo> call(LockInfo lockInfo) {
                         log.info("{}" ,lockInfo);
                         queryLockInfo[0] = lockInfo;
-//                        try {
-//                            Thread.sleep(3000);
-//                        } catch (InterruptedException e) {
-//                            e.printStackTrace();
-//                        }
                         return null;
                     }
                 }).onErrorResumeNext(new Func1<Throwable, Observable<LockInfo>>() {
@@ -84,9 +96,10 @@ public class NBLockServiceImpl {
                     HttpException httpException = (HttpException) throwable;
                     if (httpException.code() == HttpStatus.NOT_FOUND.value()) {
                         log.error("404");
-                        return null;
+                        return Observable.error(throwable);
                     }
                 }
+                resultCode[0] = ResponseCodeEnum.CODE_9999;
                 return Observable.error(throwable);
             }
         }).subscribe(new Observer<LockInfo>() {
@@ -96,6 +109,7 @@ public class NBLockServiceImpl {
             }
             @Override
             public void onError(Throwable e) {
+                resultCode[0] = ResponseCodeEnum.CODE_9999;
                 log.error("请求失败", e);
             }
             @Override
@@ -103,6 +117,58 @@ public class NBLockServiceImpl {
                 log.debug("onNext");
             }
         });
-        return queryLockInfo[0];
+        return ResultBuilder.buildError(resultCode[0] , queryLockInfo[0]);
+    }
+
+
+    public RestfulEntityBySummit toSafeReport(ReportParam reportParam) {
+        if(reportParam == null || reportParam.getTerminalNum() == null
+                || reportParam.getStartTime() == null || reportParam.getEndTime() == null){
+            return ResultBuilder.buildError(ResponseCodeEnum.CODE_9993);
+        }
+
+        final ResponseCodeEnum[] resultCode = {ResponseCodeEnum.CODE_0000};
+        final SafeReportInfo[] safeReportRusult = {null};
+//        CountDownLatch count = new CountDownLatch(1);
+        httpClient.ubLockService.safeReport(reportParam)
+                .flatMap(new Func1<SafeReportInfo, Observable<SafeReportInfo>>() {
+                    @Override
+                    public Observable<SafeReportInfo> call(SafeReportInfo safeReport) {
+                        log.info("{}" ,safeReport);
+                        safeReportRusult[0] = safeReport;
+                        return null;
+                    }
+                }).onErrorResumeNext(new Func1<Throwable, Observable<SafeReportInfo>>() {
+            @Override
+            public Observable<SafeReportInfo> call(Throwable throwable) {
+                if (throwable instanceof HttpException) {
+                    log.error("httpException");
+                    HttpException httpException = (HttpException) throwable;
+                    if (httpException.code() == HttpStatus.NOT_FOUND.value()) {
+                        log.error("404");
+                        return Observable.error(throwable);
+                    }
+                }
+                resultCode[0] = ResponseCodeEnum.CODE_9999;
+                return Observable.error(throwable);
+            }
+        }).subscribe(new Observer<SafeReportInfo>() {
+            @Override
+            public void onCompleted() {
+                log.info("请求完成");
+            }
+            @Override
+            public void onError(Throwable e) {
+                log.error("请求失败", e);
+                resultCode[0] = ResponseCodeEnum.CODE_9999;
+            }
+
+            @Override
+            public void onNext(SafeReportInfo safeReport) {
+                log.debug("onNext");
+            }
+
+        });
+        return ResultBuilder.buildError(resultCode[0] , safeReportRusult[0]);
     }
 }

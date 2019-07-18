@@ -2,10 +2,10 @@ package com.summit.service;
 
 import com.summit.entity.LockInfo;
 import com.summit.entity.LockRequest;
+import com.summit.entity.ReportParam;
+import com.summit.entity.SafeReportInfo;
 import retrofit2.http.Body;
 import retrofit2.http.POST;
-import retrofit2.http.Header;
-import retrofit2.http.Query;
 import rx.Observable;
 
 public interface UBLockService {
@@ -16,5 +16,6 @@ public interface UBLockService {
     @POST("lockstatus.jhtml")
     Observable<LockInfo> queryLockStatus(@Body LockRequest lockRequest);
 
-
+    @POST("serachsafedata.jhtml")
+    Observable<SafeReportInfo> safeReport(@Body ReportParam reportInfo);
 }
