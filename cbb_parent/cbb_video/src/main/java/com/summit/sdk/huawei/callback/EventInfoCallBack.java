@@ -1,7 +1,6 @@
 package com.summit.sdk.huawei.callback;
 
 import cn.hutool.core.util.StrUtil;
-import cn.hutool.system.SystemUtil;
 import com.summit.sdk.huawei.HWPuSDKLibrary;
 import com.summit.sdk.huawei.PU_DEVICE_REGISTER_RSP;
 import com.summit.sdk.huawei.PU_EVENT_COMMON;
@@ -34,11 +33,12 @@ public class EventInfoCallBack implements HWPuSDKLibrary.pfGetEventInfoCallBack 
     private HWPuSDKLibrary.pfRealDataCallBack pfRealDataCallBack;
 
 
-    public EventInfoCallBack(long sdkPort, String sdkUserName, String sdkPassword,String sdkLocalhost, ClientFaceInfoCallback clientFaceInfoCallback,ConcurrentHashMap<String, DeviceInfo> deviceMap) {
+    public EventInfoCallBack(long sdkPort, String sdkUserName, String sdkPassword, String sdkLocalhost,
+                             ClientFaceInfoCallback clientFaceInfoCallback, ConcurrentHashMap<String, DeviceInfo> deviceMap) {
         this.sdkPort = sdkPort;
         this.sdkUserName = sdkUserName;
         this.sdkPassword = sdkPassword;
-        this.sdkLocalhost=sdkLocalhost;
+        this.sdkLocalhost = sdkLocalhost;
         this.deviceMap = deviceMap;
         this.pfGetAlarmInfoCallBack = new AlarmInfoCallBack();
         this.pfRealDataCallBack = new RealDataCallBack(clientFaceInfoCallback);
@@ -47,10 +47,10 @@ public class EventInfoCallBack implements HWPuSDKLibrary.pfGetEventInfoCallBack 
     @Override
     public void apply(PU_EVENT_COMMON arg) {
         switch (arg.enEventType) {
-            case 1:
+            case HWPuSDKLibrary.PU_EVENT_TYPE.PU_EVENT_TYPE_CONNCET:
                 log.debug("设备主动连接，网络连接上");
                 break;
-            case 2:
+            case HWPuSDKLibrary.PU_EVENT_TYPE.PU_EVENT_TYPE_REGISTER:
                 log.debug("设备主动注册,发送注册消息");
                 PU_EVENT_REGISTER registerEvent = new PU_EVENT_REGISTER(arg.getPointer());
                 String deviceType = StrUtil.str(registerEvent.szDeviceType, "").trim();
@@ -103,7 +103,7 @@ public class EventInfoCallBack implements HWPuSDKLibrary.pfGetEventInfoCallBack 
 
                 PU_REAL_PLAY_INFO realPlayInfo = new PU_REAL_PLAY_INFO();
                 realPlayInfo.ulChannelId = new NativeLong(101);
-                realPlayInfo.hPlayWnd =Pointer.NULL;
+                realPlayInfo.hPlayWnd = Pointer.NULL;
                 realPlayInfo.enStreamType = HWPuSDKLibrary.PU_STREAM_TYPE.PU_VIDEO_MAIN_STREAM;
                 realPlayInfo.enVideoType = HWPuSDKLibrary.PU_VIDEO_TYPE.PU_VIDEO_TYPE_META;
                 realPlayInfo.enProtocolType = HWPuSDKLibrary.PU_PROTOCOL_TYPE.PU_PROTOCOL_TYPE_TCP;
@@ -118,74 +118,74 @@ public class EventInfoCallBack implements HWPuSDKLibrary.pfGetEventInfoCallBack 
                 HuaWeiSdkApi.printReturnMsg();
 
                 break;
-            case 3:
+            case HWPuSDKLibrary.PU_EVENT_TYPE.PU_EVENT_TYPE_NOT_REGISTER:
                 log.debug("设备主动连接后未注册");
                 break;
-            case 4:
+            case HWPuSDKLibrary.PU_EVENT_TYPE.PU_EVENT_TYPE_UNREGISTER:
                 log.debug("设备主动注销");
                 HWPuSDKLibrary.INSTANCE.IVS_PU_StopAllRealPlay(arg.ulIdentifyID);
                 HWPuSDKLibrary.INSTANCE.IVS_PU_Logout(arg.ulIdentifyID);
                 removeDeviceMapByUlIdentifyId(arg.ulIdentifyID);
                 break;
-            case 5:
+            case HWPuSDKLibrary.PU_EVENT_TYPE.PU_EVENT_TYPE_DISCONNECT:
                 log.debug("设备网络连接断开");
                 HWPuSDKLibrary.INSTANCE.IVS_PU_StopAllRealPlay(arg.ulIdentifyID);
                 HWPuSDKLibrary.INSTANCE.IVS_PU_Logout(arg.ulIdentifyID);
                 removeDeviceMapByUlIdentifyId(arg.ulIdentifyID);
                 break;
-            case 6:
+            case HWPuSDKLibrary.PU_EVENT_TYPE.PU_EVENT_TYPE_SEND_RECV_ERROR:
                 log.debug("发送或接收失败");
                 HWPuSDKLibrary.INSTANCE.IVS_PU_StopAllRealPlay(arg.ulIdentifyID);
                 HWPuSDKLibrary.INSTANCE.IVS_PU_Logout(arg.ulIdentifyID);
                 removeDeviceMapByUlIdentifyId(arg.ulIdentifyID);
                 break;
-            case 7:
+            case HWPuSDKLibrary.PU_EVENT_TYPE.PU_EVENT_TYPE_KEEPLIVE_FAIL:
                 log.debug("设备保活失败");
                 HWPuSDKLibrary.INSTANCE.IVS_PU_StopAllRealPlay(arg.ulIdentifyID);
                 HWPuSDKLibrary.INSTANCE.IVS_PU_Logout(arg.ulIdentifyID);
                 removeDeviceMapByUlIdentifyId(arg.ulIdentifyID);
                 break;
-            case 8:
+            case HWPuSDKLibrary.PU_EVENT_TYPE.PU_EVENT_TYPE_STREAM_PACKAGE_CHANGE:
                 log.debug("流套餐变更");
                 break;
-            case 9:
+            case HWPuSDKLibrary.PU_EVENT_TYPE.PU_EVENT_TYPE_WATERMARK_ERR:
                 log.debug("数字水印校验错误");
                 break;
-            case 10:
+            case HWPuSDKLibrary.PU_EVENT_TYPE.PU_EVENT_TYPE_UPLOAD_IMAGE_URL:
                 log.debug("设备主动获取抓拍图片上传URL请求");
                 break;
-            case 11:
+            case HWPuSDKLibrary.PU_EVENT_TYPE.PU_EVENT_TYPE_UPLOAD_IMAGE_COMP_NOTIFY:
                 log.debug("设备抓拍图片上载完成通知");
                 break;
-            case 12:
+            case HWPuSDKLibrary.PU_EVENT_TYPE.PU_EVENT_TYPE_TRANSPARENT_CHANNEL_NOTIFY:
                 log.debug("透明通道数据上报");
                 break;
-            case 13:
+            case HWPuSDKLibrary.PU_EVENT_TYPE.PU_EVENT_TYPE_REALPALY_ERROR:
                 log.debug("实况异常");
                 HuaWeiSdkApi.printReturnMsg();
                 break;
-            case 14:
+            case HWPuSDKLibrary.PU_EVENT_TYPE.PU_EVENT_TYPE_REPORT_VISUAL_INFO:
                 log.debug("上报可视化信息");
                 break;
-            case 15:
+            case HWPuSDKLibrary.PU_EVENT_TYPE.PU_EVENT_TYPE_PUPU_INFO:
                 log.debug("多机协同数据上报");
                 break;
-            case 16:
+            case HWPuSDKLibrary.PU_EVENT_TYPE.PU_EVENT_TYPE_RECORD_COMP_NOTIFY:
                 log.debug("录像下载完成通知");
                 break;
-            case 17:
+            case HWPuSDKLibrary.PU_EVENT_TYPE.PU_EVENT_TYPE_SLAVE_DEVICE_ADD:
                 log.debug("新增从设备事件");
                 break;
-            case 18:
+            case HWPuSDKLibrary.PU_EVENT_TYPE.PU_EVENT_TYPE_SLAVE_DEVICE_MODIFY:
                 log.debug("修改从设备事件");
                 break;
-            case 19:
+            case HWPuSDKLibrary.PU_EVENT_TYPE.PU_EVENT_TYPE_SLAVE_DEVICE_DELETE:
                 log.debug("删除从设备事件");
                 break;
-            case 20:
+            case HWPuSDKLibrary.PU_EVENT_TYPE.PU_EVENT_TYPE_SLAVE_DEVICE_ONLINE:
                 log.debug("从设备上线事件");
                 break;
-            case 21:
+            case HWPuSDKLibrary.PU_EVENT_TYPE.PU_EVENT_TYPE_SLAVE_DEVICE_OFFLINE:
                 log.debug("从设备下线事件");
                 break;
             default:
