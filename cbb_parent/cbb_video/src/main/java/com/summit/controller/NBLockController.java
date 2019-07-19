@@ -47,7 +47,6 @@ public class NBLockController {
 
     @PostMapping(value = "/safeReport")
     public RestfulEntityBySummit safeReport(@RequestBody ReportParam reportInfo){
-
         return nbLockServiceImpl.toSafeReport(reportInfo);
     }
 
