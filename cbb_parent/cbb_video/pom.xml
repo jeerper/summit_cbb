@@ -105,6 +105,7 @@
                         <exclude>*.lib</exclude>
                         <exclude>*.h</exclude>
                         <exclude>win32*/**</exclude>
+                        <exclude>linux-x86-64*/**</exclude>
                     </excludes>
                 </configuration>
             </plugin>
@@ -132,11 +133,6 @@
             <artifactId>converter-jackson</artifactId>
             <version>2.4.0</version>
         </dependency>
-<!--        <dependency>-->
-<!--            <groupId>com.squareup.retrofit2</groupId>-->
-<!--            <artifactId>adapter-rxjava</artifactId>-->
-<!--            <version>2.4.0</version>-->
-<!--        </dependency>-->
         <dependency>
             <groupId>com.squareup.retrofit2</groupId>
             <artifactId>adapter-rxjava</artifactId>
