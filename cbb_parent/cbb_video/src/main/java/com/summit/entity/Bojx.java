@@ -4,14 +4,14 @@ import lombok.Data;
 
 @Data
 public class Bojx {
-    private String version;
-    private String vol;
     private String jzdw;
-    private String latitude;
-    private String longitude;
-    private String altitude;
+    private String vol;
+    private String gps_time;
     private String speed;
     private String direction;
-    private String gpstime;
-    private String statusdesc;
+    private String altitude;
+    private String status_desc;
+    private String longitude;
+    private String latitude;
+    private String version;
 }
