@@ -5,9 +5,8 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.TypeReference;
 import com.summit.common.entity.ResponseCodeEnum;
 import com.summit.common.entity.RoleBean;
-import com.summit.common.entity.ADCDBean;
 import com.summit.common.entity.AntdJsonBean;
-import com.summit.domain.role.RoleBeanRowMapper;
+import com.summit.common.entity.FunctionBean;
 import com.summit.repository.UserRepository;
 import com.summit.cbb.utils.page.Page;
 import com.summit.util.SummitTools;
@@ -19,7 +18,6 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,8 +32,6 @@ public class RoleService {
 	public JdbcTemplate jdbcTemplate;
 	@Autowired
 	private SummitTools st;
-	@Autowired
-	private RoleBeanRowMapper rbrm;
 
 	public ResponseCodeEnum add(RoleBean rb) {
 		String sql = "SELECT * FROM SYS_ROLE WHERE NAME = ?";
@@ -65,10 +61,16 @@ public class RoleService {
 		jdbcTemplate.update(sql, rb.getNote(),rb.getName(), rb.getCode());
 	}
 
-	public RoleBean queryByCode(String code) {
+	public RoleBean queryByCode(String code) throws Exception {
 		String sql = "SELECT * FROM SYS_ROLE WHERE CODE = ?";
-		List<RoleBean> l = ur.queryAllCustom(sql, rbrm, code);
-		return  l.get(0);
+		LinkedMap linkedMap=new LinkedMap();
+	    linkedMap.put(1,code);
+		List  roleList = ur.queryAllCustom(sql,linkedMap);
+		if(roleList!=null &&  roleList.size()>0){
+			 RoleBean roleBean = JSON.parseObject(roleList.get(0).toString(), new TypeReference<RoleBean>() {});
+		     return roleBean;
+		}
+		return  null;
 	}
 
 	public Page<RoleBean> queryByPage(int start, int limit, String name) throws Exception {
@@ -92,9 +94,14 @@ public class RoleService {
 		return null;
 	}
 
-	public List<RoleBean> queryAll() {
+	public List<RoleBean> queryAll() throws Exception {
 		String sql = "SELECT * FROM SYS_ROLE";
-		return ur.queryAllCustom(sql, rbrm);
+		List  roleList = ur.queryAllCustom(sql,new LinkedMap());
+		if(roleList!=null &&  roleList.size()>0){
+			ArrayList<RoleBean> roleBeanList = JSON.parseObject(roleList.toString(), new TypeReference<ArrayList<RoleBean>>() {});
+		    return roleBeanList;
+		}
+		return null;
 	}
 	
 	public List<AntdJsonBean> queryRoleAntdJsonAll() throws Exception {
@@ -107,14 +114,17 @@ public class RoleService {
 		return null;
 	}
 
-	public List<String> queryFunIdByRoleCode(String roleCode) {
-		String sql = "SELECT FUNCTION_ID FROM SYS_ROLE_FUNCTION WHERE ROLE_CODE = ?";
-		List<JSONObject> l = ur.queryAllCustom(sql, roleCode);
-		List<String> list = new ArrayList<String>();
-		for (JSONObject o : l) {
-			list.add(st.objJsonGetString(o, "FUNCTION_ID"));
+	public List<FunctionBean> queryFunIdByRoleCode(String roleCode) throws Exception {
+		StringBuffer sql = new StringBuffer("SELECT fun.* FROM SYS_ROLE_FUNCTION roleFun ");
+		sql.append(" inner join sys_function fun on roleFun.FUNCTION_ID=fun.ID WHERE ROLE_CODE = ? ");
+		LinkedMap linkedMap=new LinkedMap();
+	    linkedMap.put(1,roleCode);
+		List  functionList = ur.queryAllCustom(sql.toString(),linkedMap);
+		if(functionList!=null && functionList.size()>0){
+			 ArrayList<FunctionBean> students = JSON.parseObject(functionList.toString(), new TypeReference<ArrayList<FunctionBean>>() {});
+		     return students;
 		}
-		return list;
+		return null;
 	}
 	
 	public void delRoleAuthorizationByRoleCode(String roleCodes){

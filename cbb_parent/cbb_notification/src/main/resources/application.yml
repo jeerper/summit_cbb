@@ -29,6 +29,10 @@ jpush:
   appKey: 39220bed9a417c2f58f86d48
   masterSecret: d456a6cf5c93a1867cfa838a
   liveTime: 300000
+  #安塞现场
+  #appKey: 43d2500b962982d568d6d000
+  #masterSecret: 44a6260c4afd4be02f95d808
+  #liveTime: 300000
   
   #thymeleaf
   #默认到resource/templates目录下寻找

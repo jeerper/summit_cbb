@@ -202,9 +202,9 @@ public class ADCDController {
 	 */
 	@ApiOperation(value = "行政区划删除")
 	@RequestMapping(value = "/del",method = RequestMethod.DELETE)
-	public RestfulEntityBySummit<?> del(@RequestParam(value = "ids") String ids) {
+	public RestfulEntityBySummit<?> del(@RequestParam(value = "adcds") String adcds) {
 		try {
-			 adcdService.del(ids);
+			 adcdService.del(adcds);
 			 //LogBean logBean = new LogBean("行政区划管理","共享用户组件","删除行政区划信息："+ids,"3");
 		     //logUtil.insertLog(logBean);
 			return ResultBuilder.buildSuccess();

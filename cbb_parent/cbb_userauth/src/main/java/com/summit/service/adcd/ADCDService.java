@@ -17,7 +17,6 @@ import com.summit.cbb.utils.page.Page;
 import com.summit.common.entity.ADCDBean;
 import com.summit.common.entity.ADCDTreeBean;
 import com.summit.common.entity.ResponseCodeEnum;
-import com.summit.domain.adcd.ADCDBeanRowMapper;
 import com.summit.repository.UserRepository;
 
 import net.sf.json.JSONObject;
@@ -25,10 +24,6 @@ import net.sf.json.JSONObject;
 
 @Service
 public class ADCDService {
-	
-	
-	@Autowired
-	private ADCDBeanRowMapper atm;
 	
 	@Autowired
 	private UserRepository ur;
@@ -287,12 +282,19 @@ public class ADCDService {
 	 * 根据adcds查询
 	 * @param adcds
 	 * @return
+	 * @throws Exception 
 	 */
-	public List<ADCDBean> queryByAdcds(String adcds) {
+	public List<ADCDBean> queryByAdcds(String adcds) throws Exception {
 		adcds = adcds.replaceAll(",", "','");
-		String sql = "SELECT * FROM SYS_AD_CD WHERE ADCD IN ('"+ adcds + "') ";
-		List<ADCDBean> l = ur.queryAllCustom(sql, atm, null);
-		return l;
+		String sql = "SELECT * FROM SYS_AD_CD WHERE ADCD IN ('?') ";
+		LinkedMap linkedMap=new LinkedMap();
+	    linkedMap.put(1,adcds);
+		List dataList = ur.queryAllCustom(sql,  linkedMap);
+		if(dataList!=null &&  dataList.size()>0){
+			List<ADCDBean> adcdBeanList = JSON.parseObject(dataList.toString(), new TypeReference<List<ADCDBean>>() {});
+		    return adcdBeanList;
+		}
+		return null;
 	}
 	/**
 	 * 

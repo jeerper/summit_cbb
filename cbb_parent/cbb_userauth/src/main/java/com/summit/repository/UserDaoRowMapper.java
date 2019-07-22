@@ -1,4 +1,4 @@
-package com.summit.domain.user;
+package com.summit.repository;
 
 import java.io.BufferedReader;
 import java.io.IOException;

@@ -12,7 +12,7 @@ public class DeptBean  implements Serializable {
 	private String id;
 	@ApiModelProperty(value="上级部门id",name="pid",required=true)
 	private String pid;
-	@ApiModelProperty(value="部门编码",name="deptCode",required=true)
+	@ApiModelProperty(value="部门编码",name="deptCode")
 	private String deptCode;
 	@ApiModelProperty(value="部门名称",name="deptName",required=true)
 	private String deptName;
