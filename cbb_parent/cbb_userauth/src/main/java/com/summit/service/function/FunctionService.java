@@ -369,40 +369,45 @@ public class FunctionService {
 				 String pid="";
 
 				 for(FunctionBean functionBean:functionBeans){
-					 if("586b65b2188c49d6933f0f354f0b23c9".equals(functionBean.getId())){
-						 System.out.println("==========");
-					 }
-	        		 if("".equals(pid) || !pid.equals(functionBean.getPid())){
-	        			 functionBeancChildren=new ArrayList<FunctionBean>();
-	        		 }
-	        		 functionBeancChildren.add(functionBean);
-	        		 FunctionBean functionBean1=mapFunctionBean.get(functionBean.getPid());
-	        		 if(functionBean1!=null){
-	        			 ListUtils.sort(functionBeancChildren, sortnameArr, typeArr);
-		        		 functionBean1.setChildren(functionBeancChildren);
-		        		 if(childrenmap!=null && childrenmap.get(functionBean.getId())!=null){
-		        			 List childrenList=childrenmap.get(functionBean.getId()).getChildren();
-		        			
-		        	        ListUtils.sort(childrenList, sortnameArr, typeArr);
-		        			 
-		        		    functionBean.setChildren(childrenList);
+//					 if("586b65b2188c49d6933f0f354f0b23c9".equals(functionBean.getId())){
+//						 System.out.println("==========");
+//					 }
+					 if("root".equals(functionBean.getPid())){
+						 map.put(functionBean.getId(), functionBean); 
+					 }else{
+		        		 if("".equals(pid) || !pid.equals(functionBean.getPid())){
+		        			 functionBeancChildren=new ArrayList<FunctionBean>();
 		        		 }
-		        		
-		        		 map.put(functionBean.getPid(), functionBean1);
-	        		 }else{
-	        			 functionBean1=charildFunctionBean.get(functionBean.getPid());
-	        			 functionBean1.setChildren(functionBeancChildren);
-        				 childrenmap.put(functionBean.getPid(), functionBean1);
-        				 
-	        			// map.put(functionBean.getId(), functionBean);
-	        		 }
-	        			 pid=functionBean.getPid();
+		        		 functionBeancChildren.add(functionBean);
+		        		 FunctionBean functionBean1=mapFunctionBean.get(functionBean.getPid());
+		        		 if(functionBean1!=null){
+		        			 ListUtils.sort(functionBeancChildren, sortnameArr, typeArr);
+			        		 functionBean1.setChildren(functionBeancChildren);
+			        		 if(childrenmap!=null && childrenmap.get(functionBean.getId())!=null){
+			        			 List childrenList=childrenmap.get(functionBean.getId()).getChildren();
+			        			
+			        	        ListUtils.sort(childrenList, sortnameArr, typeArr);
+			        			 
+			        		    functionBean.setChildren(childrenList);
+			        		 }
+			        		
+			        		 map.put(functionBean.getPid(), functionBean1);
+		        		 }else{
+		        			 functionBean1=charildFunctionBean.get(functionBean.getPid());
+		        			 functionBean1.setChildren(functionBeancChildren);
+	        				 childrenmap.put(functionBean.getPid(), functionBean1);
+	        				 
+		        			// map.put(functionBean.getId(), functionBean);
+		        		 }
+		        		 pid=functionBean.getPid();
+					 }
+	        			 
 	        		}
 	         }
 			 for(Map.Entry<String, FunctionBean> entry : map.entrySet()){
 				    String mapKey = entry.getKey();
 				    FunctionBean mapValue = entry.getValue();
-				    System.out.println(mapKey+":  "+mapValue.getName());
+				    // System.out.println(mapKey+":  "+mapValue.getName());
 			 }
 			 Collection<FunctionBean> valueCollection = map.values();
 			 List<FunctionBean> valueList = new ArrayList<FunctionBean>(valueCollection);
