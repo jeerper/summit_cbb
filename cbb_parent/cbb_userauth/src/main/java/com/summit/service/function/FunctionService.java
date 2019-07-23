@@ -277,68 +277,7 @@ public class FunctionService {
 		return null;
 	}
 	
-	public List<FunctionBean> getFunInfoByUserName1(String userName) throws Exception{
-		String rootSql = "SELECT  * FROM  SYS_FUNCTION   order by	FDESC";
-		List<Object> functionList= ur.queryAllCustom(rootSql, new LinkedMap());
-		Map<String,FunctionBean> mapFunctionBean=new HashMap<String,FunctionBean>();
-		if(functionList!=null && functionList.size()>0){
-			ArrayList<FunctionBean> functions = JSON.parseObject(functionList.toString(), new TypeReference<ArrayList<FunctionBean>>() {});
-			for(FunctionBean functionBean:functions){
-				mapFunctionBean.put(functionBean.getId(), functionBean);
-			}
-		}
-		String sql = "SELECT  DISTINCT SF.* FROM SYS_USER_ROLE SUR INNER JOIN SYS_ROLE_FUNCTION SRF ON ( SUR.ROLE_CODE = SRF.ROLE_CODE ) INNER JOIN SYS_FUNCTION SF ON (SRF.FUNCTION_ID = SF.ID) WHERE SF.IS_ENABLED = '1'  AND SUR.USERNAME = ? and SF.id!='root'  order by pid ,FDESC ";
-		List<JSONObject>list= ur.queryAllCustom(sql, userName);
-		if(list!=null){
-			 ArrayList<FunctionBean> functionBeans = JSON.parseObject(list.toString(), new TypeReference<ArrayList<FunctionBean>>() {});
-			 ArrayList<FunctionBean> functionBeancChildren =null;
-			 Map<String,FunctionBean> map=new LinkedHashMap<String,FunctionBean>();
-			 Map<String,FunctionBean> childrenmap=new LinkedHashMap<String,FunctionBean>();
-			 if(functionBeans!=null && functionBeans.size()>0){
-				 String pid="";
-				 for(FunctionBean functionBean:functionBeans){
-					 System.out.println("__"+functionBean.getPid()+"   "+functionBean.getName());
-//					 if("a039868a9b5d494b98d62cd3931e5b61".equals(functionBean.getId())){
-//					   System.out.println("===============");
-//				     }
-	        		 if("".equals(pid) || !pid.equals(functionBean.getPid())){
-	        			 functionBeancChildren=new ArrayList<FunctionBean>();
-	        		 }
-	        		 functionBeancChildren.add(functionBean);
-	        		 FunctionBean functionBean1=mapFunctionBean.get(functionBean.getPid());
-	        		 if(functionBean1!=null){
-	        			 if( "root".equals(functionBean1.getPid())){
-		        		    functionBean1.setChildren(functionBeancChildren);
-		        		    if(childrenmap!=null && childrenmap.get(functionBean.getId())!=null){
-		        		    	functionBean.setChildren(childrenmap.get(functionBean.getId()).getChildren());
-		        		    }
-		        		    System.out.println("_________"+functionBean.getPid()+"   "+functionBean1.getName());
-		        		    map.put(functionBean.getPid(), functionBean1);
-		        		    
-	        			 }else{ 
-	        				 functionBean1.setChildren(functionBeancChildren);
-	        				 childrenmap.put(functionBean.getPid(), functionBean1);
-	    	        	   
-	        			 }
-	        			 pid=functionBean.getPid();
-	        		 }
-	        			 
-	        		}
-	         }
-			 for(Map.Entry<String, FunctionBean> entry : map.entrySet()){
-				    String mapKey = entry.getKey();
-				    FunctionBean mapValue = entry.getValue();
-				    System.out.println(mapKey+":  "+mapValue.getName());
-			 }
-			 Collection<FunctionBean> valueCollection = map.values();
-			 List<FunctionBean> valueList = new ArrayList<FunctionBean>(valueCollection);
-			 for(FunctionBean functionBean:valueList){
-				 System.out.println("====:"+functionBean.getId()+","+functionBean.getName()+","+functionBean.getPid()+" ,,chiean");	
-			 }
-			 return valueList;
-		}
-		return null;
-	}
+	
 	
 	
 	public List<FunctionBean> getFunInfoByUserName(String userName) throws Exception{
@@ -404,11 +343,7 @@ public class FunctionService {
 	        			 
 	        		}
 	         }
-			 for(Map.Entry<String, FunctionBean> entry : map.entrySet()){
-				    String mapKey = entry.getKey();
-				    FunctionBean mapValue = entry.getValue();
-				    // System.out.println(mapKey+":  "+mapValue.getName());
-			 }
+			
 			 Collection<FunctionBean> valueCollection = map.values();
 			 List<FunctionBean> valueList = new ArrayList<FunctionBean>(valueCollection);
 //			 for(FunctionBean functionBean:valueList){
