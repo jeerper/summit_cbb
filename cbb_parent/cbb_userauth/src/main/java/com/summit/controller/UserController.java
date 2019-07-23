@@ -208,7 +208,7 @@ public class UserController {
     }
     
     @ApiOperation(value = "根据用户名查询用户信息(对内接口),该接口只供注册中心使用")
-    @GetMapping("/UserInfoByUserNameService")
+    @GetMapping("/queryUserInfoByUserNameService")
     public RestfulEntityBySummit<UserInfo> UserInfoByUserNameService(
     		@RequestParam(value = "userName")  String userName) {
         try {
@@ -254,7 +254,7 @@ public class UserController {
     }
     
     @ApiOperation(value = "根据用户名查询用户信息--对外接口")
-    @GetMapping("/UserInfoByUserName")
+    @GetMapping("/queryUserInfoByUserName")
     public RestfulEntityBySummit<UserInfo> UserInfoByUserName(
     		@RequestParam(value = "userName")  String userName) {
         try {
