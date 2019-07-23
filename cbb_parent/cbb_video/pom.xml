@@ -11,105 +11,6 @@
     <packaging>jar</packaging>
     <build>
         <finalName>backend</finalName>
-        <resources>
-            <resource>
-                <directory>src/main/native</directory>
-            </resource>
-            <resource>
-                <directory>src/main/resources</directory>
-            </resource>
-        </resources>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-resources-plugin</artifactId>
-                <configuration>
-                    <encoding>UTF-8</encoding>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>copy-resources</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>copy-resources</goal>
-                        </goals>
-                        <configuration>
-                            <encoding>UTF-8</encoding>
-                            <outputDirectory>${project.build.directory}/config</outputDirectory>
-                            <!--将以下文件复制到config文件夹下 -->
-                            <resources>
-                                <resource>
-                                    <directory>src/main/resources</directory>
-                                    <includes>
-                                        <include>logback*.xml</include>
-                                        <include>*.properties</include>
-                                        <include>*.yml</include>
-                                    </includes>
-                                    <filtering>true</filtering>
-                                </resource>
-                            </resources>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>copy-native</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>copy-resources</goal>
-                        </goals>
-                        <configuration>
-                            <!--拷贝时不需要转码的文件-->
-                            <nonFilteredFileExtensions>
-                                <nonFilteredFileExtension>dll</nonFilteredFileExtension>
-                                <nonFilteredFileExtension>so</nonFilteredFileExtension>
-                                <nonFilteredFileExtension>sl</nonFilteredFileExtension>
-                                <nonFilteredFileExtension>dylib</nonFilteredFileExtension>
-                                <nonFilteredFileExtension>lib</nonFilteredFileExtension>
-                                <nonFilteredFileExtension>h</nonFilteredFileExtension>
-                            </nonFilteredFileExtensions>
-                            <outputDirectory>${project.build.directory}/lib</outputDirectory>
-                            <!--将以下文件复制到lib文件夹下 -->
-                            <resources>
-                                <resource>
-                                    <directory>src/main/native</directory>
-                                    <filtering>true</filtering>
-                                </resource>
-                            </resources>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <!--配置Main class 路径-->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
-                <configuration>
-                    <archive>
-                        <manifest>
-                            <addClasspath>true</addClasspath>
-                            <mainClass>com.summit.MainAction</mainClass>
-                            <classpathPrefix>lib/</classpathPrefix>
-                            <useUniqueVersions>false</useUniqueVersions>
-                        </manifest>
-                        <manifestEntries>
-                            <Class-Path>config/ lib/</Class-Path>
-                        </manifestEntries>
-                    </archive>
-                    <excludes>
-                        <exclude>*.yml</exclude>
-                        <exclude>*.properties</exclude>
-                        <exclude>logback*.xml</exclude>
-                        <exclude>*.dll</exclude>
-                        <exclude>*.so</exclude>
-                        <exclude>*.sl</exclude>
-                        <exclude>*.dylib</exclude>
-                        <exclude>*.lib</exclude>
-                        <exclude>*.h</exclude>
-                        <exclude>win32*/**</exclude>
-                        <exclude>linux-x86-64*/**</exclude>
-                    </excludes>
-                </configuration>
-            </plugin>
-        </plugins>
     </build>
 
     <dependencies>
@@ -118,25 +19,12 @@
             <artifactId>cbb_common</artifactId>
         </dependency>
         <dependency>
-            <groupId>net.java.dev.jna</groupId>
-            <artifactId>jna</artifactId>
-            <version>5.3.1</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.squareup.retrofit2</groupId>
-            <artifactId>retrofit</artifactId>
-            <version>2.4.0</version>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.squareup.retrofit2</groupId>
-            <artifactId>converter-jackson</artifactId>
-            <version>2.4.0</version>
-        </dependency>
-        <dependency>
-            <groupId>com.squareup.retrofit2</groupId>
-            <artifactId>adapter-rxjava</artifactId>
-            <version>2.4.0</version>
+            <groupId>com.baomidou</groupId>
+            <artifactId>mybatis-plus-boot-starter</artifactId>
         </dependency>
     </dependencies>
 
