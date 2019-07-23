@@ -301,7 +301,7 @@ public class UserService {
 	
 	
 
-	public List<UserInfo> UserInfoList(JSONObject paramJson) throws Exception {
+	public List<UserInfo> queryUserInfoList(JSONObject paramJson) throws Exception {
 		StringBuilder sb = new StringBuilder(
 				"SELECT user1.USERNAME,NAME,SEX,IS_ENABLED,EMAIL,PHONE_NUMBER,STATE,NOTE,USERADCD.ADCD,useradcd.adnms,userdept.DEPTID,userdept.deptNames FROM SYS_USER user1 ");
 		sb.append(" left join (SELECT username,GROUP_CONCAT(useradcd.`adcd`)AS adcd ,GROUP_CONCAT(`adnm`)AS adnms ");

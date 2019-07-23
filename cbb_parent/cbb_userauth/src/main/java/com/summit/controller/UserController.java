@@ -209,7 +209,7 @@ public class UserController {
     
     @ApiOperation(value = "根据用户名查询用户信息(对内接口),该接口只供注册中心使用")
     @GetMapping("/queryUserInfoByUserNameService")
-    public RestfulEntityBySummit<UserInfo> UserInfoByUserNameService(
+    public RestfulEntityBySummit<UserInfo> queryUserInfoByUserNameService(
     		@RequestParam(value = "userName")  String userName) {
         try {
         	UserInfo ub = us.queryByUserName(userName);
@@ -255,7 +255,7 @@ public class UserController {
     
     @ApiOperation(value = "根据用户名查询用户信息--对外接口")
     @GetMapping("/queryUserInfoByUserName")
-    public RestfulEntityBySummit<UserInfo> UserInfoByUserName(
+    public RestfulEntityBySummit<UserInfo> queryUserInfoByUserName(
     		@RequestParam(value = "userName")  String userName) {
         try {
         	UserInfo ub = us.queryByUserName(userName);
@@ -340,7 +340,7 @@ public class UserController {
             if(!SummitTools.stringIsNull(state)){
                 paramJson.put("state",state);
             }
-            List<UserInfo> pageList=us.UserInfoList( paramJson);
+            List<UserInfo> pageList=us.queryUserInfoList( paramJson);
             return ResultBuilder.buildSuccess(pageList);
         } catch (Exception e) {
             logger.error("用户分页查询失败：", e);
