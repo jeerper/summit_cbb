@@ -32,7 +32,7 @@ import net.sf.json.JSONObject;
 @Service
 @Transactional
 public class FunctionService {
-	private static final Logger logger = LoggerFactory.getLogger(FunctionService1.class);
+	private static final Logger logger = LoggerFactory.getLogger(FunctionService.class);
 	@Autowired
 	private UserRepository ur;
 	@Autowired
