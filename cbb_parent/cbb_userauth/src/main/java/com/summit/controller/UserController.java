@@ -23,6 +23,7 @@ import com.alibaba.fastjson.TypeReference;
 import com.summit.cbb.utils.page.Page;
 import com.summit.common.entity.FunctionBean;
 import com.summit.common.entity.LogBean;
+import com.summit.common.entity.UserInfo;
 import com.summit.common.entity.ResponseCodeEnum;
 import com.summit.common.entity.RestfulEntityBySummit;
 import com.summit.common.entity.UserInfo;
@@ -348,6 +349,7 @@ public class UserController {
     }
     
 
+    
     @ApiOperation(value = "用户分页查询")
     @GetMapping("/queryByPage")
     public RestfulEntityBySummit<Page<UserInfo>> queryByPage(
@@ -358,7 +360,8 @@ public class UserController {
             @RequestParam(value = "isEnabled",required = false) String isEnabled,
             @RequestParam(value = "state",required = false) String state,
             @RequestParam(value = "adcd",required = false) String adcd,
-            @RequestParam(value = "deptName",required = false) String deptName) {
+            @RequestParam(value = "deptName",required = false) String deptName,
+            @RequestParam(value = "deptId",required = false) String deptId) {
         try {
         	page = (page == 0) ? 1 : page;
             pageSize = (pageSize == 0) ? SysConstants.PAGE_SIZE : pageSize;
@@ -378,6 +381,9 @@ public class UserController {
             }
             if(!SummitTools.stringIsNull(adcd)){
                 paramJson.put("adcd",adcd);
+            }
+            if(!SummitTools.stringIsNull(deptId)){
+                paramJson.put("deptId",deptId);
             }
             Page<UserInfo> pageList=us.queryByPage(page, pageSize, paramJson);
             return ResultBuilder.buildSuccess(pageList);

@@ -1,26 +1,26 @@
 package com.summit.service.dept;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.TypeReference;
-import com.summit.cbb.utils.page.Page;
-import com.summit.common.entity.DeptBean;
-import com.summit.common.entity.DeptTreeBean;
-import com.summit.common.entity.FunctionBean;
-import com.summit.common.entity.ResponseCodeEnum;
-import com.summit.domain.dept.DeptBeanRowMapper;
-import com.summit.repository.UserRepository;
-import com.summit.util.SummitTools;
-import net.sf.json.JSONObject;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.commons.collections.map.LinkedMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.TypeReference;
+import com.summit.cbb.utils.page.Page;
+import com.summit.common.entity.DeptBean;
+import com.summit.common.entity.DeptTreeBean;
+import com.summit.common.entity.ResponseCodeEnum;
+import com.summit.repository.UserRepository;
+import com.summit.util.SummitTools;
+
+import net.sf.json.JSONObject;
 
 @Service
 @Transactional
@@ -29,10 +29,6 @@ public class DeptService {
 	private UserRepository ur;
 	@Autowired
 	public JdbcTemplate jdbcTemplate;
-	@Autowired
-	private SummitTools st;
-	@Autowired
-	private DeptBeanRowMapper atm;
 	/**
 	 * 
 	 * 查询部门树
@@ -182,27 +178,47 @@ public class DeptService {
 	 * 根据id查询
 	 * @param id
 	 * @return
+	 * @throws Exception 
 	 */
-	public DeptBean queryById(String id) {
+	public DeptBean queryById(String id) throws Exception {
 		String sql = "SELECT ID,PID,DEPTCODE,DEPTNAME,ADCD,REMARK FROM SYS_DEPT WHERE id = ?";
-		List<DeptBean> l = ur.queryAllCustom(sql, atm, id);
-		return l.get(0);
+		LinkedMap linkedMap=new LinkedMap();
+	    linkedMap.put(1,id);
+		List dataList = ur.queryAllCustom(sql, linkedMap);
+		if(dataList!=null &&  dataList.size()>0){
+			DeptBean deptBean = JSON.parseObject(dataList.get(0).toString(), new TypeReference<DeptBean>() {});
+		    return deptBean;
+		}
+		return  null;
 	}
 	/**
 	 * 根据id查询
 	 * @param id
 	 * @return
+	 * @throws Exception 
 	 */
-	public DeptBean queryDeptAdcdById(String id) {
+	public DeptBean queryDeptAdcdById(String id) throws Exception {
 		String sql = "SELECT ID,PID,DEPTCODE,DEPTNAME,DEPT.ADCD,AD.ADNM,DEPT.REMARK FROM SYS_DEPT DEPT LEFT JOIN  SYS_AD_CD AD ON DEPT.ADCD=AD.ADCD  WHERE id = ?";
-		List<DeptBean> l = ur.queryAllCustom(sql, atm, id);
-		return l.get(0);
+		LinkedMap linkedMap=new LinkedMap();
+	    linkedMap.put(1,id);
+		List dataList = ur.queryAllCustom(sql, linkedMap);
+		if(dataList!=null &&  dataList.size()>0){
+			DeptBean deptBean = JSON.parseObject(dataList.get(0).toString(), new TypeReference<DeptBean>() {});
+		    return deptBean;
+		}
+		return  null;
 	}
 	
-	public List<DeptBean> queryDeptByAdcd(String adcd) {
+	public List<DeptBean> queryDeptByAdcd(String adcd) throws Exception {
 		String sql = "SELECT ID,PID,DEPTCODE,DEPTNAME,DEPT.ADCD,AD.ADNM,DEPT.REMARK FROM SYS_DEPT DEPT LEFT JOIN  SYS_AD_CD AD ON DEPT.ADCD=AD.ADCD  WHERE DEPT.adcd = ?";
-		List<DeptBean> deptList = ur.queryAllCustom(sql, atm, adcd);
-		return deptList;
+		LinkedMap linkedMap=new LinkedMap();
+	    linkedMap.put(1,adcd);
+		List dataList = ur.queryAllCustom(sql, linkedMap);
+		if(dataList!=null &&  dataList.size()>0){
+			List<DeptBean> deptList = JSON.parseObject(dataList.toString(), new TypeReference<List<DeptBean>>() {});
+		    return deptList;
+		}
+		return  null;
 	}
 
 	/**

@@ -15,6 +15,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
 import com.summit.cbb.utils.page.Page;
 import com.summit.common.entity.FunctionBean;
+import com.summit.common.entity.UserInfo;
 import com.summit.common.entity.ResponseCodeEnum;
 import com.summit.common.entity.UserInfo;
 import com.summit.repository.UserRepository;
@@ -204,18 +205,18 @@ public class UserService {
 		return null;
 	}
 	
-	@Transactional
+	
 	public void  del(String userNames) {
 		userNames = userNames.replaceAll(",", "','");
-		String sql = "UPDATE SYS_USER SET STATE = 0, LAST_UPDATE_TIME = ? WHERE USERNAME <> '"+ SysConstants.SUPER_USERNAME+ "' AND USERNAME IN ('"+ userNames + "')";
+		String sql = "UPDATE SYS_USER SET STATE = '0',IS_ENABLED='0', LAST_UPDATE_TIME = ? WHERE USERNAME <> '"+ SysConstants.SUPER_USERNAME+ "' AND USERNAME IN ('"+ userNames + "')";
 		jdbcTemplate.update(sql,new Date());
 		delUserRoleByUserName(userNames);
 		
-		String adcdSql=" delete from sys_user_adcd where USERNAME  IN ('"+userNames+"') ";
-		jdbcTemplate.update(adcdSql);
-		
-		String deptSql=" delete from SYS_USER_DEPT where USERNAME  IN ('"+userNames+"') ";
-		jdbcTemplate.update(deptSql);
+//		String adcdSql=" delete from sys_user_adcd where USERNAME  IN ('"+userNames+"') ";
+//		jdbcTemplate.update(adcdSql);
+//		
+//		String deptSql=" delete from SYS_USER_DEPT where USERNAME  IN ('"+userNames+"') ";
+//		jdbcTemplate.update(deptSql);
 	}
 
 	public UserInfo queryByUserName(String userName) throws Exception {
@@ -267,9 +268,16 @@ public class UserService {
 			linkedMap.put(index, "%" + paramJson.get("adcd") + "%");
     		index++;
 		}
+		
 		if (paramJson.containsKey("deptName")) {
 			sb.append(" AND dept.detpName  like   ? ");
 			linkedMap.put(index,"%" + paramJson.get("deptName") + "%");
+    		index++;
+		}
+		
+		if (paramJson.containsKey("deptId")) {
+			sb.append(" AND userdept.deptid  =   ? ");
+			linkedMap.put(index,paramJson.get("deptId"));
     		index++;
 		}
 		
@@ -287,7 +295,6 @@ public class UserService {
 			}
 			
 			return new Page<UserInfo>(userInfoList,page.getPageable());
-			// return new PageImpl(userInfoList,page.getPageable(),page.getTotalElements());
 		}
 		return null;
 	} 

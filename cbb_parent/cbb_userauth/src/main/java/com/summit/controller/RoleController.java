@@ -16,14 +16,14 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.summit.cbb.utils.page.Page;
 import com.summit.common.entity.AntdJsonBean;
-import com.summit.common.entity.LogBean;
+import com.summit.common.entity.FunctionBean;
+import com.summit.common.entity.FunctionListBean;
 import com.summit.common.entity.ResponseCodeEnum;
 import com.summit.common.entity.RestfulEntityBySummit;
 import com.summit.common.entity.RoleBean;
 import com.summit.common.entity.UserInfo;
 import com.summit.common.util.ResultBuilder;
 import com.summit.common.web.filter.UserContextHolder;
-import com.summit.domain.role.FunctionListBean;
 import com.summit.service.function.FunctionService;
 import com.summit.service.log.LogUtilImpl;
 import com.summit.service.role.RoleService;
@@ -141,20 +141,21 @@ public class RoleController {
 		}
 	}
 	
-	@ApiOperation(value = "角色管理查询角色权限")
+	@ApiOperation(value = "根据role_code查询角色权限")
 	@GetMapping("getRoleFunInfo")
-	public RestfulEntityBySummit<FunctionListBean> getRoleFunInfo(
+	public RestfulEntityBySummit<List<FunctionBean>> getRoleFunInfo(
 		@RequestParam(value = "roleCode") String roleCode) {
 		try {
-			String userName="";
-			UserInfo userInfo=UserContextHolder.getUserInfo();
-			if(userInfo!=null){
-				userName=userInfo.getUserName();
-			}
-			FunctionListBean functionListBean=new FunctionListBean();
-			functionListBean.setFunctionList(fs.queryAll(userName));
-			functionListBean.setFunctionIdList(rs.queryFunIdByRoleCode(roleCode));
-			return ResultBuilder.buildSuccess(functionListBean);
+//			String userName="";
+//			UserInfo userInfo=UserContextHolder.getUserInfo();
+//			if(userInfo!=null){
+//				userName=userInfo.getUserName();
+//			}
+			//FunctionListBean functionListBean=new FunctionListBean();
+			//functionListBean.setFunctionList(fs.queryAll(userName));
+			//functionListBean.setFunctionIdList();
+			
+			return ResultBuilder.buildSuccess(rs.queryFunIdByRoleCode(roleCode));
 		} catch (Exception e) {
 			logger.error("数据查询失败！", e);
 			return ResultBuilder.buildError(ResponseCodeEnum.CODE_9999);

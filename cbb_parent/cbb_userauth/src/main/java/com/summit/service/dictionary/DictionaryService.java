@@ -7,6 +7,7 @@ import java.util.Map;
 
 import org.apache.commons.collections.map.LinkedMap;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,13 +19,8 @@ import com.summit.cbb.utils.page.Page;
 import com.summit.cbb.utils.page.Pageable;
 import com.summit.common.entity.DictionaryBean;
 import com.summit.common.entity.ResponseCodeEnum;
-import com.summit.common.entity.UserInfo;
-import com.summit.domain.dictionary.DictionaryBeanRowMapper;
 import com.summit.repository.UserRepository;
 import com.summit.service.cache.DictionaryCacheImpl;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
-
 import com.summit.util.PageUtil;
 import com.summit.util.SummitTools;
 import com.summit.util.SysConstants;
@@ -41,8 +37,8 @@ public class DictionaryService {
 	public JdbcTemplate jdbcTemplate;
 	@Autowired
 	private SummitTools st;
-	@Autowired
-	private DictionaryBeanRowMapper dbrm;
+	//@Autowired
+	//private DictionaryBeanRowMapper dbrm;
 	@Autowired
 	private DictionaryCacheImpl dictionaryCacheImpl;
 	
@@ -95,8 +91,13 @@ public class DictionaryService {
 	}
 	
 
-	public List<DictionaryBean> queryAll() {
-		return ur.queryAllCustom("SELECT * FROM SYS_DICTIONARY order by code ,ckey asc", dbrm);
+	public List<DictionaryBean> queryAll() throws Exception {
+		List  dictionaryBeanList = ur.queryAllCustom("SELECT * FROM SYS_DICTIONARY order by code ,ckey asc",new LinkedMap());
+		if(dictionaryBeanList!=null &&  dictionaryBeanList.size()>0){
+			ArrayList<DictionaryBean> dataList = JSON.parseObject(dictionaryBeanList.toString(), new TypeReference<ArrayList<DictionaryBean>>() {});
+		    return dataList;
+		}
+		return null;
 	}
 	
 	
@@ -236,8 +237,9 @@ public class DictionaryService {
 	
 	/**
 	 * 初始化字典缓存加载
+	 * @throws Exception 
 	 */
-	public void initSysDic(){
+	public void initSysDic() throws Exception{
 		List<DictionaryBean> all = queryAll();
 		for (DictionaryBean dictionaryBean : all) {
 			dictionaryCacheImpl.setCacheElement(SysConstants.DICTIONARY, dictionaryBean.getCode(), dictionaryBean);
