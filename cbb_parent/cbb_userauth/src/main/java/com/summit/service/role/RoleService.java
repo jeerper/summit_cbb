@@ -10,6 +10,8 @@ import com.summit.common.entity.FunctionBean;
 import com.summit.repository.UserRepository;
 import com.summit.cbb.utils.page.Page;
 import com.summit.util.SummitTools;
+import com.summit.util.SysConstants;
+
 import net.sf.json.JSONObject;
 
 import org.apache.commons.collections.map.LinkedMap;
@@ -34,7 +36,7 @@ public class RoleService {
 	private SummitTools st;
 
 	public ResponseCodeEnum add(RoleBean rb) {
-		String sql = "SELECT * FROM SYS_ROLE WHERE NAME = ?";
+		String sql = "SELECT * FROM SYS_ROLE WHERE NAME = ? ";
 		List<JSONObject> l = ur.queryAllCustom(sql, rb.getName());
 		if (st.collectionNotNull(l)) {
 			return ResponseCodeEnum.CODE_9992;
@@ -47,22 +49,22 @@ public class RoleService {
 	@Transactional
 	public void del(String codes) {
 		codes = codes.replaceAll(",", "','");
-		String sql = "DELETE FROM SYS_ROLE WHERE CODE IN ('" + codes + "')";
+		String sql = "DELETE FROM SYS_ROLE WHERE CODE IN ('" + codes + "') and  code <> '"+SysConstants.SUROLE_CODE+"'";
 		jdbcTemplate.update(sql);
 
-		sql = "DELETE FROM SYS_USER_ROLE WHERE ROLE_CODE IN ('" + codes + "')";
+		sql = "DELETE FROM SYS_USER_ROLE WHERE ROLE_CODE IN ('" + codes + "') and ROLE_CODE <> '"+SysConstants.SUROLE_CODE+"'";
 		jdbcTemplate.update(sql);
 		
 		delRoleAuthorizationByRoleCode(codes);
 	}
 
 	public void edit(RoleBean rb) {
-		String sql = "UPDATE SYS_ROLE SET NOTE = ?,NAME=? WHERE CODE = ?";
+		String sql = "UPDATE SYS_ROLE SET NOTE = ?,NAME=? WHERE CODE = ? and  code <> '"+SysConstants.SUROLE_CODE+"' ";
 		jdbcTemplate.update(sql, rb.getNote(),rb.getName(), rb.getCode());
 	}
 
 	public RoleBean queryByCode(String code) throws Exception {
-		String sql = "SELECT * FROM SYS_ROLE WHERE CODE = ?";
+		String sql = "SELECT * FROM SYS_ROLE WHERE CODE = ? and  code <> '"+SysConstants.SUROLE_CODE+"'";
 		LinkedMap linkedMap=new LinkedMap();
 	    linkedMap.put(1,code);
 		List  roleList = ur.queryAllCustom(sql,linkedMap);
@@ -75,8 +77,9 @@ public class RoleService {
 
 	public Page<RoleBean> queryByPage(int start, int limit, String name) throws Exception {
 		LinkedMap linkedMap=null;
-		StringBuilder sb = new StringBuilder(
-				"SELECT * FROM SYS_ROLE WHERE 1 = 1");
+		StringBuilder sb = new StringBuilder("SELECT * FROM SYS_ROLE WHERE 1 = 1 and code <> '");
+		sb.append(SysConstants.SUROLE_CODE );
+		sb.append("'");
 		if (st.stringNotNull(name)) {
 			sb.append(" AND NAME LIKE ? ");
 			linkedMap=new LinkedMap();
@@ -95,7 +98,8 @@ public class RoleService {
 	}
 
 	public List<RoleBean> queryAll() throws Exception {
-		String sql = "SELECT * FROM SYS_ROLE";
+		String sql = "SELECT * FROM SYS_ROLE where code <> '"+SysConstants.SUROLE_CODE+"'";
+		
 		List  roleList = ur.queryAllCustom(sql,new LinkedMap());
 		if(roleList!=null &&  roleList.size()>0){
 			ArrayList<RoleBean> roleBeanList = JSON.parseObject(roleList.toString(), new TypeReference<ArrayList<RoleBean>>() {});
@@ -105,7 +109,7 @@ public class RoleService {
 	}
 	
 	public List<AntdJsonBean> queryRoleAntdJsonAll() throws Exception {
-		String sql = "SELECT  code  as 'key',code as 'value',name as title FROM SYS_ROLE";
+		String sql = "SELECT  code  as 'key',code as 'value',name as title FROM SYS_ROLE where code <> '"+SysConstants.SUROLE_CODE+"'";
 		JSONArray listRole= ur.queryAllCustomJsonArray(sql,null);
 		if(listRole!=null && listRole.size()>0){
 			 ArrayList<AntdJsonBean> students = JSON.parseObject(listRole.toString(), new TypeReference<ArrayList<AntdJsonBean>>() {});
@@ -116,7 +120,7 @@ public class RoleService {
 
 	public List<FunctionBean> queryFunIdByRoleCode(String roleCode) throws Exception {
 		StringBuffer sql = new StringBuffer("SELECT fun.* FROM SYS_ROLE_FUNCTION roleFun ");
-		sql.append(" inner join sys_function fun on roleFun.FUNCTION_ID=fun.ID WHERE ROLE_CODE = ? ");
+		sql.append(" inner join sys_function fun on roleFun.FUNCTION_ID=fun.ID WHERE ROLE_CODE = ?  ");
 		LinkedMap linkedMap=new LinkedMap();
 	    linkedMap.put(1,roleCode);
 		List  functionList = ur.queryAllCustom(sql.toString(),linkedMap);
@@ -128,13 +132,13 @@ public class RoleService {
 	}
 	
 	public void delRoleAuthorizationByRoleCode(String roleCodes){
-		String sql = "DELETE FROM SYS_ROLE_FUNCTION WHERE ROLE_CODE IN ('" + roleCodes + "')";
+		String sql = "DELETE FROM SYS_ROLE_FUNCTION WHERE ROLE_CODE IN ('" + roleCodes + "') and ROLE_CODE <> '"+SysConstants.SUROLE_CODE+"'";
 		jdbcTemplate.update(sql);
 	}
 	
 	public void roleAuthorization(String roleCode, String funIds) {
 		delRoleAuthorizationByRoleCode(roleCode);
-		String sql = "INSERT INTO SYS_ROLE_FUNCTION (ID, ROLE_CODE, FUNCTION_ID) VALUES (?, ?, ?)";
+		String sql = "INSERT INTO SYS_ROLE_FUNCTION (ID, ROLE_CODE, FUNCTION_ID) VALUES (?, ?, ?) ";
 		List<Object[]> batchArgs = new ArrayList<Object[]>();
 		String[] funIdArr = funIds.split(",");
 		for (String funId : funIdArr) {
