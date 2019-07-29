@@ -24,7 +24,7 @@ public class UserInfo implements Serializable {
     /**
      * 性别
      */
-    @ApiModelProperty(value="性别",name="sex")
+    @ApiModelProperty(value="性别",name="sex",allowableValues = "1,2")
     private String sex;
     /**
      * 账户密码
@@ -44,8 +44,8 @@ public class UserInfo implements Serializable {
     /**
      * 启用状态 
      */
-    @ApiModelProperty(value="启用状态:1是，0否 ,添加默认为启用",name="isEnabled" )
-    private Integer isEnabled;
+    @ApiModelProperty(value="启用状态:1是，0否 ,添加默认为启用",name="isEnabled" ,example="1",allowableValues = "1,0" )
+    private Integer isEnabled=null;
     /**
      * 最后一次更新时间
      */
