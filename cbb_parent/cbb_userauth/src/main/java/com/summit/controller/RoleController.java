@@ -81,7 +81,10 @@ public class RoleController {
 	@PutMapping("edit")
 	public RestfulEntityBySummit<String> edit(@RequestBody RoleBean roleBean) {
 		try {
-			rs.edit(roleBean);
+			ResponseCodeEnum responseCodeEnum=rs.edit(roleBean);
+			if(responseCodeEnum!=null){
+				return ResultBuilder.buildError(responseCodeEnum);
+			}
 			//LogBean logBean = new LogBean("角色管理","共享用户组件","修改角色信息："+roleBean,"2");
 		    //logUtil.insertLog(logBean);
 			return ResultBuilder.buildSuccess();

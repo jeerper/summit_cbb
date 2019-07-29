@@ -58,9 +58,18 @@ public class RoleService {
 		delRoleAuthorizationByRoleCode(codes);
 	}
 
-	public void edit(RoleBean rb) {
-		String sql = "UPDATE SYS_ROLE SET NOTE = ?,NAME=? WHERE CODE = ? and  code <> '"+SysConstants.SUROLE_CODE+"' ";
-		jdbcTemplate.update(sql, rb.getNote(),rb.getName(), rb.getCode());
+	public ResponseCodeEnum edit(RoleBean rb) throws Exception {
+		String sql = "SELECT * FROM SYS_ROLE WHERE NAME = ?  and code <> ?";
+		LinkedMap linkedMap=new LinkedMap();
+	    linkedMap.put(1,rb.getName());
+	    linkedMap.put(2,rb.getCode());
+		List<Object> l = ur.queryAllCustom(sql, linkedMap);
+		if (st.collectionNotNull(l)) {
+			return ResponseCodeEnum.CODE_9992;
+		}
+		String updateSql = "UPDATE SYS_ROLE SET NOTE = ?,NAME=? WHERE CODE = ? and  code <> '"+SysConstants.SUROLE_CODE+"' ";
+		jdbcTemplate.update(updateSql, rb.getNote(),rb.getName(), rb.getCode());
+		return null;
 	}
 
 	public RoleBean queryByCode(String code) throws Exception {
