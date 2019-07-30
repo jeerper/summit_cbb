@@ -63,7 +63,18 @@ public class UserInfo implements Serializable {
     @ApiModelProperty(value="移动设备识别码 ,用于发送短信验证用",name="imei" )
     private String imei;
     
+    @ApiModelProperty(value="工作单位",name="company" )
+    private String company;
     
+    
+    @ApiModelProperty(value="岗位",name="duty" )
+    private String duty;
+    
+    @ApiModelProperty(value="职务",name="post" )
+    private String post;
+    
+    @ApiModelProperty(value="序号",name="sn" )
+    private String sn;
     
 
     /**
@@ -234,6 +245,37 @@ public class UserInfo implements Serializable {
 	public void setImei(String imei) {
 		this.imei = imei;
 	}
-	
+
+	public String getCompany() {
+		return company;
+	}
+
+	public void setCompany(String company) {
+		this.company = company;
+	}
+
+	public String getDuty() {
+		return duty;
+	}
+
+	public void setDuty(String duty) {
+		this.duty = duty;
+	}
+
+	public String getPost() {
+		return post;
+	}
+
+	public void setPost(String post) {
+		this.post = post;
+	}
+
+	public String getSn() {
+		return sn;
+	}
+
+	public void setSn(String sn) {
+		this.sn = sn;
+	}
 	
 }
