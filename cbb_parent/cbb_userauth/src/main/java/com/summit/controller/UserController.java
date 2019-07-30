@@ -358,6 +358,7 @@ public class UserController {
             @RequestParam(value = "name",required = false) String name,
             @RequestParam(value = "userName",required = false) String userName,
             @RequestParam(value = "isEnabled",required = false) String isEnabled,
+            @RequestParam(value = "phone",required = false) String phone,
             @RequestParam(value = "state",required = false) String state,
             @RequestParam(value = "adcd",required = false) String adcd,
             @RequestParam(value = "deptName",required = false) String deptName,
@@ -384,6 +385,9 @@ public class UserController {
             }
             if(!SummitTools.stringIsNull(deptId)){
                 paramJson.put("deptId",deptId);
+            }
+            if(!SummitTools.stringIsNull(phone)){
+                paramJson.put("phone",phone);
             }
             Page<UserInfo> pageList=us.queryByPage(page, pageSize, paramJson);
             return ResultBuilder.buildSuccess(pageList);

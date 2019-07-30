@@ -241,7 +241,7 @@ public class UserService {
 		LinkedMap linkedMap=new LinkedMap();
 		Integer index = 1;
 		StringBuilder sb = new StringBuilder(
-				"SELECT user1.USERNAME,NAME,SEX,IS_ENABLED,EMAIL,PHONE_NUMBER,STATE,NOTE,,COMPANY,DUTY,POST,SN,USERADCD.ADCD,useradcd.adnms,userdept.DEPTID,userdept.deptNames,date_format(LAST_UPDATE_TIME, '%Y-%m-%d %H:%i:%s') as lastUpdateTime FROM SYS_USER user1 ");
+				"SELECT user1.USERNAME,NAME,SEX,IS_ENABLED,EMAIL,PHONE_NUMBER,STATE,NOTE,COMPANY,DUTY,POST,SN,USERADCD.ADCD,useradcd.adnms,userdept.DEPTID,userdept.deptNames,date_format(LAST_UPDATE_TIME, '%Y-%m-%d %H:%i:%s') as lastUpdateTime FROM SYS_USER user1 ");
 		sb.append(" left join (SELECT username,GROUP_CONCAT(useradcd.`adcd`)AS adcd ,GROUP_CONCAT(`adnm`)AS adnms ");
 		sb.append(" FROM sys_user_adcd useradcd inner join sys_ad_cd ad on useradcd.adcd=ad.adcd GROUP BY username)useradcd on useradcd.username=user1.USERNAME");
 		sb.append(" left join (SELECT username,GROUP_CONCAT(userdept.`deptid`)AS DEPTID,GROUP_CONCAT(dept.`deptname`)AS deptNames FROM sys_user_dept userdept ");
@@ -275,18 +275,25 @@ public class UserService {
     		index++;
 		}
 		
+		 if(paramJson.containsKey("phone") && paramJson.getString("phone")!=null ){
+			 sb.append(" and  USER1.PHONE_NUMBER=  ? ");
+			 linkedMap.put(index, paramJson.get("phone") );
+             index++;
+         }
+		 
 		if (paramJson.containsKey("deptName")) {
 			sb.append(" AND dept.detpName  like   ? ");
 			linkedMap.put(index,"%" + paramJson.get("deptName") + "%");
     		index++;
 		}
 		
-		if (paramJson.containsKey("deptId")) {
-			sb.append(" AND userdept.deptid  =   ? ");
-			linkedMap.put(index,paramJson.get("deptId"));
-    		index++;
-		}
+		 if(paramJson.containsKey("deptId") && paramJson.getString("deptId")!=null ){
+			 sb.append(" and userdept.deptid= ? ");
+			 linkedMap.put(index, paramJson.get("deptId") );
+             index++;
+         }
 		
+		sb.append(" order by  sn is null,cast(sn as SIGNED INTEGER) asc,USERADCD.ADCD ");
 		Page<Object> page= ur.queryByCustomPage(sb.toString(), start, limit,linkedMap);
 		if(page!=null){
 			List<UserInfo> userInfoList=new ArrayList<UserInfo>();
@@ -309,7 +316,7 @@ public class UserService {
 
 	public List<UserInfo> queryUserInfoList(JSONObject paramJson) throws Exception {
 		StringBuilder sb = new StringBuilder(
-				"SELECT user1.USERNAME,NAME,SEX,IS_ENABLED,EMAIL,PHONE_NUMBER,STATE,NOTE,,COMPANY,DUTY,POST,SN,USERADCD.ADCD,useradcd.adnms,userdept.DEPTID,userdept.deptNames FROM SYS_USER user1 ");
+				"SELECT user1.USERNAME,NAME,SEX,IS_ENABLED,EMAIL,PHONE_NUMBER,STATE,NOTE,COMPANY,DUTY,POST,SN,USERADCD.ADCD,useradcd.adnms,userdept.DEPTID,userdept.deptNames FROM SYS_USER user1 ");
 		sb.append(" left join (SELECT username,GROUP_CONCAT(useradcd.`adcd`)AS adcd ,GROUP_CONCAT(`adnm`)AS adnms ");
 		sb.append(" FROM sys_user_adcd useradcd inner join sys_ad_cd ad on useradcd.adcd=ad.adcd GROUP BY username)useradcd on useradcd.username=user1.USERNAME");
 		sb.append(" left join (SELECT username,GROUP_CONCAT(userdept.`deptid`)AS DEPTID,GROUP_CONCAT(dept.`deptname`)AS deptNames FROM sys_user_dept userdept ");
