@@ -65,7 +65,7 @@ public class UserService {
 	        	return ResponseCodeEnum.CODE_4014;
 	        }	
 		}
-		sql = "INSERT INTO SYS_USER (USERNAME,NAME,SEX,PASSWORD,IS_ENABLED,EMAIL,PHONE_NUMBER,STATE,NOTE,LAST_UPDATE_TIME) VALUES ( ?,?, ?, ?, ?, ?, ?, ?, ?,now())";
+		sql = "INSERT INTO SYS_USER (USERNAME,NAME,SEX,PASSWORD,IS_ENABLED,EMAIL,PHONE_NUMBER,STATE,NOTE,LAST_UPDATE_TIME,COMPANY,DUTY,POST,SN) VALUES ( ?,?, ?, ?, ?, ?, ?, ?, ?,now(), ?, ?, ?, ?)";
 		jdbcTemplate.update(sql,
 				userInfo.getUserName(),
 				userInfo.getName(),
@@ -75,7 +75,11 @@ public class UserService {
 				userInfo.getEmail(),
 				userInfo.getPhoneNumber(),
 				1,
-				userInfo.getNote()
+				userInfo.getNote(),
+				userInfo.getCompany(),
+				userInfo.getDuty(),
+				userInfo.getPost(),
+				userInfo.getSn()
 				);
 		
 		//保存行政区划
@@ -122,10 +126,12 @@ public class UserService {
 	        	return ResponseCodeEnum.CODE_4014;
 	        }	
 		}
-		String sql = "UPDATE SYS_USER SET NAME = ?,SEX=?, EMAIL = ?, PHONE_NUMBER =?, NOTE = ?, IS_ENABLED = ?, LAST_UPDATE_TIME = now() WHERE USERNAME = ? AND STATE = 1";
-		jdbcTemplate.update(sql, userInfo.getName(), userInfo.getSex(), userInfo.getEmail(),
+		StringBuffer sql = new StringBuffer("UPDATE SYS_USER SET NAME = ?,SEX=?, EMAIL = ?, PHONE_NUMBER =?, NOTE = ?, IS_ENABLED = ?, LAST_UPDATE_TIME = now() ");
+		sql.append(" ,COMPANY=?,DUTY=?,POST=?,SN=?");
+		sql.append(" WHERE USERNAME = ? AND STATE = 1 ");
+		jdbcTemplate.update(sql.toString(), userInfo.getName(), userInfo.getSex(), userInfo.getEmail(),
 				userInfo.getPhoneNumber(), userInfo.getNote(), userInfo
-						.getIsEnabled(), userInfo.getUserName());
+						.getIsEnabled(),userInfo.getCompany(),userInfo.getDuty(),userInfo.getPost(),userInfo.getSn(), userInfo.getUserName());
 		
 		String adcdSql=" delete from sys_user_adcd where USERNAME  IN ('"+userInfo.getUserName()+"') ";
 		jdbcTemplate.update(adcdSql);
@@ -220,7 +226,7 @@ public class UserService {
 	}
 
 	public UserInfo queryByUserName(String userName) throws Exception {
-		String sql = "SELECT USERNAME ,NAME ,SEX,PASSWORD ,IS_ENABLED ,EMAIL ,PHONE_NUMBER ,STATE ,NOTE ,LAST_UPDATE_TIME,IMEI FROM SYS_USER WHERE STATE = 1 AND USERNAME = ?";
+		String sql = "SELECT USERNAME ,NAME ,SEX,PASSWORD ,IS_ENABLED ,EMAIL ,PHONE_NUMBER ,STATE ,NOTE ,LAST_UPDATE_TIME,IMEI,COMPANY,DUTY,POST,SN FROM SYS_USER WHERE STATE = 1 AND USERNAME = ?";
 		LinkedMap linkedMap=new LinkedMap();
 		linkedMap.put(1,userName);
 		List<Object> dataList = ur.queryAllCustom(sql, linkedMap);
@@ -235,7 +241,7 @@ public class UserService {
 		LinkedMap linkedMap=new LinkedMap();
 		Integer index = 1;
 		StringBuilder sb = new StringBuilder(
-				"SELECT user1.USERNAME,NAME,SEX,IS_ENABLED,EMAIL,PHONE_NUMBER,STATE,NOTE,USERADCD.ADCD,useradcd.adnms,userdept.DEPTID,userdept.deptNames,date_format(LAST_UPDATE_TIME, '%Y-%m-%d %H:%i:%s') as lastUpdateTime FROM SYS_USER user1 ");
+				"SELECT user1.USERNAME,NAME,SEX,IS_ENABLED,EMAIL,PHONE_NUMBER,STATE,NOTE,,COMPANY,DUTY,POST,SN,USERADCD.ADCD,useradcd.adnms,userdept.DEPTID,userdept.deptNames,date_format(LAST_UPDATE_TIME, '%Y-%m-%d %H:%i:%s') as lastUpdateTime FROM SYS_USER user1 ");
 		sb.append(" left join (SELECT username,GROUP_CONCAT(useradcd.`adcd`)AS adcd ,GROUP_CONCAT(`adnm`)AS adnms ");
 		sb.append(" FROM sys_user_adcd useradcd inner join sys_ad_cd ad on useradcd.adcd=ad.adcd GROUP BY username)useradcd on useradcd.username=user1.USERNAME");
 		sb.append(" left join (SELECT username,GROUP_CONCAT(userdept.`deptid`)AS DEPTID,GROUP_CONCAT(dept.`deptname`)AS deptNames FROM sys_user_dept userdept ");
@@ -303,7 +309,7 @@ public class UserService {
 
 	public List<UserInfo> queryUserInfoList(JSONObject paramJson) throws Exception {
 		StringBuilder sb = new StringBuilder(
-				"SELECT user1.USERNAME,NAME,SEX,IS_ENABLED,EMAIL,PHONE_NUMBER,STATE,NOTE,USERADCD.ADCD,useradcd.adnms,userdept.DEPTID,userdept.deptNames FROM SYS_USER user1 ");
+				"SELECT user1.USERNAME,NAME,SEX,IS_ENABLED,EMAIL,PHONE_NUMBER,STATE,NOTE,,COMPANY,DUTY,POST,SN,USERADCD.ADCD,useradcd.adnms,userdept.DEPTID,userdept.deptNames FROM SYS_USER user1 ");
 		sb.append(" left join (SELECT username,GROUP_CONCAT(useradcd.`adcd`)AS adcd ,GROUP_CONCAT(`adnm`)AS adnms ");
 		sb.append(" FROM sys_user_adcd useradcd inner join sys_ad_cd ad on useradcd.adcd=ad.adcd GROUP BY username)useradcd on useradcd.username=user1.USERNAME");
 		sb.append(" left join (SELECT username,GROUP_CONCAT(userdept.`deptid`)AS DEPTID,GROUP_CONCAT(dept.`deptname`)AS deptNames FROM sys_user_dept userdept ");
