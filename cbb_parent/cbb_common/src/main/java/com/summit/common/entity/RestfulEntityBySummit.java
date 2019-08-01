@@ -20,13 +20,8 @@ public class RestfulEntityBySummit<T> implements Serializable {
     @ApiModelProperty(value = "返回码", name = "code", example = "CODE_0000")
     private String code;
 
-//    @ApiModelProperty(value = "返回码", name = "code", example = "CODE_0000")
-//    private String code = ResponseCodeBySummit.CODE_0000.name();
-
-//    @ApiModelProperty(value = "返回信息", name = "msginfo", example = "操作成功")
-//    private String msginfo = ResponseCodeBySummit.CODE_0000.getDescription();
     
-    @ApiModelProperty(value = "返回信息", name = "msginfo", example = "操作成功")
+    @ApiModelProperty(value = "返回信息", name = "msg", example = "操作成功")
     private String msg;
 
     @ApiModelProperty(value = "返回数据", name = "data")
@@ -37,60 +32,6 @@ public class RestfulEntityBySummit<T> implements Serializable {
      */
     public RestfulEntityBySummit() {}
 
-    /**
-     * 响应正确消息时使用
-     *
-     * @param data 内容主体
-     */
-//    public RestfulEntityBySummit(T data) {
-//        this.data = data;
-//    }
-
-    /**
-     *
-     * @param data
-     * @param msginfo
-     */
-//    public RestfulEntityBySummit(T data, String msginfo) {
-//        this.data = data;
-//        this.msginfo = msginfo;
-//        this.code=getCode();
-//    }
-//    public RestfulEntityBySummit(T data, String msginfo,String code) {
-//        this.data = data;
-//        this.msginfo = msginfo;
-//        this.code=code;
-//    }
-    /**
-     * 自定义响应消息
-     *
-     * @param responseCodeBySummit 状态码枚举
-     */
-//    public RestfulEntityBySummit(ResponseCodeBySummit responseCodeBySummit) {
-//        this.code = responseCodeBySummit.name();
-//        this.msginfo = responseCodeBySummit.getDescription();
-//    }
-    /**
-     * 自定义响应消息
-     *
-     * @param responseCodeBySummit 状态码枚举
-     * @param data                 主体数据
-     */
-//    public RestfulEntityBySummit(ResponseCodeBySummit responseCodeBySummit, T data) {
-//        this.code = responseCodeBySummit.name();
-//        this.msginfo = responseCodeBySummit.getDescription();
-//        this.data = data;
-//    }
-
-    /**
-     * 用于服务器内部错误消息
-     *
-     * @param e 异常实例
-     */
-//    public RestfulEntityBySummit(Throwable e) {
-//        this.code = ResponseCodeBySummit.CODE_9999.name();
-//        this.msginfo = ResponseCodeBySummit.CODE_9999.getDescription() + ":" + e.getMessage();
-//    }
 
     public String getCode() {
         return code;
@@ -116,39 +57,4 @@ public class RestfulEntityBySummit<T> implements Serializable {
         this.data = data;
     }
 
-//    public static final class RestFulEntityBySummitBuilder<T> {
-//        private String code = ResponseCodeBySummit.CODE_0000.name();
-//        private String msginfo = ResponseCodeBySummit.CODE_0000.getDescription();
-//        private T data;
-//
-//        private RestFulEntityBySummitBuilder() {
-//        }
-//
-//        public static RestFulEntityBySummitBuilder createBuilder() {
-//            return new RestFulEntityBySummitBuilder();
-//        }
-//
-//        public RestFulEntityBySummitBuilder withCode(String code) {
-//            this.code = code;
-//            return this;
-//        }
-//
-//        public RestFulEntityBySummitBuilder withMsg(String msginfo) {
-//            this.msginfo = msginfo;
-//            return this;
-//        }
-//
-//        public RestFulEntityBySummitBuilder withData(T data) {
-//            this.data = data;
-//            return this;
-//        }
-//
-//        public RestfulEntityBySummit build() {
-//            RestfulEntityBySummit restFulEntityBySummit = new RestfulEntityBySummit();
-//            restFulEntityBySummit.setCode(code);
-//            restFulEntityBySummit.setMsg(msginfo);
-//            restFulEntityBySummit.setData(data);
-//            return restFulEntityBySummit;
-//        }
-//    }
 }

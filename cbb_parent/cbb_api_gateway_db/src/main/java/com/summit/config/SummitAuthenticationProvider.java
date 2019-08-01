@@ -2,6 +2,7 @@ package com.summit.config;
 
 import cn.hutool.core.codec.Base64;
 import cn.hutool.core.util.CharsetUtil;
+import com.summit.common.entity.ResponseCodeEnum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -45,7 +46,7 @@ public class SummitAuthenticationProvider extends DaoAuthenticationProvider {
             LOGGER.debug("用户输入的密码和数据库中的密码不匹配");
             throw new BadCredentialsException(messages.getMessage(
                     "AbstractUserDetailsAuthenticationProvider.badCredentials",
-                    "用户名或密码错误"));
+                    ResponseCodeEnum.CODE_4010.getCode()));
         }
     }
     private static String decryptAES(String data, String pass) throws Exception {

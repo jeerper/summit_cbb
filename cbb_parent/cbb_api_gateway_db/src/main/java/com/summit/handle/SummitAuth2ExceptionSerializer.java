@@ -4,6 +4,7 @@ import cn.hutool.core.date.DateUtil;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.ser.std.StdSerializer;
+import com.summit.common.entity.ResponseCodeEnum;
 
 import java.io.IOException;
 
@@ -21,20 +22,16 @@ public class SummitAuth2ExceptionSerializer extends StdSerializer<SummitAuth2Exc
 
     @Override
     public void serialize(SummitAuth2Exception value, JsonGenerator gen, SerializerProvider provider) throws IOException {
-        gen.writeStartObject();
-        gen.writeObjectField("code", 200);
-        gen.writeStringField("message", "success");
 
+        ResponseCodeEnum responseCodeEnum = ResponseCodeEnum.valueOf(value.getMessage());
+        gen.writeStartObject();
+        gen.writeStringField("code", responseCodeEnum.getCode());
+        gen.writeStringField("msg", responseCodeEnum.getMessage());
         //消息主体开始
         gen.writeObjectFieldStart("data");
-        gen.writeStringField("code", "login_error");
-        gen.writeStringField("msg", "登录异常");
-        gen.writeStringField("data", value.getMessage());
-        gen.writeObjectField("success", false);
         gen.writeStringField("timestamp", DateUtil.now());
         gen.writeEndObject();
         //消息主体结束
-
         gen.writeEndObject();
     }
 }
