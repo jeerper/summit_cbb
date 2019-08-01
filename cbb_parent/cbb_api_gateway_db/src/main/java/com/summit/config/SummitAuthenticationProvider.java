@@ -27,11 +27,11 @@ public class SummitAuthenticationProvider extends DaoAuthenticationProvider {
     @Override
     public  void additionalAuthenticationChecks(UserDetails userDetails, UsernamePasswordAuthenticationToken authentication) throws AuthenticationException {
         if (authentication.getCredentials() == null) {
-            LOGGER.debug("Authentication failed: no credentials provided");
+            LOGGER.debug("密码不能为空!");
 
             throw new BadCredentialsException(messages.getMessage(
                     "AbstractUserDetailsAuthenticationProvider.badCredentials",
-                    "用户没有提供密码相关凭证"));
+                    ResponseCodeEnum.CODE_4030.getCode()));
         }
 
         String presentedPassword = authentication.getCredentials().toString();
