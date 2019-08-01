@@ -53,7 +53,7 @@ public class SummitAccessDeniedHandler extends OAuth2AccessDeniedHandler {
 
         response.setCharacterEncoding(CommonConstant.UTF8);
         response.setContentType(CommonConstant.CONTENT_TYPE);
-        response.setStatus(HttpStatus.FORBIDDEN.value());
+        response.setStatus(HttpStatus.OK.value());
         PrintWriter printWriter = response.getWriter();
         printWriter.append(objectMapper.writeValueAsString(entity));
     }
