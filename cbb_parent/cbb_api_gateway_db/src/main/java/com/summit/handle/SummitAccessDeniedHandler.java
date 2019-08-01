@@ -3,6 +3,7 @@ package com.summit.handle;
 import cn.hutool.core.date.DateUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.summit.common.constant.CommonConstant;
+import com.summit.common.entity.ResponseCodeEnum;
 import com.summit.common.entity.RestfulEntityBySummit;
 import com.summit.common.util.ResultBuilder;
 import lombok.extern.slf4j.Slf4j;
@@ -45,14 +46,10 @@ public class SummitAccessDeniedHandler extends OAuth2AccessDeniedHandler {
         log.info("权限验证失败，禁止访问 {}", request.getRequestURI());
 
         Map<String, Object> map = new HashMap<String, Object>();
-        map.put("code", HttpStatus.FORBIDDEN.value());
-        map.put("msg", "权限不足,禁止访问");
-        map.put("data", authException.getMessage());
-        map.put("success", false);
         map.put("path", request.getServletPath());
         map.put("timestamp", DateUtil.now());
 
-        RestfulEntityBySummit<Map<String, Object>> entity = ResultBuilder.buildSuccess(map);
+        RestfulEntityBySummit<Map<String, Object>> entity = ResultBuilder.buildError(ResponseCodeEnum.CODE_4012,map);
 
         response.setCharacterEncoding(CommonConstant.UTF8);
         response.setContentType(CommonConstant.CONTENT_TYPE);
