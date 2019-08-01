@@ -45,7 +45,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         RestfulEntityBySummit<UserInfo> userInfoRestFulEntity = remoteUserAuthService.queryUserInfoByUserNameService(username);
 
         if (!userInfoRestFulEntity.getCode().equals(ResponseCodeEnum.CODE_0000.getCode())) {
-            throw new UsernameNotFoundException("用户不存在");
+            throw new UsernameNotFoundException(ResponseCodeEnum.CODE_4023.getMessage());
         }
         UserInfo userInfo = userInfoRestFulEntity.getData();
 
