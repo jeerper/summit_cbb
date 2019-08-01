@@ -1,9 +1,16 @@
 package com.summit.service.user;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.TypeReference;
+import com.summit.cbb.utils.page.Page;
+import com.summit.common.entity.FunctionBean;
+import com.summit.common.entity.ResponseCodeEnum;
+import com.summit.common.entity.UserInfo;
+import com.summit.common.util.Cryptographic;
+import com.summit.repository.UserRepository;
+import com.summit.util.SummitTools;
+import com.summit.util.SysConstants;
+import net.sf.json.JSONObject;
 import org.apache.commons.collections.map.LinkedMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -11,24 +18,9 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.TypeReference;
-import com.summit.cbb.utils.page.Page;
-import com.summit.common.entity.FunctionBean;
-import com.summit.common.entity.UserInfo;
-import com.summit.common.entity.ResponseCodeEnum;
-import com.summit.common.entity.UserInfo;
-import com.summit.repository.UserRepository;
-import com.summit.util.SummitTools;
-import com.summit.util.SysConstants;
-
-import net.sf.json.JSONObject;
-
-import javax.crypto.Cipher;
-import javax.crypto.spec.IvParameterSpec;
-import javax.crypto.spec.SecretKeySpec;
-import cn.hutool.core.codec.Base64;
-import cn.hutool.core.util.CharsetUtil;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 @Service
 @Transactional
 public class UserService {
@@ -40,10 +32,7 @@ public class UserService {
 	@Autowired
 	public JdbcTemplate jdbcTemplate;
 
-	private static final String KEY_ALGORITHM = "AES";
-    private static final String DEFAULT_CIPHER_ALGORITHM = "AES/CBC/NOPadding";
-    
-   
+
 
 	@Transactional
 	public ResponseCodeEnum add(UserInfo userInfo,String key) {
@@ -60,7 +49,7 @@ public class UserService {
 		if(userInfo.getPassword()!=null && !"".equals(userInfo.getPassword())){
 			 //解密
 	        try {
-	        	userInfo.setPassword(decryptAES(userInfo.getPassword(), key).trim());
+	        	userInfo.setPassword(Cryptographic.decryptAES(userInfo.getPassword(), key));
 	        } catch (Exception e) {
 	        	return ResponseCodeEnum.CODE_4014;
 	        }	
@@ -121,7 +110,7 @@ public class UserService {
 		if(userInfo.getPassword()!=null && !"".equals(userInfo.getPassword())){
 			 //解密
 	        try {
-	        	userInfo.setPassword(decryptAES(userInfo.getPassword(), key).trim());
+	        	userInfo.setPassword(Cryptographic.decryptAES(userInfo.getPassword(), key));
 	        } catch (Exception e) {
 	        	return ResponseCodeEnum.CODE_4014;
 	        }	
@@ -187,7 +176,7 @@ public class UserService {
         String decodePasswordOld ="";
         //解密
         try {
-           decodePasswordOld = decryptAES(oldPassword, key).trim();
+           decodePasswordOld = Cryptographic.decryptAES(oldPassword, key);
         } catch (Exception e) {
         	return ResponseCodeEnum.CODE_4014;
         }
@@ -199,7 +188,7 @@ public class UserService {
         }
         
         try {
-			password=decryptAES(password, key).trim();
+			password=Cryptographic.decryptAES(password, key);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -466,14 +455,5 @@ public class UserService {
 		}
 		return null;
 	}
-	
-   private static String decryptAES(String data, String pass) throws Exception {
-	        Cipher cipher = Cipher.getInstance(DEFAULT_CIPHER_ALGORITHM);
-	        SecretKeySpec keyspec = new SecretKeySpec(pass.getBytes(), KEY_ALGORITHM);
-	        IvParameterSpec ivspec = new IvParameterSpec(pass.getBytes());
-	        cipher.init(Cipher.DECRYPT_MODE, keyspec, ivspec);
-	        byte[] result = cipher.doFinal(Base64.decode(data.getBytes(CharsetUtil.UTF_8)));
-	        return new String(result, CharsetUtil.UTF_8);
-  }
 
 }
