@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 
 /**
+ * 资源服务器Token验证异常处理.
  * @author Administrator
  * 客户端异常处理
  * 可以根据 AuthenticationException 不同细化异常处理

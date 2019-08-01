@@ -7,6 +7,7 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.oauth2.common.DefaultThrowableAnalyzer;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
+import org.springframework.security.oauth2.common.exceptions.ClientAuthenticationException;
 import org.springframework.security.oauth2.common.exceptions.InsufficientScopeException;
 import org.springframework.security.oauth2.common.exceptions.OAuth2Exception;
 import org.springframework.security.oauth2.provider.error.WebResponseExceptionTranslator;
@@ -16,6 +17,7 @@ import org.springframework.web.HttpRequestMethodNotSupportedException;
 import java.io.IOException;
 
 /**
+ * 认证服务器异常转换为HTTP响应处理类.
  * Default translator that converts exceptions into {@link OAuth2Exception}s. The output matches the OAuth 2.0
  * specification in terms of error response format and HTTP status code.
  *
@@ -33,6 +35,9 @@ public class SummitWebResponseExceptionTranslator implements WebResponseExceptio
         Exception ase = (OAuth2Exception) throwableAnalyzer.getFirstThrowableOfType(OAuth2Exception.class, causeChain);
 
         if (ase != null) {
+            if (ase instanceof ClientAuthenticationException) {
+                return handleOAuth2Exception(new UnauthorizedException(e.getMessage(), e));
+            }
             return handleOAuth2Exception((OAuth2Exception) ase);
         }
 
@@ -128,7 +133,7 @@ public class SummitWebResponseExceptionTranslator implements WebResponseExceptio
 
         @Override
         public int getHttpErrorCode() {
-            return 401;
+            return HttpStatus.UNAUTHORIZED.value();
         }
 
     }
