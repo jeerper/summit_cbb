@@ -8,6 +8,8 @@ import io.swagger.annotations.ApiModelProperty;
 
 public class DeptTreeBean  implements Serializable {
 	private static final long serialVersionUID = 1L;
+	@ApiModelProperty(value="主键id,新增不填写，修改必填",name="id")
+	private String id;
 	@ApiModelProperty(value="编码",name="value")
 	private String value;
 	@ApiModelProperty(value="名称",name="title")
@@ -21,14 +23,22 @@ public class DeptTreeBean  implements Serializable {
 		super();
 	}
 	
-	public DeptTreeBean(String value, String title, String pid) {
+	public DeptTreeBean(String id,String value, String title, String pid) {
 		super();
+		this.id = id;
 		this.value = value;
 		this.title = title;
 		this.pid = pid;
 	}
 
-	
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
 	public String getValue() {
 		return value;
 	}

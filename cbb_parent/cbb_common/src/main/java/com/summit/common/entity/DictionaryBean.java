@@ -10,7 +10,7 @@ public class DictionaryBean implements Serializable {
 	 * 
 	 */
 	private static final long serialVersionUID = 15451645L;
-	@ApiModelProperty(value="编码",name="code",required=true)
+	@ApiModelProperty(value="编码",name="code,新增不填写，修改必填",required=true)
 	private String code;
 	@ApiModelProperty(value="上级code",name="pcode",required=true)
 	private String pcode;

@@ -8,7 +8,7 @@ import io.swagger.annotations.ApiModelProperty;
 
 public class DeptBean  implements Serializable {
 	private static final long serialVersionUID = 1L;
-	
+	@ApiModelProperty(value="主键id(添加自动生成,修改必填)",name="id")
 	private String id;
 	@ApiModelProperty(value="上级部门id",name="pid",required=true)
 	private String pid;

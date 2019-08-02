@@ -8,7 +8,7 @@ import io.swagger.annotations.ApiModelProperty;
 
 public class ADCDBean  implements Serializable {
 	private static final long serialVersionUID = 1L;
-	@ApiModelProperty(value="行政区划编码",name="adcd",required=true)
+	@ApiModelProperty(value="行政区划编码,新增，修改必填",name="adcd",required=true)
 	private String adcd;
 	@ApiModelProperty(value="行政区划名称",name="adnm",required=true)
 	private String adnm;

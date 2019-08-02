@@ -11,9 +11,9 @@ public class RoleBean implements Serializable{
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	@ApiModelProperty(value="角色编码",name="code", required=true)
+	@ApiModelProperty(value="角色编码(添加自动生成,修改必填)",name="code", required=true)
 	private String code;
-	@ApiModelProperty(value="角色名称",name="name",required=true)
+	@ApiModelProperty(value="角色名称,新增，修改必填",name="name",required=true)
 	private String name;
 	@ApiModelProperty(value="备注",name="note")
 	private String note;
