@@ -23,11 +23,19 @@ public class Cryptographic {
      * @throws Exception
      */
     public static String decryptAES(String data, String pass) {
-        data = HttpUtil.decode(data, StandardCharsets.UTF_8);
-        AES aes = new AES(Mode.CBC, Padding.NoPadding,
-                new SecretKeySpec(pass.getBytes(), KEY_ALGORITHM),
-                new IvParameterSpec(pass.getBytes()));
-        byte[] result = aes.decrypt(Base64.decode(data.getBytes(StandardCharsets.UTF_8)));
+        byte[] result = {};
+        try {
+            String decodeData = HttpUtil.decode(data, StandardCharsets.UTF_8);
+            AES aes = new AES(Mode.CBC, Padding.NoPadding,
+                    new SecretKeySpec(pass.getBytes(), KEY_ALGORITHM),
+                    new IvParameterSpec(pass.getBytes()));
+            result = aes.decrypt(Base64.decode(decodeData.getBytes(StandardCharsets.UTF_8)));
+        } catch (Exception e) {
+            AES aes = new AES(Mode.CBC, Padding.NoPadding,
+                    new SecretKeySpec(pass.getBytes(), KEY_ALGORITHM),
+                    new IvParameterSpec(pass.getBytes()));
+            result = aes.decrypt(Base64.decode(data.getBytes(StandardCharsets.UTF_8)));
+        }
         return new String(result, StandardCharsets.UTF_8).trim();
     }
 
