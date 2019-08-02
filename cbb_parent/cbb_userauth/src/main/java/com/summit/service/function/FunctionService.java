@@ -66,10 +66,9 @@ public class FunctionService {
 		return null;
 	}
 	
-	
    public List<FunctionBean> generateOrgMapToTree(Map<String, List<Object>>  orgMaps, String pid)throws  Exception {
         if (null == orgMaps || orgMaps.size() == 0) {//a.ADLEVEL as LEVELa ,b.ADLEVEL as LEVELb
-        	StringBuffer querySql = new StringBuffer(" SELECT A.ID, A.NAME,A.PID, B.ID AS CHILD_ID, B.NAME AS CHILD_NAME,B.FDESC,B.FURL,B.IMGULR,B.NOTE, B.SUPER_FUN FROM SYS_FUNCTION AS A ");
+        	StringBuffer querySql = new StringBuffer(" SELECT A.ID, A.NAME,B.PID,B.IS_ENABLED, B.ID AS CHILD_ID, B.NAME AS CHILD_NAME,B.FDESC,B.FURL,B.IMGULR,B.NOTE, B.SUPER_FUN FROM SYS_FUNCTION AS A ");
         	querySql.append("  JOIN SYS_FUNCTION AS B ON B.PID = A.ID ");
         	// querySql.append("  where a.id!='root' ");
         	querySql.append("  where 1=1 ");
@@ -113,7 +112,11 @@ public class FunctionService {
             	if(json.containsKey("FDESC")){
             		functionBean.setFdesc(json.getInt("FDESC"));	
             	}
+            	if(json.containsKey("PID")){
+            		functionBean.setPid(json.getString("PID"));	
+            	}
             	functionBean.setFurl(json.containsKey("FURL")?json.getString("FURL"):"");
+            	functionBean.setIsEnabled(json.containsKey("IS_ENABLED")?json.getInt("IS_ENABLED"):null);
             	functionBean.setImgUlr(json.containsKey("IMGULR")?json.getString("IMGULR"):"");
             	functionBean.setNote(json.containsKey("SUPER_FUN")?json.getString("SUPER_FUN"):"");
                 List<FunctionBean> children = generateOrgMapToTree(orgMaps, json.get("CHILD_ID").toString());
