@@ -343,10 +343,13 @@ public class FunctionService {
 			        		
 			        		 map.put(functionBean.getPid(), functionBean1);
 		        		 }else{
-		        			 functionBean1=charildFunctionBean.get(functionBean.getPid());
-		        			 functionBean1.setChildren(functionBeancChildren);
-	        				 childrenmap.put(functionBean.getPid(), functionBean1);
-	        				 
+		        			 if(functionBean!=null ){
+		        				 functionBean1=charildFunctionBean.get(functionBean.getPid());
+		        				 if(functionBean1!=null){
+			        			   functionBean1.setChildren(functionBeancChildren);
+		        				   childrenmap.put(functionBean.getPid(), functionBean1);	
+		        				 }
+		        			 }
 		        			// map.put(functionBean.getId(), functionBean);
 		        		 }
 		        		 pid=functionBean.getPid();

@@ -7,6 +7,7 @@ import com.summit.common.entity.ResponseCodeEnum;
 import com.summit.common.entity.RoleBean;
 import com.summit.common.entity.AntdJsonBean;
 import com.summit.common.entity.FunctionBean;
+import com.summit.common.entity.LogBean;
 import com.summit.repository.UserRepository;
 import com.summit.cbb.utils.page.Page;
 import com.summit.util.SummitTools;
@@ -43,6 +44,8 @@ public class RoleService {
 		}
 		sql = "INSERT INTO SYS_ROLE (CODE,NAME,NOTE) VALUES ( ?, ?, ?)";
 		jdbcTemplate.update(sql, "ROLE_" + System.currentTimeMillis(), rb.getName(), rb.getNote());
+		
+		
 		return null;
 	}
 	

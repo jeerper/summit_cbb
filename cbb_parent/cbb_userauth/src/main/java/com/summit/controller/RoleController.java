@@ -28,10 +28,12 @@ import com.summit.common.web.filter.UserContextHolder;
 import com.summit.service.function.FunctionService;
 import com.summit.service.log.LogUtilImpl;
 import com.summit.service.role.RoleService;
+import com.summit.util.SummitTools;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import net.sf.json.JSONObject;
 
 @Api(description = "角色管理")
 @RestController
@@ -49,6 +51,8 @@ public class RoleController {
     @ApiOperation(value = "新增角色", notes = "角色名称(name)都是必输项")
     @PostMapping("/add")
 	public RestfulEntityBySummit<String> add(@RequestBody RoleBean roleBean) {
+    	LogBean logBean =new  LogBean();
+    	SummitTools.getLogBean(logBean,"角色管理","新增角色信息："+JSONObject.fromObject(roleBean).toString(),"");
 		try {
 			ResponseCodeEnum responseCodeEnum=rs.add(roleBean);
 			//LogBean logBean = new LogBean("角色管理","共享用户组件","修改角色信息："+roleBean,"1");
@@ -56,17 +60,24 @@ public class RoleController {
 			if(responseCodeEnum!=null){
 				return ResultBuilder.buildError(responseCodeEnum);
 			}
+			logBean.setActionFlag("1");
+		    logUtil.insertLog(logBean);
 			return ResultBuilder.buildSuccess();
 		} catch (Exception e) {
 			logger.error("操作失败！", e);
+			logBean.setActionFlag("0");
+		    logUtil.insertLog(logBean);
 			return ResultBuilder.buildError(ResponseCodeEnum.CODE_9999);
 		}
+		
 	}
 
 	@ApiOperation(value = "角色管理删除")
 	@DeleteMapping("del")
 	public RestfulEntityBySummit<String> del(
 			@RequestParam(value = "codes") String codes) {
+		LogBean logBean =new  LogBean();
+    	SummitTools.getLogBean(logBean,"角色管理","删除角色信息："+codes,"");
 		try {
 			ResponseCodeEnum responseCodeEnum=rs.del(codes);
 			if(responseCodeEnum!=null){
@@ -74,9 +85,13 @@ public class RoleController {
 			}
 			//LogBean logBean = new LogBean("角色管理","共享用户组件","删除角色信息："+codes,"3");
 		    //logUtil.insertLog(logBean);
+			logBean.setActionFlag("1");
+		    logUtil.insertLog(logBean);
 			return ResultBuilder.buildSuccess();
 		} catch (Exception e) {
 			logger.error("操作失败！", e);
+			logBean.setActionFlag("0");
+		    logUtil.insertLog(logBean);
 			return ResultBuilder.buildError(ResponseCodeEnum.CODE_9999);
 		}
 	}
@@ -84,6 +99,8 @@ public class RoleController {
 	@ApiOperation(value = "角色管理修改", notes = "code,角色名称(name)都是必输项")
 	@PutMapping("edit")
 	public RestfulEntityBySummit<String> edit(@RequestBody RoleBean roleBean) {
+		LogBean logBean =new  LogBean();
+    	SummitTools.getLogBean(logBean,"角色管理","修改角色信息："+JSONObject.fromObject(roleBean).toString(),"");
 		try {
 			ResponseCodeEnum responseCodeEnum=rs.edit(roleBean);
 			if(responseCodeEnum!=null){
@@ -91,8 +108,12 @@ public class RoleController {
 			}
 			//LogBean logBean = new LogBean("角色管理","共享用户组件","修改角色信息："+roleBean,"2");
 		    //logUtil.insertLog(logBean);
+			logBean.setActionFlag("1");
+		    logUtil.insertLog(logBean);
 			return ResultBuilder.buildSuccess();
 		} catch (Exception e) {
+			logBean.setActionFlag("0");
+		    logUtil.insertLog(logBean);
 			logger.error("操作失败！", e);
 			return ResultBuilder.buildError(ResponseCodeEnum.CODE_9999);
 		}

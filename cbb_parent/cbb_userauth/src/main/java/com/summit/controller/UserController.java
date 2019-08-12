@@ -159,6 +159,9 @@ public class UserController {
     	 LogBean logBean =new  LogBean();
     	 logBean.setStime(SummitTools.DTFormat("yyyy-MM-dd HH:mm:ss",new Date()));
         try {
+        	if(userPassWordInfo==null){
+        		return ResultBuilder.buildError(ResponseCodeEnum.CODE_4013);
+        	}
             if(!userPassWordInfo.getPassword().equals(userPassWordInfo.getRepeatPassword())){
                 return ResultBuilder.buildError(ResponseCodeEnum.CODE_4013);
             }
