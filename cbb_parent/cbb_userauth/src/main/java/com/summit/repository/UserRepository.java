@@ -62,6 +62,35 @@ public class UserRepository extends JdbcDaoSupport {
 		return jdbcTemplate.query(sql, args, rowMapper);
 	}
 
+	public int getRowCount(String sql,LinkedMap linkedMap) throws Exception{
+		DataSource ds = getJdbcTemplate().getDataSource();
+		// Connection conn = null;
+		int totalElements = 0;
+		StringBuffer sqlTmp = new StringBuffer(sql);
+		try{
+		try (Connection conn  =ds.getConnection();
+				PreparedStatement pstmt = conn.prepareStatement(sqlTmp.toString());
+			) {
+			if(null != linkedMap && linkedMap.size() > 0){
+				try {
+					for (Iterator iterator = linkedMap.keySet().iterator(); iterator.hasNext();) {
+						Object object = (Object) iterator.next();
+						pstmt.setObject(Integer.valueOf(object.toString()), linkedMap.get(object));
+					}
+				} catch (Exception e3) {
+					throw e3;
+				}
+			}
+			try (ResultSet rs = pstmt.executeQuery();){
+			  rs.next();
+			  totalElements = rs.getInt(1);
+			}
+		 }
+		} catch (Exception e) {
+			throw e;
+		} 
+		return totalElements;
+	}
 	public JSONArray queryAllCustomJsonArray(String sql, LinkedMap linkedMap) throws Exception {
 		JSONArray array = null;
 		DataSource ds = getJdbcTemplate().getDataSource();

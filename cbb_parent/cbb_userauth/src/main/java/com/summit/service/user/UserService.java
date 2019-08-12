@@ -340,11 +340,12 @@ public class UserService {
 		return null;
 	}
 	
-	public void resetPassword(String userNames) {
+	public void resetPassword(String userNames,String password,String key) {
 		userNames = userNames.replaceAll(",", "','");
+		String password1=Cryptographic.decryptAES(password, key);
         BCryptPasswordEncoder encoder =new BCryptPasswordEncoder();
 		String sql = "UPDATE SYS_USER SET PASSWORD = ?, LAST_UPDATE_TIME = ? WHERE USERNAME = ?";
-		jdbcTemplate.update(sql, encoder.encode(SysConstants.USERNAMEPASSWORD),  new Date(),
+		jdbcTemplate.update(sql, encoder.encode(password1),  new Date(),
 				userNames);
 	}
 
@@ -446,9 +447,17 @@ public class UserService {
 		return list;
 	}
 
-	public List<FunctionBean> getFunInfoByUserName(String userName){
-		String sql = "SELECT  SF.* FROM SYS_USER_ROLE SUR INNER JOIN SYS_ROLE_FUNCTION SRF ON ( SUR.ROLE_CODE = SRF.ROLE_CODE ) INNER JOIN SYS_FUNCTION SF ON (SRF.FUNCTION_ID = SF.ID) WHERE SF.IS_ENABLED = '1' AND SF.SUPER_FUN = 0 AND SUR.USERNAME = ? ORDER BY FDESC";
-		List<JSONObject>list= ur.queryAllCustom(sql, userName);
+	public List<FunctionBean> getFunInfoByUserName(String userName,boolean isSuroleCode) throws Exception{
+		LinkedMap linkedMap=new LinkedMap();
+		Integer index = 1;
+		String sql = "";
+		if(isSuroleCode){
+			sql = "SELECT  SF.* FROM SYS_FUNCTION SF  WHERE SF.IS_ENABLED = '1' and id!='root' ORDER BY FDESC ";
+		}else{
+			sql = "SELECT  SF.* FROM SYS_USER_ROLE SUR INNER JOIN SYS_ROLE_FUNCTION SRF ON ( SUR.ROLE_CODE = SRF.ROLE_CODE ) INNER JOIN SYS_FUNCTION SF ON (SRF.FUNCTION_ID = SF.ID) WHERE SF.IS_ENABLED = '1' AND SF.SUPER_FUN = 0 AND SUR.USERNAME = ? ORDER BY FDESC";
+			linkedMap.put(index, userName);
+		}
+		List list= ur.queryAllCustom(sql, linkedMap);
 		if(list!=null){
 			 ArrayList<FunctionBean> functionBeans = JSON.parseObject(list.toString(), new TypeReference<ArrayList<FunctionBean>>() {});
 			 return functionBeans;

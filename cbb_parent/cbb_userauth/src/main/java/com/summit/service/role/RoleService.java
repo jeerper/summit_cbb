@@ -47,8 +47,16 @@ public class RoleService {
 	}
 	
 	@Transactional
-	public void del(String codes) {
+	public ResponseCodeEnum del(String codes) throws Exception {
 		codes = codes.replaceAll(",", "','");
+		String querySql = "SELECT count(0) FROM sys_user_role WHERE ROLE_CODE in('" + codes + "') and  ROLE_CODE <> '"+SysConstants.SUROLE_CODE+"'";
+		LinkedMap linkedMap=new LinkedMap();
+	    // linkedMap.put(1,"'"+codes+"'");
+		int  countRow = ur.getRowCount(querySql,linkedMap);
+		if(countRow>0){
+			return ResponseCodeEnum.CODE_9992;
+		}
+		
 		String sql = "DELETE FROM SYS_ROLE WHERE CODE IN ('" + codes + "') and  code <> '"+SysConstants.SUROLE_CODE+"'";
 		jdbcTemplate.update(sql);
 
@@ -56,6 +64,7 @@ public class RoleService {
 		jdbcTemplate.update(sql);
 		
 		delRoleAuthorizationByRoleCode(codes);
+		return null;
 	}
 
 	public ResponseCodeEnum edit(RoleBean rb) throws Exception {

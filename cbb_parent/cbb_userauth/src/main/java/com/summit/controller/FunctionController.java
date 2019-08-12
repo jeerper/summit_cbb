@@ -6,6 +6,7 @@ import com.summit.common.util.ResultBuilder;
 import com.summit.common.web.filter.UserContextHolder;
 import com.summit.service.function.FunctionService;
 import com.summit.service.log.LogUtilImpl;
+import com.summit.util.SysConstants;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -14,6 +15,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Arrays;
 import java.util.List;
 
 @Api(description = "功能管理")
@@ -134,11 +136,15 @@ public class FunctionController {
 	public RestfulEntityBySummit<List<FunctionBean>> getFunInfoByUserName(@RequestParam(value = "userName" ,required = true)  String userName) {
 		try {
 			//String userName="";
-//			UserInfo userInfo=UserContextHolder.getUserInfo();
+			UserInfo userInfo=UserContextHolder.getUserInfo();
 //			if(userInfo!=null){
 //				userName=userInfo.getUserName();
 //			}
-			return ResultBuilder.buildSuccess(fs.getFunInfoByUserName(userName));
+			boolean isSuroleCode=false; 
+            if(userInfo.getRoles()!=null && userInfo.getRoles().length>0){
+            	isSuroleCode=Arrays.asList(userInfo.getRoles()).contains(SysConstants.SUROLE_CODE);
+            }
+			return ResultBuilder.buildSuccess(fs.getFunInfoByUserName(userName,isSuroleCode));
 		} catch (Exception e) {
 			logger.error("查询失败！", e);
 			 return ResultBuilder.buildError(ResponseCodeEnum.CODE_9999);

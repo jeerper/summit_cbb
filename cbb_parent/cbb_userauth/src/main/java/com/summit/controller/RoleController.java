@@ -18,6 +18,7 @@ import com.summit.cbb.utils.page.Page;
 import com.summit.common.entity.AntdJsonBean;
 import com.summit.common.entity.FunctionBean;
 import com.summit.common.entity.FunctionListBean;
+import com.summit.common.entity.LogBean;
 import com.summit.common.entity.ResponseCodeEnum;
 import com.summit.common.entity.RestfulEntityBySummit;
 import com.summit.common.entity.RoleBean;
@@ -67,7 +68,10 @@ public class RoleController {
 	public RestfulEntityBySummit<String> del(
 			@RequestParam(value = "codes") String codes) {
 		try {
-			rs.del(codes);
+			ResponseCodeEnum responseCodeEnum=rs.del(codes);
+			if(responseCodeEnum!=null){
+				return ResultBuilder.buildError(responseCodeEnum);
+			}
 			//LogBean logBean = new LogBean("角色管理","共享用户组件","删除角色信息："+codes,"3");
 		    //logUtil.insertLog(logBean);
 			return ResultBuilder.buildSuccess();

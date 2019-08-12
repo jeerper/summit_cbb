@@ -283,7 +283,7 @@ public class FunctionService {
 	
 	
 	
-	public List<FunctionBean> getFunInfoByUserName(String userName) throws Exception{
+	public List<FunctionBean> getFunInfoByUserName(String userName,boolean isSuroleCode) throws Exception{
 		String rootSql = "SELECT  * FROM  SYS_FUNCTION   order by	FDESC";
 		List<Object> functionList= ur.queryAllCustom(rootSql, new LinkedMap());
 		Map<String,FunctionBean> mapFunctionBean=new HashMap<String,FunctionBean>();
@@ -300,8 +300,16 @@ public class FunctionService {
 		}
 		String[] sortnameArr=new String[]{"fdesc"};
         boolean[] typeArr=new boolean[]{true};
-		String sql = "SELECT  DISTINCT SF.* FROM SYS_USER_ROLE SUR INNER JOIN SYS_ROLE_FUNCTION SRF ON ( SUR.ROLE_CODE = SRF.ROLE_CODE ) INNER JOIN SYS_FUNCTION SF ON (SRF.FUNCTION_ID = SF.ID) WHERE SF.IS_ENABLED = '1'  AND SUR.USERNAME = ? and SF.id!='root'  order by  pid DESC";
-		List<JSONObject>list= ur.queryAllCustom(sql, userName);
+        String sql = null;
+        LinkedMap linkedMap=new LinkedMap();
+		Integer index = 1;
+        if(isSuroleCode){
+        	sql = "SELECT  DISTINCT * FROM SYS_FUNCTION WHERE IS_ENABLED = '1'  and id!='root'  order by  pid DESC";
+        }else{
+        	sql = "SELECT  DISTINCT SF.* FROM SYS_USER_ROLE SUR INNER JOIN SYS_ROLE_FUNCTION SRF ON ( SUR.ROLE_CODE = SRF.ROLE_CODE ) INNER JOIN SYS_FUNCTION SF ON (SRF.FUNCTION_ID = SF.ID) WHERE SF.IS_ENABLED = '1'  AND SUR.USERNAME = ? and SF.id!='root'  order by  pid DESC";
+        	linkedMap.put(index, userName);
+        }
+		List list= ur.queryAllCustom(sql, linkedMap);
 		if(list!=null){
 			 ArrayList<FunctionBean> functionBeans = JSON.parseObject(list.toString(), new TypeReference<ArrayList<FunctionBean>>() {});
 			 ArrayList<FunctionBean> functionBeancChildren =null;

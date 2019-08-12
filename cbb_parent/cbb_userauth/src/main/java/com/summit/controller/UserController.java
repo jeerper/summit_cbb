@@ -1,5 +1,6 @@
 package com.summit.controller;
 
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -30,6 +31,7 @@ import com.summit.common.entity.UserInfo;
 import com.summit.common.entity.UserPassWordInfo;
 import com.summit.common.redis.user.UserInfoCache;
 import com.summit.common.util.ResultBuilder;
+import com.summit.common.web.filter.UserContextHolder;
 import com.summit.service.log.LogUtilImpl;
 import com.summit.service.user.UserService;
 import com.summit.util.SummitTools;
@@ -301,16 +303,22 @@ public class UserController {
     }
     
     
-    @ApiOperation(value = "根据用户名查询所有菜单")
+    @ApiOperation(value = "根据用户名查询权限菜单")
     @GetMapping("/queryFunctionInfoByUserName")
     public RestfulEntityBySummit<List<FunctionBean>> queryFunctionInfoByUserName(
     		@RequestParam(value = "userName")  String userName) {
         try {
-        	UserInfo ub = us.queryByUserName(userName);
+        	
+        	UserInfo ub = UserContextHolder.getUserInfo();
             if (ub == null) {
             	 return ResultBuilder.buildError(ResponseCodeEnum.CODE_4023);
             }
-            List<FunctionBean> funList=us.getFunInfoByUserName(userName);
+            boolean isSuroleCode=false; 
+            if(ub.getRoles()!=null && ub.getRoles().length>0){
+            	isSuroleCode=Arrays.asList(ub.getRoles()).contains(SysConstants.SUROLE_CODE);
+            }
+            List<FunctionBean> funList =us.getFunInfoByUserName(userName,isSuroleCode);
+           
             return ResultBuilder.buildSuccess(funList);
             
         }catch (Exception e) {
@@ -402,11 +410,12 @@ public class UserController {
     @ApiOperation(value = "重置密码")
     @PutMapping("/resetPassword")
     public RestfulEntityBySummit<String> resetPassword(
-    		@RequestParam(value = "userName") String userName) {
+    		@RequestParam(value = "userName") String userName,
+    		@RequestParam(value = "password") String password) {
     	 LogBean logBean =new  LogBean();
     	 logBean.setStime(SummitTools.DTFormat("yyyy-MM-dd HH:mm:ss",new Date()));
         try {
-        	us.resetPassword(userName);
+        	us.resetPassword(userName,password,key);
         	logBean.setActionFlag("1");
         } catch (Exception e) {
             logger.error("重置密码失败：", e);
@@ -426,7 +435,7 @@ public class UserController {
     public RestfulEntityBySummit<List<String>> queryRoleByUserName(
     		@RequestParam(value = "userName") String userName) {
         try {
-        	UserInfo ub = us.queryByUserName(userName);
+        	UserInfo ub = UserContextHolder.getUserInfo();
             if (ub == null) {
             	return ResultBuilder.buildError(ResponseCodeEnum.CODE_4023);
             }
@@ -443,7 +452,7 @@ public class UserController {
     public RestfulEntityBySummit<List<String>> queryRoleListAntdByUserName(
     		@RequestParam(value = "userName") String userName) {
 	        try {
-	        	UserInfo ub = us.queryByUserName(userName);
+	        	UserInfo ub = UserContextHolder.getUserInfo();;
 	            if (ub == null) {
 	            	return ResultBuilder.buildError(ResponseCodeEnum.CODE_4023);
 	            }
@@ -466,7 +475,7 @@ public class UserController {
     	 LogBean logBean =new  LogBean();
     	 logBean.setStime(SummitTools.DTFormat("yyyy-MM-dd HH:mm:ss",new Date()));
         try {
-        	UserInfo ub = us.queryByUserName(userName);
+        	UserInfo ub = UserContextHolder.getUserInfo();
             if (ub == null) {
             	return ResultBuilder.buildError(ResponseCodeEnum.CODE_4023);
             }
