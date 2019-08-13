@@ -20,7 +20,7 @@ public class FunctionBean implements Serializable {
 	private String name;
 	@ApiModelProperty(value="排序",name="fdesc",required=true)
 	private Integer fdesc;
-	@ApiModelProperty(value="是否有效",name="isEnabled")
+	@ApiModelProperty(value="是否有效,1 有效 0无效 ",name="isEnabled",required=true ,example="1",allowableValues = "1,0")
 	private Integer isEnabled;
 	@ApiModelProperty(value="路径地址",name="furl")
 	private String furl;
@@ -34,7 +34,7 @@ public class FunctionBean implements Serializable {
 	@ApiModelProperty(value="超级功能",name="superfun")
 	private String superfun;
 	
-	@ApiModelProperty(value="功能子集",name="children")
+	@ApiModelProperty(value="功能子集",name="children",hidden = true)
 	private List<FunctionBean> children;
 	
 	public FunctionBean() {

@@ -76,6 +76,8 @@ public class UserInfo implements Serializable {
     @ApiModelProperty(value="序号",name="sn" )
     private String sn;
     
+    @ApiModelProperty(value="用户头像",name="headPortrait")
+    private String headPortrait;
 
     /**
      * 备注
@@ -86,29 +88,28 @@ public class UserInfo implements Serializable {
     @ApiModelProperty(value="行政区划编码集合",name="adcds")
     private String[] adcds;
     
-    @ApiModelProperty(value="行政区划名称，以,分割",name="adcds",hidden = true)
+    @ApiModelProperty(value="查询用--行政区划名称，以,分割",name="adcds",hidden = true)
     private String adnms;
     
     @ApiModelProperty(value="部门集合",name="depts")
     private String[] depts;
     
-    @ApiModelProperty(value="部门名称，以,分割",name="deptNames",hidden = true)
+    @ApiModelProperty(value="查询用--部门名称，以,分割",name="deptNames",hidden = true)
     private String deptNames;
     
     /**
      * 权限标识集合(对应sys_function表中的ID字段)
      */
-    @ApiModelProperty(value="权限标识集合，查询用",name="permissions",hidden = true)
+    @ApiModelProperty(value="查询用--权限标识集合，查询用",name="permissions",hidden = true)
     private String[] permissions;
-
-    
     /**
      * 角色集合
      */
-    @ApiModelProperty(value="角色集合",name="roles")
+    @ApiModelProperty(value="查询用--角色集合",name="roles",hidden = true)
     private String[] roles;
-
-   
+    
+    
+    
     
     public int getState() {
         return state;
@@ -276,6 +277,14 @@ public class UserInfo implements Serializable {
 
 	public void setSn(String sn) {
 		this.sn = sn;
+	}
+
+	public String getHeadPortrait() {
+		return headPortrait;
+	}
+
+	public void setHeadPortrait(String headPortrait) {
+		this.headPortrait = headPortrait;
 	}
 	
 }

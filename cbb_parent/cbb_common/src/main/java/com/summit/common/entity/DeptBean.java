@@ -18,14 +18,14 @@ public class DeptBean  implements Serializable {
 	private String deptName;
 	@ApiModelProperty(value="行政区划编码",name="adcd")
 	private String adcd;
-	@ApiModelProperty(value="行政区划名称",name="adnm")
+	@ApiModelProperty(value="行政区划名称",name="adnm",hidden = true)
 	private String adnm;
 	@ApiModelProperty(value="备注",name="remark")
 	private String remark;
-	@ApiModelProperty(value="下级部门",name="children")
+	@ApiModelProperty(value="下级部门",name="children" ,hidden = true)
 	private List<DeptBean> children;
 	
-	@ApiModelProperty(value="上级部门名称",name="pdeptName")
+	@ApiModelProperty(value="上级部门名称",name="pdeptName" ,hidden = true)
 	private String pdeptName;
 	
 	

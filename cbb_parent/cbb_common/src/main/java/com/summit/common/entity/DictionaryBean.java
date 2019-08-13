@@ -20,7 +20,7 @@ public class DictionaryBean implements Serializable {
 	private String ckey;
 	@ApiModelProperty(value="备注",name="note")
 	private String note;
-	@ApiModelProperty(value="下级信息",name="children")
+	@ApiModelProperty(value="下级信息",name="children",hidden = true)
 	private List<DictionaryBean> children;
 	
 	

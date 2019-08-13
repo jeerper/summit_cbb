@@ -17,13 +17,13 @@ public class ADCDBean  implements Serializable {
 	
 	@ApiModelProperty(value="上级行政区划编码",name="padcd",required=true)
 	private String padcd;
-	@ApiModelProperty(value="上级行政区划名称",name="padnm")
+	@ApiModelProperty(value="上级行政区划名称",name="padnm",hidden = true)
 	private String padnm;
 
-	@ApiModelProperty(value="下级行政区划集合",name="children")
+	@ApiModelProperty(value="下级行政区划集合",name="children",hidden = true)
 	private List<ADCDBean> children;
 	
-	@ApiModelProperty(value="是否有子集",name="hasChild")
+	@ApiModelProperty(value="是否有子集",name="hasChild",hidden = true)
 	private boolean hasChild;
 	
 	public ADCDBean() {
