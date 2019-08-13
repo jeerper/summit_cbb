@@ -30,6 +30,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -37,6 +38,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -94,13 +96,14 @@ public class UserController {
     
    
    
-    @PostMapping("/addUserinfo")
     @ApiOperation(value = "新增用户---头像上传",  notes = "昵称(name),用户名(userName),密码(password)都是必输项")
-    public RestfulEntityBySummit<String> addUserinfo(@ApiParam(value = "用户头像",allowMultiple = true) MultipartFile headPortrait, UserInfo userInfo
+	@RequestMapping(value = "/addUserinfo", method = RequestMethod.POST, consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
+    public RestfulEntityBySummit<String> addUserinfo(@ApiParam(value = "用户头像", allowMultiple = true) MultipartFile[] headPortrait,
+    		UserInfo userInfo
     		) {
     	 LogBean logBean =new  LogBean();
     	 try {
-    		 if(headPortrait!=null){
+    		 if(headPortrait!=null && headPortrait.length>0){
                  String picId=IdWorker.getIdStr();
                  String headPicpath = new StringBuilder()
                          .append(SystemUtil.getUserInfo().getCurrentDir())
@@ -117,7 +120,7 @@ public class UserController {
                          .append(picId)
                          .append("_Head.jpg")
                          .toString();
-        		FileUtil.writeBytes(headPortrait.getBytes(), headPicpath);
+        		FileUtil.writeBytes(headPortrait[0].getBytes(), headPicpath);
         		userInfo.setHeadPortrait(headPicUrl);
     		 }
     		
