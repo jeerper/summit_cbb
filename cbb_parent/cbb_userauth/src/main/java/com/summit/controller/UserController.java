@@ -4,6 +4,7 @@ import cn.hutool.core.io.FileUtil;
 import cn.hutool.system.SystemUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
+import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import com.summit.MainAction;
 import com.summit.cbb.utils.page.Page;
 import com.summit.common.entity.FunctionBean;
@@ -100,20 +101,20 @@ public class UserController {
     	 LogBean logBean =new  LogBean();
     	 try {
     		 if(headPortrait!=null){
-    			 String snapshotTime = DateUtil.DTFormat(DateUtil.YMD_HMS1,new Date());
+                 String picId=IdWorker.getIdStr();
                  String headPicpath = new StringBuilder()
                          .append(SystemUtil.getUserInfo().getCurrentDir())
                          .append(File.separator)
                          .append(MainAction.SnapshotFileName)
                          .append(File.separator)
-                         .append(snapshotTime)
+                         .append(picId)
                          .append("_Head.jpg")
                          .toString();
     			 String headPicUrl = new StringBuilder()
         				 .append("/")
                          .append(MainAction.SnapshotFileName)
                          .append("/")
-                         .append(snapshotTime)
+                         .append(picId)
                          .append("_Head.jpg")
                          .toString();
         		FileUtil.writeBytes(headPortrait.getBytes(), headPicpath);
