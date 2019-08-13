@@ -18,9 +18,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
+import com.summit.MainAction;
 import com.summit.cbb.utils.page.Page;
 import com.summit.common.entity.FunctionBean;
 import com.summit.common.entity.LogBean;
@@ -34,11 +36,15 @@ import com.summit.common.util.ResultBuilder;
 import com.summit.common.web.filter.UserContextHolder;
 import com.summit.service.log.LogUtilImpl;
 import com.summit.service.user.UserService;
+import com.summit.util.DateUtil;
 import com.summit.util.SummitTools;
 import com.summit.util.SysConstants;
 
+import cn.hutool.core.io.FileUtil;
+import cn.hutool.system.SystemUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import net.sf.json.JSONObject;
 
@@ -65,7 +71,52 @@ public class UserController {
     public RestfulEntityBySummit<String> add(@RequestBody UserInfo userInfo) {
     	 LogBean logBean =new  LogBean();
     	 try {
-    	    logBean.setStime(SummitTools.DTFormat("yyyy-MM-dd HH:mm:ss",new Date()));
+    	    logBean.setStime(DateUtil.DTFormat("yyyy-MM-dd HH:mm:ss",new Date()));
+            ResponseCodeEnum c=us.add(userInfo,key);
+            if(c!=null){
+            	 return ResultBuilder.buildError(c);
+            }
+            userInfoCache.setUserInfo(userInfo.getUserName(),userInfo);
+            logBean.setActionFlag("1");
+        } catch (Exception e) {
+        	logBean.setActionFlag("0");
+        	logBean.setErroInfo(e.getMessage());
+            logger.error("新增用户失败", e);
+        }
+        userInfo.setPassword(null);
+        SummitTools.getLogBean(logBean,"用户管理","新增用户信息："+JSONObject.fromObject(userInfo).toString(),"1");
+        logUtil.insertLog(logBean);
+        if("0".equals(logBean.getActionFlag())){
+        	 return ResultBuilder.buildError(ResponseCodeEnum.CODE_9999);
+        }else{
+        	 return ResultBuilder.buildSuccess();
+        }
+        
+    }
+    
+   
+   
+    @PostMapping("/addUserinfo")
+    @ApiOperation(value = "新增用户---头像上传",  notes = "昵称(name),用户名(userName),密码(password)都是必输项")
+    public RestfulEntityBySummit<String> addUserinfo(@ApiParam(value = "用户头像",allowMultiple = true) MultipartFile headPortrait, UserInfo userInfo
+    		) {
+    	 LogBean logBean =new  LogBean();
+    	 try {
+    		 if(headPortrait!=null){
+    			 String snapshotTime = DateUtil.DTFormat(DateUtil.YMD_HMS1,new Date());
+    			 String headPicUrl = new StringBuilder()
+        				 .append(SystemUtil.getUserInfo().getCurrentDir())
+        				 .append("/")
+                         .append(MainAction.SnapshotFileName)
+                         .append("/")
+                         .append(snapshotTime)
+                         .append("_Head.jpg")
+                         .toString();
+        		FileUtil.writeBytes(headPortrait.getBytes(), headPicUrl);
+        		userInfo.setHeadPortrait(headPicUrl);
+    		 }
+    		
+    	    logBean.setStime(DateUtil.DTFormat("yyyy-MM-dd HH:mm:ss",new Date()));
             ResponseCodeEnum c=us.add(userInfo,key);
             if(c!=null){
             	 return ResultBuilder.buildError(c);
@@ -98,7 +149,7 @@ public class UserController {
     public RestfulEntityBySummit<String> del(
     		@RequestParam(value = "userNames") String userNames) {
     	 LogBean logBean =new  LogBean();
-    	 logBean.setStime(SummitTools.DTFormat("yyyy-MM-dd HH:mm:ss",new Date()));
+    	 logBean.setStime(DateUtil.DTFormat("yyyy-MM-dd HH:mm:ss",new Date()));
         try {
             if(userNames.contains(",")){
             	for(String username:userNames.split(",")){
@@ -130,7 +181,7 @@ public class UserController {
     @PostMapping("/edit")
     public RestfulEntityBySummit<String> edit(@RequestBody UserInfo userInfo) {
     	 LogBean logBean =new  LogBean();
-    	 logBean.setStime(SummitTools.DTFormat("yyyy-MM-dd HH:mm:ss",new Date()));
+    	 logBean.setStime(DateUtil.DTFormat("yyyy-MM-dd HH:mm:ss",new Date()));
         try {
             ResponseCodeEnum c=us.edit(userInfo,key);
             if(c!=null){
@@ -157,11 +208,8 @@ public class UserController {
     @PutMapping("/editPassword")
     public RestfulEntityBySummit<String> editPassword(@RequestBody UserPassWordInfo userPassWordInfo) {
     	 LogBean logBean =new  LogBean();
-    	 logBean.setStime(SummitTools.DTFormat("yyyy-MM-dd HH:mm:ss",new Date()));
+    	 logBean.setStime(DateUtil.DTFormat("yyyy-MM-dd HH:mm:ss",new Date()));
         try {
-        	if(userPassWordInfo==null){
-        		return ResultBuilder.buildError(ResponseCodeEnum.CODE_4013);
-        	}
             if(!userPassWordInfo.getPassword().equals(userPassWordInfo.getRepeatPassword())){
                 return ResultBuilder.buildError(ResponseCodeEnum.CODE_4013);
             }
@@ -191,7 +239,7 @@ public class UserController {
     @PutMapping("/editImei")
     public RestfulEntityBySummit<String> editImei(@RequestBody UserInfo userInfo) {
     	 LogBean logBean =new  LogBean();
-    	 logBean.setStime(SummitTools.DTFormat("yyyy-MM-dd HH:mm:ss",new Date()));
+    	 logBean.setStime(DateUtil.DTFormat("yyyy-MM-dd HH:mm:ss",new Date()));
         try {
             ResponseCodeEnum ub=us.editImei(userInfo.getUserName(),userInfo.getImei());
             if(ub!=null){
@@ -416,7 +464,7 @@ public class UserController {
     		@RequestParam(value = "userName") String userName,
     		@RequestParam(value = "password") String password) {
     	 LogBean logBean =new  LogBean();
-    	 logBean.setStime(SummitTools.DTFormat("yyyy-MM-dd HH:mm:ss",new Date()));
+    	 logBean.setStime(DateUtil.DTFormat("yyyy-MM-dd HH:mm:ss",new Date()));
         try {
         	us.resetPassword(userName,password,key);
         	logBean.setActionFlag("1");
@@ -476,7 +524,7 @@ public class UserController {
     		@RequestParam(value = "userName") String userName,
     		@RequestParam(value = "role",required = false) String[] role) {
     	 LogBean logBean =new  LogBean();
-    	 logBean.setStime(SummitTools.DTFormat("yyyy-MM-dd HH:mm:ss",new Date()));
+    	 logBean.setStime(DateUtil.DTFormat("yyyy-MM-dd HH:mm:ss",new Date()));
         try {
         	UserInfo ub = UserContextHolder.getUserInfo();
             if (ub == null) {

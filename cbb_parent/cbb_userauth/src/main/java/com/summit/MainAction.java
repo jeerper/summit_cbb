@@ -22,7 +22,7 @@ import org.springframework.context.annotation.ImportResource;
 @MapperScan("com.summit.dao")
 @ImportResource(locations= {"classpath:applicationContext.xml"})
 public class MainAction {
-
+	public static final String SnapshotFileName="userinfohead";
 	public static void main(String[] args){
 		SpringApplication.run(MainAction.class, args);
 	}

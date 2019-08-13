@@ -12,6 +12,7 @@ import java.sql.Timestamp;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
 
+import com.summit.util.DateUtil;
 import com.summit.util.SummitTools;
 
 import net.sf.json.JSONObject;
@@ -43,9 +44,9 @@ public class UserDaoRowMapper implements RowMapper<JSONObject> {
 				}
 				o.put(columnName, b.toString());
 			} else if (oo instanceof Date) {
-				o.put(columnName, SummitTools.DTFormat("yyyy-MM-dd",(Date) oo));
+				o.put(columnName, DateUtil.DTFormat("yyyy-MM-dd",(Date) oo));
 			} else if (oo instanceof Timestamp) {
-				o.put(columnName, SummitTools.DTFormat("yyyy-MM-dd",(Timestamp) oo));
+				o.put(columnName, DateUtil.DTFormat("yyyy-MM-dd",(Timestamp) oo));
 			} else {
 				o.put(columnName, oo);
 			}

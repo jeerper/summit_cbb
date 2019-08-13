@@ -1,0 +1,1 @@
+alter table sys_user add column HEADPORTRAIT varchar(100) CHARACTER SET utf8 COLLATE utf8_bin COMMENT '头像';

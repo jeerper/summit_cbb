@@ -2,12 +2,14 @@ package com.summit.service.user;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
+import com.summit.MainAction;
 import com.summit.cbb.utils.page.Page;
 import com.summit.common.entity.FunctionBean;
 import com.summit.common.entity.ResponseCodeEnum;
 import com.summit.common.entity.UserInfo;
 import com.summit.common.util.Cryptographic;
 import com.summit.repository.UserRepository;
+import com.summit.util.DateUtil;
 import com.summit.util.SummitTools;
 import com.summit.util.SysConstants;
 import net.sf.json.JSONObject;
@@ -54,7 +56,8 @@ public class UserService {
 	        	return ResponseCodeEnum.CODE_4014;
 	        }	
 		}
-		sql = "INSERT INTO SYS_USER (USERNAME,NAME,SEX,PASSWORD,IS_ENABLED,EMAIL,PHONE_NUMBER,STATE,NOTE,LAST_UPDATE_TIME,COMPANY,DUTY,POST,SN) VALUES ( ?,?, ?, ?, ?, ?, ?, ?, ?,now(), ?, ?, ?, ?)";
+		
+		sql = "INSERT INTO SYS_USER (USERNAME,NAME,SEX,PASSWORD,IS_ENABLED,EMAIL,PHONE_NUMBER,STATE,NOTE,LAST_UPDATE_TIME,COMPANY,DUTY,POST,SN,HEADPORTRAIT) VALUES ( ?,?, ?, ?, ?, ?, ?, ?, ?,now(), ?, ?, ?, ?,?)";
 		jdbcTemplate.update(sql,
 				userInfo.getUserName(),
 				userInfo.getName(),
@@ -68,7 +71,8 @@ public class UserService {
 				userInfo.getCompany(),
 				userInfo.getDuty(),
 				userInfo.getPost(),
-				userInfo.getSn()
+				userInfo.getSn(),
+				userInfo.getHeadPortrait()
 				);
 		
 		//保存行政区划

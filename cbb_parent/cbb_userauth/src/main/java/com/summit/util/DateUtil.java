@@ -24,6 +24,7 @@ public class DateUtil {
 	public static final String YMD = "yyyy-MM-dd";
 	public static final String YMD_HM = "yyyy-MM-dd HH:mm";
 	public static final String YMD_HMS = "yyyy-MM-dd HH:mm:ss";
+	public static final String YMD_HMS1 = "yyyyMMddHHmmss";
 	public static final String YMD_HMS_SSS = "yyyy-MM-dd HH:mm:ss.sss";
 
 	static {
@@ -205,6 +206,35 @@ public class DateUtil {
 		}
 		return interval;
 	}
+	
+	/**
+	 * 计算两个时间差，要精确到小时
+	 * date1 开始时间
+	 * date2 结束时间
+	 * **/
+	public static double jisuan(String date1, String date2) throws Exception {
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-M-d HH:mm:ss");
+		Date start = sdf.parse(date1);
+		Date end = sdf.parse(date2);
+		long cha = end.getTime() - start.getTime();
+		double result = cha * 1.0 / (1000 * 60 * 60);
+		//logUtil.info("开始时间:"+date1+"结束时间:"+date2+"相差:"+result+"小时");
+		return result;
+	}
+	
+	/**
+	 * 获取给定时间月的最大天数
+	 * 
+	 * @param date
+	 * @return int
+	 */
+	public static int getMaxDay(Date date) {
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(date);
+		cal.set(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH) + 1, 1);
+		cal.add(Calendar.DAY_OF_YEAR, -1);
+		return cal.get(Calendar.DAY_OF_MONTH);
+	}
 
 	/**
 	 * 计算两个日期之间相差的天数
@@ -355,6 +385,18 @@ public class DateUtil {
 			break;
 		}
 		return calendar;
+	}
+	
+	/**
+	 * 将时间转为字符串
+	 * 
+	 * @param dateTimeType
+	 * @param date
+	 * @return
+	 */
+	public  static String DTFormat(String aMask, Date date) {
+		SimpleDateFormat yearFormat = new SimpleDateFormat(aMask);
+		return yearFormat.format(date);   
 	}
 
 	/**
