@@ -1,10 +1,30 @@
 package com.summit.controller;
 
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-
-
+import cn.hutool.core.io.FileUtil;
+import cn.hutool.system.SystemUtil;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.TypeReference;
+import com.summit.MainAction;
+import com.summit.cbb.utils.page.Page;
+import com.summit.common.entity.FunctionBean;
+import com.summit.common.entity.LogBean;
+import com.summit.common.entity.ResponseCodeEnum;
+import com.summit.common.entity.RestfulEntityBySummit;
+import com.summit.common.entity.UserInfo;
+import com.summit.common.entity.UserPassWordInfo;
+import com.summit.common.redis.user.UserInfoCache;
+import com.summit.common.util.ResultBuilder;
+import com.summit.common.web.filter.UserContextHolder;
+import com.summit.service.log.LogUtilImpl;
+import com.summit.service.user.UserService;
+import com.summit.util.DateUtil;
+import com.summit.util.SummitTools;
+import com.summit.util.SysConstants;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import lombok.extern.slf4j.Slf4j;
+import net.sf.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,33 +40,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.TypeReference;
-import com.summit.MainAction;
-import com.summit.cbb.utils.page.Page;
-import com.summit.common.entity.FunctionBean;
-import com.summit.common.entity.LogBean;
-import com.summit.common.entity.UserInfo;
-import com.summit.common.entity.ResponseCodeEnum;
-import com.summit.common.entity.RestfulEntityBySummit;
-import com.summit.common.entity.UserInfo;
-import com.summit.common.entity.UserPassWordInfo;
-import com.summit.common.redis.user.UserInfoCache;
-import com.summit.common.util.ResultBuilder;
-import com.summit.common.web.filter.UserContextHolder;
-import com.summit.service.log.LogUtilImpl;
-import com.summit.service.user.UserService;
-import com.summit.util.DateUtil;
-import com.summit.util.SummitTools;
-import com.summit.util.SysConstants;
-
-import cn.hutool.core.io.FileUtil;
-import cn.hutool.system.SystemUtil;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-import lombok.extern.slf4j.Slf4j;
-import net.sf.json.JSONObject;
+import java.io.File;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
 
 @Api(description = "用户管理")
 @CrossOrigin(origins = "*", maxAge = 3600)
@@ -104,15 +101,22 @@ public class UserController {
     	 try {
     		 if(headPortrait!=null){
     			 String snapshotTime = DateUtil.DTFormat(DateUtil.YMD_HMS1,new Date());
+                 String headPicpath = new StringBuilder()
+                         .append(SystemUtil.getUserInfo().getCurrentDir())
+                         .append(File.separator)
+                         .append(MainAction.SnapshotFileName)
+                         .append(File.separator)
+                         .append(snapshotTime)
+                         .append("_Head.jpg")
+                         .toString();
     			 String headPicUrl = new StringBuilder()
-        				 .append(SystemUtil.getUserInfo().getCurrentDir())
         				 .append("/")
                          .append(MainAction.SnapshotFileName)
                          .append("/")
                          .append(snapshotTime)
                          .append("_Head.jpg")
                          .toString();
-        		FileUtil.writeBytes(headPortrait.getBytes(), headPicUrl);
+        		FileUtil.writeBytes(headPortrait.getBytes(), headPicpath);
         		userInfo.setHeadPortrait(headPicUrl);
     		 }
     		
