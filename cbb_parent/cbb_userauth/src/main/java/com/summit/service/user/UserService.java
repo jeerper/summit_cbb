@@ -120,12 +120,24 @@ public class UserService {
 	        }	
 		}
 		StringBuffer sql = new StringBuffer("UPDATE SYS_USER SET NAME = ?,SEX=?, EMAIL = ?, PHONE_NUMBER =?, NOTE = ?, IS_ENABLED = ?, LAST_UPDATE_TIME = now() ");
-		sql.append(" ,COMPANY=?,DUTY=?,POST=?,SN=?,HEADPORTRAIT=? ");
+		sql.append(" ,COMPANY=?,DUTY=?,POST=?,SN=? ");
+		if(SummitTools.stringNotNull(userInfo.getHeadPortrait())){
+			sql.append(" ,HEADPORTRAIT=? ");
+			
+		}
 		sql.append(" WHERE USERNAME = ? AND STATE = 1 ");
-		jdbcTemplate.update(sql.toString(), userInfo.getName(), userInfo.getSex(), userInfo.getEmail(),
-				userInfo.getPhoneNumber(), userInfo.getNote(), userInfo
-						.getIsEnabled(),userInfo.getCompany(),userInfo.getDuty(),
-						userInfo.getPost(),userInfo.getSn(), userInfo.getHeadPortrait(),userInfo.getUserName());
+		if(SummitTools.stringNotNull(userInfo.getHeadPortrait())){
+			jdbcTemplate.update(sql.toString(), userInfo.getName(), userInfo.getSex(), userInfo.getEmail(),
+					userInfo.getPhoneNumber(), userInfo.getNote(), userInfo
+							.getIsEnabled(),userInfo.getCompany(),userInfo.getDuty(),
+							userInfo.getPost(),userInfo.getSn(),userInfo.getHeadPortrait(), userInfo.getUserName());
+		}else{
+			jdbcTemplate.update(sql.toString(), userInfo.getName(), userInfo.getSex(), userInfo.getEmail(),
+					userInfo.getPhoneNumber(), userInfo.getNote(), userInfo
+							.getIsEnabled(),userInfo.getCompany(),userInfo.getDuty(),
+							userInfo.getPost(),userInfo.getSn(), userInfo.getUserName());
+		}
+		
 		
 		String adcdSql=" delete from sys_user_adcd where USERNAME  IN ('"+userInfo.getUserName()+"') ";
 		jdbcTemplate.update(adcdSql);
