@@ -26,6 +26,8 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import net.sf.json.JSONObject;
+
+import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,13 +42,17 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Arrays;
+import java.util.Base64;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 @Api(description = "用户管理")
 @CrossOrigin(origins = "*", maxAge = 3600)
@@ -67,10 +73,44 @@ public class UserController {
     private String key;
 
     @PostMapping("/add")
-    @ApiOperation(value = "新增用户",  notes = "昵称(name)，用户名(userName),密码(password)都是必输项")
+    @ApiOperation(value = "新增用户,可以上传base64格式的头像",  notes = "昵称(name)，用户名(userName),密码(password)都是必输项")
     public RestfulEntityBySummit<String> add(@RequestBody UserInfo userInfo) {
     	 LogBean logBean =new  LogBean();
     	 try {
+    		 
+    		 String base64Str=userInfo.getHeadPortrait();
+    		 if(SummitTools.stringNotNull(base64Str)){
+    		        StringBuffer fileName = new StringBuffer();
+    		        fileName.append(UUID.randomUUID().toString().replaceAll("-", ""));
+    		        if (base64Str.indexOf("data:image/png;") != -1) {
+    		            base64Str = base64Str.replace("data:image/png;base64,", "");
+    		            fileName.append(".png");
+    		        } else if (base64Str.indexOf("data:image/jpeg;") != -1) {
+    		            base64Str = base64Str.replace("data:image/jpeg;base64,", "");
+    		            fileName.append(".jpeg");
+    		        } 
+                 String picId=IdWorker.getIdStr();
+                 String headPicpath = new StringBuilder()
+                         .append(SystemUtil.getUserInfo().getCurrentDir())
+                         .append(File.separator)
+                         .append(MainAction.SnapshotFileName)
+                         .append(File.separator)
+                         .append(picId)
+                         .append("_Head.jpg")
+                         .toString();
+    			 String headPicUrl = new StringBuilder()
+        				 .append("/")
+                         .append(MainAction.SnapshotFileName)
+                         .append("/")
+                         .append(picId)
+                         .append("_Head.jpg")
+                         .toString();
+    			 
+    			byte[] fileBytes = Base64.getDecoder().decode(base64Str);
+    			FileUtil.writeBytes(fileBytes, headPicpath);
+        		userInfo.setHeadPortrait(headPicUrl);
+    		 }
+    		 
     	    logBean.setStime(DateUtil.DTFormat("yyyy-MM-dd HH:mm:ss",new Date()));
             ResponseCodeEnum c=us.add(userInfo,key);
             if(c!=null){
@@ -95,8 +135,7 @@ public class UserController {
     }
     
    
-   
-    @ApiOperation(value = "新增用户---头像上传",  notes = "昵称(name),用户名(userName),密码(password)都是必输项")
+    @ApiOperation(value = "新增用户---以附件的形式头像上传",  notes = "昵称(name),用户名(userName),密码(password)都是必输项")
 	@RequestMapping(value = "/addUserinfo", method = RequestMethod.POST, consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
     public RestfulEntityBySummit<String> addUserinfo(@ApiParam(value = "用户头像", allowMultiple = true) MultipartFile[] headPortrait,
     		UserInfo userInfo
@@ -138,7 +177,7 @@ public class UserController {
         }
         userInfo.setPassword(null);
         SummitTools.getLogBean(logBean,"用户管理","新增用户信息："+JSONObject.fromObject(userInfo).toString(),"1");
-        logUtil.insertLog(logBean);
+        // logUtil.insertLog(logBean);
         if("0".equals(logBean.getActionFlag())){
         	 return ResultBuilder.buildError(ResponseCodeEnum.CODE_9999);
         }else{
