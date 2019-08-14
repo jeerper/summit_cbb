@@ -120,11 +120,12 @@ public class UserService {
 	        }	
 		}
 		StringBuffer sql = new StringBuffer("UPDATE SYS_USER SET NAME = ?,SEX=?, EMAIL = ?, PHONE_NUMBER =?, NOTE = ?, IS_ENABLED = ?, LAST_UPDATE_TIME = now() ");
-		sql.append(" ,COMPANY=?,DUTY=?,POST=?,SN=?");
+		sql.append(" ,COMPANY=?,DUTY=?,POST=?,SN=?,HEADPORTRAIT=? ");
 		sql.append(" WHERE USERNAME = ? AND STATE = 1 ");
 		jdbcTemplate.update(sql.toString(), userInfo.getName(), userInfo.getSex(), userInfo.getEmail(),
 				userInfo.getPhoneNumber(), userInfo.getNote(), userInfo
-						.getIsEnabled(),userInfo.getCompany(),userInfo.getDuty(),userInfo.getPost(),userInfo.getSn(), userInfo.getUserName());
+						.getIsEnabled(),userInfo.getCompany(),userInfo.getDuty(),
+						userInfo.getPost(),userInfo.getSn(), userInfo.getHeadPortrait(),userInfo.getUserName());
 		
 		String adcdSql=" delete from sys_user_adcd where USERNAME  IN ('"+userInfo.getUserName()+"') ";
 		jdbcTemplate.update(adcdSql);

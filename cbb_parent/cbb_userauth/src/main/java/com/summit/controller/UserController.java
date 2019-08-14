@@ -27,7 +27,6 @@ import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import net.sf.json.JSONObject;
 
-import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,12 +41,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.Base64;
 import java.util.Date;
@@ -230,6 +227,38 @@ public class UserController {
     	 LogBean logBean =new  LogBean();
     	 logBean.setStime(DateUtil.DTFormat("yyyy-MM-dd HH:mm:ss",new Date()));
         try {
+        	 String base64Str=userInfo.getHeadPortrait();
+    		 if(SummitTools.stringNotNull(base64Str)){
+    		        StringBuffer fileName = new StringBuffer();
+    		        fileName.append(UUID.randomUUID().toString().replaceAll("-", ""));
+    		        if (base64Str.indexOf("data:image/png;") != -1) {
+    		            base64Str = base64Str.replace("data:image/png;base64,", "");
+    		            fileName.append(".png");
+    		        } else if (base64Str.indexOf("data:image/jpeg;") != -1) {
+    		            base64Str = base64Str.replace("data:image/jpeg;base64,", "");
+    		            fileName.append(".jpeg");
+    		        } 
+                 String picId=IdWorker.getIdStr();
+                 String headPicpath = new StringBuilder()
+                         .append(SystemUtil.getUserInfo().getCurrentDir())
+                         .append(File.separator)
+                         .append(MainAction.SnapshotFileName)
+                         .append(File.separator)
+                         .append(picId)
+                         .append("_Head.jpg")
+                         .toString();
+    			 String headPicUrl = new StringBuilder()
+        				 .append("/")
+                         .append(MainAction.SnapshotFileName)
+                         .append("/")
+                         .append(picId)
+                         .append("_Head.jpg")
+                         .toString();
+    			 
+    			byte[] fileBytes = Base64.getDecoder().decode(base64Str);
+    			FileUtil.writeBytes(fileBytes, headPicpath);
+        		userInfo.setHeadPortrait(headPicUrl);
+    		 }
             ResponseCodeEnum c=us.edit(userInfo,key);
             if(c!=null){
             	 return ResultBuilder.buildError(c);
