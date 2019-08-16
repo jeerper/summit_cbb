@@ -1,5 +1,6 @@
 package com.summit.config;
 
+import com.summit.handle.SummitPreAuthenticationChecks;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -28,6 +29,8 @@ public class WebSecurityConfigurer extends WebSecurityConfigurerAdapter {
     AppConfig appConfig;
     @Autowired
     private UserDetailsServiceImpl userDetailsServiceImpl;
+    @Autowired
+    private SummitPreAuthenticationChecks summitPreAuthenticationChecks;
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -61,6 +64,8 @@ public class WebSecurityConfigurer extends WebSecurityConfigurerAdapter {
         SummitAuthenticationProvider provider = new SummitAuthenticationProvider();
         // 设置userDetailsService
         provider.setUserDetailsService(userDetailsServiceImpl);
+        //设置用户信息预处理
+        provider.setPreAuthenticationChecks(summitPreAuthenticationChecks);
         // 禁止隐藏用户未找到异常
         provider.setHideUserNotFoundExceptions(false);
         // 使用BCrypt进行密码的hash
