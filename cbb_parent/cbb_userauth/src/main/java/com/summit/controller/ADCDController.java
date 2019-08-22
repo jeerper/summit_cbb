@@ -77,6 +77,19 @@ public class ADCDController {
 	     }
 	}
 	
+	@ApiOperation(value = "查询有多个行政区划树--JSON 数据直接生成树结构", notes = "用于application/json格式")
+	@GetMapping(value = "/queryJsonTreeList")
+	public RestfulEntityBySummit<List<ADCDTreeBean>> queryJsonTreeList(@RequestParam(value = "pid",required = false)  String pid,
+			@RequestParam(value = "isQueryAll",required = false,defaultValue="true")  boolean isQueryAll) {
+		// HttpServletRequest request = ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest();
+	     try {
+	           List<ADCDTreeBean> adcdBean=adcdService.queryJsonAdcdTreeList(pid,isQueryAll);
+	           return ResultBuilder.buildSuccess(adcdBean);
+	     } catch (Exception e) {
+	            logger.error("数据查询失败！", e);
+	            return ResultBuilder.buildError(ResponseCodeEnum.CODE_9999);
+	     }
+	}
 	
 	@ApiOperation(value = "根据padcd查询下面所有的子节点")
 	@RequestMapping(value = "/queryAllAdcdByPadcd",method = RequestMethod.GET)

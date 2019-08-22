@@ -27,6 +27,7 @@ import com.summit.util.ListUtils;
 import com.summit.util.SummitTools;
 import com.summit.util.SysConstants;
 
+import io.netty.util.internal.StringUtil;
 import net.sf.json.JSONObject;
 
 @Service
@@ -283,7 +284,7 @@ public class FunctionService {
 	
 	
 	
-	public List<FunctionBean> getFunInfoByUserName(String userName,boolean isSuroleCode) throws Exception{
+	public List<FunctionBean> getFunInfoByUserName1(String userName,boolean isSuroleCode) throws Exception{
 		String rootSql = "SELECT  * FROM  SYS_FUNCTION   order by	FDESC";
 		List<Object> functionList= ur.queryAllCustom(rootSql, new LinkedMap());
 		Map<String,FunctionBean> mapFunctionBean=new HashMap<String,FunctionBean>();
@@ -319,9 +320,9 @@ public class FunctionService {
 				 String pid="";
 
 				 for(FunctionBean functionBean:functionBeans){
-//					 if("586b65b2188c49d6933f0f354f0b23c9".equals(functionBean.getId())){
-//						 System.out.println("==========");
-//					 }
+					 if("1e4e85ee2f3c4e9c8887a22a5cbfda30".equals(functionBean.getId())){
+						 System.out.println("==========");
+					 }
 					 if("root".equals(functionBean.getPid())){
 						 map.put(functionBean.getId(), functionBean); 
 					 }else{
@@ -371,6 +372,118 @@ public class FunctionService {
 	
 	
 
+	public List<FunctionBean> getFunInfoByUserName(String userName,boolean isSuroleCode) throws Exception{
+		String rootSql = "SELECT  * FROM  SYS_FUNCTION WHERE IS_ENABLED = '1'  and id!='root'   order by  pid DESC ";
+		List<Object> functionList= ur.queryAllCustom(rootSql, new LinkedMap());
+		Map<String,FunctionBean> mapFunctionBean=new HashMap<String,FunctionBean>();
+		if(functionList!=null && functionList.size()>0){
+			ArrayList<FunctionBean> functions = JSON.parseObject(functionList.toString(), new TypeReference<ArrayList<FunctionBean>>() {});
+			String pid;
+			for(FunctionBean functionBean:functions){
+				mapFunctionBean.put(functionBean.getId(), functionBean);
+			}
+		}
+		String sql = null;
+	    LinkedMap linkedMap=new LinkedMap();
+	    Integer index = 1;
+		if(isSuroleCode){
+        	sql = "SELECT  DISTINCT * FROM SYS_FUNCTION WHERE IS_ENABLED = '1'  and id!='root'  order by  pid DESC";
+        }else{
+        	sql = "SELECT  DISTINCT SF.* FROM SYS_USER_ROLE SUR INNER JOIN SYS_ROLE_FUNCTION SRF ON ( SUR.ROLE_CODE = SRF.ROLE_CODE ) INNER JOIN SYS_FUNCTION SF ON (SRF.FUNCTION_ID = SF.ID) WHERE SF.IS_ENABLED = '1'  AND SUR.USERNAME = ? and SF.id!='root'    order by fdesc ";
+        	linkedMap.put(index, userName);
+        }
+		
+		List<FunctionBean> menuList = new ArrayList<FunctionBean>();
+		List list= ur.queryAllCustom(sql, linkedMap);
+		if(list!=null){
+			 Map<String,FunctionBean> map=new LinkedHashMap<String,FunctionBean>();
+			 ArrayList<FunctionBean> functionBeans = JSON.parseObject(list.toString(), new TypeReference<ArrayList<FunctionBean>>() {});
+			 for(FunctionBean functionBean:functionBeans){
+				 if("root".equals(functionBean.getPid())){
+					 map.put(functionBean.getId(), functionBean);
+					 menuList.add(functionBean);
+				 }else {
+					 FunctionBean rootFunctionBean=mapFunctionBean.get(functionBean.getPid());
+					 if(rootFunctionBean!=null && "root".equals(rootFunctionBean.getPid())){
+						 if(rootFunctionBean.getChildren()!=null){
+							 rootFunctionBean.getChildren().add(functionBean);
+						 }else{
+							List<FunctionBean> functionBeancChildren=new ArrayList<FunctionBean>(); 
+							functionBeancChildren.add(functionBean);
+							rootFunctionBean.setChildren(functionBeancChildren);
+						 }
+						 map.put(rootFunctionBean.getId(), rootFunctionBean);
+					 }else{
+						 FunctionBean rootFunctionBean1=getRoot(functionBean.getPid(),mapFunctionBean,functionBean, map,null);
+						// System.out.println("=============="+rootFunctionBean+"   ========== :"+functionBean.getName());
+						 if(rootFunctionBean1!=null){
+						    map.put(rootFunctionBean1.getId(), rootFunctionBean1);
+						    // menuList.add(functionBean);
+						 }
+					 }
+				 }
+			 }
+			 Collection<FunctionBean> valueCollection = map.values();
+			 List<FunctionBean> valueList = new ArrayList<FunctionBean>(valueCollection);
+//			 for(FunctionBean functionBean:valueList){
+//				 System.out.println("====:"+functionBean.getId()+","+functionBean.getName()+","+functionBean.getPid());	
+//			 }
+			 String[] sortnameArr=new String[]{"fdesc"};
+		        boolean[] typeArr=new boolean[]{true};
+			 ListUtils.sort(valueList, sortnameArr, typeArr);
+			 return valueList;
+		}
+		
+		return null;
+		
+	}
+	
+	private FunctionBean getRoot(String id,Map<String,FunctionBean> mapFunctionBean,FunctionBean functionBean, Map<String,FunctionBean> map,Map<String,FunctionBean> childMap ) {
+		
+		   FunctionBean functionBeanInfo=mapFunctionBean.get(id);
+		   if(childMap==null){
+			   childMap=new HashMap<String,FunctionBean>();
+		   }
+			if(functionBeanInfo!=null && map.get(functionBeanInfo.getId())!=null){
+				functionBeanInfo=map.get(functionBeanInfo.getId());
+			}
+			// System.out.println("functionBean: "+functionBean.getName());
+			if(functionBean.getPid().equals(functionBeanInfo.getId())){
+				if(functionBeanInfo.getChildren()!=null ){
+					for(FunctionBean functionBean1:functionBeanInfo.getChildren()){
+						
+						if(functionBean1.getId().equals(functionBean.getId())){
+							//functionBean1.getChildren().add(functionBean);
+							// System.out.println("name:  "+functionBean1.getName());
+							if(functionBean1.getChildren()==null){
+								List<FunctionBean> functionBeancChildren=new ArrayList<FunctionBean>(); 
+								functionBeancChildren.add(childMap.get(functionBean1.getId()));
+								functionBean1.setChildren(functionBeancChildren);
+							}else{
+								functionBean1.getChildren().add(childMap.get(functionBean1.getId()));
+							}
+							
+						}
+					}
+					// functionBeanInfo.getChildren().add(functionBean);
+				}else{
+					childMap.put(functionBean.getPid(), functionBean);
+				}
+			}
+			
+			if("root".equals(functionBeanInfo.getPid())){
+				return functionBeanInfo; 
+		    }else{
+				if(!"root".equals(functionBeanInfo.getPid())){
+					functionBeanInfo=getRoot(functionBeanInfo.getPid(),mapFunctionBean,functionBeanInfo,map,childMap);
+				}
+			}
+			
+			return functionBeanInfo;
+	}
+	
+	
+	
 	
 	
 

@@ -137,6 +137,48 @@ public class ADCDService {
     }
 
    
+   public List<ADCDTreeBean> queryJsonAdcdTreeList(String padcd,boolean isQueryAll) throws Exception {
+		LinkedMap linkedMap=new LinkedMap();
+		StringBuffer sql = new StringBuffer("SELECT ADCD as value, ADNM as title,PADCD, ADLEVEL FROM SYS_AD_CD where 1=1 ");
+		if(padcd==null || "".equals(padcd)){
+			sql.append(" and (padcd is null  or padcd='-1' )");
+		}else{
+			sql.append(" and adcd =? ");
+			linkedMap.put(1, padcd);
+			
+		}
+	   List<Object> rootList= ur.queryAllCustom(sql.toString(),linkedMap);
+       if(rootList.size()>0){
+    	   List<ADCDTreeBean> aDCDTreeBeanList=new ArrayList<ADCDTreeBean>();
+    	   ADCDTreeBean adcdTreeBean =null;
+    	   for(int i=0;i<rootList.size();i++){
+    			String jsonTree=((JSONObject)rootList.get(i)).toString();
+    	       	adcdTreeBean = JSON.parseObject(jsonTree, new TypeReference<ADCDTreeBean>() {});
+    			List<ADCDBean> list=generateOrgMapToTree(null,adcdTreeBean.getValue(),isQueryAll);
+    			if(list!=null && list.size()>0){
+    					List<ADCDTreeBean> adcdTreeBeanList=new ArrayList<ADCDTreeBean>();
+    					ADCDTreeBean adcdTreeBean1=null;
+    					for(ADCDBean adcdBean:list){
+    						adcdTreeBean1=new ADCDTreeBean();
+    						adcdTreeBean1.setValue(adcdBean.getAdcd());
+    						adcdTreeBean1.setTitle(adcdBean.getAdnm());
+    						adcdTreeBean1.setLevel(adcdBean.getLevel());
+    						adcdTreeBean1.setPadcd(adcdBean.getPadcd());
+    						if(isQueryAll){
+    						  adcdTreeBean1.setChildren(getAdcdTreeBean(adcdBean.getChildren()));
+    						}
+    						adcdTreeBeanList.add(adcdTreeBean1);
+    					}
+    					adcdTreeBean.setChildren(adcdTreeBeanList);
+    					
+    			}
+    			aDCDTreeBeanList.add(adcdTreeBean);
+    	   }
+    	   
+          return aDCDTreeBeanList;
+		}
+		return null;
+	}
    
    public ADCDTreeBean queryJsonAdcdTree(String padcd,boolean isQueryAll) throws Exception {
 		LinkedMap linkedMap=new LinkedMap();
@@ -151,26 +193,30 @@ public class ADCDService {
 	   List<Object> rootList= ur.queryAllCustom(sql.toString(),linkedMap);
 	   ADCDTreeBean adcdTreeBean =null;
        if(rootList.size()>0){
-       	String jsonTree=((JSONObject)rootList.get(0)).toString();
-       	adcdTreeBean = JSON.parseObject(jsonTree, new TypeReference<ADCDTreeBean>() {});
-			List<ADCDBean> list=generateOrgMapToTree(null,adcdTreeBean.getValue(),isQueryAll);
-			if(list!=null && list.size()>0){
-				List<ADCDTreeBean> adcdTreeBeanList=new ArrayList<ADCDTreeBean>();
-				ADCDTreeBean adcdTreeBean1=null;
-				for(ADCDBean adcdBean:list){
-					adcdTreeBean1=new ADCDTreeBean();
-					adcdTreeBean1.setValue(adcdBean.getAdcd());
-					adcdTreeBean1.setTitle(adcdBean.getAdnm());
-					adcdTreeBean1.setLevel(adcdBean.getLevel());
-					adcdTreeBean1.setPadcd(adcdBean.getPadcd());
-					if(isQueryAll){
-					  adcdTreeBean1.setChildren(getAdcdTreeBean(adcdBean.getChildren()));
-					}
-					adcdTreeBeanList.add(adcdTreeBean1);
-				}
-				adcdTreeBean.setChildren(adcdTreeBeanList);
-				
-			}
+    	   for(int i=0;i<rootList.size();i++){
+    			String jsonTree=((JSONObject)rootList.get(i)).toString();
+    	       	adcdTreeBean = JSON.parseObject(jsonTree, new TypeReference<ADCDTreeBean>() {});
+    			List<ADCDBean> list=generateOrgMapToTree(null,adcdTreeBean.getValue(),isQueryAll);
+    			if(list!=null && list.size()>0){
+    					List<ADCDTreeBean> adcdTreeBeanList=new ArrayList<ADCDTreeBean>();
+    					ADCDTreeBean adcdTreeBean1=null;
+    					for(ADCDBean adcdBean:list){
+    						adcdTreeBean1=new ADCDTreeBean();
+    						adcdTreeBean1.setValue(adcdBean.getAdcd());
+    						adcdTreeBean1.setTitle(adcdBean.getAdnm());
+    						adcdTreeBean1.setLevel(adcdBean.getLevel());
+    						adcdTreeBean1.setPadcd(adcdBean.getPadcd());
+    						if(isQueryAll){
+    						  adcdTreeBean1.setChildren(getAdcdTreeBean(adcdBean.getChildren()));
+    						}
+    						adcdTreeBeanList.add(adcdTreeBean1);
+    					}
+    					adcdTreeBean.setChildren(adcdTreeBeanList);
+    					
+    			}
+    	   }
+    	   
+       
 		}
 		return adcdTreeBean;
 	}
