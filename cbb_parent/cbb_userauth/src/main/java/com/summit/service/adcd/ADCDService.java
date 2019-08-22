@@ -332,9 +332,9 @@ public class ADCDService {
 	 */
 	public List<ADCDBean> queryByAdcds(String adcds) throws Exception {
 		adcds = adcds.replaceAll(",", "','");
-		String sql = "SELECT * FROM SYS_AD_CD WHERE ADCD IN ('?') ";
+		String sql = "SELECT * FROM SYS_AD_CD WHERE ADCD IN ('"+adcds+"') ";
 		LinkedMap linkedMap=new LinkedMap();
-	    linkedMap.put(1,adcds);
+	    //linkedMap.put(1,"'"+adcds+"'");
 		List dataList = ur.queryAllCustom(sql,  linkedMap);
 		if(dataList!=null &&  dataList.size()>0){
 			List<ADCDBean> adcdBeanList = JSON.parseObject(dataList.toString(), new TypeReference<List<ADCDBean>>() {});
