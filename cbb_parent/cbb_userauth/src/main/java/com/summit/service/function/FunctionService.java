@@ -399,9 +399,15 @@ public class FunctionService {
 			 Map<String,FunctionBean> map=new LinkedHashMap<String,FunctionBean>();
 			 ArrayList<FunctionBean> functionBeans = JSON.parseObject(list.toString(), new TypeReference<ArrayList<FunctionBean>>() {});
 			 for(FunctionBean functionBean:functionBeans){
+//				 if("db8def85358447dfb724f908f6416cbf".equals(functionBean.getId())){
+//					 System.out.println("========");
+//				 }
 				 if("root".equals(functionBean.getPid())){
-					 map.put(functionBean.getId(), functionBean);
-					 menuList.add(functionBean);
+					 if(map.get(functionBean.getId())==null){
+						 map.put(functionBean.getId(), functionBean);
+						 menuList.add(functionBean);	 
+					 }
+					
 				 }else {
 					 FunctionBean rootFunctionBean=mapFunctionBean.get(functionBean.getPid());
 					 if(rootFunctionBean!=null && "root".equals(rootFunctionBean.getPid())){
@@ -422,11 +428,17 @@ public class FunctionService {
 						 }
 					 }
 				 }
+				 System.out.println(functionBean.getName()+"==================================================");
+				 Collection<FunctionBean> valueCollection = map.values();
+				 List<FunctionBean> valueList = new ArrayList<FunctionBean>(valueCollection);
+				 for(FunctionBean functionBean11:valueList){
+					 System.out.println("====:"+functionBean11.getId()+","+functionBean11.getName()+","+functionBean11.getChildren());	
+				 }
 			 }
 			 Collection<FunctionBean> valueCollection = map.values();
 			 List<FunctionBean> valueList = new ArrayList<FunctionBean>(valueCollection);
 //			 for(FunctionBean functionBean:valueList){
-//				 System.out.println("====:"+functionBean.getId()+","+functionBean.getName()+","+functionBean.getPid());	
+//				 System.out.println("====:"+functionBean.getId()+","+functionBean.getName()+","+functionBean.getChildren());	
 //			 }
 			 String[] sortnameArr=new String[]{"fdesc"};
 		        boolean[] typeArr=new boolean[]{true};

@@ -6,6 +6,7 @@ import com.summit.common.util.ResultBuilder;
 import com.summit.common.web.filter.UserContextHolder;
 import com.summit.service.function.FunctionService;
 import com.summit.service.log.LogUtilImpl;
+import com.summit.service.user.UserService;
 import com.summit.util.SysConstants;
 
 import io.swagger.annotations.Api;
@@ -25,6 +26,9 @@ public class FunctionController {
 	private static final Logger logger = LoggerFactory.getLogger(FunctionController.class);
 	@Autowired
 	private FunctionService fs;
+	
+	@Autowired
+	private UserService userservice;
 	
 	@Autowired
 	LogUtilImpl logUtil;
@@ -136,13 +140,14 @@ public class FunctionController {
 	public RestfulEntityBySummit<List<FunctionBean>> getFunInfoByUserName(@RequestParam(value = "userName" ,required = true)  String userName) {
 		try {
 			//String userName="";
-			UserInfo userInfo=UserContextHolder.getUserInfo();
+			List<String> roleList = userservice.queryRoleByUserName(userName);
+			//UserInfo userInfo=UserContextHolder.getUserInfo();
 //			if(userInfo!=null){
 //				userName=userInfo.getUserName();
 //			}
 			boolean isSuroleCode=false; 
-            if(userInfo.getRoles()!=null && userInfo.getRoles().length>0){
-            	isSuroleCode=Arrays.asList(userInfo.getRoles()).contains(SysConstants.SUROLE_CODE);
+            if(roleList!=null && roleList.size()>0){
+            	isSuroleCode=Arrays.asList(roleList).contains(SysConstants.SUROLE_CODE);
             }
 			return ResultBuilder.buildSuccess(fs.getFunInfoByUserName(userName,isSuroleCode));
 		} catch (Exception e) {
