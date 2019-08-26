@@ -23,7 +23,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 @Api(description = "路由管理")
 @RestController
-@RequestMapping("/route")
+@RequestMapping("/api/cbb-api-gateway-db/route")
 public class DictionaryController {
 
     @Autowired
