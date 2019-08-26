@@ -74,9 +74,7 @@ public class FunctionService {
         	// querySql.append("  where a.id!='root' ");
         	querySql.append("  where 1=1 ");
         	querySql.append("   ORDER BY a.id,fdesc ");
-            System.out.println(querySql.toString());
         	com.alibaba.fastjson.JSONArray list= ur.queryAllCustomJsonArray(querySql.toString(),null);
-            System.out.println(list);
     		Map<String, List<Object>> map=new HashMap<String, List<Object>>();
     		List<Object> childrenList=new ArrayList<Object>();;
     		String adcd="";
@@ -99,18 +97,15 @@ public class FunctionService {
 //            String json_list = JSONObject.toJSONString(list);
 //            orgMaps = (List<Map<String, Object>>) JSONObject.parse(json_list);
         }
-       	System.out.println(orgMaps);
         List<FunctionBean> orgList = new ArrayList<>();
         if (orgMaps != null && orgMaps.size() > 0) {
         	List<Object> parenList=orgMaps.get(pid);
         	if(parenList==null){
         		return orgList;
         	}
-          	System.out.println(parenList);
         	FunctionBean functionBean=null;
             for (Object obj : parenList) {
             	JSONObject json=(JSONObject)obj;
-              System.out.println(json);
             	functionBean=new FunctionBean();
             	functionBean.setId(json.getString("CHILD_ID"));
             	functionBean.setName(json.getString("CHILD_NAME"));
