@@ -117,6 +117,7 @@ public class UserRepository extends JdbcDaoSupport {
 						for(int i = 0; i < rsd.getColumnCount(); i++) {
 							columnArray[i] = rsd.getColumnName(i + 1);
 						}
+                      	System.out.println(Arrays.toString(columnArray));
 						while(rs.next()){
 							JSONObject o = new JSONObject();
 							for (int j = 0; j < columnArray.length; j++) {
