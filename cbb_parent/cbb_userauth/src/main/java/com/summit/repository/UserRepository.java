@@ -5,6 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
@@ -115,7 +116,7 @@ public class UserRepository extends JdbcDaoSupport {
 						array = new JSONArray();
 						String[] columnArray = new String[rsd.getColumnCount()];
 						for(int i = 0; i < rsd.getColumnCount(); i++) {
-							columnArray[i] = rsd.getColumnName(i + 1);
+							columnArray[i] = rsd.getColumnLabel(i + 1);
 						}
 						while(rs.next()){
 							JSONObject o = new JSONObject();

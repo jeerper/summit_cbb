@@ -97,7 +97,6 @@ public class FunctionService {
 //            String json_list = JSONObject.toJSONString(list);
 //            orgMaps = (List<Map<String, Object>>) JSONObject.parse(json_list);
         }
-       
         List<FunctionBean> orgList = new ArrayList<>();
         if (orgMaps != null && orgMaps.size() > 0) {
         	List<Object> parenList=orgMaps.get(pid);
