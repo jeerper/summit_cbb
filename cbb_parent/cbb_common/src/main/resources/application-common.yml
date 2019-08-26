@@ -8,13 +8,13 @@ hystrix:
         isolation:
           strategy: SEMAPHORE
           thread:
-            timeoutInMilliseconds: 40000
+            timeoutInMilliseconds: 120000
 
 ribbon:
   # 请求连接的超时时间
   ConnectTimeout: 10000
   # 请求处理的超时时间
-  ReadTimeout: 10000
+  ReadTimeout: 50000
 
 
 feign:
