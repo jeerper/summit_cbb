@@ -165,7 +165,7 @@ public class UserRepository extends JdbcDaoSupport {
 					if(rsd.getColumnCount() > 0){
 						String[] columnArray = new String[rsd.getColumnCount()];
 						for(int i = 0; i < rsd.getColumnCount(); i++) {
-							columnArray[i] = rsd.getColumnName(i + 1);
+							columnArray[i] = rsd.getColumnLabel(i + 1);
 						}
 						while(rs.next()){
 							JSONObject o = new JSONObject();
@@ -210,7 +210,7 @@ public class UserRepository extends JdbcDaoSupport {
 							list = new ArrayList<Object>();
 							String[] columnArray = new String[rsd.getColumnCount()];
 							for(int i = 0; i < rsd.getColumnCount(); i++) {  
-						        columnArray[i] = rsd.getColumnName(i + 1);
+						        columnArray[i] = rsd.getColumnLabel(i + 1);
 						    }  
 							while(rs.next()){
 								JSONObject o = new JSONObject();
@@ -262,7 +262,7 @@ public class UserRepository extends JdbcDaoSupport {
 							list = new ArrayList<Object>();
 							String[] columnArray = new String[rsd.getColumnCount()];
 							for(int i = 0; i < rsd.getColumnCount(); i++) {  
-						        columnArray[i] = rsd.getColumnName(i + 1);
+						        columnArray[i] = rsd.getColumnLabel(i + 1);
 						    }
 //							if(null == pageSize || (null != pageSize && pageSize.trim().length() == 0)){
 //								pageSize = Common.PAGE_SIZE;
