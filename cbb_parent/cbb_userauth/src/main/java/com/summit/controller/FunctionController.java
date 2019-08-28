@@ -147,7 +147,7 @@ public class FunctionController {
 //			}
 			boolean isSuroleCode=false; 
             if(roleList!=null && roleList.size()>0){
-            	isSuroleCode=Arrays.asList(roleList).contains(SysConstants.SUROLE_CODE);
+            	isSuroleCode=roleList.contains(SysConstants.SUROLE_CODE);
             }
 			return ResultBuilder.buildSuccess(fs.getFunInfoByUserName(userName,isSuroleCode));
 		} catch (Exception e) {

@@ -97,6 +97,7 @@ public class FunctionService {
 //            String json_list = JSONObject.toJSONString(list);
 //            orgMaps = (List<Map<String, Object>>) JSONObject.parse(json_list);
         }
+       
         List<FunctionBean> orgList = new ArrayList<>();
         if (orgMaps != null && orgMaps.size() > 0) {
         	List<Object> parenList=orgMaps.get(pid);
@@ -118,7 +119,8 @@ public class FunctionService {
             	functionBean.setFurl(json.containsKey("FURL")?json.getString("FURL"):"");
             	functionBean.setIsEnabled(json.containsKey("IS_ENABLED")?json.getInt("IS_ENABLED"):null);
             	functionBean.setImgUlr(json.containsKey("IMGULR")?json.getString("IMGULR"):"");
-            	functionBean.setNote(json.containsKey("SUPER_FUN")?json.getString("SUPER_FUN"):"");
+            	functionBean.setNote(json.containsKey("NOTE")?json.getString("NOTE"):"");
+            	functionBean.setSuperfun(json.containsKey("SUPER_FUN")?json.getString("SUPER_FUN"):"");
                 List<FunctionBean> children = generateOrgMapToTree(orgMaps, json.get("CHILD_ID").toString());
                 functionBean.setChildren(children);
                 //添加当前对象到主结果集中
@@ -319,9 +321,9 @@ public class FunctionService {
 				 String pid="";
 
 				 for(FunctionBean functionBean:functionBeans){
-					 if("1e4e85ee2f3c4e9c8887a22a5cbfda30".equals(functionBean.getId())){
-						 System.out.println("==========");
-					 }
+					// if("1e4e85ee2f3c4e9c8887a22a5cbfda30".equals(functionBean.getId())){
+					//	 System.out.println("==========");
+					// }
 					 if("root".equals(functionBean.getPid())){
 						 map.put(functionBean.getId(), functionBean); 
 					 }else{
@@ -386,7 +388,7 @@ public class FunctionService {
 	    LinkedMap linkedMap=new LinkedMap();
 	    Integer index = 1;
 		if(isSuroleCode){
-        	sql = "SELECT  DISTINCT * FROM SYS_FUNCTION WHERE IS_ENABLED = '1'  and id!='root'  order by  pid DESC";
+        	sql = "SELECT  DISTINCT * FROM SYS_FUNCTION WHERE IS_ENABLED = '1'  and id!='root'   order by fdesc ";
         }else{
         	sql = "SELECT  DISTINCT SF.* FROM SYS_USER_ROLE SUR INNER JOIN SYS_ROLE_FUNCTION SRF ON ( SUR.ROLE_CODE = SRF.ROLE_CODE ) INNER JOIN SYS_FUNCTION SF ON (SRF.FUNCTION_ID = SF.ID) WHERE SF.IS_ENABLED = '1'  AND SUR.USERNAME = ? and SF.id!='root'    order by fdesc ";
         	linkedMap.put(index, userName);
@@ -398,7 +400,8 @@ public class FunctionService {
 			 Map<String,FunctionBean> map=new LinkedHashMap<String,FunctionBean>();
 			 ArrayList<FunctionBean> functionBeans = JSON.parseObject(list.toString(), new TypeReference<ArrayList<FunctionBean>>() {});
 			 for(FunctionBean functionBean:functionBeans){
-//				 if("db8def85358447dfb724f908f6416cbf".equals(functionBean.getId())){
+//				 System.out.println(functionBean.getName()+"==================================================");
+//				 if("2d2b9f190cac4dc7ad7eecae481ff5c8".equals(functionBean.getId())){
 //					 System.out.println("========");
 //				 }
 				 if("root".equals(functionBean.getPid())){
@@ -427,12 +430,12 @@ public class FunctionService {
 						 }
 					 }
 				 }
-				 System.out.println(functionBean.getName()+"==================================================");
-				 Collection<FunctionBean> valueCollection = map.values();
-				 List<FunctionBean> valueList = new ArrayList<FunctionBean>(valueCollection);
-				 for(FunctionBean functionBean11:valueList){
-					 System.out.println("====:"+functionBean11.getId()+","+functionBean11.getName()+","+functionBean11.getChildren());	
-				 }
+				
+//				 Collection<FunctionBean> valueCollection = map.values();
+//				 List<FunctionBean> valueList = new ArrayList<FunctionBean>(valueCollection);
+//				 for(FunctionBean functionBean11:valueList){
+//					 System.out.println("====:"+functionBean11.getId()+","+functionBean11.getName()+","+functionBean11.getChildren());	
+//				 }
 			 }
 			 Collection<FunctionBean> valueCollection = map.values();
 			 List<FunctionBean> valueList = new ArrayList<FunctionBean>(valueCollection);
