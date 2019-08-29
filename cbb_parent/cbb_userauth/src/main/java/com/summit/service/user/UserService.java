@@ -298,8 +298,22 @@ public class UserService {
 			 linkedMap.put(index, paramJson.get("deptId") );
              index++;
          }
+		if(paramJson.containsKey("sortColumn") && st.stringNotNull(paramJson.getString("sortColumn"))){
+//			if("sn".equalsIgnoreCase(paramJson.getString("sortColumn"))){
+//				//sb.append(" order by  sn is null,cast(sn as SIGNED INTEGER) asc ");	
+//			}else{
+				sb.append(" order by  ");	
+				sb.append(paramJson.getString("sortColumn"));
+				sb.append(" is null , ");
+				sb.append(paramJson.getString("sortColumn"));
+				sb.append("  ");
+				if(paramJson.containsKey("sortName") && st.stringNotNull(paramJson.getString("sortName"))){
+					sb.append(paramJson.getString("sortName"));
+				}
+		//	}
+			
+		}
 		
-		sb.append(" order by  sn is null,cast(sn as SIGNED INTEGER) asc,USERADCD.ADCD ");
 		Page<Object> page= ur.queryByCustomPage(sb.toString(), start, limit,linkedMap);
 		if(page!=null){
 			List<UserInfo> userInfoList=new ArrayList<UserInfo>();

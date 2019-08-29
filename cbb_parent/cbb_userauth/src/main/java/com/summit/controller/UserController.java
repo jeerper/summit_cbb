@@ -497,7 +497,9 @@ public class UserController {
             @RequestParam(value = "state",required = false) String state,
             @RequestParam(value = "adcd",required = false) String adcd,
             @RequestParam(value = "deptName",required = false) String deptName,
-            @RequestParam(value = "deptId",required = false) String deptId) {
+            @RequestParam(value = "deptId",required = false) String deptId,
+            @RequestParam(value = "sortColumn",required = false) String sortColumn,
+            @RequestParam(value = "sortName",required = false) String sortName) {
         try {
         	page = (page == 0) ? 1 : page;
             pageSize = (pageSize == 0) ? SysConstants.PAGE_SIZE : pageSize;
@@ -524,6 +526,13 @@ public class UserController {
             if(!SummitTools.stringIsNull(phone)){
                 paramJson.put("phone",phone);
             }
+            if(!SummitTools.stringIsNull(sortColumn)){
+                paramJson.put("sortColumn",sortColumn);
+            }
+            if(!SummitTools.stringIsNull(sortName)){
+                paramJson.put("sortName",sortName);
+            }
+            
             Page<UserInfo> pageList=us.queryByPage(page, pageSize, paramJson);
             return ResultBuilder.buildSuccess(pageList);
         } catch (Exception e) {
