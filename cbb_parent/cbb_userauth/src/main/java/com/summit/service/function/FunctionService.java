@@ -400,10 +400,10 @@ public class FunctionService {
 			 Map<String,FunctionBean> map=new LinkedHashMap<String,FunctionBean>();
 			 ArrayList<FunctionBean> functionBeans = JSON.parseObject(list.toString(), new TypeReference<ArrayList<FunctionBean>>() {});
 			 for(FunctionBean functionBean:functionBeans){
-				 System.out.println(functionBean.getName()+"==================================================");
-				 if("430e1876e61045789a1e3d122ff4c962".equals(functionBean.getId())){
-					 System.out.println("========");
-				 }
+//				 System.out.println(functionBean.getName()+"==================================================");
+//				 if("430e1876e61045789a1e3d122ff4c962".equals(functionBean.getId())){
+//					 System.out.println("========");
+//				 }
 				 if("root".equals(functionBean.getPid())){
 					 if(map.get(functionBean.getId())==null){
 						 map.put(functionBean.getId(), functionBean);
