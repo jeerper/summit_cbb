@@ -105,10 +105,8 @@ public class UserInfo implements Serializable {
     /**
      * 角色集合
      */
-    @ApiModelProperty(value="查询用--角色集合",name="roles",hidden = true)
+    @ApiModelProperty(value="查询用--角色集合",name="roles")
     private String[] roles;
-    
-    
     
     
     public int getState() {
