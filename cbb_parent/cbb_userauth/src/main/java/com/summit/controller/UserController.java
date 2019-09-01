@@ -543,21 +543,20 @@ public class UserController {
     
 
 
-    @ApiOperation(value = "重置密码")
+    @ApiOperation(value = "重置密码,只需输入UserName和Password",notes = "重置的密码必须是加密后的数据")
     @PutMapping("/resetPassword")
     public RestfulEntityBySummit<String> resetPassword(
-    		@RequestParam(value = "userName") String userName,
-    		@RequestParam(value = "password") String password) {
+    		 @RequestBody UserInfo userInfo) {
     	 LogBean logBean =new  LogBean();
     	 logBean.setStime(DateUtil.DTFormat("yyyy-MM-dd HH:mm:ss",new Date()));
         try {
-        	us.resetPassword(userName,password,key);
+        	us.resetPassword(userInfo.getUserName(),userInfo.getPassword(),key);
         	logBean.setActionFlag("1");
         } catch (Exception e) {
             logger.error("重置密码失败：", e);
             logBean.setActionFlag("0");
         }
-        SummitTools.getLogBean(logBean,"用户管理","重置密码:用户名 "+userName,"2");
+        SummitTools.getLogBean(logBean,"用户管理","重置密码:用户名 "+userInfo.getUserName(),"2");
         logUtil.insertLog(logBean);
         if("0".equals(logBean.getActionFlag())){
         	 return ResultBuilder.buildError(ResponseCodeEnum.CODE_9999);
@@ -603,11 +602,10 @@ public class UserController {
     
     
 
-    @ApiOperation(value = "授权权限")
+    @ApiOperation(value = "授权权限，只需输入userName和roles")
     @PutMapping("/grantRole")
     public RestfulEntityBySummit<String>  grantRole(
-    		@RequestParam(value = "userName") String userName,
-    		@RequestParam(value = "role",required = false) String[] role) {
+    		@RequestBody UserInfo userInfo) {
     	 LogBean logBean =new  LogBean();
     	 logBean.setStime(DateUtil.DTFormat("yyyy-MM-dd HH:mm:ss",new Date()));
         try {
@@ -615,7 +613,7 @@ public class UserController {
             if (ub == null) {
             	return ResultBuilder.buildError(ResponseCodeEnum.CODE_4023);
             }
-            us.grantRole(userName,role);
+            us.grantRole(userInfo.getUserName(),userInfo.getRoles());
             logBean.setActionFlag("1");
         } catch (Exception e) {
         	logBean.setActionFlag("0");
@@ -623,7 +621,7 @@ public class UserController {
             logger.error("授权权限失败：", e);
             return ResultBuilder.buildError(ResponseCodeEnum.CODE_9999);
         }
-        SummitTools.getLogBean(logBean,"用户管理","授权权限："+userName+",角色信息:"+role,"4");
+        SummitTools.getLogBean(logBean,"用户管理","授权权限："+userInfo.getUserName()+",角色信息:"+userInfo.getRoles(),"4");
         logUtil.insertLog(logBean);
         if("0".equals(logBean.getActionFlag())){
         	 return ResultBuilder.buildError(ResponseCodeEnum.CODE_9999);
