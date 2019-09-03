@@ -1,5 +1,6 @@
 package com.summit.controller;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -23,6 +24,8 @@ import com.summit.common.entity.RestfulEntityBySummit;
 import com.summit.common.util.ResultBuilder;
 import com.summit.service.adcd.ADCDService;
 import com.summit.service.log.LogUtilImpl;
+import com.summit.util.DateUtil;
+import com.summit.util.SummitTools;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -178,18 +181,23 @@ public class ADCDController {
 	@ApiOperation(value = "行政区划新增",notes="编码(ADCD),行政区划名称(ADNM),padcd(父节点)都是必输项")
 	@RequestMapping(value = "/add",method = RequestMethod.POST)
 	public RestfulEntityBySummit<String> add(@RequestBody ADCDBean adcdBean) {
+		LogBean logBean =new  LogBean();
+   	    logBean.setStime(DateUtil.DTFormat("yyyy-MM-dd HH:mm:ss",new Date()));
+   	    SummitTools.getLogBean(logBean,"行政区划管理","新增行政区划:"+JSONObject.fromObject(adcdBean).toString(),"1");
 		try {
-			//list = adcdService.add(adcdBean);
 			ResponseCodeEnum responseCodeEnum=adcdService.add(adcdBean);
-			//LogBean logBean = new LogBean("行政区划管理","共享用户组件","新增行政区划信息："+adcdBean.toString(),"1");
-	        //logUtil.insertLog(logBean);
 			if(responseCodeEnum!=null){
 				return ResultBuilder.buildError(responseCodeEnum);
 			}else{
+				logBean.setActionFlag("1");
+				logUtil.insertLog(logBean);
 			   return ResultBuilder.buildSuccess();
 			}
 		} catch (Exception e) {
 			logger.error("行政区划新增失败！", e);
+			logBean.setActionFlag("0");
+			logBean.setErroInfo(e.getMessage());
+		    logUtil.insertLog(logBean);
 			return ResultBuilder.buildError(ResponseCodeEnum.CODE_9999);
 		}
 	}
@@ -200,32 +208,47 @@ public class ADCDController {
 	@ApiOperation(value = "行政区划编辑",notes="编码(ADCD),行政区划名称(ADNM),padcd(父节点)都是必输项")
 	@RequestMapping(value = "/edit",method = RequestMethod.POST)
 	public RestfulEntityBySummit<?> edit(@RequestBody ADCDBean adcdBean) {
+		 LogBean logBean =new  LogBean();
+    	 logBean.setStime(DateUtil.DTFormat("yyyy-MM-dd HH:mm:ss",new Date()));
+    	 SummitTools.getLogBean(logBean,"行政区划管理","编辑行政区划:"+JSONObject.fromObject(adcdBean).toString(),"2");
 		try {
 			adcdService.edit(adcdBean);
-			//LogBean logBean = new LogBean("行政区划管理","共享用户组件","修改行政区划信息："+adcdBean.toString(),"2");
-	        //logUtil.insertLog(logBean);
+			logBean.setActionFlag("1");
+		    logUtil.insertLog(logBean);
 			return ResultBuilder.buildSuccess();
 		} catch (Exception e) {
 			logger.error("行政区划编辑失败！", e);
-			 return ResultBuilder.buildError(ResponseCodeEnum.CODE_9999);
+			logBean.setActionFlag("0");
+			logBean.setErroInfo(e.getMessage());
+		    logUtil.insertLog(logBean);
+			return ResultBuilder.buildError(ResponseCodeEnum.CODE_9999);
 		}
 	}
 	/**
 	 * 删除
 	 */
-	@ApiOperation(value = "行政区划删除")
+	@ApiOperation(value = "行政区划删除，删除多个以,分割")
 	@RequestMapping(value = "/del",method = RequestMethod.DELETE)
 	public RestfulEntityBySummit<?> del(@RequestParam(value = "adcds") String adcds) {
+		 LogBean logBean =new  LogBean();
+    	 logBean.setStime(DateUtil.DTFormat("yyyy-MM-dd HH:mm:ss",new Date()));
+    	 SummitTools.getLogBean(logBean,"行政区划管理","删除行政区划:"+adcds,"3");
 		try {
-			 adcdService.del(adcds);
-			 //LogBean logBean = new LogBean("行政区划管理","共享用户组件","删除行政区划信息："+ids,"3");
-		     //logUtil.insertLog(logBean);
-			return ResultBuilder.buildSuccess();
+			ResponseCodeEnum responseCodeEnum=adcdService.del(adcds);
+			if(responseCodeEnum!=null){
+				 return ResultBuilder.buildError(ResponseCodeEnum.CODE_9999,"有子集信息，无法删除",null);
+			}
+			logBean.setActionFlag("1");
 		} catch (Exception e) {
-			//e.printStackTrace();
-			logger.error("行政区划删除失败！", e);
-			 return ResultBuilder.buildError(ResponseCodeEnum.CODE_9999);
+			 logBean.setActionFlag("0");
+			 logger.error("行政区划删除失败！", e);
 		}
+	    logUtil.insertLog(logBean);
+	    if("0".equals(logBean.getActionFlag())){
+        	 return ResultBuilder.buildError(ResponseCodeEnum.CODE_9999);
+        }else{
+        	 return ResultBuilder.buildSuccess();
+        }
 	}
 	
 }

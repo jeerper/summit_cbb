@@ -619,7 +619,7 @@ public class UserController {
         	logBean.setActionFlag("0");
         	logBean.setErroInfo(e.getMessage());
             logger.error("授权权限失败：", e);
-            return ResultBuilder.buildError(ResponseCodeEnum.CODE_9999);
+           // return ResultBuilder.buildError(ResponseCodeEnum.CODE_9999);
         }
         SummitTools.getLogBean(logBean,"用户管理","授权权限："+userInfo.getUserName()+",角色信息:"+userInfo.getRoles(),"4");
         logUtil.insertLog(logBean);

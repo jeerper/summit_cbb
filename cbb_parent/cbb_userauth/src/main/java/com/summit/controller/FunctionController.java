@@ -7,16 +7,21 @@ import com.summit.common.web.filter.UserContextHolder;
 import com.summit.service.function.FunctionService;
 import com.summit.service.log.LogUtilImpl;
 import com.summit.service.user.UserService;
+import com.summit.util.DateUtil;
+import com.summit.util.SummitTools;
 import com.summit.util.SysConstants;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import net.sf.json.JSONObject;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 @Api(description = "功能管理")
@@ -36,13 +41,19 @@ public class FunctionController {
 	@ApiOperation(value = "新增功能",  notes = "上级功能(pid),功能名称(name),功能排序(fdesc)都是必输项")
 	@PostMapping("/add")
 	public RestfulEntityBySummit<String> add(@RequestBody FunctionBean functionBean) {
+		LogBean logBean =new  LogBean();
+   	    logBean.setStime(DateUtil.DTFormat("yyyy-MM-dd HH:mm:ss",new Date()));
+   	    SummitTools.getLogBean(logBean,"功能管理","新增功能菜单:"+JSONObject.fromObject(functionBean).toString(),"1");
 		try {
 			fs.add(functionBean);
-			//LogBean logBean = new LogBean("功能管理","共享用户组件","修改功能信息："+functionBean,"1");
-		    //logUtil.insertLog(logBean);
+			logBean.setActionFlag("1");
+			logUtil.insertLog(logBean);
 			return ResultBuilder.buildSuccess();
 		} catch (Exception e) {
 			logger.error("操作失败！", e);
+			logBean.setActionFlag("0");
+			logBean.setErroInfo(e.getMessage());
+			logUtil.insertLog(logBean);
 			return ResultBuilder.buildError(ResponseCodeEnum.CODE_9999);
 		}
 	}
@@ -51,13 +62,19 @@ public class FunctionController {
 	@DeleteMapping("del")
 	public RestfulEntityBySummit<String> del(
 			@RequestParam(value = "ids") String ids) {
+		LogBean logBean =new  LogBean();
+   	    logBean.setStime(DateUtil.DTFormat("yyyy-MM-dd HH:mm:ss",new Date()));
+   	    SummitTools.getLogBean(logBean,"功能管理","删除功能菜单:"+ids,"3");
 		try {
 			fs.del(ids);
-			//LogBean logBean = new LogBean("功能管理","共享用户组件","删除功能信息："+ids,"3");
-		    //logUtil.insertLog(logBean);
+			logBean.setActionFlag("1");
+			logUtil.insertLog(logBean);
 			return ResultBuilder.buildSuccess();
 		} catch (Exception e) {
 			logger.error("操作失败！", e);
+			logBean.setActionFlag("0");
+			logBean.setErroInfo(e.getMessage());
+			logUtil.insertLog(logBean);
 			 return ResultBuilder.buildError(ResponseCodeEnum.CODE_9999);
 		}
 	}
@@ -65,13 +82,19 @@ public class FunctionController {
 	@ApiOperation(value = "功能管理修改" ,notes = "id,上级功能(pid),功能名称(name),功能排序(fdesc)都是必输项")
 	@PutMapping("edit")
 	public RestfulEntityBySummit<String> edit(@RequestBody FunctionBean functionBean) {
+		LogBean logBean =new  LogBean();
+   	    logBean.setStime(DateUtil.DTFormat("yyyy-MM-dd HH:mm:ss",new Date()));
+   	    SummitTools.getLogBean(logBean,"功能管理","修改功能菜单:"+JSONObject.fromObject(functionBean).toString(),"2");
 		try {
 			fs.edit(functionBean);
-			//LogBean logBean = new LogBean("功能管理","共享用户组件","修改功能信息："+functionBean,"2");
-		    //logUtil.insertLog(logBean);
+			logBean.setActionFlag("1");
+			logUtil.insertLog(logBean);
 			return ResultBuilder.buildSuccess();
 		} catch (Exception e) {
 			logger.error("操作失败！", e);
+			logBean.setActionFlag("0");
+			logBean.setErroInfo(e.getMessage());
+			logUtil.insertLog(logBean);
 			return ResultBuilder.buildError(ResponseCodeEnum.CODE_9999);
 		}
 	}

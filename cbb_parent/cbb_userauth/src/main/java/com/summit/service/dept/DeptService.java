@@ -319,17 +319,21 @@ public class DeptService {
 	 * 删除
 	 * @param ids
 	 * @return
+	 * @throws Exception 
 	 */
-	public void del(String ids) {
-		ids = ids.replaceAll(",", "','");
-		//String sql = "SELECT * FROM SYS_DEPT WHERE pid IN ('" + ids + "')";
-		//List<DeptBean> l = ur.queryAllCustom(sql, atm);
-//		if (st.collectionNotNull(l)) {
-//			return ResponseCodeBySummit.CODE_9981;
-//		}
-		String sql = "DELETE FROM SYS_DEPT WHERE id IN ('" + ids+ "') ";
-		jdbcTemplate.update(sql);
-		//return ResponseCodeBySummit.CODE_0000;
+	public ResponseCodeEnum del(String ids) throws Exception {
+		ids = "'"+ids.replaceAll(",", "','")+"'";
+		String sql="select padcd, count(*) from SYS_AD_CD where padcd in (" + ids+ ") group by padcd";
+		LinkedMap linkedMap=new LinkedMap();
+		// linkedMap.put(1,ids);
+		List<Object> list= ur.queryAllCustom(sql, linkedMap);
+		if(list==null || list.size()==0){
+		   String updateSql = "DELETE FROM SYS_DEPT WHERE id IN (" + ids+ ") ";
+		   jdbcTemplate.update(updateSql);
+		   return null;
+		}else{
+			return ResponseCodeEnum.CODE_0000;
+		}
 	}
 
 

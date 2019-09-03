@@ -69,7 +69,7 @@ public class FunctionService {
         	StringBuffer querySql = new StringBuffer(" SELECT A.ID, A.NAME,B.PID,B.IS_ENABLED, B.ID AS CHILD_ID, B.NAME AS CHILD_NAME,B.FDESC,B.FURL,B.IMGULR,B.NOTE, B.SUPER_FUN FROM SYS_FUNCTION AS A ");
         	querySql.append("  JOIN SYS_FUNCTION AS B ON B.PID = A.ID ");
         	// querySql.append("  where a.id!='root' ");
-        	querySql.append("  where A.IS_ENABLED = '1' ");
+        	querySql.append("  where B.IS_ENABLED = '1' ");
         	querySql.append("   ORDER BY a.id,fdesc ");
         	com.alibaba.fastjson.JSONArray list= ur.queryAllCustomJsonArray(querySql.toString(),null);
     		Map<String, List<Object>> map=new HashMap<String, List<Object>>();

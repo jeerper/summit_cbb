@@ -1,5 +1,6 @@
 package com.summit.controller;
 
+import java.util.Date;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -21,6 +22,8 @@ import com.summit.common.entity.RestfulEntityBySummit;
 import com.summit.common.util.ResultBuilder;
 import com.summit.service.dept.DeptService;
 import com.summit.service.log.LogUtilImpl;
+import com.summit.util.DateUtil;
+import com.summit.util.SummitTools;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -148,18 +151,23 @@ public class DeptController {
 	@ApiOperation(value = "部门新增",notes="部门名称(deptName),上级部门(pid)都是必输项,没有上级部门为pid=-1 ")
 	@RequestMapping(value = "/add",method = RequestMethod.POST)
 	public RestfulEntityBySummit<String> add(@RequestBody  DeptBean deptBean) {
+		LogBean logBean =new  LogBean();
+   	    logBean.setStime(DateUtil.DTFormat("yyyy-MM-dd HH:mm:ss",new Date()));
+   	    SummitTools.getLogBean(logBean,"部门管理","新增部门信息:"+JSONObject.fromObject(deptBean).toString(),"1");
 		try {
-			//list = ds.add(deptBean);
 			ResponseCodeEnum responseCodeEnum=ds.add(deptBean);
-			//LogBean logBean = new LogBean("部门管理","共享用户组件","新增部门信息："+deptBean,"1");
-		    //logUtil.insertLog(logBean);
 			if(responseCodeEnum!=null){ 
 				return ResultBuilder.buildError(responseCodeEnum);
 			}else{
+				logBean.setActionFlag("1");
+				logUtil.insertLog(logBean);
 				return ResultBuilder.buildSuccess();
 			}
 		} catch (Exception e) {
 			logger.error("操作失败：", e);
+			logBean.setActionFlag("0");
+			logBean.setErroInfo(e.getMessage());
+			logUtil.insertLog(logBean);
 			return ResultBuilder.buildError(ResponseCodeEnum.CODE_9999);
 		}
 	}
@@ -170,31 +178,43 @@ public class DeptController {
 	@ApiOperation(value = "部门编辑",notes="id,部门名称(deptName),上级部门(pid)都是必输项,没有上级部门为pid=-1 ")
 	@RequestMapping(value = "/edit",method = RequestMethod.POST)
 	public RestfulEntityBySummit<String> edit(@RequestBody DeptBean deptBean) {
+		LogBean logBean =new  LogBean();
+   	    logBean.setStime(DateUtil.DTFormat("yyyy-MM-dd HH:mm:ss",new Date()));
+   	    SummitTools.getLogBean(logBean,"部门管理","修改部门信息:"+JSONObject.fromObject(deptBean).toString(),"2");
 		try {
-			//list = ds.edit(deptBean);
 			ds.edit(deptBean);
-			//LogBean logBean = new LogBean("部门管理","共享用户组件","部门编辑信息："+deptBean,"2");
-		   // logUtil.insertLog(logBean);
+			logBean.setActionFlag("1");
+			logUtil.insertLog(logBean);
 			return ResultBuilder.buildSuccess();
 		} catch (Exception e) {
-			//e.printStackTrace();
 			logger.error("操作失败：", e);
+			logBean.setActionFlag("0");
+			logBean.setErroInfo(e.getMessage());
+			logUtil.insertLog(logBean);
 			return ResultBuilder.buildError(ResponseCodeEnum.CODE_9999);
 		}
 	}
 	/**
 	 * 删除
 	 */
-	@ApiOperation(value = "部门删除")
+	@ApiOperation(value = "部门删除，删除多个以,分割")
 	@RequestMapping(value = "/del",method = RequestMethod.DELETE)
 	public RestfulEntityBySummit<String> del(@RequestParam(value = "ids") String ids) {
+		LogBean logBean =new  LogBean();
+   	    logBean.setStime(DateUtil.DTFormat("yyyy-MM-dd HH:mm:ss",new Date()));
+   	    SummitTools.getLogBean(logBean,"部门管理","删除部门信息:"+ids,"3");
 		try {
-			ds.del(ids);
-			//LogBean logBean = new LogBean("部门管理","共享用户组件","部门删除信息："+ids,"3");
-		    //logUtil.insertLog(logBean);
+			ResponseCodeEnum responseCodeEnum=ds.del(ids);
+			if(responseCodeEnum!=null){
+				 return ResultBuilder.buildError(ResponseCodeEnum.CODE_9999,"有子集信息，无法删除",null);
+			}
+			logBean.setActionFlag("1");
 			return ResultBuilder.buildSuccess();
 		} catch (Exception e) {
 			logger.error("操作失败：", e);
+			logBean.setActionFlag("0");
+			logBean.setErroInfo(e.getMessage());
+			logUtil.insertLog(logBean);
 			return ResultBuilder.buildError(ResponseCodeEnum.CODE_9999);
 		}
 	}
