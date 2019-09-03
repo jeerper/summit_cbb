@@ -73,7 +73,7 @@ public class FunctionService {
         	querySql.append("   ORDER BY a.id,fdesc ");
         	com.alibaba.fastjson.JSONArray list= ur.queryAllCustomJsonArray(querySql.toString(),null);
     		Map<String, List<Object>> map=new HashMap<String, List<Object>>();
-    		List<Object> childrenList=new ArrayList<Object>();;
+    		List<Object> childrenList=new ArrayList<Object>();
     		String adcd="";
     		int i=0;
     		for(Object o:list){
@@ -119,7 +119,11 @@ public class FunctionService {
             	functionBean.setNote(json.containsKey("NOTE")?json.getString("NOTE"):"");
             	functionBean.setSuperfun(json.containsKey("SUPER_FUN")?json.getString("SUPER_FUN"):"");
                 List<FunctionBean> children = generateOrgMapToTree(orgMaps, json.get("CHILD_ID").toString());
-                functionBean.setChildren(children);
+                if(children!=null && children.size()==0){
+                	functionBean.setChildren(null);
+                }else{
+                   functionBean.setChildren(children);
+                }
                 //添加当前对象到主结果集中
                 orgList.add(functionBean);
             }
