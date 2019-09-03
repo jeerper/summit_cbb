@@ -2,8 +2,6 @@ package com.summit.service.function;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -27,7 +25,6 @@ import com.summit.util.ListUtils;
 import com.summit.util.SummitTools;
 import com.summit.util.SysConstants;
 
-import io.netty.util.internal.StringUtil;
 import net.sf.json.JSONObject;
 
 @Service
@@ -471,7 +468,7 @@ public class FunctionService {
 				functionBeanInfo=map.get(functionBeanInfo.getId());
 			}
 			// System.out.println("functionBean: "+functionBean.getName());
-			if(functionBean.getPid().equals(functionBeanInfo.getId())){
+			if(functionBean!=null && functionBeanInfo!=null && functionBean.getPid().equals(functionBeanInfo.getId())){
 				if(functionBeanInfo.getChildren()!=null ){
 					boolean falg=functionBeanInfo.getChildren().contains(functionBean);
 					if(!falg){
