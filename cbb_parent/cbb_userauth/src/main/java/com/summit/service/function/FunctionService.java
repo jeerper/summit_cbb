@@ -465,6 +465,9 @@ public class FunctionService {
 	private FunctionBean getRoot(String id,Map<String,FunctionBean> mapFunctionBean,FunctionBean functionBean, Map<String,FunctionBean> map,Map<String,FunctionBean> childMap ) {
 		
 		   FunctionBean functionBeanInfo=mapFunctionBean.get(id);
+		   if(functionBeanInfo==null) {
+			   return null;
+		   }
 		   if(childMap==null){
 			   childMap=new HashMap<String,FunctionBean>();
 		   }
