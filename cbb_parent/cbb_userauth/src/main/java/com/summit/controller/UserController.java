@@ -1,5 +1,7 @@
 package com.summit.controller;
 
+import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.bean.copier.CopyOptions;
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.system.SystemUtil;
 import com.alibaba.fastjson.JSON;
@@ -26,7 +28,6 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import net.sf.json.JSONObject;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -263,7 +264,12 @@ public class UserController {
             if(c!=null){
             	 return ResultBuilder.buildError(c);
             }
-            userInfoCache.setUserInfo(userInfo.getUserName(),userInfo);
+
+            UserInfo cacheUserInfo=  userInfoCache.getUserInfo(userInfo.getUserName());
+
+            BeanUtil.copyProperties(userInfo, cacheUserInfo, CopyOptions.create().setIgnoreNullValue(true));
+
+            userInfoCache.setUserInfo(userInfo.getUserName(),cacheUserInfo);
             logBean.setActionFlag("1");
         } catch (Exception e) {
             logger.error("修改用户失败:", e);
