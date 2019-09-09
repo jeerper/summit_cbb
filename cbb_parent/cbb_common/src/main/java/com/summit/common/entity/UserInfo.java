@@ -74,7 +74,7 @@ public class UserInfo implements Serializable {
     private String post;
     
     @ApiModelProperty(value="序号",name="sn" )
-    private String sn;
+    private Integer sn;
     
     @ApiModelProperty(value="用户头像",name="headPortrait")
     private String headPortrait;
@@ -269,11 +269,11 @@ public class UserInfo implements Serializable {
 		this.post = post;
 	}
 
-	public String getSn() {
+	public Integer getSn() {
 		return sn;
 	}
 
-	public void setSn(String sn) {
+	public void setSn(Integer sn) {
 		this.sn = sn;
 	}
 
