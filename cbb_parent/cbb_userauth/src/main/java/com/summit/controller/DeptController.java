@@ -148,7 +148,7 @@ public class DeptController {
 	/**
 	 * 新增
 	 */
-	@ApiOperation(value = "部门新增",notes="部门名称(deptName),上级部门(pid)都是必输项,没有上级部门为pid=-1 ")
+	@ApiOperation(value = "部门新增",notes="部门编码（deptCode）不能重复添加;部门名称(deptName),上级部门(pid)都是必输项,没有上级部门为pid=-1 ")
 	@RequestMapping(value = "/add",method = RequestMethod.POST)
 	public RestfulEntityBySummit<String> add(@RequestBody  DeptBean deptBean) {
 		LogBean logBean =new  LogBean();

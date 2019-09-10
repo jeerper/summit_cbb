@@ -28,6 +28,8 @@ public class DeptService {
 	@Autowired
 	private UserRepository ur;
 	@Autowired
+	private SummitTools st;
+	@Autowired
 	public JdbcTemplate jdbcTemplate;
 	/**
 	 * 
@@ -294,11 +296,14 @@ public class DeptService {
 	 * 新增
 	 */
 	public ResponseCodeEnum add(DeptBean ab) {
-		String hasadcd="select * from SYS_DEPT where DEPTCODE='"+ab.getDeptCode()+"'";
-		List l=ur.queryAllCustom(hasadcd);
-		if(l.size()>0){
-			return ResponseCodeEnum.CODE_9992;
+		if(st.stringNotNull(ab.getDeptCode()) ){
+			String hasadcd="select * from SYS_DEPT where DEPTCODE='"+ab.getDeptCode()+"'";
+			List l=ur.queryAllCustom(hasadcd);
+			if(l.size()>0){
+				return ResponseCodeEnum.CODE_9992;
+			}
 		}
+		
 		String sql = "INSERT INTO SYS_DEPT (ID, PID, DEPTCODE,DEPTNAME,ADCD,REMARK) VALUES (?, ? ,?, ?,?,?)";
 		jdbcTemplate.update(
 				sql,
