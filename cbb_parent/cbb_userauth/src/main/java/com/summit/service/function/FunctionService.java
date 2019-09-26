@@ -333,6 +333,8 @@ public class FunctionService {
 					 funInfoList.add(functionBean);
 				}else if(mapFunctionBean.get(functionBean.getId())!=null){
 					funInfoList.add(functionBean);
+				}else if(isSuroleCode){
+					funInfoList.add(functionBean);
 				}
 			}
 			return funInfoList;
