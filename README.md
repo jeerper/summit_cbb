@@ -201,8 +201,6 @@ mvn install
 
   ![SpringBootAdmin监控](doc/SpringBootAdmin.png)
 
-  ![SpringBootAdmin监控](https://devcloud.huaweicloud.com/codehub/project/7ebfb43fd288413495ccae1590babfe3/codehub/433269/file?ref=master&path=doc%252FSpringBootAdmin.png)
-  
 - 各个组件启动完成后访问<http://localhost:22222/swagger-ui.html>,这个界面来进行接口调试，并在下图红框中切换各个组件，调试各个组件的接口，如下图所示：
 
   ![Swagger接口调试界面](doc/Swagger-test-ui.png)
