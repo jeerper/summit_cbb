@@ -296,7 +296,7 @@ public class FunctionService {
 		String rootSql = "SELECT  * FROM  SYS_FUNCTION WHERE IS_ENABLED = '1'   and pid='root'   order by  fdesc  ";
 		List<Object> rootList= ur.queryAllCustom(rootSql, new LinkedMap());
 		
-		StringBuffer sql = new StringBuffer("select A.ID as PID,B.ID AS ID,B.ID AS CHILD_ID,B.NAME AS CHILD_NAME,B.FDESC,B.FURL,B.IMGULR,B.NOTE, B.SUPER_FUN  ");
+		StringBuffer sql = new StringBuffer("select A.ID as PID,B.ID AS ID,B.IS_ENABLED,B.ID AS CHILD_ID,B.NAME AS CHILD_NAME,B.FDESC,B.FURL,B.IMGULR,B.NOTE, B.SUPER_FUN  ");
 		LinkedMap linkedMap=new LinkedMap();
 		if(isSuroleCode){
 			sql.append(" FROM  (SELECT  DISTINCT * FROM SYS_FUNCTION WHERE IS_ENABLED = '1'  and id!='root'   order by fdesc)A  ");
