@@ -103,7 +103,7 @@ public class DictionaryService {
 	
 	public DictionaryBean queryTree(String padcd) throws Exception{
 		LinkedMap linkedMap=new LinkedMap();
-		StringBuffer sql = new StringBuffer("SELECT CODE,NAME,PCODE FROM SYS_DICTIONARY where 1=1 ");
+		StringBuffer sql = new StringBuffer("SELECT CODE,NAME,PCODE,NOTE FROM SYS_DICTIONARY where 1=1 ");
 		if(padcd==null || "".equals(padcd)){
 			sql.append(" and (PCODE is null  or PCODE='-1' )");
 		}else{
