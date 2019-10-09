@@ -1,8 +1,3 @@
-
-drop DATABASE if exists `cbb_notification`;
-
-CREATE DATABASE `cbb_notification` CHARACTER SET 'utf8' COLLATE 'utf8_general_ci';
-
 use `cbb_notification`;
 
 drop table if exists msg_email;
@@ -11,16 +6,16 @@ drop table if exists msg_email;
 /*==============================================================*/
 create table msg_email 
 (
-   email_id             varchar(32)      not null     comment 'ÓÊ¼þ±àºÅ',
-   email_name           varchar(64)      null         comment 'ÓÊ¼þÃû³Æ',
-   send_to              varchar(64)      not null     comment '½ÓÊÕÕßµØÖ·',
-   email_title          varchar(256)     not null     comment 'ÓÊ¼þ±êÌâ',
-   email_content        text             not null     comment 'ÓÊ¼þÄÚÈÝ',
-   send_state           integer          null         comment '·¢ËÍ×´Ì¬',
-   create_time          datetime         null         comment '´´½¨Ê±¼ä',
-   update_time          datetime         null         comment '¸üÐÂÊ±¼ä',
+   email_id             varchar(32)      not null     comment 'ï¿½Ê¼ï¿½ï¿½ï¿½ï¿½',
+   email_name           varchar(64)      null         comment 'ï¿½Ê¼ï¿½ï¿½ï¿½ï¿½ï¿½',
+   send_to              varchar(64)      not null     comment 'ï¿½ï¿½ï¿½ï¿½ï¿½ßµï¿½Ö·',
+   email_title          varchar(256)     not null     comment 'ï¿½Ê¼ï¿½ï¿½ï¿½ï¿½ï¿½',
+   email_content        text             not null     comment 'ï¿½Ê¼ï¿½ï¿½ï¿½ï¿½ï¿½',
+   send_state           integer          null         comment 'ï¿½ï¿½ï¿½ï¿½×´Ì¬',
+   create_time          datetime         null         comment 'ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½',
+   update_time          datetime         null         comment 'ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½',
    primary key (email_id)
-) ENGINE=InnoDB default CHARSET=utf8 comment 'ÓÊ¼þ¼ÇÂ¼±í';
+) ENGINE=InnoDB default CHARSET=utf8 comment 'ï¿½Ê¼ï¿½ï¿½ï¿½Â¼ï¿½ï¿½';
 
 
 
@@ -30,17 +25,17 @@ drop table if exists msg_sms;
 /*==============================================================*/
 create table msg_sms 
 (
-   sms_id            varchar(32)     not null   comment '¶ÌÐÅ±àºÅ',
-   template_id       varchar(32)     not null   comment 'Ä£°åid',
-   res_phone         varchar(20)     not null   comment '½ÓÊÕÕßÊÖ»úºÅ',
-   biz_id            varchar(64)     null       comment '·¢ËÍ»ØÖ´ID',
-   sms_signname      varchar(32)     not null   comment '¶ÌÐÅÇ©Ãû',
-   sms_content       text            not null   comment '¶ÌÐÅÄÚÈÝ',
-   send_state        integer         null       comment '·¢ËÍ×´Ì¬',
-   create_time       datetime        null       comment '´´½¨Ê±¼ä',
-   update_time       datetime        null       comment '¸üÐÂÊ±¼ä',
+   sms_id            varchar(32)     not null   comment 'ï¿½ï¿½ï¿½Å±ï¿½ï¿½',
+   template_id       varchar(32)     not null   comment 'Ä£ï¿½ï¿½id',
+   res_phone         varchar(20)     not null   comment 'ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö»ï¿½ï¿½ï¿½',
+   biz_id            varchar(64)     null       comment 'ï¿½ï¿½ï¿½Í»ï¿½Ö´ID',
+   sms_signname      varchar(32)     not null   comment 'ï¿½ï¿½ï¿½ï¿½Ç©ï¿½ï¿½',
+   sms_content       text            not null   comment 'ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½',
+   send_state        integer         null       comment 'ï¿½ï¿½ï¿½ï¿½×´Ì¬',
+   create_time       datetime        null       comment 'ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½',
+   update_time       datetime        null       comment 'ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½',
    primary key (sms_id)
-) ENGINE=InnoDB default CHARSET=utf8 comment '¶ÌÐÅ¼ÇÂ¼±í';
+) ENGINE=InnoDB default CHARSET=utf8 comment 'ï¿½ï¿½ï¿½Å¼ï¿½Â¼ï¿½ï¿½';
 
 
 
@@ -51,14 +46,14 @@ drop table if exists sms_template;
 /*==============================================================*/
 create table sms_template 
 (
-   template_id          varchar(32)   not null   comment 'Ä£°å±àºÅ',
-   template_content     varchar(32)   null       comment 'Ä£°åÄÚÈÝ',
-   template_code        varchar(32)   not null   comment 'Ä£°åºÅ',
-   template_type        varchar(16)   null       comment 'Ä£°åÀàÐÍ',
-   create_time          datetime      null       comment '´´½¨Ê±¼ä',
-   update_time          datetime      null       comment '¸üÐÂÊ±¼ä',
+   template_id          varchar(32)   not null   comment 'Ä£ï¿½ï¿½ï¿½ï¿½',
+   template_content     varchar(32)   null       comment 'Ä£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½',
+   template_code        varchar(32)   not null   comment 'Ä£ï¿½ï¿½ï¿½',
+   template_type        varchar(16)   null       comment 'Ä£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½',
+   create_time          datetime      null       comment 'ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½',
+   update_time          datetime      null       comment 'ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½',
    primary key (template_id)
-) ENGINE=InnoDB default CHARSET=utf8 comment '¶ÌÐÅÄ£°å±í';
+) ENGINE=InnoDB default CHARSET=utf8 comment 'ï¿½ï¿½ï¿½ï¿½Ä£ï¿½ï¿½ï¿½';
 
 
 
