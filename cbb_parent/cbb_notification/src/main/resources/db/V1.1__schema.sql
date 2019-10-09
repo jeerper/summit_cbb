@@ -47,7 +47,7 @@ drop table if exists sms_template;
 create table sms_template 
 (
    template_id          varchar(32)   not null   comment 'ģ����',
-   template_content     varchar(32)   null       comment 'ģ������',
+   template_content     varchar(255)   null       comment 'ģ������',
    template_code        varchar(32)   not null   comment 'ģ���',
    template_type        varchar(16)   null       comment 'ģ������',
    create_time          datetime      null       comment '����ʱ��',
