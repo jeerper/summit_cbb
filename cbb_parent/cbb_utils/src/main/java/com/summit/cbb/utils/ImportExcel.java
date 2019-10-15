@@ -18,6 +18,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.reflect.FieldUtils;
 import org.apache.poi.hssf.usermodel.HSSFDateUtil;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
@@ -232,7 +233,7 @@ public class ImportExcel {
 		StringBuffer infoMsg = new StringBuffer();
 		// Get annotation field 
 		//Field[] fs = cls.getDeclaredFields();
-        Field[] fs = cls.getFields();
+        Field[] fs = FieldUtils.getAllFields(cls);;
 		for (Field f : fs){
 			ExcelField ef = f.getAnnotation(ExcelField.class);
 			if (ef != null && (ef.type()==0 || ef.type()==2)){
