@@ -231,7 +231,8 @@ public class ImportExcel {
 		StringBuffer errorMsg = new StringBuffer();
 		StringBuffer infoMsg = new StringBuffer();
 		// Get annotation field 
-		Field[] fs = cls.getDeclaredFields();
+		//Field[] fs = cls.getDeclaredFields();
+        Field[] fs = cls.getFields();
 		for (Field f : fs){
 			ExcelField ef = f.getAnnotation(ExcelField.class);
 			if (ef != null && (ef.type()==0 || ef.type()==2)){
@@ -255,7 +256,8 @@ public class ImportExcel {
 			}
 		}
 		// Get annotation method
-		Method[] ms = cls.getDeclaredMethods();
+		//Method[] ms = cls.getDeclaredMethods();
+        Method[] ms = cls.getMethods();
 		for (Method m : ms){
 			ExcelField ef = m.getAnnotation(ExcelField.class);
 			if (ef != null && (ef.type()==0 || ef.type()==2)){
