@@ -9,7 +9,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 
-
 @Component
 public class AccessFilter extends ZuulFilter {
 
@@ -33,7 +32,7 @@ public class AccessFilter extends ZuulFilter {
         RequestContext requestContext = RequestContext.getCurrentContext();
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null) {
-            if(authentication.getName().equals("anonymousUser")){
+            if (authentication.getName().equals("anonymousUser")) {
                 return null;
             }
             requestContext.addZuulRequestHeader(CommonConstant.USER_HEADER, authentication.getName());

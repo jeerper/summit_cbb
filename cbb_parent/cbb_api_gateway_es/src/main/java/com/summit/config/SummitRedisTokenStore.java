@@ -16,9 +16,7 @@ import org.springframework.security.oauth2.provider.token.DefaultAuthenticationK
 import org.springframework.security.oauth2.provider.token.TokenStore;
 
 /**
- * 
  * @author yt
- *
  */
 public class SummitRedisTokenStore implements TokenStore {
 
@@ -42,9 +40,7 @@ public class SummitRedisTokenStore implements TokenStore {
     public void setRedisTemplate(RedisTemplate<String, Object> redisTemplate) {
         this.redisTemplate = redisTemplate;
     }
-    
-    
-    
+
 
     private AuthenticationKeyGenerator authenticationKeyGenerator = new DefaultAuthenticationKeyGenerator();
 

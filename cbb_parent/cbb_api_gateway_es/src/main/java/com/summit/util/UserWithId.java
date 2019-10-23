@@ -14,9 +14,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 
 /**
- * 
  * @author yt
- *
  */
 
 public class UserWithId extends User {
@@ -24,7 +22,7 @@ public class UserWithId extends User {
     private Serializable id;
 
     public UserWithId(String username, String password, boolean enabled, boolean accountNonExpired, boolean credentialsNonExpired, boolean accountNonLocked,
-            Collection<? extends GrantedAuthority> authorities, Serializable id) {
+                      Collection<? extends GrantedAuthority> authorities, Serializable id) {
         super(username, password, enabled, accountNonExpired, credentialsNonExpired, accountNonLocked, authorities);
         this.id = id;
     }

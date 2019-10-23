@@ -21,21 +21,20 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * 定义403无权限访问的处理，重定向到/403页面
- * 
- * @author Administrator
  *
+ * @author Administrator
  */
 @Component("myAccessDeniedHandler")
 public class MyAccessDeniedHandler implements AccessDeniedHandler {
-	private static Logger logger = LoggerFactory.getLogger(MyAccessDeniedHandler.class);
+    private static Logger logger = LoggerFactory.getLogger(MyAccessDeniedHandler.class);
 
-	@Override
-	public void handle(HttpServletRequest request, HttpServletResponse response,
-			AccessDeniedException accessDeniedException) throws IOException, ServletException {
-		
-		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-		response.setContentType("application/json;charset=UTF-8");
-        Map<String,Object> map = new HashMap<String,Object>();
+    @Override
+    public void handle(HttpServletRequest request, HttpServletResponse response,
+                       AccessDeniedException accessDeniedException) throws IOException, ServletException {
+
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        response.setContentType("application/json;charset=UTF-8");
+        Map<String, Object> map = new HashMap<String, Object>();
         map.put("code", "401");//401
         map.put("msg", "权限不足");
         map.put("data", accessDeniedException.getMessage());
@@ -53,5 +52,5 @@ public class MyAccessDeniedHandler implements AccessDeniedHandler {
 					+ request.getRequestURI());
 		}
 		response.sendRedirect(request.getContextPath() + "/403");*/
-	}
+    }
 }

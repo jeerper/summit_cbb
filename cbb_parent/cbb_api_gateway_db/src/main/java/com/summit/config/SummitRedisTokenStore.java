@@ -19,6 +19,7 @@ public class SummitRedisTokenStore extends RedisTokenStore {
         super(connectionFactory);
         this.clientDetailsService = clientDetailsService;
     }
+
     @Override
     public OAuth2Authentication readAuthentication(OAuth2AccessToken token) {
         OAuth2Authentication result = readAuthentication(token.getValue());

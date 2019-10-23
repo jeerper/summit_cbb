@@ -20,7 +20,7 @@ public class RestfulEntityBySummit<T> implements Serializable {
     @ApiModelProperty(value = "返回码", name = "code", example = "CODE_0000")
     private String code;
 
-    
+
     @ApiModelProperty(value = "返回信息", name = "msg", example = "操作成功")
     private String msg;
 
@@ -30,7 +30,8 @@ public class RestfulEntityBySummit<T> implements Serializable {
     /**
      * 用于只响应正确状态时使用
      */
-    public RestfulEntityBySummit() {}
+    public RestfulEntityBySummit() {
+    }
 
 
     public String getCode() {

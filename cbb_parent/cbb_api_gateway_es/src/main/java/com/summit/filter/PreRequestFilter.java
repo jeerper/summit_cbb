@@ -12,15 +12,14 @@ import com.netflix.zuul.ZuulFilter;
 import com.netflix.zuul.context.RequestContext;
 
 @Component
-public class PreRequestFilter  extends ZuulFilter {
+public class PreRequestFilter extends ZuulFilter {
 
     private static Logger log = LoggerFactory.getLogger(PreRequestFilter.class);
 
     @Autowired
-     RedisTemplate<String, Object> redisTemplate;
+    RedisTemplate<String, Object> redisTemplate;
 
-   
-    
+
     @Override
     public String filterType() {
         return "pre";
@@ -43,10 +42,10 @@ public class PreRequestFilter  extends ZuulFilter {
         log.info(String.format("%s >>> %s", request.getMethod(), request.getRequestURL().toString()));
         Object accessToken = request.getParameter("access_token");
         System.out.println("accessToken:" + accessToken);
-        
-      // Object test =  redisTemplate.opsForValue().get("auth:" + accessToken);
-       Object test  = redisTemplate.type("auth:" + accessToken);
-       System.out.println("test :" + test);
+
+        // Object test =  redisTemplate.opsForValue().get("auth:" + accessToken);
+        Object test = redisTemplate.type("auth:" + accessToken);
+        System.out.println("test :" + test);
         /*if(accessToken == null) {
             log.warn("token is empty");
             ctx.setSendZuulResponse(false);
@@ -57,13 +56,14 @@ public class PreRequestFilter  extends ZuulFilter {
 
             return null;
         }*/
-        if(test.toString().equalsIgnoreCase("NONE")) {
+        if (test.toString().equalsIgnoreCase("NONE")) {
             log.warn("token is empty");
             ctx.setSendZuulResponse(false);
             ctx.setResponseStatusCode(401);
             try {
                 ctx.getResponse().getWriter().write("token is empty");
-            }catch (Exception e){}
+            } catch (Exception e) {
+            }
 
             return null;
         }

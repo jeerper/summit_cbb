@@ -12,20 +12,20 @@ public class UserPassWordInfo implements Serializable {
     /**
      * 账户名称
      */
-    @ApiModelProperty(value="登录名称",name="userName",required=true)
+    @ApiModelProperty(value = "登录名称", name = "userName", required = true)
     private String userName;
 
 
     /**
      * 账户密码
      */
-    @ApiModelProperty(value="账户密码",name="password",required=true)
+    @ApiModelProperty(value = "账户密码", name = "password", required = true)
     private String password;
 
-    @ApiModelProperty(value="确认密码",name="repeatPassword",required=true)
+    @ApiModelProperty(value = "确认密码", name = "repeatPassword", required = true)
     private String repeatPassword;
 
-    @ApiModelProperty(value="旧密码",name="oldPassword",required=true)
+    @ApiModelProperty(value = "旧密码", name = "oldPassword", required = true)
     private String oldPassword;
 
 

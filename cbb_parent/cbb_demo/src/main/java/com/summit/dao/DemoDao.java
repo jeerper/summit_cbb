@@ -7,10 +7,10 @@ public interface DemoDao extends BaseMapper<User> {
 
     /**
      * 使用xml配置形式查询
+     *
      * @return
      */
     public User getUserInfoByUserName();
-
 
 
 }

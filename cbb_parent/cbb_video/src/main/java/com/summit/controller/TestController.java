@@ -22,7 +22,7 @@ public class TestController {
 
     @ApiOperation(value = "测试邮件发送")
     @PostMapping(value = "/sendEmail")
-    public RestfulEntityBySummit sendEmail(EmailInfo emailInfo, MultipartFile[] attachFiles){
+    public RestfulEntityBySummit sendEmail(EmailInfo emailInfo, MultipartFile[] attachFiles) {
         String emailId = emailInfo.getEmailId();
         String[] toEmails = emailInfo.getToEmails();
         String title = emailInfo.getTitle();
@@ -38,7 +38,7 @@ public class TestController {
 
     @ApiOperation(value = "测试短信发送")
     @PostMapping(value = "/sendSms")
-    public RestfulEntityBySummit sendSms(@RequestBody SendSms sendSms){
+    public RestfulEntityBySummit sendSms(@RequestBody SendSms sendSms) {
 
         RestfulEntityBySummit result = notificationService.sendSms(sendSms);
 

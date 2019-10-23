@@ -15,7 +15,6 @@ public class UserService {
     private DemoDao demoDao;
 
 
-
     public List<User> getAllUser1() {
         System.out.println(demoDao.selectCount(null));
         return demoDao.selectList(null);

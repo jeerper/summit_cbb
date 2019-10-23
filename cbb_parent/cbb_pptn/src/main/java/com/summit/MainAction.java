@@ -19,7 +19,7 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 @EnableFeignClients
 public class MainAction {
 
-	public static void main(String[] args) throws Exception {
-		SpringApplication.run(MainAction.class, args);
-	}
+    public static void main(String[] args) throws Exception {
+        SpringApplication.run(MainAction.class, args);
+    }
 }

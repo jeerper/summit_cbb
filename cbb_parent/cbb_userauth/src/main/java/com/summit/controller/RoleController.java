@@ -40,169 +40,169 @@ import net.sf.json.JSONObject;
 @RequestMapping("role")
 @Slf4j
 public class RoleController {
-	private static final Logger logger = LoggerFactory.getLogger(RoleController.class);
-	@Autowired
-	private RoleService rs;
-	@Autowired
-	private FunctionService fs;
-	@Autowired
-	LogUtilImpl logUtil;
+    private static final Logger logger = LoggerFactory.getLogger(RoleController.class);
+    @Autowired
+    private RoleService rs;
+    @Autowired
+    private FunctionService fs;
+    @Autowired
+    LogUtilImpl logUtil;
 
     @ApiOperation(value = "新增角色", notes = "角色名称(name)都是必输项")
     @PostMapping("/add")
-	public RestfulEntityBySummit<String> add(@RequestBody RoleBean roleBean) {
-    	LogBean logBean =new  LogBean();
-    	SummitTools.getLogBean(logBean,"角色管理","新增角色信息："+JSONObject.fromObject(roleBean).toString(),"");
-		try {
-			ResponseCodeEnum responseCodeEnum=rs.add(roleBean);
-			//LogBean logBean = new LogBean("角色管理","共享用户组件","修改角色信息："+roleBean,"1");
-		    //logUtil.insertLog(logBean);
-			if(responseCodeEnum!=null){
-				return ResultBuilder.buildError(responseCodeEnum);
-			}
-			logBean.setActionFlag("1");
-		    logUtil.insertLog(logBean);
-			return ResultBuilder.buildSuccess();
-		} catch (Exception e) {
-			logger.error("操作失败！", e);
-			logBean.setActionFlag("0");
-		    logUtil.insertLog(logBean);
-			return ResultBuilder.buildError(ResponseCodeEnum.CODE_9999);
-		}
-		
-	}
+    public RestfulEntityBySummit<String> add(@RequestBody RoleBean roleBean) {
+        LogBean logBean = new LogBean();
+        SummitTools.getLogBean(logBean, "角色管理", "新增角色信息：" + JSONObject.fromObject(roleBean).toString(), "");
+        try {
+            ResponseCodeEnum responseCodeEnum = rs.add(roleBean);
+            //LogBean logBean = new LogBean("角色管理","共享用户组件","修改角色信息："+roleBean,"1");
+            //logUtil.insertLog(logBean);
+            if (responseCodeEnum != null) {
+                return ResultBuilder.buildError(responseCodeEnum);
+            }
+            logBean.setActionFlag("1");
+            logUtil.insertLog(logBean);
+            return ResultBuilder.buildSuccess();
+        } catch (Exception e) {
+            logger.error("操作失败！", e);
+            logBean.setActionFlag("0");
+            logUtil.insertLog(logBean);
+            return ResultBuilder.buildError(ResponseCodeEnum.CODE_9999);
+        }
 
-	@ApiOperation(value = "角色管理删除")
-	@DeleteMapping("del")
-	public RestfulEntityBySummit<String> del(
-			@RequestParam(value = "codes") String codes) {
-		LogBean logBean =new  LogBean();
-    	SummitTools.getLogBean(logBean,"角色管理","删除角色信息："+codes,"");
-		try {
-			ResponseCodeEnum responseCodeEnum=rs.del(codes);
-			if(responseCodeEnum!=null){
-				return ResultBuilder.buildError(responseCodeEnum);
-			}
-			//LogBean logBean = new LogBean("角色管理","共享用户组件","删除角色信息："+codes,"3");
-		    //logUtil.insertLog(logBean);
-			logBean.setActionFlag("1");
-		    logUtil.insertLog(logBean);
-			return ResultBuilder.buildSuccess();
-		} catch (Exception e) {
-			logger.error("操作失败！", e);
-			logBean.setActionFlag("0");
-		    logUtil.insertLog(logBean);
-			return ResultBuilder.buildError(ResponseCodeEnum.CODE_9999);
-		}
-	}
+    }
 
-	@ApiOperation(value = "角色管理修改", notes = "code,角色名称(name)都是必输项")
-	@PutMapping("edit")
-	public RestfulEntityBySummit<String> edit(@RequestBody RoleBean roleBean) {
-		LogBean logBean =new  LogBean();
-    	SummitTools.getLogBean(logBean,"角色管理","修改角色信息："+JSONObject.fromObject(roleBean).toString(),"");
-		try {
-			ResponseCodeEnum responseCodeEnum=rs.edit(roleBean);
-			if(responseCodeEnum!=null){
-				return ResultBuilder.buildError(responseCodeEnum);
-			}
-			//LogBean logBean = new LogBean("角色管理","共享用户组件","修改角色信息："+roleBean,"2");
-		    //logUtil.insertLog(logBean);
-			logBean.setActionFlag("1");
-		    logUtil.insertLog(logBean);
-			return ResultBuilder.buildSuccess();
-		} catch (Exception e) {
-			logBean.setActionFlag("0");
-		    logUtil.insertLog(logBean);
-			logger.error("操作失败！", e);
-			return ResultBuilder.buildError(ResponseCodeEnum.CODE_9999);
-		}
-	}
+    @ApiOperation(value = "角色管理删除")
+    @DeleteMapping("del")
+    public RestfulEntityBySummit<String> del(
+            @RequestParam(value = "codes") String codes) {
+        LogBean logBean = new LogBean();
+        SummitTools.getLogBean(logBean, "角色管理", "删除角色信息：" + codes, "");
+        try {
+            ResponseCodeEnum responseCodeEnum = rs.del(codes);
+            if (responseCodeEnum != null) {
+                return ResultBuilder.buildError(responseCodeEnum);
+            }
+            //LogBean logBean = new LogBean("角色管理","共享用户组件","删除角色信息："+codes,"3");
+            //logUtil.insertLog(logBean);
+            logBean.setActionFlag("1");
+            logUtil.insertLog(logBean);
+            return ResultBuilder.buildSuccess();
+        } catch (Exception e) {
+            logger.error("操作失败！", e);
+            logBean.setActionFlag("0");
+            logUtil.insertLog(logBean);
+            return ResultBuilder.buildError(ResponseCodeEnum.CODE_9999);
+        }
+    }
 
-	@ApiOperation(value = "角色管理按照编号查询")
-	@GetMapping("queryByCode")
-	public RestfulEntityBySummit<RoleBean> queryByCode(
-			@RequestParam(value = "code") String code) {
-		try {
-			return ResultBuilder.buildSuccess(rs.queryByCode(code));
-		} catch (Exception e) {
-			logger.error("数据查询失败！", e);
-			return ResultBuilder.buildError(ResponseCodeEnum.CODE_9999);
-		}
-	}
+    @ApiOperation(value = "角色管理修改", notes = "code,角色名称(name)都是必输项")
+    @PutMapping("edit")
+    public RestfulEntityBySummit<String> edit(@RequestBody RoleBean roleBean) {
+        LogBean logBean = new LogBean();
+        SummitTools.getLogBean(logBean, "角色管理", "修改角色信息：" + JSONObject.fromObject(roleBean).toString(), "");
+        try {
+            ResponseCodeEnum responseCodeEnum = rs.edit(roleBean);
+            if (responseCodeEnum != null) {
+                return ResultBuilder.buildError(responseCodeEnum);
+            }
+            //LogBean logBean = new LogBean("角色管理","共享用户组件","修改角色信息："+roleBean,"2");
+            //logUtil.insertLog(logBean);
+            logBean.setActionFlag("1");
+            logUtil.insertLog(logBean);
+            return ResultBuilder.buildSuccess();
+        } catch (Exception e) {
+            logBean.setActionFlag("0");
+            logUtil.insertLog(logBean);
+            logger.error("操作失败！", e);
+            return ResultBuilder.buildError(ResponseCodeEnum.CODE_9999);
+        }
+    }
 
-	@ApiOperation(value = "角色管理分页查询")
-	@GetMapping("queryByPage")
-	public RestfulEntityBySummit<Page<RoleBean>> queryByPage(
-			@RequestParam(value = "page") int page,
-            @RequestParam(value ="pageSize") int pageSize,
-            @RequestParam(value = "name",required = false) String name) {
-		try {
-			return ResultBuilder.buildSuccess(rs.queryByPage(page, pageSize, name));
-		} catch (Exception e) {
-			//e.printStackTrace();
-			logger.error("数据查询失败！", e);
-			return ResultBuilder.buildError(ResponseCodeEnum.CODE_9999);
-		}
-	}
+    @ApiOperation(value = "角色管理按照编号查询")
+    @GetMapping("queryByCode")
+    public RestfulEntityBySummit<RoleBean> queryByCode(
+            @RequestParam(value = "code") String code) {
+        try {
+            return ResultBuilder.buildSuccess(rs.queryByCode(code));
+        } catch (Exception e) {
+            logger.error("数据查询失败！", e);
+            return ResultBuilder.buildError(ResponseCodeEnum.CODE_9999);
+        }
+    }
 
-	@ApiOperation(value = "角色管理查询所有数据")
-	@GetMapping("queryAll")
-	public RestfulEntityBySummit<List<RoleBean>> queryAll() {
-		try {
-			return ResultBuilder.buildSuccess(rs.queryAll());
-		} catch (Exception e) {
-			logger.error("数据查询失败！", e);
-			return ResultBuilder.buildError(ResponseCodeEnum.CODE_9999);
-		}
-	}
-	
+    @ApiOperation(value = "角色管理分页查询")
+    @GetMapping("queryByPage")
+    public RestfulEntityBySummit<Page<RoleBean>> queryByPage(
+            @RequestParam(value = "page") int page,
+            @RequestParam(value = "pageSize") int pageSize,
+            @RequestParam(value = "name", required = false) String name) {
+        try {
+            return ResultBuilder.buildSuccess(rs.queryByPage(page, pageSize, name));
+        } catch (Exception e) {
+            //e.printStackTrace();
+            logger.error("数据查询失败！", e);
+            return ResultBuilder.buildError(ResponseCodeEnum.CODE_9999);
+        }
+    }
 
-	@ApiOperation(value = "角色管理查询所有数据--基于antd：Transfer穿梭框")
-	@GetMapping("queryRoleAllAntd")
-	public RestfulEntityBySummit<List<AntdJsonBean>> queryRoleAllAntd() {
-		try {
-			return ResultBuilder.buildSuccess(rs.queryRoleAntdJsonAll());
-		} catch (Exception e) {
-			logger.error("数据查询失败！", e);
-			return ResultBuilder.buildError(ResponseCodeEnum.CODE_9999);
-		}
-	}
-	
-	@ApiOperation(value = "根据role_code查询角色权限")
-	@GetMapping("getRoleFunInfo")
-	public RestfulEntityBySummit<List<FunctionBean>> getRoleFunInfo(
-		@RequestParam(value = "roleCode") String roleCode) {
-		try {
+    @ApiOperation(value = "角色管理查询所有数据")
+    @GetMapping("queryAll")
+    public RestfulEntityBySummit<List<RoleBean>> queryAll() {
+        try {
+            return ResultBuilder.buildSuccess(rs.queryAll());
+        } catch (Exception e) {
+            logger.error("数据查询失败！", e);
+            return ResultBuilder.buildError(ResponseCodeEnum.CODE_9999);
+        }
+    }
+
+
+    @ApiOperation(value = "角色管理查询所有数据--基于antd：Transfer穿梭框")
+    @GetMapping("queryRoleAllAntd")
+    public RestfulEntityBySummit<List<AntdJsonBean>> queryRoleAllAntd() {
+        try {
+            return ResultBuilder.buildSuccess(rs.queryRoleAntdJsonAll());
+        } catch (Exception e) {
+            logger.error("数据查询失败！", e);
+            return ResultBuilder.buildError(ResponseCodeEnum.CODE_9999);
+        }
+    }
+
+    @ApiOperation(value = "根据role_code查询角色权限")
+    @GetMapping("getRoleFunInfo")
+    public RestfulEntityBySummit<List<FunctionBean>> getRoleFunInfo(
+            @RequestParam(value = "roleCode") String roleCode) {
+        try {
 //			String userName="";
 //			UserInfo userInfo=UserContextHolder.getUserInfo();
 //			if(userInfo!=null){
 //				userName=userInfo.getUserName();
 //			}
-			//FunctionListBean functionListBean=new FunctionListBean();
-			//functionListBean.setFunctionList(fs.queryAll(userName));
-			//functionListBean.setFunctionIdList();
-			
-			return ResultBuilder.buildSuccess(rs.queryFunIdByRoleCode(roleCode));
-		} catch (Exception e) {
-			logger.error("数据查询失败！", e);
-			return ResultBuilder.buildError(ResponseCodeEnum.CODE_9999);
-		}
-	}
+            //FunctionListBean functionListBean=new FunctionListBean();
+            //functionListBean.setFunctionList(fs.queryAll(userName));
+            //functionListBean.setFunctionIdList();
 
-	@ApiOperation(value = "角色授权")
-	@GetMapping("roleAuthorization")
-	public RestfulEntityBySummit<String> roleAuthorization(
-			@RequestParam(value = "roleCode") String roleCode,
-			@RequestParam(value = "funIds") String funIds) {
-		try {
-			rs.roleAuthorization(roleCode, funIds);
-			//LogBean logBean = new LogBean("角色管理","共享用户组件","角色授权："+roleCode+",funIds"+funIds,"4");
-		    //logUtil.insertLog(logBean);
-			return ResultBuilder.buildSuccess();
-		} catch (Exception e) {
-			logger.error("数据查询失败！", e);
-			return ResultBuilder.buildError(ResponseCodeEnum.CODE_9999);
-		}
-	}
+            return ResultBuilder.buildSuccess(rs.queryFunIdByRoleCode(roleCode));
+        } catch (Exception e) {
+            logger.error("数据查询失败！", e);
+            return ResultBuilder.buildError(ResponseCodeEnum.CODE_9999);
+        }
+    }
+
+    @ApiOperation(value = "角色授权")
+    @GetMapping("roleAuthorization")
+    public RestfulEntityBySummit<String> roleAuthorization(
+            @RequestParam(value = "roleCode") String roleCode,
+            @RequestParam(value = "funIds") String funIds) {
+        try {
+            rs.roleAuthorization(roleCode, funIds);
+            //LogBean logBean = new LogBean("角色管理","共享用户组件","角色授权："+roleCode+",funIds"+funIds,"4");
+            //logUtil.insertLog(logBean);
+            return ResultBuilder.buildSuccess();
+        } catch (Exception e) {
+            logger.error("数据查询失败！", e);
+            return ResultBuilder.buildError(ResponseCodeEnum.CODE_9999);
+        }
+    }
 }

@@ -71,7 +71,7 @@ public class SendSmsServiceImpl implements SendSmsService {
     private SmsTemplateDao smsTemplateDao;
 
     @Override
-    public RestfulEntityBySummit<Map<String,String>> sendSms(SendSms sendSms) {
+    public RestfulEntityBySummit<Map<String, String>> sendSms(SendSms sendSms) {
 //        if(sendSms.getTemplateVars() == null || sendSms.getTemplateVars().size() == 0){
 //            return sendSmsByForeach(sendSms);
 //        }else {
@@ -83,10 +83,11 @@ public class SendSmsServiceImpl implements SendSmsService {
 
     /**
      * 调用阿里批量发送api发送多个号码
+     *
      * @param sendSms 发送短信所需信息
      * @return RestfulEntityBySummit结果对象
      */
-    public RestfulEntityBySummit sendSmsByJson(SendSms sendSms){
+    public RestfulEntityBySummit sendSmsByJson(SendSms sendSms) {
         String result;
         DefaultProfile profile = DefaultProfile.getProfile("default", accessKeyId, secret);
         IAcsClient client = new DefaultAcsClient(profile);
@@ -111,39 +112,40 @@ public class SendSmsServiceImpl implements SendSmsService {
         try {
             CommonResponse response = client.getCommonResponse(request);
             String responseData = response.getData();
-            Map<String , Object> repMap = JSONUtil.parseJsonToMap(responseData);
-            if("OK".equals(repMap.get("Code"))){
+            Map<String, Object> repMap = JSONUtil.parseJsonToMap(responseData);
+            if ("OK".equals(repMap.get("Code"))) {
                 log.info("返回数据为 {}", responseData);
                 result = "发送短信完成";
-            }else{
+            } else {
                 log.error("返回数据为 {}", responseData);
                 result = "发送短信失败";
-                return ResultBuilder.buildError(ResponseCodeEnum.CODE_4025 ,result,null);
+                return ResultBuilder.buildError(ResponseCodeEnum.CODE_4025, result, null);
             }
 
         } catch (ServerException e) {
-            log.info("发送短信失败,服务端异常{}",e);
+            log.info("发送短信失败,服务端异常{}", e);
             result = "发送短信失败";
-            return ResultBuilder.buildError(ResponseCodeEnum.CODE_4025 ,result,null);
+            return ResultBuilder.buildError(ResponseCodeEnum.CODE_4025, result, null);
         } catch (ClientException e) {
-            log.info("发送短信失败,客户端异常{}",e);
+            log.info("发送短信失败,客户端异常{}", e);
             result = "发送短信失败";
-            return ResultBuilder.buildError(ResponseCodeEnum.CODE_4025 ,result,null);
+            return ResultBuilder.buildError(ResponseCodeEnum.CODE_4025, result, null);
         }
-        return ResultBuilder.buildError(ResponseCodeEnum.CODE_0000 ,result,null);
+        return ResultBuilder.buildError(ResponseCodeEnum.CODE_0000, result, null);
     }
 
     /**
      * 当所传模板参数为空时，调用阿里单条发送api循环发送多个号码
+     *
      * @param sendSms 发送短信所需信息
      * @return RestfulEntityBySummit结果对象
      */
-    public RestfulEntityBySummit<Map<String,String>> sendSmsByForeach(SendSms sendSms){
+    public RestfulEntityBySummit<Map<String, String>> sendSmsByForeach(SendSms sendSms) {
         String result = "";
-        if(sendSms == null){
+        if (sendSms == null) {
             log.error("短信不能为空");
             result = "发送短信失败";
-            return ResultBuilder.buildError(ResponseCodeEnum.CODE_4025 ,result,null);
+            return ResultBuilder.buildError(ResponseCodeEnum.CODE_4025, result, null);
         }
         DefaultProfile profile = DefaultProfile.getProfile("default", accessKeyId, secret);
         IAcsClient client = new DefaultAcsClient(profile);
@@ -155,51 +157,51 @@ public class SendSmsServiceImpl implements SendSmsService {
         request.setAction("SendSms");
 
         String[] phoneNumbers = sendSms.getPhoneNumbers();
-        if(phoneNumbers == null || phoneNumbers.length == 0){
+        if (phoneNumbers == null || phoneNumbers.length == 0) {
             log.error("号码不能为空");
             result = "发送短信失败";
-            return ResultBuilder.buildError(ResponseCodeEnum.CODE_4025 ,result,null);
+            return ResultBuilder.buildError(ResponseCodeEnum.CODE_4025, result, null);
         }
-        int len  = phoneNumbers.length;
+        int len = phoneNumbers.length;
         String signName = sendSms.getSignName();
-        if(signName == null){
+        if (signName == null) {
             log.error("短信签名不能为空");
             result = "发送短信失败";
-            return ResultBuilder.buildError(ResponseCodeEnum.CODE_4025 ,result,null);
+            return ResultBuilder.buildError(ResponseCodeEnum.CODE_4025, result, null);
         }
         String templateCode = sendSms.getTemplateCode();
         //名字暂未改，实际传过来的应该是templateId,去数据库查询出templateCode
         templateCode = smsTemplateDao.queryTmpalteCodeById(templateCode);
-        if(StringUtils.isEmpty(templateCode)){
+        if (StringUtils.isEmpty(templateCode)) {
             log.error("模板号不能为空");
             result = "发送短信失败";
-            return ResultBuilder.buildError(ResponseCodeEnum.CODE_4025 ,result,null);
+            return ResultBuilder.buildError(ResponseCodeEnum.CODE_4025, result, null);
         }
         Map<String, Object> templateVars = sendSms.getTemplateVars();
         int failCount = 0;
         //用于存放号码和bizid的对应关系
-        Map<String,String> bizIdMap = new HashMap<>();
-        for (int i = 0;i < len;i++){
+        Map<String, String> bizIdMap = new HashMap<>();
+        for (int i = 0; i < len; i++) {
             String phone = phoneNumbers[i];
             request.putQueryParameter("PhoneNumbers", phone);
             request.putQueryParameter("SignName", signName);
-            request.putQueryParameter("TemplateCode",templateCode);
+            request.putQueryParameter("TemplateCode", templateCode);
 //            request.putQueryParameter("TemplateParam", "{\"code\": \"6666666\"}");
 
-            if(templateVars != null){
-                request.putQueryParameter("TemplateParam",JSONUtil.parseObjToJson(templateVars));
+            if (templateVars != null) {
+                request.putQueryParameter("TemplateParam", JSONUtil.parseObjToJson(templateVars));
             }
             try {
                 CommonResponse response = client.getCommonResponse(request);
                 String responseData = response.getData();
-                Map<String , Object> repMap = JSONUtil.parseJsonToMap(responseData);
-                if("OK".equals(repMap.get("Code"))){
+                Map<String, Object> repMap = JSONUtil.parseJsonToMap(responseData);
+                if ("OK".equals(repMap.get("Code"))) {
                     log.info("返回数据为 {}", responseData);
 //                    result = "发送短信完成";
                     //TODO 插库
                     SmsEntity smsEntity = new SmsEntity();
                     String bizId = (String) repMap.get("BizId");
-                    bizIdMap.put(phone,bizId);
+                    bizIdMap.put(phone, bizId);
                     //目前默认将smsId设为bizId
                     smsEntity.setSmsId(bizId);
                     smsEntity.setBizId(bizId);
@@ -218,19 +220,21 @@ public class SendSmsServiceImpl implements SendSmsService {
                     Timer timer = new Timer();
 
                     TimerTask timerTask = new TimerTask() {
-//                        private int count = 0;
-                        private ThreadLocal<Integer> count = new ThreadLocal<Integer>(){
+                        //                        private int count = 0;
+                        private ThreadLocal<Integer> count = new ThreadLocal<Integer>() {
                             @Override
                             protected Integer initialValue() {
                                 return 0;
                             }
                         };
+
                         @Override
                         public void run() {
                             /*DefaultProfile profile = DefaultProfile.getProfile("default", "<accessKeyId>", "<accessSecret>");
                             IAcsClient client = new DefaultAcsClient(profile);*/
-                            count.set(count.get() + 1);;
-                            if(count.get() > maxPollingCount){
+                            count.set(count.get() + 1);
+                            ;
+                            if (count.get() > maxPollingCount) {
                                 log.info("获取发送结果超时，停止轮询");
                                 timer.cancel();
                             }
@@ -250,15 +254,15 @@ public class SendSmsServiceImpl implements SendSmsService {
                                 log.info(response.getData());
                                 JSONArray results = JSONUtil.parseResponseDataToMap(response.getData());
 
-                                if(results.size() == 0){
+                                if (results.size() == 0) {
                                     log.info("暂无结果");
                                     return;
                                 }
                                 //如果成功或失败，则插库并停止定时任务。若是发送中，则继续查询
-                                JSONObject result = (JSONObject)results.get(0);
+                                JSONObject result = (JSONObject) results.get(0);
                                 int sendStatus = result.getInteger("SendStatus");
                                 String content = result.getString("Content");
-                                if(sendStatus == 3){
+                                if (sendStatus == 3) {
                                     log.info("发送成功");
                                     //更新状态和内容
                                     SmsEntity sms = new SmsEntity();
@@ -268,7 +272,7 @@ public class SendSmsServiceImpl implements SendSmsService {
                                     sms.setUpdateTime(new Date());
                                     smsDao.updateSms(sms);
                                     timer.cancel();
-                                }else if(sendStatus == 2){
+                                } else if (sendStatus == 2) {
                                     log.info("发送失败");
                                     //更新状态
                                     SmsEntity sms = new SmsEntity();
@@ -278,7 +282,7 @@ public class SendSmsServiceImpl implements SendSmsService {
                                     sms.setUpdateTime(new Date());
                                     smsDao.updateSms(sms);
                                     timer.cancel();
-                                }else if(sendStatus == 1){
+                                } else if (sendStatus == 1) {
                                     log.info("发送中...");
                                 }
 
@@ -287,8 +291,8 @@ public class SendSmsServiceImpl implements SendSmsService {
                             }
                         }
                     };
-                    timer.schedule(timerTask,50,period);
-                }else{
+                    timer.schedule(timerTask, 50, period);
+                } else {
                     log.error("返回数据为 {}", responseData);
 //                    result = "发送短信失败";
                     failCount++;
@@ -296,21 +300,21 @@ public class SendSmsServiceImpl implements SendSmsService {
 
             } catch (ServerException e) {
                 failCount++;
-                log.error("发送短信失败,服务端异常{}",e);
+                log.error("发送短信失败,服务端异常{}", e);
             } catch (ClientException e) {
                 failCount++;
-                log.error("发送短信失败,客户端异常{}",e);
+                log.error("发送短信失败,客户端异常{}", e);
             }
         }
-        if(failCount == len){
+        if (failCount == len) {
             result = "发送短信失败";
-            return ResultBuilder.buildError(ResponseCodeEnum.CODE_4025 ,result,bizIdMap);
+            return ResultBuilder.buildError(ResponseCodeEnum.CODE_4025, result, bizIdMap);
         }
         result = "发送短信完成";
-        return ResultBuilder.buildError(ResponseCodeEnum.CODE_0000 ,result,bizIdMap);
+        return ResultBuilder.buildError(ResponseCodeEnum.CODE_0000, result, bizIdMap);
     }
 
-    public int directToAliQueryState(String bizId){
+    public int directToAliQueryState(String bizId) {
         SmsEntity smsRecord = smsDao.querySmsRecordByBizId(bizId);
 
         DefaultProfile profile = DefaultProfile.getProfile("default", accessKeyId, secret);
@@ -336,14 +340,14 @@ public class SendSmsServiceImpl implements SendSmsService {
         log.info(response.getData());
         JSONArray results = JSONUtil.parseResponseDataToMap(response.getData());
 
-        if(results.size() == 0){
+        if (results.size() == 0) {
             log.info("暂无结果");
             return -1;
         }
         //如果成功或失败，则插库并停止定时任务。若是发送中，则继续查询
-        JSONObject result = (JSONObject)results.get(0);
+        JSONObject result = (JSONObject) results.get(0);
         int sendStatus = result.getInteger("SendStatus");
-        if(sendStatus == 2 || sendStatus == 3){
+        if (sendStatus == 2 || sendStatus == 3) {
             //若查询出成功或失败，更新数据库
             SmsEntity sms = new SmsEntity();
             sms.setBizId(bizId);
@@ -392,11 +396,11 @@ public class SendSmsServiceImpl implements SendSmsService {
 //        return ResultBuilder.buildError(ResponseCodeEnum.CODE_0000 ,result);
 //    }
 
-    public List<SmsEntity> querySmsRecordByPhone(String resPhone){
+    public List<SmsEntity> querySmsRecordByPhone(String resPhone) {
         return smsDao.querySmsRecordByPhone(resPhone);
     }
 
-    public SmsEntity querySmsRecordByBizId(String bizId){
+    public SmsEntity querySmsRecordByBizId(String bizId) {
         return smsDao.querySmsRecordByBizId(bizId);
     }
 }

@@ -3,12 +3,10 @@ package com.summit.config;
 import org.springframework.context.annotation.Configuration;
 
 /**
- * 
  * @author yt
- *
  */
 @Configuration
-public class MvcConfig{
+public class MvcConfig {
 
   /*  @Override
     public void addViewControllers(ViewControllerRegistry registry) {

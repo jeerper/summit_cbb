@@ -14,18 +14,17 @@ import org.springframework.security.web.AuthenticationEntryPoint;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-public class AuthExceptionEntryPoint implements AuthenticationEntryPoint
-{
+public class AuthExceptionEntryPoint implements AuthenticationEntryPoint {
 
-    @Override 
+    @Override
     public void commence(HttpServletRequest request, HttpServletResponse response,
-        AuthenticationException authException) throws ServletException {
+                         AuthenticationException authException) throws ServletException {
         Map<String, Object> map = new HashMap<String, Object>();
         Throwable cause = authException.getCause();
-        if(cause instanceof InvalidTokenException) {
+        if (cause instanceof InvalidTokenException) {
             map.put("code", "401");//401
             map.put("msg", "无效的token");
-        }else{
+        } else {
             map.put("code", "login_error");//401
             map.put("msg", "访问此资源需要完全的身份验证");
         }

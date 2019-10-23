@@ -4,12 +4,12 @@ import com.summit.service.DemoService;
 import org.springframework.stereotype.Component;
 
 @Component
-public class DemoServiceHystric implements DemoService{
+public class DemoServiceHystric implements DemoService {
 
-	@Override
-	public String demo(String name) {
-		// TODO Auto-generated method stub
-		return "sorry" + name +" the request got error";
-	}
+    @Override
+    public String demo(String name) {
+        // TODO Auto-generated method stub
+        return "sorry" + name + " the request got error";
+    }
 
 }

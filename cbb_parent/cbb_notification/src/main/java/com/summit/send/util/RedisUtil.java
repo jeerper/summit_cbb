@@ -8,6 +8,7 @@ import javax.annotation.PostConstruct;
 import java.util.Collection;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
+
 import org.springframework.stereotype.Component;
 
 @Component
@@ -28,6 +29,7 @@ public class RedisUtil {
 
     /**
      * 根据手机号获取最近的验证码
+     *
      * @param phoneNumber 手机号
      * @return 手机号对应验证码
      */
@@ -38,6 +40,7 @@ public class RedisUtil {
 
     /**
      * 将参数中的字符串值设置为键的值，不设置过期时间
+     *
      * @param key
      * @param value 必须要实现 Serializable 接口
      */
@@ -47,8 +50,9 @@ public class RedisUtil {
 
     /**
      * 将参数中的字符串值设置为键的值，设置过期时间
+     *
      * @param key
-     * @param value 必须要实现 Serializable 接口
+     * @param value   必须要实现 Serializable 接口
      * @param timeout
      */
     public static void set(String key, String value, Long timeout) {
@@ -57,16 +61,18 @@ public class RedisUtil {
 
     /**
      * 获取与指定键相关的值
+     *
      * @param key
      * @return
      */
     public static Object get(String key) {
-        System.out.println("RedisUtil.redisTemplate"+RedisUtil.redisTemplate);
+        System.out.println("RedisUtil.redisTemplate" + RedisUtil.redisTemplate);
         return RedisUtil.redisTemplate.opsForValue().get(key);
     }
 
     /**
      * 设置某个键的过期时间
+     *
      * @param key 键值
      * @param ttl 过期秒数
      */
@@ -76,6 +82,7 @@ public class RedisUtil {
 
     /**
      * 判断某个键是否存在
+     *
      * @param key 键值
      */
     public static boolean hasKey(String key) {
@@ -84,6 +91,7 @@ public class RedisUtil {
 
     /**
      * 向集合添加元素
+     *
      * @param key
      * @param value
      * @return 返回值为设置成功的value数
@@ -94,6 +102,7 @@ public class RedisUtil {
 
     /**
      * 获取集合中的某个元素
+     *
      * @param key
      * @return 返回值为redis中键值为key的value的Set集合
      */
@@ -103,6 +112,7 @@ public class RedisUtil {
 
     /**
      * 将给定分数的指定成员添加到键中存储的排序集合中
+     *
      * @param key
      * @param value
      * @param score
@@ -114,6 +124,7 @@ public class RedisUtil {
 
     /**
      * 返回指定排序集中给定成员的分数
+     *
      * @param key
      * @param value
      * @return
@@ -124,6 +135,7 @@ public class RedisUtil {
 
     /**
      * 删除指定的键
+     *
      * @param key
      * @return
      */
@@ -133,6 +145,7 @@ public class RedisUtil {
 
     /**
      * 删除多个键
+     *
      * @param keys
      * @return
      */

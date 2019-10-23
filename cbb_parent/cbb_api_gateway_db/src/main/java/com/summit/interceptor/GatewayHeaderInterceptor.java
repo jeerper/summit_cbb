@@ -27,7 +27,7 @@ public class GatewayHeaderInterceptor implements RequestInterceptor {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null) {
             if (authentication instanceof OAuth2Authentication) {
-                if(!authentication.getName().equals("anonymousUser")){
+                if (!authentication.getName().equals("anonymousUser")) {
                     requestTemplate.header(CommonConstant.USER_HEADER, authentication.getName());
                 }
             }

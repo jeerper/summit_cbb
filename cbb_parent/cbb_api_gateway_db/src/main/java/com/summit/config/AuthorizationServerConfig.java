@@ -80,14 +80,16 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
 
     @Bean
     public TokenStore tokenStore() {
-        SummitRedisTokenStore tokenStore = new SummitRedisTokenStore(redisConnectionFactory,jdbcClientDetailsService());
+        SummitRedisTokenStore tokenStore = new SummitRedisTokenStore(redisConnectionFactory, jdbcClientDetailsService());
         tokenStore.setPrefix(CommonConstant.PROJECT_PREFIX + CommonConstant.OAUTH_PREFIX);
         return tokenStore;
     }
+
     @Bean
     public ClientDetailsService jdbcClientDetailsService() {
-       return new JdbcClientDetailsService(dataSource);
+        return new JdbcClientDetailsService(dataSource);
     }
+
     @Bean
     public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory redisConnectionFactory) {
         RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();

@@ -64,6 +64,7 @@ public class UserInfoCache {
 
     /**
      * 删除用户信息缓存
+     *
      * @param userName 用户名称
      * @return
      */

@@ -49,7 +49,7 @@ public class SummitAccessDeniedHandler extends OAuth2AccessDeniedHandler {
         map.put("path", request.getServletPath());
         map.put("timestamp", DateUtil.now());
 
-        RestfulEntityBySummit<Map<String, Object>> entity = ResultBuilder.buildError(ResponseCodeEnum.CODE_4012,map);
+        RestfulEntityBySummit<Map<String, Object>> entity = ResultBuilder.buildError(ResponseCodeEnum.CODE_4012, map);
 
         response.setCharacterEncoding(CommonConstant.UTF8);
         response.setContentType(CommonConstant.CONTENT_TYPE);

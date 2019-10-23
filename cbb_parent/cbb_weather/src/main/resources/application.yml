@@ -2,7 +2,7 @@
 server:
   port: 22225
 spring:
-  application: 
+  application:
     name: "cbb-weather"
   profiles:
     active: pro
@@ -16,16 +16,16 @@ spring:
 
 ###天气组件的KEY
 weather:
-##需要保存历史数据的城市名
+  ##需要保存历史数据的城市名
   city:
     name: 西安;武汉;雁塔区;长安区;洪山区;马尾区
   key:
-  ###高德地图key
+    ###高德地图key
     ibs: a8c65b39006c61d78f2d02cea44bcafc
-  ###聚合数据key
+    ###聚合数据key
     juhe: 772ff93727cb12fe4565a58960ba5d20
     seniverse: c0obrbc0bvpzjriv
-######保存每天天气cron表达式#########
+    ######保存每天天气cron表达式#########
     save:
       today:
         weather: 0 0 23 * * ?

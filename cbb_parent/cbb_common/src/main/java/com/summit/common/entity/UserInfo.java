@@ -13,39 +13,39 @@ public class UserInfo implements Serializable {
     /**
      * 账户名称
      */
-    @ApiModelProperty(value="登录名称",name="userName",required=true)
+    @ApiModelProperty(value = "登录名称", name = "userName", required = true)
     private String userName;
 
     /**
      * 用户昵称
      */
-    @ApiModelProperty(value="姓名",name="name",required=true)
+    @ApiModelProperty(value = "姓名", name = "name", required = true)
     private String name;
     /**
      * 性别
      */
-    @ApiModelProperty(value="性别",name="sex",allowableValues = "1,2")
+    @ApiModelProperty(value = "性别", name = "sex", allowableValues = "1,2")
     private String sex;
     /**
      * 账户密码
      */
-    @ApiModelProperty(value="账户密码",name="password",required=true)
+    @ApiModelProperty(value = "账户密码", name = "password", required = true)
     private String password;
     /**
      * 邮箱
      */
-    @ApiModelProperty(value="邮箱",name="email")
+    @ApiModelProperty(value = "邮箱", name = "email")
     private String email;
     /**
      * 电话号码
      */
-    @ApiModelProperty(value="电话号码",name="phoneNumber")
+    @ApiModelProperty(value = "电话号码", name = "phoneNumber")
     private String phoneNumber;
     /**
-     * 启用状态 
+     * 启用状态
      */
-    @ApiModelProperty(value="启用状态:1是，0否 ,添加默认为启用",name="isEnabled" ,example="1",allowableValues = "1,0" )
-    private Integer isEnabled=null;
+    @ApiModelProperty(value = "启用状态:1是，0否 ,添加默认为启用", name = "isEnabled", example = "1", allowableValues = "1,0")
+    private Integer isEnabled = null;
     /**
      * 最后一次更新时间
      */
@@ -56,59 +56,59 @@ public class UserInfo implements Serializable {
      */
     @ApiModelProperty(hidden = true)
     private int state;
-    
+
     /**
      * 移动设备
      */
-    @ApiModelProperty(value="移动设备识别码 ,用于发送短信验证用",name="imei" )
+    @ApiModelProperty(value = "移动设备识别码 ,用于发送短信验证用", name = "imei")
     private String imei;
-    
-    @ApiModelProperty(value="工作单位",name="company" )
+
+    @ApiModelProperty(value = "工作单位", name = "company")
     private String company;
-    
-    
-    @ApiModelProperty(value="岗位",name="duty" )
+
+
+    @ApiModelProperty(value = "岗位", name = "duty")
     private String duty;
-    
-    @ApiModelProperty(value="职务",name="post" )
+
+    @ApiModelProperty(value = "职务", name = "post")
     private String post;
-    
-    @ApiModelProperty(value="序号",name="sn" )
+
+    @ApiModelProperty(value = "序号", name = "sn")
     private Integer sn;
-    
-    @ApiModelProperty(value="用户头像",name="headPortrait")
+
+    @ApiModelProperty(value = "用户头像", name = "headPortrait")
     private String headPortrait;
 
     /**
      * 备注
      */
-    @ApiModelProperty(value="备注",name="note")
+    @ApiModelProperty(value = "备注", name = "note")
     private String note;
 
-    @ApiModelProperty(value="行政区划编码集合",name="adcds")
+    @ApiModelProperty(value = "行政区划编码集合", name = "adcds")
     private String[] adcds;
-    
-    @ApiModelProperty(value="查询用--行政区划名称，以,分割",name="adcds",hidden = true)
+
+    @ApiModelProperty(value = "查询用--行政区划名称，以,分割", name = "adcds", hidden = true)
     private String adnms;
-    
-    @ApiModelProperty(value="部门集合",name="depts")
+
+    @ApiModelProperty(value = "部门集合", name = "depts")
     private String[] depts;
-    
-    @ApiModelProperty(value="查询用--部门名称，以,分割",name="deptNames",hidden = true)
+
+    @ApiModelProperty(value = "查询用--部门名称，以,分割", name = "deptNames", hidden = true)
     private String deptNames;
-    
+
     /**
      * 权限标识集合(对应sys_function表中的ID字段)
      */
-    @ApiModelProperty(value="查询用--权限标识集合，查询用",name="permissions",hidden = true)
+    @ApiModelProperty(value = "查询用--权限标识集合，查询用", name = "permissions", hidden = true)
     private String[] permissions;
     /**
      * 角色集合
      */
-    @ApiModelProperty(value="查询用--角色集合",name="roles")
+    @ApiModelProperty(value = "查询用--角色集合", name = "roles")
     private String[] roles;
-    
-    
+
+
     public int getState() {
         return state;
     }
@@ -197,92 +197,92 @@ public class UserInfo implements Serializable {
         this.roles = roles;
     }
 
-	public String[] getAdcds() {
-		return adcds;
-	}
+    public String[] getAdcds() {
+        return adcds;
+    }
 
-	public void setAdcds(String[] adcds) {
-		this.adcds = adcds;
-	}
+    public void setAdcds(String[] adcds) {
+        this.adcds = adcds;
+    }
 
-	public String[] getDepts() {
-		return depts;
-	}
+    public String[] getDepts() {
+        return depts;
+    }
 
-	public void setDepts(String[] depts) {
-		this.depts = depts;
-	}
+    public void setDepts(String[] depts) {
+        this.depts = depts;
+    }
 
-	public String getSex() {
-		return sex;
-	}
+    public String getSex() {
+        return sex;
+    }
 
-	public void setSex(String sex) {
-		this.sex = sex;
-	}
+    public void setSex(String sex) {
+        this.sex = sex;
+    }
 
-	public String getAdnms() {
-		return adnms;
-	}
+    public String getAdnms() {
+        return adnms;
+    }
 
-	public void setAdnms(String adnms) {
-		this.adnms = adnms;
-	}
+    public void setAdnms(String adnms) {
+        this.adnms = adnms;
+    }
 
-	public String getDeptNames() {
-		return deptNames;
-	}
+    public String getDeptNames() {
+        return deptNames;
+    }
 
-	public void setDeptNames(String deptNames) {
-		this.deptNames = deptNames;
-	}
+    public void setDeptNames(String deptNames) {
+        this.deptNames = deptNames;
+    }
 
-	public String getImei() {
-		return imei;
-	}
+    public String getImei() {
+        return imei;
+    }
 
-	public void setImei(String imei) {
-		this.imei = imei;
-	}
+    public void setImei(String imei) {
+        this.imei = imei;
+    }
 
-	public String getCompany() {
-		return company;
-	}
+    public String getCompany() {
+        return company;
+    }
 
-	public void setCompany(String company) {
-		this.company = company;
-	}
+    public void setCompany(String company) {
+        this.company = company;
+    }
 
-	public String getDuty() {
-		return duty;
-	}
+    public String getDuty() {
+        return duty;
+    }
 
-	public void setDuty(String duty) {
-		this.duty = duty;
-	}
+    public void setDuty(String duty) {
+        this.duty = duty;
+    }
 
-	public String getPost() {
-		return post;
-	}
+    public String getPost() {
+        return post;
+    }
 
-	public void setPost(String post) {
-		this.post = post;
-	}
+    public void setPost(String post) {
+        this.post = post;
+    }
 
-	public Integer getSn() {
-		return sn;
-	}
+    public Integer getSn() {
+        return sn;
+    }
 
-	public void setSn(Integer sn) {
-		this.sn = sn;
-	}
+    public void setSn(Integer sn) {
+        this.sn = sn;
+    }
 
-	public String getHeadPortrait() {
-		return headPortrait;
-	}
+    public String getHeadPortrait() {
+        return headPortrait;
+    }
 
-	public void setHeadPortrait(String headPortrait) {
-		this.headPortrait = headPortrait;
-	}
-	
+    public void setHeadPortrait(String headPortrait) {
+        this.headPortrait = headPortrait;
+    }
+
 }

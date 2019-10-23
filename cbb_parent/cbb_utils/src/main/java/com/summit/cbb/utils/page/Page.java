@@ -3,36 +3,35 @@ package com.summit.cbb.utils.page;
 import java.util.List;
 
 
-
 public class Page<T> {
 
-	private List<T> content;
-	private Pageable pageable;
-	
-	public Page() {
-		super();
-	}
+    private List<T> content;
+    private Pageable pageable;
 
-	public Page(List<T> content, Pageable pageable) {
-		super();
-		this.content = content;
-		this.pageable = pageable;
-	}
+    public Page() {
+        super();
+    }
 
-	public List<T> getContent() {
-		return content;
-	}
+    public Page(List<T> content, Pageable pageable) {
+        super();
+        this.content = content;
+        this.pageable = pageable;
+    }
 
-	public void setContent(List<T> content) {
-		this.content = content;
-	}
+    public List<T> getContent() {
+        return content;
+    }
 
-	public Pageable getPageable() {
-		return pageable;
-	}
+    public void setContent(List<T> content) {
+        this.content = content;
+    }
 
-	public void setPageable(Pageable pageable) {
-		this.pageable = pageable;
-	}
-	
+    public Pageable getPageable() {
+        return pageable;
+    }
+
+    public void setPageable(Pageable pageable) {
+        this.pageable = pageable;
+    }
+
 }

@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 public class EmailManagerServiceImpl implements EmailManagerService {
 
 
-    public void insertEmail(){
+    public void insertEmail() {
 
     }
 

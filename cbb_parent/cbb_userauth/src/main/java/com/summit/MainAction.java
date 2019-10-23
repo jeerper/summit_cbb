@@ -15,7 +15,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ImportResource;
 
 
-
 @SpringBootApplication(exclude = {
         DataSourceAutoConfiguration.class,
         JpaRepositoriesAutoConfiguration.class,
@@ -24,13 +23,13 @@ import org.springframework.context.annotation.ImportResource;
 @EnableEurekaClient
 @EnableFeignClients
 @MapperScan("com.summit.dao")
-@ImportResource(locations= {"classpath:applicationContext.xml"})
+@ImportResource(locations = {"classpath:applicationContext.xml"})
 public class MainAction {
-	public static final String SnapshotFileName="userinfohead";
-	public static void main(String[] args){
-		SpringApplication.run(MainAction.class, args);
-	}
-	
+    public static final String SnapshotFileName = "userinfohead";
 
-	
+    public static void main(String[] args) {
+        SpringApplication.run(MainAction.class, args);
+    }
+
+
 }

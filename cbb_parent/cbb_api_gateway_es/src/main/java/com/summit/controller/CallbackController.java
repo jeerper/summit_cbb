@@ -17,9 +17,7 @@ import springfox.documentation.annotations.ApiIgnore;
 
 
 /**
- * 
  * @author yt
- *
  */
 @RestController
 @ApiIgnore
@@ -30,19 +28,19 @@ public class CallbackController {
     RestTemplate restTemplate;
 
     @RequestMapping("/code/redirect")
-    public String getToken(@RequestParam String code){
-    	System.out.println("code : " + code);
+    public String getToken(@RequestParam String code) {
+        System.out.println("code : " + code);
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-        MultiValueMap<String, String> params= new LinkedMultiValueMap<>();
-        
-        
-        params.add("grant_type","authorization_code");
-        params.add("code",code);
+        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+
+
+        params.add("grant_type", "authorization_code");
+        params.add("code", code);
         //params.add("client_id","summit");
-        params.add("client_id","yt");
-        params.add("client_secret","123456");
-        params.add("redirect_uri","http://localhost:8769/code/redirect");
+        params.add("client_id", "yt");
+        params.add("client_secret", "123456");
+        params.add("redirect_uri", "http://localhost:8769/code/redirect");
         System.out.println(params.toString());
         System.out.println("------------------------------------------");
         HttpEntity<MultiValueMap<String, String>> requestEntity = new HttpEntity<>(params, headers);

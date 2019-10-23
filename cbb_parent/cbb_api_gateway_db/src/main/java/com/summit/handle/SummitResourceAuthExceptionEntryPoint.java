@@ -20,6 +20,7 @@ import java.io.PrintWriter;
 
 /**
  * 资源服务器Token验证异常处理.
+ *
  * @author Administrator
  * 客户端异常处理
  * 可以根据 AuthenticationException 不同细化异常处理
@@ -28,24 +29,24 @@ import java.io.PrintWriter;
 @Component
 public class SummitResourceAuthExceptionEntryPoint implements AuthenticationEntryPoint {
 
-	@Autowired
-	private  ObjectMapper objectMapper;
+    @Autowired
+    private ObjectMapper objectMapper;
 
-	@Override
-	public void commence(HttpServletRequest request, HttpServletResponse response,
+    @Override
+    public void commence(HttpServletRequest request, HttpServletResponse response,
                          AuthenticationException authException) throws IOException {
 
-		Throwable cause = authException.getCause();
-		RestfulEntityBySummit entity;
-		if(cause instanceof InvalidTokenException) {
-			entity=ResultBuilder.buildError(ResponseCodeEnum.CODE_4008);
-		}else{
-			entity=ResultBuilder.buildError(ResponseCodeEnum.CODE_4007);
-		}
-		response.setCharacterEncoding(CommonConstant.UTF8);
-		response.setContentType(CommonConstant.CONTENT_TYPE);
-		response.setStatus(HttpStatus.OK.value());
-		PrintWriter printWriter = response.getWriter();
-		printWriter.append(objectMapper.writeValueAsString(entity));
-	}
+        Throwable cause = authException.getCause();
+        RestfulEntityBySummit entity;
+        if (cause instanceof InvalidTokenException) {
+            entity = ResultBuilder.buildError(ResponseCodeEnum.CODE_4008);
+        } else {
+            entity = ResultBuilder.buildError(ResponseCodeEnum.CODE_4007);
+        }
+        response.setCharacterEncoding(CommonConstant.UTF8);
+        response.setContentType(CommonConstant.CONTENT_TYPE);
+        response.setStatus(HttpStatus.OK.value());
+        PrintWriter printWriter = response.getWriter();
+        printWriter.append(objectMapper.writeValueAsString(entity));
+    }
 }

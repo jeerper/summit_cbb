@@ -4,38 +4,40 @@
 
 
     <resultMap id="BaseResultMap" type="com.summit.send.pojo.SmsEntity">
-        <id column="sms_id" javaType="java.lang.String" property="smsId" />
-        <result column="template_id" javaType="java.lang.String" property="templateId" />
-        <result column="res_phone" javaType="java.lang.String" property="resPhone" />
-        <result column="biz_id" javaType="java.lang.String" property="bizId" />
-        <result column="sms_signname" javaType="java.lang.String" property="smsSignname" />
-        <result column="sms_content" javaType="java.lang.String" property="smsContent" />
-        <result column="send_state" javaType="java.lang.Integer" property="sendState" />
-        <result column="create_time" javaType="java.util.Date" property="createTime" />
-        <result column="update_time" javaType="java.util.Date" property="updateTime" />
+        <id column="sms_id" javaType="java.lang.String" property="smsId"/>
+        <result column="template_id" javaType="java.lang.String" property="templateId"/>
+        <result column="res_phone" javaType="java.lang.String" property="resPhone"/>
+        <result column="biz_id" javaType="java.lang.String" property="bizId"/>
+        <result column="sms_signname" javaType="java.lang.String" property="smsSignname"/>
+        <result column="sms_content" javaType="java.lang.String" property="smsContent"/>
+        <result column="send_state" javaType="java.lang.Integer" property="sendState"/>
+        <result column="create_time" javaType="java.util.Date" property="createTime"/>
+        <result column="update_time" javaType="java.util.Date" property="updateTime"/>
     </resultMap>
-    
+
     <sql id="Base_Column">
         sms_id,template_id,res_phone,biz_id,sms_signname,sms_content,send_state,create_time,update_time
     </sql>
 
-    <insert  id="insertSms" parameterType="com.summit.send.pojo.SmsEntity">
+    <insert id="insertSms" parameterType="com.summit.send.pojo.SmsEntity">
         INSERT INTO msg_sms
-        ( <include refid="Base_Column" /> ) values
+        (
+        <include refid="Base_Column"/>
+        ) values
         (#{smsId},#{templateId},#{resPhone},#{bizId},#{smsSignname},#{smsContent},#{sendState},#{createTime},#{updateTime})
-    </insert >
+    </insert>
 
     <update id="updateSms" parameterType="com.summit.send.pojo.SmsEntity">
         update msg_sms
         <trim prefix="set" suffixOverrides=",">
-            <if test="templateId != null"> template_id = #{templateId},</if>
-            <if test="resPhone != null"> res_phone = #{resPhone},</if>
-            <if test="bizId != null"> biz_id = #{bizId},</if>
-            <if test="smsSignname != null"> sms_signname = #{smsSignname},</if>
-            <if test="smsContent != null"> sms_content = #{smsContent},</if>
-            <if test="sendState != null"> send_state = #{sendState},</if>
-            <if test="createTime != null"> create_time = #{createTime},</if>
-            <if test="updateTime != null"> update_time = #{updateTime},</if>
+            <if test="templateId != null">template_id = #{templateId},</if>
+            <if test="resPhone != null">res_phone = #{resPhone},</if>
+            <if test="bizId != null">biz_id = #{bizId},</if>
+            <if test="smsSignname != null">sms_signname = #{smsSignname},</if>
+            <if test="smsContent != null">sms_content = #{smsContent},</if>
+            <if test="sendState != null">send_state = #{sendState},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
         </trim>
         <where>
             <if test="smsId != null">
@@ -53,14 +55,16 @@
 
     <select id="queryTmpalteCodeById" resultType="java.lang.String">
 
-        select DISTINCT t.template_code from msg_sms  s
+        select DISTINCT t.template_code from msg_sms s
         left join sms_template t on s.template_id=t.template_id;
 
     </select>
 
     <select id="querySmsRecordByPhone" resultMap="BaseResultMap">
 
-        select <include refid="Base_Column" />  from msg_sms
+        select
+        <include refid="Base_Column"/>
+        from msg_sms
         <where>
             res_phone = #{resPhone}
         </where>
@@ -69,7 +73,9 @@
 
     <select id="querySmsRecordByBizId" resultMap="BaseResultMap">
 
-        select <include refid="Base_Column" />  from msg_sms
+        select
+        <include refid="Base_Column"/>
+        from msg_sms
         <where>
             biz_id = #{bizId}
         </where>

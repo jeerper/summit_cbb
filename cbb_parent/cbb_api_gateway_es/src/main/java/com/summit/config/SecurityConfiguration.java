@@ -24,9 +24,7 @@ import com.summit.service.UserServiceDetail;
 
 
 /**
- * 
  * @author yt
- *
  */
 @Configuration
 @EnableWebSecurity
@@ -41,7 +39,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 		 auth.userDetailsService(userServiceDetail);
 		 }
 	*/
-	  /**
+    /**
      * 需要放行的URL
      */
     private static final String[] AUTH_WHITELIST = {
@@ -61,81 +59,82 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
             "/springboot/swagger-ui.html"
             // other public endpoints of your API may be appended to this array
     };
-    
-	@Resource(name = "userServiceDetail")
-	private UserServiceDetail userServiceDetail;
-	@Bean
-	LoginSuccessHandler loginSuccessHandler() {
-		return new LoginSuccessHandler();
-	}
 
-	@Bean
-	LoginFailHandler loginFailHandler() {
-		return new LoginFailHandler();
-	}
+    @Resource(name = "userServiceDetail")
+    private UserServiceDetail userServiceDetail;
 
-	@Bean
-	public PasswordEncoder passwordEncoder() {
-		// 使用 BCrypt 加密
-		return new BCryptPasswordEncoder(); 
-	}
+    @Bean
+    LoginSuccessHandler loginSuccessHandler() {
+        return new LoginSuccessHandler();
+    }
+
+    @Bean
+    LoginFailHandler loginFailHandler() {
+        return new LoginFailHandler();
+    }
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        // 使用 BCrypt 加密
+        return new BCryptPasswordEncoder();
+    }
 
 
-	@Bean
-	@Override
-	public AuthenticationManager authenticationManagerBean() throws Exception {
-		AuthenticationManager manager = super.authenticationManagerBean();
-		return manager;
-	}
+    @Bean
+    @Override
+    public AuthenticationManager authenticationManagerBean() throws Exception {
+        AuthenticationManager manager = super.authenticationManagerBean();
+        return manager;
+    }
 
-	@Override
-	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-		auth.userDetailsService(this.userServiceDetail).passwordEncoder(passwordEncoder());
+    @Override
+    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+        auth.userDetailsService(this.userServiceDetail).passwordEncoder(passwordEncoder());
 
-	}
+    }
 
-	/**
-	 * 配置拦截器 处理login是json的情况
-	 * 
-	 * @return
-	 * @throws Exception
-	 */
-	@Bean
-	CustomAuthenticationFilter customAuthenticationFilter() throws Exception {
-		CustomAuthenticationFilter filter = new CustomAuthenticationFilter();
-		filter.setAuthenticationSuccessHandler(loginSuccessHandler());
-		filter.setAuthenticationFailureHandler(loginFailHandler());
-		
-		// 这句很关键，重用WebSecurityConfigurerAdapter配置的AuthenticationManager，不然要自己组装AuthenticationManager
-		filter.setAuthenticationManager(authenticationManagerBean());
-		return filter;
-	}
+    /**
+     * 配置拦截器 处理login是json的情况
+     *
+     * @return
+     * @throws Exception
+     */
+    @Bean
+    CustomAuthenticationFilter customAuthenticationFilter() throws Exception {
+        CustomAuthenticationFilter filter = new CustomAuthenticationFilter();
+        filter.setAuthenticationSuccessHandler(loginSuccessHandler());
+        filter.setAuthenticationFailureHandler(loginFailHandler());
+
+        // 这句很关键，重用WebSecurityConfigurerAdapter配置的AuthenticationManager，不然要自己组装AuthenticationManager
+        filter.setAuthenticationManager(authenticationManagerBean());
+        return filter;
+    }
 
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
 
-		http.csrf().disable().authorizeRequests().antMatchers(AUTH_WHITELIST).permitAll()
+        http.csrf().disable().authorizeRequests().antMatchers(AUTH_WHITELIST).permitAll()
                 // /oauth/authorize link org.springframework.security.oauth2.provider.endpoint.AuthorizationEndpoint
                 // 必须登录过的用户才可以进行 oauth2 的授权码申请
-                .antMatchers("/", "/home","/login","/oauth/authorize","/code/redirect").permitAll().anyRequest()
-        		.authenticated()
+                .antMatchers("/", "/home", "/login", "/oauth/authorize", "/code/redirect").permitAll().anyRequest()
+                .authenticated()
                 .and()
-            .formLogin()
+                .formLogin()
                 .loginPage("/login").permitAll().successHandler(loginSuccessHandler()).failureUrl("/login-error?secError=true")
                 .and().exceptionHandling().accessDeniedPage("/403")
                 .and()
-            .httpBasic()
+                .httpBasic()
                 .disable()
-            .exceptionHandling()
+                .exceptionHandling()
                 .accessDeniedPage("/login?authorization_error=true")
                 .and()
-            // TODO: put CSRF protection back into this endpoint
-            .csrf()
+                // TODO: put CSRF protection back into this endpoint
+                .csrf()
                 .requireCsrfProtectionMatcher(new AntPathRequestMatcher("/oauth/authorize"))
                 .disable();
 //                .loginPage("/login") .failureUrl("/login?authentication_error=true")   .httpBasic();            
-		http.sessionManagement().maximumSessions(60);
-		http.addFilterAt(customAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
+        http.sessionManagement().maximumSessions(60);
+        http.addFilterAt(customAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
     }
 }

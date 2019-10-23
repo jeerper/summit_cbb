@@ -7,10 +7,10 @@ services:
     image: ${projectName}/backend:1.0
     restart: always
     env_file:
-    - .env
+      - .env
     ports:
-    - "${WebServer_Port}:${WebServer_Port}"
+      - "${WebServer_Port}:${WebServer_Port}"
     volumes:
-    - ./logs:/opt/App/logs
-    - ./userinfohead:/opt/App/userinfohead
+      - ./logs:/opt/App/logs
+      - ./userinfohead:/opt/App/userinfohead
     user: root

@@ -27,11 +27,8 @@ import com.summit.domain.User;
 import com.summit.util.UserWithId;
 
 
-
 /**
- * 
  * @author yt
- *
  */
 public class UserContext {
     public static final String ANONYMOUS_USER = "anonymousUser";
@@ -41,8 +38,8 @@ public class UserContext {
      * currently exists in your accounts' repository; it could be a spring security
      * 'anonymous user'.
      *
-     * @see org.springframework.security.web.authentication.AnonymousAuthenticationFilter
      * @return the current user's username, or 'anonymousUser'.
+     * @see org.springframework.security.web.authentication.AnonymousAuthenticationFilter
      */
     public static String getUsername() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -51,7 +48,7 @@ public class UserContext {
             Object principal = auth.getPrincipal();
 
             if (principal instanceof UserDetails) {
-            	System.out.println(((UserDetails) principal).getUsername());
+                System.out.println(((UserDetails) principal).getUsername());
                 return ((UserDetails) principal).getUsername();
             }
 
@@ -86,25 +83,22 @@ public class UserContext {
      * Retrieve the current UserDetails bound to the current thread by Spring Security, if any.
      */
     public static User getCurrentUser() {
-    	User currentUser = null;
-		SecurityContext ctx = SecurityContextHolder.getContext();
-		if (ctx.getAuthentication() != null) {
-			Authentication auth = ctx.getAuthentication();
-			if (auth.getPrincipal() instanceof UserDetails) {
-				currentUser = (User) auth.getPrincipal();
-			} else if (auth.getDetails() instanceof UserDetails) {
-				currentUser = (User) auth.getDetails();
-			} else {
-				throw new AccessDeniedException(
-				"User not properly authenticated.");
-			}
-		}
-		return currentUser;
-    	
-    	
-    	
-    	
-    	
+        User currentUser = null;
+        SecurityContext ctx = SecurityContextHolder.getContext();
+        if (ctx.getAuthentication() != null) {
+            Authentication auth = ctx.getAuthentication();
+            if (auth.getPrincipal() instanceof UserDetails) {
+                currentUser = (User) auth.getPrincipal();
+            } else if (auth.getDetails() instanceof UserDetails) {
+                currentUser = (User) auth.getDetails();
+            } else {
+                throw new AccessDeniedException(
+                        "User not properly authenticated.");
+            }
+        }
+        return currentUser;
+
+
 //    	Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 //
 //        if (auth != null && auth.getPrincipal() instanceof UserDetails) {

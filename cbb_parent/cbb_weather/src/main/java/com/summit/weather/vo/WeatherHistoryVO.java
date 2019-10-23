@@ -8,70 +8,69 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
 /**
- * 
-* @Title: WeatherDataBO.java
-* @Package com.summit.bo.weather
-* @Description: TODO
-* @author hyn  
-* @date 2018年11月28日 下午7:59:25
-* @version V1.0  
+ * @author hyn  
+ * @version V1.0  
+ * @Title: WeatherDataBO.java
+ * @Package com.summit.bo.weather
+ * @Description: TODO
+ * @date 2018年11月28日 下午7:59:25
  */
 @ApiModel(value = "天气历史信息")
 public class WeatherHistoryVO {
 
-	@ApiModelProperty(value = "城市名", name = "cityName")
-	String cityName;
-	
-	@ApiModelProperty(value = "时间", name = "time")
-	Date time;
-	
-	@ApiModelProperty(value = "温度", name = "temperature")
-	String temperature;
-	
-	@ApiModelProperty(value = "天气", name = "weather")
-	String weather;
-	
-	@ApiModelProperty(value = "风力", name = "wind")
-	String wind;
+    @ApiModelProperty(value = "城市名", name = "cityName")
+    String cityName;
 
-	public String getCityName() {
-		return cityName;
-	}
+    @ApiModelProperty(value = "时间", name = "time")
+    Date time;
 
-	public void setCityName(String cityName) {
-		this.cityName = cityName;
-	}
+    @ApiModelProperty(value = "温度", name = "temperature")
+    String temperature;
 
-	public Date getTime() {
-		return time;
-	}
+    @ApiModelProperty(value = "天气", name = "weather")
+    String weather;
 
-	public void setTime(Date time) {
-		this.time = time;
-	}
+    @ApiModelProperty(value = "风力", name = "wind")
+    String wind;
 
-	public String getTemperature() {
-		return temperature;
-	}
+    public String getCityName() {
+        return cityName;
+    }
 
-	public void setTemperature(String temperature) {
-		this.temperature = temperature;
-	}
+    public void setCityName(String cityName) {
+        this.cityName = cityName;
+    }
 
-	public String getWeather() {
-		return weather;
-	}
+    public Date getTime() {
+        return time;
+    }
 
-	public void setWeather(String weather) {
-		this.weather = weather;
-	}
+    public void setTime(Date time) {
+        this.time = time;
+    }
 
-	public String getWind() {
-		return wind;
-	}
+    public String getTemperature() {
+        return temperature;
+    }
 
-	public void setWind(String wind) {
-		this.wind = wind;
-	}
-	
+    public void setTemperature(String temperature) {
+        this.temperature = temperature;
+    }
+
+    public String getWeather() {
+        return weather;
+    }
+
+    public void setWeather(String weather) {
+        this.weather = weather;
+    }
+
+    public String getWind() {
+        return wind;
+    }
+
+    public void setWind(String wind) {
+        this.wind = wind;
+    }
+
 }

@@ -12,6 +12,7 @@ import java.util.List;
 
 /**
  * routeLocator 聚合swagger
+ *
  * @author Administrator
  */
 @Component

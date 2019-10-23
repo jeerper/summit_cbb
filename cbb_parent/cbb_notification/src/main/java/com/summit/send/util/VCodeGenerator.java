@@ -5,7 +5,8 @@ import java.security.SecureRandom;
 public class VCodeGenerator {
 
     private static SecureRandom random = new SecureRandom();
-    public static String getVerificationCode(){
+
+    public static String getVerificationCode() {
 
         String vcode = "";
         for (int i = 0; i < 6; i++) {

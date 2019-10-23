@@ -21,7 +21,6 @@ public class SummitAuthenticationProvider extends DaoAuthenticationProvider {
     private String key;
 
 
-
     @Override
     public void additionalAuthenticationChecks(UserDetails userDetails, UsernamePasswordAuthenticationToken authentication) throws AuthenticationException {
         if (authentication.getCredentials() == null) {
@@ -37,7 +36,7 @@ public class SummitAuthenticationProvider extends DaoAuthenticationProvider {
         try {
             decodePassword = Cryptographic.decryptAES(presentedPassword, key);
         } catch (Exception e) {
-            LOGGER.error("密码解密失败:{}", presentedPassword,e);
+            LOGGER.error("密码解密失败:{}", presentedPassword, e);
         }
 
         if (!getPasswordEncoder().matches(decodePassword, userDetails.getPassword())) {

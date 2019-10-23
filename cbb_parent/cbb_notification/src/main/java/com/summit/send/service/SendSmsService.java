@@ -12,13 +12,15 @@ public interface SendSmsService {
 
     /**
      * 发送短信，新版
+     *
      * @param sendSms 短信参数
      * @return 返回发送号码和bizId的键值对map
      */
-    RestfulEntityBySummit<Map<String,String>> sendSms(SendSms sendSms);
+    RestfulEntityBySummit<Map<String, String>> sendSms(SendSms sendSms);
 
     /**
      * 发送短信，旧版
+     *
      * @param sendSms 短信参数
      * @return 向哪些号码发送成功、哪些号码失败的消息，封号隔开。全部成功返回全部成功，全部失败返回全部失败
      */

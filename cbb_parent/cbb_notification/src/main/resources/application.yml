@@ -18,7 +18,7 @@ spring:
     host: smtp.qq.com
     username: 3421988273@qq.com
     password: fdgeeukxcdncdaeg
-#    port: 465
+    #    port: 465
     default-encoding: UTF-8
     properties:
       mail:
@@ -35,7 +35,7 @@ jpush:
   #appKey: 43d2500b962982d568d6d000
   #masterSecret: 44a6260c4afd4be02f95d808
   #liveTime: 300000
-  
+
   #thymeleaf
   #默认到resource/templates目录下寻找
   thymeleaf:

@@ -10,11 +10,11 @@ import com.summit.service.DemoService;
 @RestController
 public class DemoController {
 
-	@Autowired
-	DemoService demoService;
-	
-	 @GetMapping(value = "/hi")
-	public String sayHi(@RequestParam String name){
-		return "i am pptn demo";
-	}
+    @Autowired
+    DemoService demoService;
+
+    @GetMapping(value = "/hi")
+    public String sayHi(@RequestParam String name) {
+        return "i am pptn demo";
+    }
 }

@@ -18,43 +18,42 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-
 @Configuration
 @PropertySource(value = "classpath:esconfig.properties")
 public class ESConfig {
-	private Logger logger = LoggerFactory.getLogger(this.getClass());
+    private Logger logger = LoggerFactory.getLogger(this.getClass());
 
-	@Value("${elasticsearch.sql.url}")
-	public static String url;
+    @Value("${elasticsearch.sql.url}")
+    public static String url;
 
-	 
+
     @Value("${elasticsearch.cluster.nodes}")
     private String esCluster;
-    
- 
+
+
     @Value("${elasticsearch.clustername}")
     private String esClusterName;
-    
+
     @Value("${elasticsearch.cluster.port}")
     private int clusterPort;
- 
+
     private List<TransportAddress> list = new ArrayList<>();
- 
+
     @Bean
     public TransportClient client() throws Exception {
         Settings esSettings = Settings.builder().put("cluster.name", esClusterName)
                 .put("client.transport.sniff", true).build();
-		TransportClient transportClient = null;
+        TransportClient transportClient = null;
         transportClient = new PreBuiltTransportClient(esSettings);
         transportClient.addTransportAddresses(getTransportAddresses());
         return transportClient;
     }
- 
+
     private TransportAddress[] getTransportAddresses() throws UnknownHostException {
         if (StringUtils.isNotBlank(esCluster)) {
             String[] urllist = esCluster.split(",");
-            for(String str : urllist){
-            	TransportAddress transportAddress = new TransportAddress(InetAddress.getByName(str), clusterPort);
+            for (String str : urllist) {
+                TransportAddress transportAddress = new TransportAddress(InetAddress.getByName(str), clusterPort);
                 list.add(transportAddress);
             }
         }

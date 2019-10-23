@@ -7,8 +7,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.summit.hystric.DemoServiceHystric;
 
-@FeignClient(value = "service-feign",fallback = DemoServiceHystric.class)
+@FeignClient(value = "service-feign", fallback = DemoServiceHystric.class)
 public interface DemoService {
-	@RequestMapping(value = "/hi",method = RequestMethod.GET)	
+    @RequestMapping(value = "/hi", method = RequestMethod.GET)
     String demo(@RequestParam(value = "name") String name);
 }

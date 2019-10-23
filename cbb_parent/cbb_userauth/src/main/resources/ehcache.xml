@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <ehcache xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:noNamespaceSchemaLocation="http://ehcache.org/ehcache.xsd" updateCheck="false"
-	monitoring="autodetect" dynamicConfig="true">
+         xsi:noNamespaceSchemaLocation="http://ehcache.org/ehcache.xsd" updateCheck="false"
+         monitoring="autodetect" dynamicConfig="true">
 
-	<diskStore path="java.io.tmpdir" />
-	<!-- 字典缓存 -->
-	<cache name="dictionary" maxEntriesLocalHeap="0" eternal="true"
-		timeToIdleSeconds="10000" timeToLiveSeconds="10000" overflowToDisk="false" />
-	
+    <diskStore path="java.io.tmpdir"/>
+    <!-- 字典缓存 -->
+    <cache name="dictionary" maxEntriesLocalHeap="0" eternal="true"
+           timeToIdleSeconds="10000" timeToLiveSeconds="10000" overflowToDisk="false"/>
+
 </ehcache>

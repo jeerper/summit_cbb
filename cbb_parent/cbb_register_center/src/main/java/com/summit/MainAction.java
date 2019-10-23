@@ -10,8 +10,8 @@ import org.springframework.cloud.netflix.eureka.server.EnableEurekaServer;
 @EnableEurekaServer
 @EnableAdminServer
 public class MainAction {
-public static void main(String[] args) throws Exception {
-	SpringApplication.run(MainAction.class, args);
-}
+    public static void main(String[] args) throws Exception {
+        SpringApplication.run(MainAction.class, args);
+    }
 
 }

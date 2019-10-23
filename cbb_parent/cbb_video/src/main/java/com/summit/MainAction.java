@@ -13,8 +13,8 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 @MapperScan("com.summit.dao")
 public class MainAction {
 
-	public static void main(String[] args){
-		SpringApplication.run(MainAction.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(MainAction.class, args);
+    }
 
 }

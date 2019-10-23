@@ -28,6 +28,7 @@ public class WebServerConfig {
 
     /**
      * 文件上传配置
+     *
      * @return
      */
     @Bean
@@ -37,9 +38,9 @@ public class WebServerConfig {
         factory.setMaxFileSize("1024MB");
         /// 设置总上传数据总大小
         factory.setMaxRequestSize("10240MB");
-        String file=System.getProperty("user.dir")+ File.separator+"tomcat.temp";
-        File tempFile=new File(file);
-        if(!tempFile.exists()){
+        String file = System.getProperty("user.dir") + File.separator + "tomcat.temp";
+        File tempFile = new File(file);
+        if (!tempFile.exists()) {
             tempFile.mkdirs();
         }
         factory.setLocation(file);

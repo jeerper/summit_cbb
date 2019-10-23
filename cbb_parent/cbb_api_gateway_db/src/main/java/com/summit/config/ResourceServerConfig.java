@@ -14,7 +14,8 @@ import org.springframework.security.oauth2.config.annotation.web.configurers.Res
 import org.springframework.security.oauth2.provider.expression.OAuth2WebSecurityExpressionHandler;
 
 /**
- *  资源服务器配置
+ * 资源服务器配置
+ *
  * @author Administrator
  */
 @Configuration
@@ -29,7 +30,6 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
     private SummitAccessDeniedHandler summitAccessDeniedHandler;
     @Autowired
     AppConfig appConfig;
-
 
 
     @Override

@@ -38,37 +38,39 @@ public class SendEmailServiceImpl implements SendEmailService {
 
     /**
      * 发送邮件入口
+     *
      * @param sendEmail 待发送邮件信息
      * @return 向哪些邮箱发送成功、哪些邮箱失败的消息，封号隔开。全部成功返回全部成功，全部失败返回全部失败
      */
     @Override
     public RestfulEntityBySummit sendMail(SendEmail sendEmail) {
         List<String> result = new ArrayList<String>();
-        if(sendEmail == null){
+        if (sendEmail == null) {
             log.error("sendEmail is null");
             result.add("mail info is null");
-            return ResultBuilder.buildError(ResponseCodeEnum.CODE_4025 ,result);
+            return ResultBuilder.buildError(ResponseCodeEnum.CODE_4025, result);
         }
         //判断邮件类型
-        if(MailContentType.TEXT.value().equals(sendEmail.getContentType())){
+        if (MailContentType.TEXT.value().equals(sendEmail.getContentType())) {
             return sendSimpleMail(sendEmail);
-        }else if(MailContentType.HTML.value().equals(sendEmail.getContentType())){
+        } else if (MailContentType.HTML.value().equals(sendEmail.getContentType())) {
             return sendHtmlMail(sendEmail);
-        }else if(MailContentType.TEMPLATE.value().equals(sendEmail.getContentType())){
+        } else if (MailContentType.TEMPLATE.value().equals(sendEmail.getContentType())) {
             return sendTemplateEmail(sendEmail);
-        }else{
+        } else {
             log.error("unknown mail type");
             result.add("unknown mail type");
-            return ResultBuilder.buildError(ResponseCodeEnum.CODE_4025 ,result);
+            return ResultBuilder.buildError(ResponseCodeEnum.CODE_4025, result);
         }
     }
 
     /**
      * 发送纯文本邮件
+     *
      * @param sendEmail 待发送邮件信息
      * @return 向哪些邮箱发送成功、哪些邮箱失败的消息，封号隔开。全部成功返回全部成功，全部失败返回全部失败
      */
-    private RestfulEntityBySummit sendSimpleMail(SendEmail sendEmail){
+    private RestfulEntityBySummit sendSimpleMail(SendEmail sendEmail) {
         List<String> result = new ArrayList<String>();
         message.setFrom(userNmae);
         message.setSubject(sendEmail.getTitle());
@@ -78,16 +80,16 @@ public class SendEmailServiceImpl implements SendEmailService {
         String[] toEmails = sendEmail.getToEmails();
         //int susCount = 0;
         int failCount = 0;
-        for (String to : toEmails){
+        for (String to : toEmails) {
             message.setTo(to);
             try {
                 javaMailSender.send(message);
-                log.info("纯文本的邮件已经发送至【{}】" , to );
+                log.info("纯文本的邮件已经发送至【{}】", to);
                 result.add("successfully sent text mail to  " + to);
                 //susCount++;
             } catch (Exception e) {
-                log.error("向【{}】发送纯文本邮件时发生异常{}" , to , e);
-                result.add("failed to send text mail to " + to );
+                log.error("向【{}】发送纯文本邮件时发生异常{}", to, e);
+                result.add("failed to send text mail to " + to);
                 failCount++;
             }
         }
@@ -97,15 +99,16 @@ public class SendEmailServiceImpl implements SendEmailService {
         if(failCount == toEmails.length){
             result = ALL_FAILURE;
         }*/
-        log.info("所有纯文本的邮件已发送" );
-        if(failCount > 0){
-            return ResultBuilder.buildError(ResponseCodeEnum.CODE_4025 ,result);
+        log.info("所有纯文本的邮件已发送");
+        if (failCount > 0) {
+            return ResultBuilder.buildError(ResponseCodeEnum.CODE_4025, result);
         }
-        return ResultBuilder.buildError(ResponseCodeEnum.CODE_0000 ,result);
+        return ResultBuilder.buildError(ResponseCodeEnum.CODE_0000, result);
     }
 
     /**
      * 发送html邮件
+     *
      * @param sendEmail 待发送邮件信息
      * @return 向哪些邮箱发送成功、哪些邮箱失败的消息，封号隔开。全部成功返回全部成功，全部失败返回全部失败
      */
@@ -132,7 +135,7 @@ public class SendEmailServiceImpl implements SendEmailService {
             //若有附件则添加
             //AttachFile[] attachFiles = sendEmail.getAttachFiles();
             MultipartFile[] attachFiles = sendEmail.getAttachFiles();
-            if(attachFiles != null){
+            if (attachFiles != null) {
                 for (MultipartFile attachFile : attachFiles) {
                     //FileSystemResource file = new FileSystemResource(new File(attachFile.getPath()));
                     helper.addAttachment(attachFile.getOriginalFilename(), attachFile);
@@ -141,24 +144,24 @@ public class SendEmailServiceImpl implements SendEmailService {
 
             log.info("html邮件参数设置成功。");
         } catch (MessagingException e) {
-            log.error("设置html邮件参数时发生异常{}" , e);
-            result.add("error in mail parameters , "+ALL_FAILURE);
-            return ResultBuilder.buildError(ResponseCodeEnum.CODE_4025 ,result);
+            log.error("设置html邮件参数时发生异常{}", e);
+            result.add("error in mail parameters , " + ALL_FAILURE);
+            return ResultBuilder.buildError(ResponseCodeEnum.CODE_4025, result);
         }
         //群发
         String[] toEmails = sendEmail.getToEmails();
         //int susCount = 0;
         int failCount = 0;
-        for (String to : toEmails){
+        for (String to : toEmails) {
             try {
                 helper.setTo(to);
                 javaMailSender.send(message);
                 log.info("html邮件已经发送至【{}】。", to);
-                result.add("successfully sent html mail to  " + to );
+                result.add("successfully sent html mail to  " + to);
                 //susCount++;
             } catch (MessagingException e) {
-                log.error("向【{}】发送html邮件时发生异常{}！",to , e);
-                result.add("failed to send html mail to " + to );
+                log.error("向【{}】发送html邮件时发生异常{}！", to, e);
+                result.add("failed to send html mail to " + to);
                 failCount++;
             }
 
@@ -169,15 +172,16 @@ public class SendEmailServiceImpl implements SendEmailService {
         if(failCount == toEmails.length){
             result = ALL_FAILURE;
         }*/
-        log.info("所有html邮件已发送" );
-        if(failCount > 0){
-            return ResultBuilder.buildError(ResponseCodeEnum.CODE_4025 ,result);
+        log.info("所有html邮件已发送");
+        if (failCount > 0) {
+            return ResultBuilder.buildError(ResponseCodeEnum.CODE_4025, result);
         }
-        return ResultBuilder.buildError(ResponseCodeEnum.CODE_0000 ,result);
+        return ResultBuilder.buildError(ResponseCodeEnum.CODE_0000, result);
     }
 
     /**
      * 发送模板邮件
+     *
      * @param sendEmail 待发送邮件信息
      * @return 向哪些邮箱发送成功、哪些邮箱失败的消息，封号隔开。全部成功返回全部成功，全部失败返回全部失败
      */
@@ -187,8 +191,8 @@ public class SendEmailServiceImpl implements SendEmailService {
         String[] templateVars = sendEmail.getTemplateVars();
         if (null != templateVars && templateVars.length > 0) {
             for (String templateVar : templateVars) {
-                Map<String,String> keyAndValue = getKeyAndValue(templateVar);
-                if(keyAndValue == null)
+                Map<String, String> keyAndValue = getKeyAndValue(templateVar);
+                if (keyAndValue == null)
                     continue;
                 ctx.setVariable(keyAndValue.get("key"), keyAndValue.get("value"));
             }
@@ -213,7 +217,7 @@ public class SendEmailServiceImpl implements SendEmailService {
             //若有附件则添加
             //AttachFile[] attachFiles = sendEmail.getAttachFiles();
             MultipartFile[] attachFiles = sendEmail.getAttachFiles();
-            if(attachFiles != null){
+            if (attachFiles != null) {
                 for (MultipartFile attachFile : attachFiles) {
                     //FileSystemResource file = new FileSystemResource(new File(attachFile.getPath()));
                     helper.addAttachment(attachFile.getOriginalFilename(), attachFile);
@@ -221,23 +225,23 @@ public class SendEmailServiceImpl implements SendEmailService {
             }
             log.info("模板邮件参数设置成功。");
         } catch (MessagingException e) {
-            log.error("设置模板邮件参数时发生异常{}" , e);
-            result.add("error in mail parameters , "+ALL_FAILURE);
-            return ResultBuilder.buildError(ResponseCodeEnum.CODE_4025 ,result);
+            log.error("设置模板邮件参数时发生异常{}", e);
+            result.add("error in mail parameters , " + ALL_FAILURE);
+            return ResultBuilder.buildError(ResponseCodeEnum.CODE_4025, result);
         }
         String[] toEmails = sendEmail.getToEmails();
         //int susCount = 0;
         int failCount = 0;
-        for (String to : toEmails){
+        for (String to : toEmails) {
             try {
                 helper.setTo(to);
                 javaMailSender.send(mimeMessage);
                 log.info("模板邮件已成功发送至【{}】。", to);
-                result.add("successfully sent template mail to  " + to );
+                result.add("successfully sent template mail to  " + to);
                 //susCount++;
             } catch (MessagingException e) {
-                log.error("向【{}】发送模板邮件时发生异常{}！", to , e);
-                result.add("failed to send template mail to " + to );
+                log.error("向【{}】发送模板邮件时发生异常{}！", to, e);
+                result.add("failed to send template mail to " + to);
                 failCount++;
             }
         }
@@ -248,33 +252,33 @@ public class SendEmailServiceImpl implements SendEmailService {
             result = ALL_FAILURE;
         }*/
 
-        log.info("所有模板邮件已经发送完成" );
-        if(failCount > 0){
-            return ResultBuilder.buildError(ResponseCodeEnum.CODE_4025 ,result);
+        log.info("所有模板邮件已经发送完成");
+        if (failCount > 0) {
+            return ResultBuilder.buildError(ResponseCodeEnum.CODE_4025, result);
         }
-        return ResultBuilder.buildError(ResponseCodeEnum.CODE_0000 ,result);
+        return ResultBuilder.buildError(ResponseCodeEnum.CODE_0000, result);
     }
 
     /**
      * 用冒号分割模板变量，返回map
+     *
      * @param templateVar 模板变量，格式为 xxx:yyy
      * @return 返回大小为2的map，key模板变量为模板变量的key，value为模板变量的value
      */
     private Map<String, String> getKeyAndValue(String templateVar) {
         Map<String, String> map = new HashMap<>();
-        if (StringUtils.isEmpty(templateVar))
-        {
+        if (StringUtils.isEmpty(templateVar)) {
             log.error("template var is empty");
             return null;
         }
 
-        String[] templateVarArr = templateVar.split(":",2);
-        if(templateVarArr.length != 2){
-            log.error("template var : {} format error" , templateVar);
+        String[] templateVarArr = templateVar.split(":", 2);
+        if (templateVarArr.length != 2) {
+            log.error("template var : {} format error", templateVar);
             return null;
         }
-        map.put("key",templateVarArr[0]);
-        map.put("value",templateVarArr[1]);
+        map.put("key", templateVarArr[0]);
+        map.put("value", templateVarArr[1]);
         return map;
     }
 

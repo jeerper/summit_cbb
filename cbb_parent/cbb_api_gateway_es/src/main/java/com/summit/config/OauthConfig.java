@@ -39,158 +39,156 @@ import com.summit.handle.LoginSuccessHandler;
 import com.summit.handle.MyAccessDeniedHandler;
 
 /**
- * 
  * @author yt
- *
  */
 @Configurable
 @Order(2)
 public class OauthConfig {
-	private static final String DEMO_RESOURCE_ID = "demo";
+    private static final String DEMO_RESOURCE_ID = "demo";
 
-	@Configuration
-	@EnableResourceServer
-	protected static class ResourceServerConfiguration extends ResourceServerConfigurerAdapter {
-		@Override
-		public void configure(ResourceServerSecurityConfigurer resources) {
-			resources.resourceId(DEMO_RESOURCE_ID).stateless(true);
-			// 如果关闭 stateless，则 accessToken 使用时的 session id 会被记录，后续请求不携带
-			// accessToken 也可以正常响应
-			resources.authenticationEntryPoint(new AuthExceptionEntryPoint())
-            .accessDeniedHandler(new MyAccessDeniedHandler());
-		}
+    @Configuration
+    @EnableResourceServer
+    protected static class ResourceServerConfiguration extends ResourceServerConfigurerAdapter {
+        @Override
+        public void configure(ResourceServerSecurityConfigurer resources) {
+            resources.resourceId(DEMO_RESOURCE_ID).stateless(true);
+            // 如果关闭 stateless，则 accessToken 使用时的 session id 会被记录，后续请求不携带
+            // accessToken 也可以正常响应
+            resources.authenticationEntryPoint(new AuthExceptionEntryPoint())
+                    .accessDeniedHandler(new MyAccessDeniedHandler());
+        }
 
-		@Override
-		public void configure(HttpSecurity http) throws Exception {
-			// 保险起见，防止被主过滤器链路拦截
-			http.requestMatchers().antMatchers("/api*/**").and().authorizeRequests().anyRequest().authenticated().and()
-					.authorizeRequests().antMatchers("/api*/**").access("#oauth2.hasScope('get_user_info')");
+        @Override
+        public void configure(HttpSecurity http) throws Exception {
+            // 保险起见，防止被主过滤器链路拦截
+            http.requestMatchers().antMatchers("/api*/**").and().authorizeRequests().anyRequest().authenticated().and()
+                    .authorizeRequests().antMatchers("/api*/**").access("#oauth2.hasScope('get_user_info')");
 
-		
-			//http.authorizeRequests().antMatchers("/demo/**").access("#oauth2.hasScope('get_user_info')");
-		}
-	}
 
-	@Configuration
-	@EnableAuthorizationServer
-	protected static class AuthorizationServerConfiguration extends AuthorizationServerConfigurerAdapter {
+            //http.authorizeRequests().antMatchers("/demo/**").access("#oauth2.hasScope('get_user_info')");
+        }
+    }
 
-		@Autowired
-		@Qualifier("authenticationManagerBean")
-		private AuthenticationManager authenticationManager;
+    @Configuration
+    @EnableAuthorizationServer
+    protected static class AuthorizationServerConfiguration extends AuthorizationServerConfigurerAdapter {
 
-	
-		@Autowired
+        @Autowired
+        @Qualifier("authenticationManagerBean")
+        private AuthenticationManager authenticationManager;
 
-		private EsClientDetailServiceImpl esClientDetailService;
 
-		@Override
-		public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
+        @Autowired
 
-			// 访问数据库方式
-			/*
-			 * JdbcClientDetailsService clientDetailsService = new
-			 * JdbcClientDetailsService(dataSource);
-			 * clientDetailsService.setSelectClientDetailsSql(SecurityConstants.
-			 * DEFAULT_SELECT_STATEMENT);
-			 * clientDetailsService.setFindClientDetailsSql(SecurityConstants.
-			 * DEFAULT_FIND_STATEMENT);
-			 * clients.withClientDetails(clientDetailsService);
-			 */
+        private EsClientDetailServiceImpl esClientDetailService;
 
-			clients.withClientDetails(esClientDetailService);
+        @Override
+        public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
 
-			/*
-			 * clients.inMemory().withClient("aiqiyi")
-			 * .resourceIds(DEMO_RESOURCE_ID)
-			 * .authorizedGrantTypes("authorization_code", "refresh_token",
-			 * "implicit") .authorities("ROLE_CLIENT") .scopes("get_user_info",
-			 * "get_fanslist") .secret("secret")
-			 * .redirectUris("http://localhost:8081/aiqiyi/qq/redirect")
-			 * .autoApprove(true) .autoApprove("get_user_info") .and()
-			 * .withClient("youku") .resourceIds(DEMO_RESOURCE_ID)
-			 * .authorizedGrantTypes("authorization_code", "refresh_token",
-			 * "implicit") .authorities("ROLE_CLIENT") .scopes("get_user_info",
-			 * "get_fanslist") .secret("secret")
-			 * .redirectUris("http://localhost:8082/youku/qq/redirect");
-			 */
-		}
+            // 访问数据库方式
+            /*
+             * JdbcClientDetailsService clientDetailsService = new
+             * JdbcClientDetailsService(dataSource);
+             * clientDetailsService.setSelectClientDetailsSql(SecurityConstants.
+             * DEFAULT_SELECT_STATEMENT);
+             * clientDetailsService.setFindClientDetailsSql(SecurityConstants.
+             * DEFAULT_FIND_STATEMENT);
+             * clients.withClientDetails(clientDetailsService);
+             */
 
-		@Bean
-		public ApprovalStore approvalStore() {
-			TokenApprovalStore store = new TokenApprovalStore();
-			store.setTokenStore(tokenStore());
-			return store;
-		}
+            clients.withClientDetails(esClientDetailService);
 
-		@Autowired
-		RedisConnectionFactory redisConnectionFactory;
+            /*
+             * clients.inMemory().withClient("aiqiyi")
+             * .resourceIds(DEMO_RESOURCE_ID)
+             * .authorizedGrantTypes("authorization_code", "refresh_token",
+             * "implicit") .authorities("ROLE_CLIENT") .scopes("get_user_info",
+             * "get_fanslist") .secret("secret")
+             * .redirectUris("http://localhost:8081/aiqiyi/qq/redirect")
+             * .autoApprove(true) .autoApprove("get_user_info") .and()
+             * .withClient("youku") .resourceIds(DEMO_RESOURCE_ID)
+             * .authorizedGrantTypes("authorization_code", "refresh_token",
+             * "implicit") .authorities("ROLE_CLIENT") .scopes("get_user_info",
+             * "get_fanslist") .secret("secret")
+             * .redirectUris("http://localhost:8082/youku/qq/redirect");
+             */
+        }
 
-		@Bean
-		public TokenStore tokenStore() {
-			// return new InMemoryTokenStore();
-			// 需要使用 redis 的话，放开这里
-			return new RedisTokenStore(redisConnectionFactory);
-		}
+        @Bean
+        public ApprovalStore approvalStore() {
+            TokenApprovalStore store = new TokenApprovalStore();
+            store.setTokenStore(tokenStore());
+            return store;
+        }
 
-		
-		 @Bean
-		    public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory redisConnectionFactory) {
-		        RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
-		        redisTemplate.setConnectionFactory(redisConnectionFactory);
+        @Autowired
+        RedisConnectionFactory redisConnectionFactory;
 
-		        StringRedisSerializer serializer = new StringRedisSerializer();
-		        redisTemplate.setKeySerializer(serializer);
-		        redisTemplate.setValueSerializer(serializer);
-		        return redisTemplate;
-		    }
-		 
-		@Override
-		public void configure(AuthorizationServerEndpointsConfigurer endpoints) {
+        @Bean
+        public TokenStore tokenStore() {
+            // return new InMemoryTokenStore();
+            // 需要使用 redis 的话，放开这里
+            return new RedisTokenStore(redisConnectionFactory);
+        }
 
-			/*
-			 * endpoints.tokenStore(tokenStore()).authenticationManager(
-			 * authenticationManager)
-			 * .allowedTokenEndpointRequestMethods(HttpMethod.GET,
-			 * HttpMethod.POST);
-			 */
 
-			// token增强配置
-			TokenEnhancerChain tokenEnhancerChain = new TokenEnhancerChain();
-			tokenEnhancerChain.setTokenEnhancers(Arrays.asList(tokenEnhancer(), accessTokenConverter()));
-			endpoints.tokenStore(tokenStore()).tokenEnhancer(tokenEnhancerChain)
-					.authenticationManager(authenticationManager)
-					.allowedTokenEndpointRequestMethods(HttpMethod.GET, HttpMethod.POST);
+        @Bean
+        public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory redisConnectionFactory) {
+            RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
+            redisTemplate.setConnectionFactory(redisConnectionFactory);
 
-		}
+            StringRedisSerializer serializer = new StringRedisSerializer();
+            redisTemplate.setKeySerializer(serializer);
+            redisTemplate.setValueSerializer(serializer);
+            return redisTemplate;
+        }
 
-		@Bean
-		public TokenEnhancer accessTokenConverter() {
-			SummitJwtAccessTokenConverter jwtAccessTokenConverter = new SummitJwtAccessTokenConverter();
-			jwtAccessTokenConverter.setSigningKey("summit");
-			return jwtAccessTokenConverter;
-		}
+        @Override
+        public void configure(AuthorizationServerEndpointsConfigurer endpoints) {
 
-		@Override
-		public void configure(AuthorizationServerSecurityConfigurer oauthServer) {
-			oauthServer.realm(DEMO_RESOURCE_ID).allowFormAuthenticationForClients();
-		}
+            /*
+             * endpoints.tokenStore(tokenStore()).authenticationManager(
+             * authenticationManager)
+             * .allowedTokenEndpointRequestMethods(HttpMethod.GET,
+             * HttpMethod.POST);
+             */
 
-		@Bean
-		public TokenEnhancer tokenEnhancer() {
-			return (accessToken, authentication) -> {
-				final Map<String, Object> additionalInfo = new HashMap<>(2);
-				additionalInfo.put("license", SecurityConstants.SUMMIT_LICENSE);
-				User user = (User) authentication.getUserAuthentication().getPrincipal();
-				if (user != null) {
-					//System.out.println(user.toString());
-					additionalInfo.put("username", user.getUsername());
-				}
-				((DefaultOAuth2AccessToken) accessToken).setAdditionalInformation(additionalInfo);
-				return accessToken;
-			};
-		}
+            // token增强配置
+            TokenEnhancerChain tokenEnhancerChain = new TokenEnhancerChain();
+            tokenEnhancerChain.setTokenEnhancers(Arrays.asList(tokenEnhancer(), accessTokenConverter()));
+            endpoints.tokenStore(tokenStore()).tokenEnhancer(tokenEnhancerChain)
+                    .authenticationManager(authenticationManager)
+                    .allowedTokenEndpointRequestMethods(HttpMethod.GET, HttpMethod.POST);
 
-	}
+        }
+
+        @Bean
+        public TokenEnhancer accessTokenConverter() {
+            SummitJwtAccessTokenConverter jwtAccessTokenConverter = new SummitJwtAccessTokenConverter();
+            jwtAccessTokenConverter.setSigningKey("summit");
+            return jwtAccessTokenConverter;
+        }
+
+        @Override
+        public void configure(AuthorizationServerSecurityConfigurer oauthServer) {
+            oauthServer.realm(DEMO_RESOURCE_ID).allowFormAuthenticationForClients();
+        }
+
+        @Bean
+        public TokenEnhancer tokenEnhancer() {
+            return (accessToken, authentication) -> {
+                final Map<String, Object> additionalInfo = new HashMap<>(2);
+                additionalInfo.put("license", SecurityConstants.SUMMIT_LICENSE);
+                User user = (User) authentication.getUserAuthentication().getPrincipal();
+                if (user != null) {
+                    //System.out.println(user.toString());
+                    additionalInfo.put("username", user.getUsername());
+                }
+                ((DefaultOAuth2AccessToken) accessToken).setAdditionalInformation(additionalInfo);
+                return accessToken;
+            };
+        }
+
+    }
 
 }

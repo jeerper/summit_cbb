@@ -1,9 +1,7 @@
 package com.summit.constants;
 
 /**
- * 
  * @author yt
- *
  */
 public interface SecurityConstants {
     /**
@@ -37,7 +35,7 @@ public interface SecurityConstants {
             + "refresh_token_validity, additional_information, autoapprove";
 
     /**
-     *JdbcClientDetailsService 查询语句
+     * JdbcClientDetailsService 查询语句
      */
     String BASE_FIND_STATEMENT = "select " + CLIENT_FIELDS
             + " from sys_oauth_client_details";
@@ -52,6 +50,6 @@ public interface SecurityConstants {
      */
     String DEFAULT_SELECT_STATEMENT = BASE_FIND_STATEMENT + " where client_id = ?";
 
-    
+
     String SUMMIT_LICENSE = "summit";
 }

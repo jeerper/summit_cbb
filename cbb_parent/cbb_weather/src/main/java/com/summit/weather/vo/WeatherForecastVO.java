@@ -6,259 +6,255 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
 /**
- * 
+ * @author hyn  
+ * @version V1.0  
  * @Title: WeatherDataBO.java
  * @Package com.summit.bo.weather
  * @Description: TODO
- * @author hyn  
  * @date 2018年11月28日 下午7:59:25
- * @version V1.0  
  */
 @ApiModel(value = "天气预报信息")
 public class WeatherForecastVO {
 
-	// 实时天气状况
-	@ApiModelProperty(value = "实时天气状况", name = "realWeather")
-	RealWeather realWeather;
+    // 实时天气状况
+    @ApiModelProperty(value = "实时天气状况", name = "realWeather")
+    RealWeather realWeather;
 
-	@ApiModelProperty(value = "当天天气状况", name = "todayWeather")
-	TodayWeather todayWeather;
+    @ApiModelProperty(value = "当天天气状况", name = "todayWeather")
+    TodayWeather todayWeather;
 
-	@ApiModelProperty(value = "未来天气状况", name = "futureWeathers")
-	List<FutureWeather> futureWeathers;
+    @ApiModelProperty(value = "未来天气状况", name = "futureWeathers")
+    List<FutureWeather> futureWeathers;
 
-	public TodayWeather getTodayWeather() {
-		return todayWeather;
-	}
+    public TodayWeather getTodayWeather() {
+        return todayWeather;
+    }
 
-	public void setTodayWeather(TodayWeather todayWeather) {
-		this.todayWeather = todayWeather;
-	}
+    public void setTodayWeather(TodayWeather todayWeather) {
+        this.todayWeather = todayWeather;
+    }
 
-	public List<FutureWeather> getFutureWeathers() {
-		return futureWeathers;
-	}
+    public List<FutureWeather> getFutureWeathers() {
+        return futureWeathers;
+    }
 
-	public void setFutureWeathers(List<FutureWeather> futureWeathers) {
-		this.futureWeathers = futureWeathers;
-	}
+    public void setFutureWeathers(List<FutureWeather> futureWeathers) {
+        this.futureWeathers = futureWeathers;
+    }
 
-	public RealWeather getRealWeather() {
-		return realWeather;
-	}
+    public RealWeather getRealWeather() {
+        return realWeather;
+    }
 
-	public void setRealWeather(RealWeather realWeather) {
-		this.realWeather = realWeather;
-	}
+    public void setRealWeather(RealWeather realWeather) {
+        this.realWeather = realWeather;
+    }
 
 
+    // 实时天气
+    @ApiModel(value = "实时天气")
+    public static class RealWeather {
 
-	// 实时天气
-	@ApiModel(value = "实时天气")
-	public static class RealWeather {
-		
-		@ApiModelProperty(value = "温度", name = "temperature")
-		public String temperature;
+        @ApiModelProperty(value = "温度", name = "temperature")
+        public String temperature;
 
-		@ApiModelProperty(value = "天气", name = "weather")
-		public String weather;
+        @ApiModelProperty(value = "天气", name = "weather")
+        public String weather;
 
-		@ApiModelProperty(value = "风力", name = "wind")
-		public String wind;
-		
-		@ApiModelProperty(value = "时间", name = "date")
-		public String date;
+        @ApiModelProperty(value = "风力", name = "wind")
+        public String wind;
 
-		public String getTemperature() {
-			return temperature;
-		}
+        @ApiModelProperty(value = "时间", name = "date")
+        public String date;
 
-		public void setTemperature(String temperature) {
-			this.temperature = temperature;
-		}
+        public String getTemperature() {
+            return temperature;
+        }
 
-		public String getWeather() {
-			return weather;
-		}
+        public void setTemperature(String temperature) {
+            this.temperature = temperature;
+        }
 
-		public void setWeather(String weather) {
-			this.weather = weather;
-		}
+        public String getWeather() {
+            return weather;
+        }
 
-		public String getWind() {
-			return wind;
-		}
+        public void setWeather(String weather) {
+            this.weather = weather;
+        }
 
-		public void setWind(String wind) {
-			this.wind = wind;
-		}
+        public String getWind() {
+            return wind;
+        }
 
-		public String getDate() {
-			return date;
-		}
+        public void setWind(String wind) {
+            this.wind = wind;
+        }
 
-		public void setDate(String date) {
-			this.date = date;
-		}
-		
-		
-		
+        public String getDate() {
+            return date;
+        }
 
-	}
+        public void setDate(String date) {
+            this.date = date;
+        }
 
-	// 未来天气
-	@ApiModel(value = "未来天气")
-	public static class FutureWeather {
 
-		@ApiModelProperty(value = "温度", name = "temperature")
-		public String temperature;
+    }
 
-		@ApiModelProperty(value = "天气", name = "weather")
-		public String weather;
+    // 未来天气
+    @ApiModel(value = "未来天气")
+    public static class FutureWeather {
 
-		@ApiModelProperty(value = "风力", name = "wind")
-		public String wind;
+        @ApiModelProperty(value = "温度", name = "temperature")
+        public String temperature;
 
-		@ApiModelProperty(value = "星期", name = "week")
-		public String week;
+        @ApiModelProperty(value = "天气", name = "weather")
+        public String weather;
 
-		@ApiModelProperty(value = "时间", name = "date")
-		public String date;
+        @ApiModelProperty(value = "风力", name = "wind")
+        public String wind;
 
-		public String getTemperature() {
-			return temperature;
-		}
+        @ApiModelProperty(value = "星期", name = "week")
+        public String week;
 
-		public void setTemperature(String temperature) {
-			this.temperature = temperature;
-		}
+        @ApiModelProperty(value = "时间", name = "date")
+        public String date;
 
-		public String getWeather() {
-			return weather;
-		}
+        public String getTemperature() {
+            return temperature;
+        }
 
-		public void setWeather(String weather) {
-			this.weather = weather;
-		}
+        public void setTemperature(String temperature) {
+            this.temperature = temperature;
+        }
 
-		public String getWind() {
-			return wind;
-		}
+        public String getWeather() {
+            return weather;
+        }
 
-		public void setWind(String wind) {
-			this.wind = wind;
-		}
+        public void setWeather(String weather) {
+            this.weather = weather;
+        }
 
-		public String getWeek() {
-			return week;
-		}
+        public String getWind() {
+            return wind;
+        }
 
-		public void setWeek(String week) {
-			this.week = week;
-		}
+        public void setWind(String wind) {
+            this.wind = wind;
+        }
 
-		public String getDate() {
-			return date;
-		}
+        public String getWeek() {
+            return week;
+        }
 
-		public void setDate(String date) {
-			this.date = date;
-		}
+        public void setWeek(String week) {
+            this.week = week;
+        }
 
-	}
+        public String getDate() {
+            return date;
+        }
 
-	// 今天天气
-	@ApiModel(value = "当天天气")
-	public static class TodayWeather {
+        public void setDate(String date) {
+            this.date = date;
+        }
 
-		@ApiModelProperty(value = "温度", name = "temperature")
-		public String temperature;
+    }
 
-		@ApiModelProperty(value = "天气", name = "weather")
-		public String weather;
+    // 今天天气
+    @ApiModel(value = "当天天气")
+    public static class TodayWeather {
 
-		@ApiModelProperty(value = "风力", name = "wind")
-		public String wind;
+        @ApiModelProperty(value = "温度", name = "temperature")
+        public String temperature;
 
-		@ApiModelProperty(value = "星期", name = "week")
-		public String week;
+        @ApiModelProperty(value = "天气", name = "weather")
+        public String weather;
 
-		@ApiModelProperty(value = "城市", name = "city")
-		public String city;
+        @ApiModelProperty(value = "风力", name = "wind")
+        public String wind;
 
-		@ApiModelProperty(value = "时间", name = "date")
-		public String date;
+        @ApiModelProperty(value = "星期", name = "week")
+        public String week;
 
-		@ApiModelProperty(value = "穿衣指数", name = "dressingAdvice")
-		public String dressingAdvice;
+        @ApiModelProperty(value = "城市", name = "city")
+        public String city;
 
-		@ApiModelProperty(value = "紫外线强度", name = "uvIndex")
-		public String uvIndex;
+        @ApiModelProperty(value = "时间", name = "date")
+        public String date;
 
-		public String getTemperature() {
-			return temperature;
-		}
+        @ApiModelProperty(value = "穿衣指数", name = "dressingAdvice")
+        public String dressingAdvice;
 
-		public void setTemperature(String temperature) {
-			this.temperature = temperature;
-		}
+        @ApiModelProperty(value = "紫外线强度", name = "uvIndex")
+        public String uvIndex;
 
-		public String getWeather() {
-			return weather;
-		}
+        public String getTemperature() {
+            return temperature;
+        }
 
-		public void setWeather(String weather) {
-			this.weather = weather;
-		}
+        public void setTemperature(String temperature) {
+            this.temperature = temperature;
+        }
 
-		public String getWind() {
-			return wind;
-		}
+        public String getWeather() {
+            return weather;
+        }
 
-		public void setWind(String wind) {
-			this.wind = wind;
-		}
+        public void setWeather(String weather) {
+            this.weather = weather;
+        }
 
-		public String getWeek() {
-			return week;
-		}
+        public String getWind() {
+            return wind;
+        }
 
-		public void setWeek(String week) {
-			this.week = week;
-		}
+        public void setWind(String wind) {
+            this.wind = wind;
+        }
 
-		public String getCity() {
-			return city;
-		}
+        public String getWeek() {
+            return week;
+        }
 
-		public void setCity(String city) {
-			this.city = city;
-		}
+        public void setWeek(String week) {
+            this.week = week;
+        }
 
-		public String getDate() {
-			return date;
-		}
+        public String getCity() {
+            return city;
+        }
 
-		public void setDate(String date) {
-			this.date = date;
-		}
+        public void setCity(String city) {
+            this.city = city;
+        }
 
-		public String getDressingAdvice() {
-			return dressingAdvice;
-		}
+        public String getDate() {
+            return date;
+        }
 
-		public void setDressingAdvice(String dressingAdvice) {
-			this.dressingAdvice = dressingAdvice;
-		}
+        public void setDate(String date) {
+            this.date = date;
+        }
 
-		public String getUvIndex() {
-			return uvIndex;
-		}
+        public String getDressingAdvice() {
+            return dressingAdvice;
+        }
 
-		public void setUvIndex(String uvIndex) {
-			this.uvIndex = uvIndex;
-		}
+        public void setDressingAdvice(String dressingAdvice) {
+            this.dressingAdvice = dressingAdvice;
+        }
 
-	}
+        public String getUvIndex() {
+            return uvIndex;
+        }
+
+        public void setUvIndex(String uvIndex) {
+            this.uvIndex = uvIndex;
+        }
+
+    }
 
 }

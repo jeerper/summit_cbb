@@ -21,9 +21,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 
 /**
- * 
  * @author yt
- *
  */
 @RestController
 @Api("client模块")
@@ -31,62 +29,62 @@ import io.swagger.annotations.ApiParam;
 @RequestMapping("/api/client")
 public class ClientController {
 
-	@Autowired
-	EsClientDetailServiceImpl esClientDetailService;
+    @Autowired
+    EsClientDetailServiceImpl esClientDetailService;
 
-	@Autowired
-	SummitTools st;
+    @Autowired
+    SummitTools st;
 
-	@ApiOperation(value = "新增client", notes = "用于application/json格式")
-	@RequestMapping(value = "/add", method = RequestMethod.POST)
-	public Object add(@RequestBody SummitClient client) {
-		esClientDetailService.addClientDetails(client);
-		return st.success("新增成功", "");
-	}
+    @ApiOperation(value = "新增client", notes = "用于application/json格式")
+    @RequestMapping(value = "/add", method = RequestMethod.POST)
+    public Object add(@RequestBody SummitClient client) {
+        esClientDetailService.addClientDetails(client);
+        return st.success("新增成功", "");
+    }
 
-	@ApiOperation(value = "修改client", notes = "用于application/json格式")
-	@RequestMapping(value = "/edit", method = RequestMethod.PUT)
-	public Object edit(@RequestBody SummitClient client) {
-		esClientDetailService.updateClientDetails(client);
-		return st.success("更新成功", "");
-	}
+    @ApiOperation(value = "修改client", notes = "用于application/json格式")
+    @RequestMapping(value = "/edit", method = RequestMethod.PUT)
+    public Object edit(@RequestBody SummitClient client) {
+        esClientDetailService.updateClientDetails(client);
+        return st.success("更新成功", "");
+    }
 
-	@ApiOperation(value = "删除client")
-	@RequestMapping(value = "/{clientId}", method = RequestMethod.DELETE)
-	public Object delete(
-			@ApiParam(value = "clientId", required = true) @PathVariable(name = "clientId") String clientId) {
+    @ApiOperation(value = "删除client")
+    @RequestMapping(value = "/{clientId}", method = RequestMethod.DELETE)
+    public Object delete(
+            @ApiParam(value = "clientId", required = true) @PathVariable(name = "clientId") String clientId) {
 
-		esClientDetailService.removeClientDetails(clientId);
-		return st.success("删除成功", "");
-	}
+        esClientDetailService.removeClientDetails(clientId);
+        return st.success("删除成功", "");
+    }
 
-	@ApiOperation(value = "修改client密码")
-	@RequestMapping(value = "/editPwd", method = RequestMethod.PUT)
-	public Object editPwd(
-			@ApiParam(value = "clientId", required = true) @RequestParam(name = "clientId",required=true) String clientId,
-			@ApiParam(value = "secret", required = true) @RequestParam(name = "secret",required=true) String secret) {
-		esClientDetailService.updateClientSecret(clientId, secret);
-		return st.success("更新成功", "");
-	}
+    @ApiOperation(value = "修改client密码")
+    @RequestMapping(value = "/editPwd", method = RequestMethod.PUT)
+    public Object editPwd(
+            @ApiParam(value = "clientId", required = true) @RequestParam(name = "clientId", required = true) String clientId,
+            @ApiParam(value = "secret", required = true) @RequestParam(name = "secret", required = true) String secret) {
+        esClientDetailService.updateClientSecret(clientId, secret);
+        return st.success("更新成功", "");
+    }
 
-	@ApiOperation(value = "查询所有")
-	@RequestMapping(value = "/queryAll", method = RequestMethod.POST)
-	public Object queryAll() {
+    @ApiOperation(value = "查询所有")
+    @RequestMapping(value = "/queryAll", method = RequestMethod.POST)
+    public Object queryAll() {
 
-		List<ClientDetails> clientList = esClientDetailService.listClientDetails();
+        List<ClientDetails> clientList = esClientDetailService.listClientDetails();
 
-		//System.out.println(clientList);
-		return st.success("查询成功", clientList);
-	}
+        //System.out.println(clientList);
+        return st.success("查询成功", clientList);
+    }
 
-	@ApiOperation(value = "根据查询id查询client")
-	@RequestMapping(value = "/{clientId}", method = RequestMethod.POST)
-	public Object query(
-			@ApiParam(value = "clientId", required = true) @PathVariable(name = "clientId") String clientId) {
-		ClientDetails clientDetail = esClientDetailService.loadClientByClientId(clientId);
+    @ApiOperation(value = "根据查询id查询client")
+    @RequestMapping(value = "/{clientId}", method = RequestMethod.POST)
+    public Object query(
+            @ApiParam(value = "clientId", required = true) @PathVariable(name = "clientId") String clientId) {
+        ClientDetails clientDetail = esClientDetailService.loadClientByClientId(clientId);
 
-		return st.success("查询成功", clientDetail);
-	}
-	
-	
+        return st.success("查询成功", clientDetail);
+    }
+
+
 }

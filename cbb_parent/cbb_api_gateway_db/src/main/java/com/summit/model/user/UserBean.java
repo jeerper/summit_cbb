@@ -96,7 +96,6 @@ public class UserBean implements UserDetails, Serializable {
     }
 
 
-
     @Override
     public Collection<GrantedAuthority> getAuthorities() {
         return authorities;

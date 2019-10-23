@@ -6,163 +6,164 @@ import io.swagger.annotations.ApiModelProperty;
 
 /**
  * 日志类，主要用于查询
- * @author Administrator
  *
+ * @author Administrator
  */
-public class QueryLogBean  implements Serializable {
-	
-	@ApiModelProperty(value="主键id",name="id")
-	private String id;
-	@ApiModelProperty(value="用户名",name="usernname")
-	private String username;
-	
-	@ApiModelProperty(value="操作者姓名",name="name")
-	private String name;
-	
-	@ApiModelProperty(value="操作类型(1：新增,  2：修改,   3：删除,  4：授权 ,  5：查询  )",name="operType")
-	private String operType;
-	
-	@ApiModelProperty(value="访问机器IP",name="callerIP")
-	private String callerIP;
-	
-	@ApiModelProperty(value="功能模块",name="funName")
-	private String funName;
-	
-	@ApiModelProperty(value="访问开始时间",name="stime")
-	private String stime;
-	
-	@ApiModelProperty(value="访问结束时间",name="stime")
-	private String etime;
-	
-	@ApiModelProperty(value="访问时长",name="actiontime")
-	private String actiontime;
-	
-	@ApiModelProperty(value="错误信息",name="erroInfo")
-	private String erroInfo;
-	
-	@ApiModelProperty(value="修改时间",name="updateTime")
-	private String updateTime;
-	
-	@ApiModelProperty(value="调用是否成功标志  1：成功  0：失败",name="actionFlag")
-	private String actionFlag;
-	
-	@ApiModelProperty(value="系统名称",name="systemName")
-	private String systemName;
-	
-	@ApiModelProperty(value="操作描述",name="operInfo")
-	private String operInfo;
-	
+public class QueryLogBean implements Serializable {
 
-	public String getFunName() {
-		return funName;
-	}
+    @ApiModelProperty(value = "主键id", name = "id")
+    private String id;
+    @ApiModelProperty(value = "用户名", name = "usernname")
+    private String username;
 
-	public void setFunName(String funName) {
-		this.funName = funName;
-	}
+    @ApiModelProperty(value = "操作者姓名", name = "name")
+    private String name;
 
-	public String getErroInfo() {
-		return erroInfo;
-	}
+    @ApiModelProperty(value = "操作类型(1：新增,  2：修改,   3：删除,  4：授权 ,  5：查询  )", name = "operType")
+    private String operType;
 
-	public void setErroInfo(String erroInfo) {
-		this.erroInfo = erroInfo;
-	}
+    @ApiModelProperty(value = "访问机器IP", name = "callerIP")
+    private String callerIP;
 
-	public String getSystemName() {
-		return systemName;
-	}
+    @ApiModelProperty(value = "功能模块", name = "funName")
+    private String funName;
 
-	public void setSystemName(String systemName) {
-		this.systemName = systemName;
-	}
+    @ApiModelProperty(value = "访问开始时间", name = "stime")
+    private String stime;
 
-	public String getOperInfo() {
-		return operInfo;
-	}
+    @ApiModelProperty(value = "访问结束时间", name = "stime")
+    private String etime;
 
-	public void setOperInfo(String operInfo) {
-		this.operInfo = operInfo;
-	}
+    @ApiModelProperty(value = "访问时长", name = "actiontime")
+    private String actiontime;
 
-	public String getId() {
-		return id;
-	}
+    @ApiModelProperty(value = "错误信息", name = "erroInfo")
+    private String erroInfo;
 
-	public void setId(String id) {
-		this.id = id;
-	}
-	public String getUsername() {
-		return username;
-	}
+    @ApiModelProperty(value = "修改时间", name = "updateTime")
+    private String updateTime;
 
-	public void setUsername(String username) {
-		this.username = username;
-	}
+    @ApiModelProperty(value = "调用是否成功标志  1：成功  0：失败", name = "actionFlag")
+    private String actionFlag;
 
-	public String getName() {
-		return name;
-	}
+    @ApiModelProperty(value = "系统名称", name = "systemName")
+    private String systemName;
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    @ApiModelProperty(value = "操作描述", name = "operInfo")
+    private String operInfo;
 
-	public String getCallerIP() {
-		return callerIP;
-	}
 
-	public void setCallerIP(String callerIP) {
-		this.callerIP = callerIP;
-	}
+    public String getFunName() {
+        return funName;
+    }
 
-	public String getStime() {
-		return stime;
-	}
+    public void setFunName(String funName) {
+        this.funName = funName;
+    }
 
-	public void setStime(String stime) {
-		this.stime = stime;
-	}
+    public String getErroInfo() {
+        return erroInfo;
+    }
 
-	public String getUpdateTime() {
-		return updateTime;
-	}
+    public void setErroInfo(String erroInfo) {
+        this.erroInfo = erroInfo;
+    }
 
-	public void setUpdateTime(String updateTime) {
-		this.updateTime = updateTime;
-	}
+    public String getSystemName() {
+        return systemName;
+    }
 
-	public String getActionFlag() {
-		return actionFlag;
-	}
+    public void setSystemName(String systemName) {
+        this.systemName = systemName;
+    }
 
-	public void setActionFlag(String actionFlag) {
-		this.actionFlag = actionFlag;
-	}
+    public String getOperInfo() {
+        return operInfo;
+    }
 
-	public String getOperType() {
-		return operType;
-	}
+    public void setOperInfo(String operInfo) {
+        this.operInfo = operInfo;
+    }
 
-	public void setOperType(String operType) {
-		this.operType = operType;
-	}
+    public String getId() {
+        return id;
+    }
 
-	public String getEtime() {
-		return etime;
-	}
+    public void setId(String id) {
+        this.id = id;
+    }
 
-	public void setEtime(String etime) {
-		this.etime = etime;
-	}
+    public String getUsername() {
+        return username;
+    }
 
-	public String getActiontime() {
-		return actiontime;
-	}
+    public void setUsername(String username) {
+        this.username = username;
+    }
 
-	public void setActiontime(String actiontime) {
-		this.actiontime = actiontime;
-	}
-	
-	
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getCallerIP() {
+        return callerIP;
+    }
+
+    public void setCallerIP(String callerIP) {
+        this.callerIP = callerIP;
+    }
+
+    public String getStime() {
+        return stime;
+    }
+
+    public void setStime(String stime) {
+        this.stime = stime;
+    }
+
+    public String getUpdateTime() {
+        return updateTime;
+    }
+
+    public void setUpdateTime(String updateTime) {
+        this.updateTime = updateTime;
+    }
+
+    public String getActionFlag() {
+        return actionFlag;
+    }
+
+    public void setActionFlag(String actionFlag) {
+        this.actionFlag = actionFlag;
+    }
+
+    public String getOperType() {
+        return operType;
+    }
+
+    public void setOperType(String operType) {
+        this.operType = operType;
+    }
+
+    public String getEtime() {
+        return etime;
+    }
+
+    public void setEtime(String etime) {
+        this.etime = etime;
+    }
+
+    public String getActiontime() {
+        return actiontime;
+    }
+
+    public void setActiontime(String actiontime) {
+        this.actiontime = actiontime;
+    }
+
+
 }
