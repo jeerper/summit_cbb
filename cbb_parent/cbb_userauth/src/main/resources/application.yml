@@ -2,7 +2,7 @@ server:
   port: 22224
 spring:
   profiles:
-    active: dev
+    active: pro
     include: common
   application:
     name: "cbb-userauth"
