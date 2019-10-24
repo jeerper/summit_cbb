@@ -104,9 +104,15 @@ public class UserController {
                          .append("_Head.jpg")
                          .toString();
 
-    			byte[] fileBytes = Base64.getDecoder().decode(base64Str);
-    			FileUtil.writeBytes(fileBytes, headPicpath);
-        		userInfo.setHeadPortrait(headPicUrl);
+                 byte[] fileBytes =null;
+                 try {
+                     fileBytes = Base64.getDecoder().decode(base64Str);
+                 } catch (Exception e) {
+                     log.error("图片base64格式有误!");
+                     userInfo.setHeadPortrait("图片base64格式有误!");
+                 }
+                 FileUtil.writeBytes(fileBytes, headPicpath);
+        		 userInfo.setHeadPortrait(headPicUrl);
     		 }
 
     	    logBean.setStime(DateUtil.DTFormat("yyyy-MM-dd HH:mm:ss",new Date()));
