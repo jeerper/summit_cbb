@@ -6,7 +6,11 @@ import org.apache.ibatis.annotations.Param;
 import java.util.List;
 
 public interface FunctionDao {
-
-    List<FunctionBean> getFunctionInfoListByUserName(@Param("userName")String userName);
+    /**
+     * 通过角色集合获取系统功能信息列表
+     * @param roles 角色集合
+     * @return
+     */
+    List<FunctionBean> getFunctionInfoListByRole(@Param("roles") List<String> roles);
 
 }
