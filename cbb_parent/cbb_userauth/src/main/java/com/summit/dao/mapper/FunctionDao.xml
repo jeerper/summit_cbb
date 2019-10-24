@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.summit.dao.repository.FunctionDao">
+
+    <select id="getFunctionInfoListByUserName" parameterType="map" resultType="com.summit.common.entity.FunctionBean">
+        select distinct sf.id
+        from sys_user_role sur
+                 inner join sys_role_function srf on (sur.role_code = srf.role_code)
+                 inner join sys_function sf on (srf.function_id = sf.id)
+        where sf.is_enabled = '1'
+          and sf.super_fun = 0
+          and sur.username = ?
+    </select>
+
+</mapper>
