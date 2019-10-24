@@ -391,8 +391,7 @@ public class UserController {
 
     @ApiOperation(value = "根据用户名查询用户信息--对外接口")
     @GetMapping("/queryUserInfoByUserName")
-    public RestfulEntityBySummit<UserInfo> queryUserInfoByUserName(
-    		@RequestParam(value = "userName")  String userName) {
+    public RestfulEntityBySummit<UserInfo> queryUserInfoByUserName(@RequestParam(value = "userName")  String userName) {
         try {
         	UserInfo ub = us.queryByUserName(userName);
             if (ub == null) {
