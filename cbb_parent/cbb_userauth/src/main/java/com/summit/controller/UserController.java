@@ -3,7 +3,6 @@ package com.summit.controller;
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.bean.copier.CopyOptions;
 import cn.hutool.core.io.FileUtil;
-import cn.hutool.core.util.StrUtil;
 import cn.hutool.system.SystemUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
@@ -18,12 +17,11 @@ import com.summit.common.entity.UserInfo;
 import com.summit.common.entity.UserPassWordInfo;
 import com.summit.common.redis.user.UserInfoCache;
 import com.summit.common.util.ResultBuilder;
-import com.summit.common.util.UserAuthUtils;
 import com.summit.common.web.filter.UserContextHolder;
-import com.summit.dao.repository.FunctionDao;
 import com.summit.service.log.LogUtilImpl;
 import com.summit.service.user.UserService;
 import com.summit.util.DateUtil;
+import com.summit.util.PermissionUtil;
 import com.summit.util.SummitTools;
 import com.summit.util.SysConstants;
 import io.swagger.annotations.Api;
@@ -68,7 +66,7 @@ public class UserController {
     @Autowired
     UserInfoCache userInfoCache;
     @Autowired
-    FunctionDao functionDao;
+    PermissionUtil permissionUtil;
     @Autowired
     private UserService us;
     @Value("${password.encode.key}")
@@ -207,6 +205,9 @@ public class UserController {
         LogBean logBean = new LogBean();
         logBean.setStime(DateUtil.DTFormat("yyyy-MM-dd HH:mm:ss", new Date()));
         try {
+            if (!permissionUtil.checkLoginUserAccessPermissionToOtherUser(userNames)) {
+                return ResultBuilder.buildError(ResponseCodeEnum.CODE_4012);
+            }
             if (userNames.contains(",")) {
                 for (String username : userNames.split(",")) {
                     //系统管路员用户不能删除
@@ -239,6 +240,9 @@ public class UserController {
         LogBean logBean = new LogBean();
         logBean.setStime(DateUtil.DTFormat("yyyy-MM-dd HH:mm:ss", new Date()));
         try {
+            if (!permissionUtil.checkLoginUserAccessPermissionToOtherUser(userInfo.getUserName())) {
+                return ResultBuilder.buildError(ResponseCodeEnum.CODE_4012);
+            }
             String base64Str = userInfo.getHeadPortrait();
             if (SummitTools.stringNotNull(base64Str)) {
                 StringBuffer fileName = new StringBuffer();
@@ -310,6 +314,9 @@ public class UserController {
         LogBean logBean = new LogBean();
         logBean.setStime(DateUtil.DTFormat("yyyy-MM-dd HH:mm:ss", new Date()));
         try {
+            if (!permissionUtil.checkLoginUserAccessPermissionToOtherUser(userPassWordInfo.getUserName())) {
+                return ResultBuilder.buildError(ResponseCodeEnum.CODE_4012);
+            }
             if (!userPassWordInfo.getPassword().equals(userPassWordInfo.getRepeatPassword())) {
                 return ResultBuilder.buildError(ResponseCodeEnum.CODE_4013);
             }
@@ -419,21 +426,8 @@ public class UserController {
             }
             ub.setPassword(null);
 
-            if (!StrUtil.equals(userName, UserContextHolder.getUserInfo().getUserName())) {
-                if (StrUtil.equalsIgnoreCase(userName, "admin")) {
-                    return ResultBuilder.buildError(ResponseCodeEnum.CODE_4012);
-                }
-                List<FunctionBean> functionList = functionDao.getFunctionInfoListByRole(UserAuthUtils.getRoles());
-                boolean effectivePermission = false;
-                for (FunctionBean functionBean : functionList) {
-                    if (functionBean.getName().equals("用户管理")) {
-                        effectivePermission = true;
-                        break;
-                    }
-                }
-                if (!effectivePermission) {
-                    return ResultBuilder.buildError(ResponseCodeEnum.CODE_4012);
-                }
+            if (!permissionUtil.checkLoginUserAccessPermissionToOtherUser(userName)) {
+                return ResultBuilder.buildError(ResponseCodeEnum.CODE_4012);
             }
 
             List<String> roleList = us.queryRoleByUserName(userName);
