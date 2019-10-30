@@ -138,7 +138,91 @@ public class ADCDService {
         }
         return orgList;
     }
+    public List<ADCDBean> generateOrgMapToTree(Map<String, List<Object>> orgMaps, String adlevel,String pid, boolean isQueryAll) throws Exception {
+        if (null == orgMaps || orgMaps.size() == 0) {//a.ADLEVEL as LEVELa ,b.ADLEVEL as LEVELb
+            StringBuffer querySql = new StringBuffer(" SELECT a.ADCD, a.ADNM,a.PADCD, b.ADCD AS CHILD_ID, b.ADNM AS CHILD_NAME ");
+            LinkedMap whereMap = new LinkedMap();
+            if (!isQueryAll) {
+                querySql.append(" ,(select count(*) from SYS_AD_CD where padcd=b.ADCD ) countChildren ");
+            }
+            querySql.append(" FROM SYS_AD_CD AS a  ");
+            querySql.append(" JOIN SYS_AD_CD AS b ON b.PADCD = a.ADCD where 1=1");
+            if (!isQueryAll) {
+                querySql.append(" and b.padcd=? ");
+                whereMap.put(1, pid);
+            }
+            if (adlevel == null || "".equals(adlevel)) {
+            	
+            }else {
+            	querySql.append(" and b.ADLEVEL <=? ");
+                if(whereMap.size()>0)
+                	whereMap.put(2, adlevel);
+                 else 
+                	whereMap.put(1, adlevel);      	
+            }
+            querySql.append(" ORDER BY  a.ADCD ASC,b.ADCD asc");
+            JSONArray list = null;
+            list = ur.queryAllCustomJsonArray(querySql.toString(), whereMap);
 
+            Map<String, List<Object>> map = new HashMap<String, List<Object>>();
+            List<Object> childrenList = new ArrayList<Object>();
+            ;
+            String adcd = "";
+            int i = 0;
+            for (Object o : list) {
+                JSONObject jSONObject = (JSONObject) o;
+                if (!"".equals(adcd) && !adcd.equals(jSONObject.getString("ADCD"))) {
+                    map.put(adcd, childrenList);
+                    childrenList = new ArrayList<Object>();
+                }
+                childrenList.add(jSONObject);
+                adcd = jSONObject.getString("ADCD");
+                if (i == list.size() - 1) {
+                    map.put(adcd, childrenList);
+                }
+                i++;
+
+            }
+            orgMaps = map;
+        }
+        List<ADCDBean> orgList = new ArrayList<>();
+        if (orgMaps != null && orgMaps.size() > 0) {
+            List parenList = orgMaps.get(pid);
+            if (parenList == null) {
+                return orgList;
+            }
+            for (Object obj : parenList) {
+                // logger.debug("3-1:"+i);
+                ADCDBean adcdBean = new ADCDBean();
+                // JSONObject jSONOTree=new JSONObject();
+                JSONObject json = (JSONObject) obj;
+                //System.out.println(json);
+                adcdBean.setAdcd(json.getString("CHILD_ID"));
+                adcdBean.setAdnm(json.getString("CHILD_NAME"));
+                adcdBean.setPadcd(pid);
+                if (json.containsKey("LEVELb")) {
+                    adcdBean.setLevel(json.getString("LEVELb"));
+                }
+                if (json.containsKey("countChildren")) {
+                    if (json.getString("countChildren") != null && json.getInt("countChildren") > 0) {
+                        adcdBean.setHasChild(true);
+                    } else {
+                        adcdBean.setHasChild(false);
+                    }
+                }
+                //if(isQueryAll){
+                List<ADCDBean> children = generateOrgMapToTree(orgMaps,adlevel, json.get("CHILD_ID").toString(), isQueryAll);
+                //将子结果集存入当前对象的children字段中
+                if (children != null && children.size() > 0) {
+                    adcdBean.setChildren(children);
+                }
+                //}
+                //添加当前对象到主结果集中
+                orgList.add(adcdBean);
+            }
+        }
+        return orgList;
+    }
 
     public List<ADCDTreeBean> queryJsonAdcdTreeList(String padcd, boolean isQueryAll) throws Exception {
         LinkedMap linkedMap = new LinkedMap();
@@ -184,6 +268,57 @@ public class ADCDService {
         return null;
     }
 
+    public ADCDTreeBean queryJsonAdcdTreeByAdlevel(String adlevel,String padcd, boolean isQueryAll) throws Exception {
+        LinkedMap linkedMap = new LinkedMap();
+        StringBuffer sql = new StringBuffer("SELECT ADCD as value, ADNM as title,PADCD, ADLEVEL FROM SYS_AD_CD where 1=1 ");
+        if (padcd == null || "".equals(padcd)) {
+            sql.append(" and (padcd is null  or padcd='-1' )");
+        } else {
+            sql.append(" and adcd =? ");
+            linkedMap.put(1, padcd);
+
+        }
+        if (adlevel == null || "".equals(adlevel)) {
+        	
+        }else {
+            sql.append(" and ADLEVEL <=? ");
+            if(linkedMap.size()>0)
+               linkedMap.put(2, adlevel);
+            else 
+               linkedMap.put(1, adlevel);
+        }
+        List<Object> rootList = ur.queryAllCustom(sql.toString(), linkedMap);
+        ADCDTreeBean adcdTreeBean = null;
+        if (rootList.size() > 0) {
+            for (int i = 0; i < rootList.size(); i++) {
+                String jsonTree = ((JSONObject) rootList.get(i)).toString();
+                adcdTreeBean = JSON.parseObject(jsonTree, new TypeReference<ADCDTreeBean>() {
+                });
+                List<ADCDBean> list = generateOrgMapToTree(null, adlevel,adcdTreeBean.getValue(), isQueryAll);
+                if (list != null && list.size() > 0) {
+                    List<ADCDTreeBean> adcdTreeBeanList = new ArrayList<ADCDTreeBean>();
+                    ADCDTreeBean adcdTreeBean1 = null;
+                    for (ADCDBean adcdBean : list) {
+                        adcdTreeBean1 = new ADCDTreeBean();
+                        adcdTreeBean1.setValue(adcdBean.getAdcd());
+                        adcdTreeBean1.setTitle(adcdBean.getAdnm());
+                        adcdTreeBean1.setLevel(adcdBean.getLevel());
+                        adcdTreeBean1.setPadcd(adcdBean.getPadcd());
+                        if (isQueryAll) {
+                            adcdTreeBean1.setChildren(getAdcdTreeBean(adcdBean.getChildren()));
+                        }
+                        adcdTreeBeanList.add(adcdTreeBean1);
+                    }
+                    adcdTreeBean.setChildren(adcdTreeBeanList);
+
+                }
+            }
+
+
+        }
+        return adcdTreeBean;
+    }
+    
     public ADCDTreeBean queryJsonAdcdTree(String padcd, boolean isQueryAll) throws Exception {
         LinkedMap linkedMap = new LinkedMap();
         StringBuffer sql = new StringBuffer("SELECT ADCD as value, ADNM as title,PADCD, ADLEVEL FROM SYS_AD_CD where 1=1 ");

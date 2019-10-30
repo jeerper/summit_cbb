@@ -80,7 +80,21 @@ public class ADCDController {
             return ResultBuilder.buildError(ResponseCodeEnum.CODE_9999);
         }
     }
-
+    
+    @ApiOperation(value = "查询行政区划树--分级别查询--JSON 数据直接生成树结构", notes = "用于application/json格式")
+    @GetMapping(value = "/queryAdcdJsonTreeByAdlevel")
+    public RestfulEntityBySummit<ADCDTreeBean> queryJsonTreeByAdlevel(
+    		@RequestParam(value = "adlevel", required = false) String adlevel,
+    		@RequestParam(value = "pid", required = false) String pid,
+            @RequestParam(value = "isQueryAll", required = false, defaultValue = "true") boolean isQueryAll) {
+        try {
+            ADCDTreeBean adcdBean = adcdService.queryJsonAdcdTreeByAdlevel(adlevel,pid, isQueryAll);
+            return ResultBuilder.buildSuccess(adcdBean);
+        } catch (Exception e) {
+            logger.error("数据查询失败！", e);
+            return ResultBuilder.buildError(ResponseCodeEnum.CODE_9999);
+        }
+    }
     @ApiOperation(value = "查询有多个行政区划树--JSON 数据直接生成树结构", notes = "用于application/json格式")
     @GetMapping(value = "/queryJsonTreeList")
     public RestfulEntityBySummit<List<ADCDTreeBean>> queryJsonTreeList(@RequestParam(value = "pid", required = false) String pid,
