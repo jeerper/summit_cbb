@@ -27,7 +27,7 @@ public class UserDaoRowMapper implements RowMapper<JSONObject> {
         JSONObject o = new JSONObject();
         String columnName;
         for (int i = 0; i < rsd.getColumnCount(); i++) {
-            columnName = rsd.getColumnName(i + 1);
+            columnName = rsd.getColumnLabel(i + 1);
             Object oo = rs.getObject(columnName);
             if (oo instanceof ClobImpl) {
                 ClobImpl c = (ClobImpl) oo;
