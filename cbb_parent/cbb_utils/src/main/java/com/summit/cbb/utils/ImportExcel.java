@@ -312,9 +312,11 @@ public class ImportExcel {
             Row row = this.getRow(i);
             StringBuilder sb = new StringBuilder();
             for (Object[] os : annotationList) {
-                Object val = this.getCellValue(row, column++);
+                ExcelField ef = (ExcelField) os[0];
+                Object val = this.getCellValue(row, ef.sort());
+                // Object val = this.getCellValue(row, column++);
                 if (val != null) {
-                    ExcelField ef = (ExcelField) os[0];
+                    // ExcelField ef = (ExcelField) os[0];
                     if (StringUtils.isEmpty(String.valueOf(val).trim())) {
                         if (!ef.nullable()) {
                             errorMsg.append("<br/>第" + (i + 1) + "行,第" + column + "列: 无数据;");
