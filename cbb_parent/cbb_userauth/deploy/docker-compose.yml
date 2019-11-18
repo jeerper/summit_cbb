@@ -12,5 +12,5 @@ services:
       - "${WebServer_Port}:${WebServer_Port}"
     volumes:
       - ./logs:/opt/App/logs
-      - ./userinfohead:/opt/App/userinfohead
+      - /home/cbb_userauth/userinfohead:/opt/App/userinfohead
     user: root
