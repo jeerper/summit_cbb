@@ -233,7 +233,7 @@ public RestfulEntityBySummit<Page<RoleBean>> queryByPage() {
 
     } catch (Exception e) {
         logger.error("数据查询失败！", e);
-        return ResultBuilder.buildErro(ResponseCodeEnum.CODE_9999);
+        return ResultBuilder.buildError(ResponseCodeEnum.CODE_9999);
     }
 }
 ```
