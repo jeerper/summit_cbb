@@ -35,10 +35,10 @@
 - <b>更新：</b> 使用PUT更新现有资源;
 - <b>删除：</b> 使用DELETE删除现有资源;
 
-|URL|POST(创建)|GET(读取)|PUT(更新)|DELETE(删除)
-|-|-|-|-|-|-|
-/users|创建用户（INSERT）|列出所有用户（SELECT）|批量更新用户信息(UPDATE)|删除用户（DELETE）
-/users/56||获取id为56的用户|更新id为56的用户|删除id为56的用户
+|URL|POST(创建)|GET(读取)|PUT(更新)|DELETE(删除)|
+|--|--|--|--|--|--|
+|/users|创建用户（INSERT）|列出所有用户（SELECT）|批量更新用户信息(UPDATE)|删除用户（DELETE）|
+|/users/56||获取id为56的用户|更新id为56的用户|删除id为56的用户|
 
 ## 接口定义
 
@@ -83,6 +83,7 @@
 #### 参数接收
 
 - <font color="red"><b>URL 传参: &emsp; 使用@ApiParam注解进行参数说明</b></font>
+
 > <font color="red"><b>例1、</b></font>@ApiParam(value = "用户名", required = true, example = "example")@PathVariable String userName
 
 > <font color="red"><b>例2、</b></font>@ApiParam(value = "用户名", required = true, example = "example")@RequestParam String userName
