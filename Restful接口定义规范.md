@@ -198,17 +198,25 @@ public class Pageable {
 ``` java
 package com.summit.cbb.utils.page;
 import java.util.List;
-public class Page<T> {
+public class Page<T> extends com.baomidou.mybatisplus.extension.plugins.pagination.Page<T> {
 
-    private List<T> content;
-    private Pageable pageable;
+    private List<T> content=null;
+    private Pageable pageable=null;
 
     public Page() {
-        super();
+    }
+
+    /**
+     * 分页构造函数
+     *
+     * @param current 当前页
+     * @param size    每页显示条数
+     */
+    public Page(long current, long size) {
+        this(current, size, 0);
     }
 
     public Page(List<T> content, Pageable pageable) {
-        super();
         this.content = content;
         this.pageable = pageable;
     }
@@ -237,6 +245,57 @@ public RestfulEntityBySummit<Page<RoleBean>> queryByPage() {
     }
 }
 ```
+
+- Mybatis-plus使用例子:
+
+> 方式一:
+
+``` java
+import com.summit.cbb.utils.page.Page;
+
+@ApiOperation(value = "角色管理分页查询")
+@GetMapping("queryByPage")
+public RestfulEntityBySummit<Page<RoleBean>> queryByPage() {
+    try {
+         //current->当前页,pageSize->每页页数，...conditionArgs->查询条件
+        Page<RoleBean> pageParam=new Page<>(current, pageSize);
+
+        List<RoleBean> roleList= rolesDao.selectRoles(pageParam,...conditionArgs);
+
+        pageParam.setRecords(roleList);
+
+        return ResultBuilder.buildSuccess(pageParam);
+
+    } catch (Exception e) {
+        logger.error("数据查询失败！", e);
+        return ResultBuilder.buildError(ResponseCodeEnum.CODE_9999);
+    }
+}
+```
+
+> 方式二:
+
+``` java
+import com.summit.cbb.utils.page.Page;
+
+@ApiOperation(value = "角色管理分页查询")
+@GetMapping("queryByPage")
+public RestfulEntityBySummit<Page<RoleBean>> queryByPage() {
+    try {
+        //current->当前页,pageSize->每页页数，...conditionArgs->查询条件
+        Page<RoleBean> pageParam=new Page<>(current, pageSize);
+
+        Page<RoleBean>  page=rolesDao.selectRoles(pageParam,...conditionArgs);
+
+        return ResultBuilder.buildSuccess(page);
+
+    } catch (Exception e) {
+        logger.error("数据查询失败！", e);
+        return ResultBuilder.buildError(ResponseCodeEnum.CODE_9999);
+    }
+}
+```
+
 
 - 返回的json格式:
 
