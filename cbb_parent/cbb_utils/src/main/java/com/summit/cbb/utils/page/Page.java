@@ -10,7 +10,6 @@ import java.util.List;
 
 public class Page<T> extends com.baomidou.mybatisplus.extension.plugins.pagination.Page<T> {
 
-    private List<T> content=null;
     private Pageable pageable=null;
 
     public Page() {
@@ -43,7 +42,7 @@ public class Page<T> extends com.baomidou.mybatisplus.extension.plugins.paginati
     }
 
     public Page(List<T> content, Pageable pageable) {
-        this.content = content;
+        setRecords(content);
         this.pageable = pageable;
     }
     @JsonIgnore
@@ -56,9 +55,8 @@ public class Page<T> extends com.baomidou.mybatisplus.extension.plugins.paginati
     @Override
     public Page<T> setRecords(List<T> records) {
         super.setRecords(records);
-        content=records;
         if(pageable!=null){
-            pageable.setPageRowsCount(content.size());
+            pageable.setPageRowsCount(records.size());
         }
         return this;
     }
@@ -147,7 +145,7 @@ public class Page<T> extends com.baomidou.mybatisplus.extension.plugins.paginati
 
 
     public List<T> getContent() {
-        return content;
+        return getRecords();
     }
 
     public Pageable getPageable() {
