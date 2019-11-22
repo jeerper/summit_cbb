@@ -200,7 +200,6 @@ package com.summit.cbb.utils.page;
 import java.util.List;
 public class Page<T> extends com.baomidou.mybatisplus.extension.plugins.pagination.Page<T> {
 
-    private List<T> content=null;
     private Pageable pageable=null;
 
     public Page() {
@@ -215,11 +214,20 @@ public class Page<T> extends com.baomidou.mybatisplus.extension.plugins.paginati
     public Page(long current, long size) {
         this(current, size, 0);
     }
-
+    //用于手动构建分页对象
     public Page(List<T> content, Pageable pageable) {
-        this.content = content;
+        setRecords(content);
         this.pageable = pageable;
     }
+    //获取数据集合
+    public List<T> getContent() {
+        return getRecords();
+    }
+    //获取分页信息
+    public Pageable getPageable() {
+        return pageable;
+    }
+
 }
 ```
 
