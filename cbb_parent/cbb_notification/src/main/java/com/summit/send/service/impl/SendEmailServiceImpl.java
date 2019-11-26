@@ -8,6 +8,7 @@ import com.summit.common.util.ResultBuilder;
 import com.summit.send.service.SendEmailService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -19,7 +20,11 @@ import org.thymeleaf.context.Context;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 @Service
 @Slf4j
@@ -28,8 +33,8 @@ public class SendEmailServiceImpl implements SendEmailService {
     @Autowired
     private JavaMailSender javaMailSender; // = new JavaMailSenderImpl()
     private SimpleMailMessage message = new SimpleMailMessage();
-    //@Value("${spring.mail.username}")
-    private String userNmae = "3421988273@qq.com";
+    @Value("${spring.mail.username}")
+    private String userNmae;
     @Autowired
     private TemplateEngine templateEngine;
 
