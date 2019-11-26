@@ -15,9 +15,9 @@ spring:
     #关闭占位符替换功能
     placeholder-replacement: false
   mail:
-    host: smtp.qq.com
-    username: 3421988273@qq.com
-    password: fdgeeukxcdncdaeg
+    host: smtp.summit.com.cn
+    username: system-application@summit.com.cn
+    password: Summit123.
     #    port: 465
     default-encoding: UTF-8
     properties:
