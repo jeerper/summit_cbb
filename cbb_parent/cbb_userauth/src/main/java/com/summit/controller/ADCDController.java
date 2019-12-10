@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Map;
 
 
+import com.summit.common.entity.*;
+import io.swagger.annotations.ApiParam;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,11 +18,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.summit.cbb.utils.page.Page;
-import com.summit.common.entity.ADCDBean;
-import com.summit.common.entity.ADCDTreeBean;
-import com.summit.common.entity.LogBean;
-import com.summit.common.entity.ResponseCodeEnum;
-import com.summit.common.entity.RestfulEntityBySummit;
 import com.summit.common.util.ResultBuilder;
 import com.summit.service.adcd.ADCDService;
 import com.summit.service.log.LogUtilImpl;
@@ -156,6 +153,19 @@ public class ADCDController {
         }
     }
 
+    @ApiOperation(value = "根据行政区划编码查询当前行政区划下的所有人员")
+    @RequestMapping(value = "/queryCurrentUserByAdcd", method = RequestMethod.GET)
+    public RestfulEntityBySummit<List<UserInfo>> queryCurrentUserByAdcd(@ApiParam(value = "行政区划编码",required = true)
+                                                                        @RequestParam(value = "adcd") String adcd) {
+        try {
+            List<UserInfo> list = adcdService.queryCurrentUserByAdcd(adcd);
+            return ResultBuilder.buildSuccess(list);
+        } catch (Exception e) {
+            logger.error("数据查询失败！", e);
+            return ResultBuilder.buildError(ResponseCodeEnum.CODE_9999);
+        }
+    }
+
     @ApiOperation(value = "根据编码查询不分页返回Map")
     @RequestMapping(value = "/queryAdcdMap", method = RequestMethod.GET)
     public RestfulEntityBySummit<Map<String, ADCDBean>> queryAdcdMap(
@@ -263,5 +273,9 @@ public class ADCDController {
             return ResultBuilder.buildSuccess();
         }
     }
+
+
+
+
 
 }

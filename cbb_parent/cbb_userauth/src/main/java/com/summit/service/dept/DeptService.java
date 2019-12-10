@@ -292,7 +292,7 @@ public class DeptService {
      * @return
      */
     public void edit(DeptBean ab) {
-        String sql = "UPDATE SYS_DEPT SET  pid = ?, DEPTCODE = ?, DEPTNAME = ?, ADCD=?,REMARK = ? where id = ?";
+        String sql = "UPDATE SYS_DEPT SET  pid = ?, DEPTCODE = ?, DEPTNAME = ?, ADCD=?,REMARK = ?,DEPTHEAD=?  where id = ?";
         jdbcTemplate.update(
                 sql,
                 ab.getPid(),
@@ -300,6 +300,7 @@ public class DeptService {
                 ab.getDeptName(),
                 ab.getAdcd(),
                 ab.getRemark(),
+                ab.getDeptHead(),
                 ab.getId()
         );
         //return ResponseCodeBySummit.CODE_0000;
@@ -317,7 +318,7 @@ public class DeptService {
             }
         }
 
-        String sql = "INSERT INTO SYS_DEPT (ID, PID, DEPTCODE,DEPTNAME,ADCD,REMARK) VALUES (?, ? ,?, ?,?,?)";
+        String sql = "INSERT INTO SYS_DEPT (ID, PID, DEPTCODE,DEPTNAME,ADCD,DEPTHEAD,REMARK) VALUES (?, ? ,?, ?,?,?,?)";
         jdbcTemplate.update(
                 sql,
                 SummitTools.getKey(),
@@ -325,6 +326,7 @@ public class DeptService {
                 ab.getDeptCode(),
                 ab.getDeptName(),
                 ab.getAdcd(),
+                ab.getDeptHead(),
                 ab.getRemark());
         return null;
     }
