@@ -1,13 +1,13 @@
 package com.summit.weather.util;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * @version ： 1.0
@@ -348,25 +348,25 @@ public class TimeUtil {
         int weekday = c.get(Calendar.DAY_OF_WEEK);
         String week = null;
         switch (weekday) {
-            case 1:
+            case 2:
                 week = "星期一";
                 break;
-            case 2:
+            case 3:
                 week = "星期二";
                 break;
-            case 3:
+            case 4:
                 week = "星期三";
                 break;
-            case 4:
+            case 5:
                 week = "星期四";
                 break;
-            case 5:
+            case 6:
                 week = "星期五";
                 break;
-            case 6:
+            case 7:
                 week = "星期六";
                 break;
-            case 7:
+            case 1:
                 week = "星期天";
                 break;
             default:

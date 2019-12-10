@@ -35,7 +35,8 @@ public enum ResponseCodeEnum implements ResponseCode {
     CODE_4029("该手机号在24小时内未发送过验证码"),// 用于验证码短信
     CODE_4030("密码不能为空"),// 用于登录、注册、密码找回、修改密码
     CODE_4031("用户未启用"),
-    CODE_4032("用户已过期");
+    CODE_4032("用户已过期"),
+    CODE_4033("天气数据请求失败");
 
 
     private String message;// 提示消息

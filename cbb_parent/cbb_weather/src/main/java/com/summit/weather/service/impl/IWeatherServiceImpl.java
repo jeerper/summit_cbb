@@ -1,32 +1,5 @@
 package com.summit.weather.service.impl;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.domain.Sort.Direction;
-import org.springframework.data.jpa.domain.Specification;
-import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
-
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
@@ -38,10 +11,35 @@ import com.summit.weather.util.EncodUtils;
 import com.summit.weather.util.HttpRequestUtils;
 import com.summit.weather.util.TimeUtil;
 import com.summit.weather.vo.WeatherForecastVO;
-import com.summit.weather.vo.WeatherHistoryVO;
 import com.summit.weather.vo.WeatherForecastVO.FutureWeather;
 import com.summit.weather.vo.WeatherForecastVO.RealWeather;
 import com.summit.weather.vo.WeatherForecastVO.TodayWeather;
+import com.summit.weather.vo.WeatherHistoryVO;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
+
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
 
 @Service
 public class IWeatherServiceImpl implements IWeatherService {
@@ -275,7 +273,7 @@ public class IWeatherServiceImpl implements IWeatherService {
         todayWeather.setCity(forecasts.getString("city"));
         todayWeather.setDate(new SimpleDateFormat("yyyy-MM-dd").format(new Date()));
         todayWeather.setDressingAdvice("暂无数据");
-        todayWeather.setTemperature(((JSONObject) casts.get(0)).getString("nighttemp") + "℃~"
+        todayWeather.setTemperature(((JSONObject) casts.get(0)).getString("nighttemp") + "~"
                 + ((JSONObject) casts.get(0)).getString("daytemp") + "℃");
         todayWeather.setUvIndex("暂无数据");
         todayWeather.setWeather(((JSONObject) casts.get(0)).getString("dayweather"));
@@ -284,12 +282,12 @@ public class IWeatherServiceImpl implements IWeatherService {
 
         // 整合未来天气状况
         List<FutureWeather> futureWeathers = new LinkedList<>();
-        for (int i = 0; i < casts.size(); i++) {
+        for (int i = 1; i < casts.size(); i++) {
             FutureWeather futureWeather = new FutureWeather();
             JSONObject tmp = (JSONObject) casts.get(i);
 
             futureWeather.setDate(new SimpleDateFormat("yyyy-MM-dd").format(TimeUtil.addDay(new Date(), i)));
-            futureWeather.setTemperature((tmp).getString("nighttemp") + "~" + (tmp).getString("daytemp"));
+            futureWeather.setTemperature((tmp).getString("nighttemp") + "~" + (tmp).getString("daytemp")+ "℃");
             futureWeather.setWeather((tmp).getString("dayweather"));
             futureWeather.setWeek(TimeUtil.getWeek(TimeUtil.addDay(new Date(), i)));
             futureWeather.setWind(tmp.getString("daypower"));
@@ -369,7 +367,7 @@ public class IWeatherServiceImpl implements IWeatherService {
             todayWeather.setDate(new SimpleDateFormat("yyyy-MM-dd").format(new Date()));
             todayWeather.setDressingAdvice(data.getString("ganmao"));
             todayWeather.setTemperature(((JSONObject) forecast.get(0)).getString("low") + "~"
-                    + ((JSONObject) forecast.get(0)).getString("high"));
+                    + ((JSONObject) forecast.get(0)).getString("high")+"℃");
             todayWeather.setUvIndex("暂无数据");
             todayWeather.setWeather(((JSONObject) forecast.get(0)).getString("type"));
             todayWeather.setWeek(TimeUtil.getWeek(new Date()));
@@ -381,7 +379,7 @@ public class IWeatherServiceImpl implements IWeatherService {
                 JSONObject tmp = (JSONObject) forecast.get(i);
 
                 futureWeather.setDate(new SimpleDateFormat("yyyy-MM-dd").format(TimeUtil.addDay(new Date(), i)));
-                futureWeather.setTemperature((tmp).getString("low") + "~" + (tmp).getString("high"));
+                futureWeather.setTemperature((tmp).getString("low") + "~" + (tmp).getString("high")+"℃");
                 futureWeather.setWeather((tmp).getString("type"));
                 futureWeather.setWeek(TimeUtil.getWeek(TimeUtil.addDay(new Date(), i)));
                 futureWeather.setWind(CommonUtil.getCdata(tmp.getString("fengli")));
