@@ -367,7 +367,7 @@ public class IWeatherServiceImpl implements IWeatherService {
             todayWeather.setDate(new SimpleDateFormat("yyyy-MM-dd").format(new Date()));
             todayWeather.setDressingAdvice(data.getString("ganmao"));
             todayWeather.setTemperature(((JSONObject) forecast.get(0)).getString("low") + "~"
-                    + ((JSONObject) forecast.get(0)).getString("high"));
+                    + ((JSONObject) forecast.get(0)).getString("high")+"℃");
             todayWeather.setUvIndex("暂无数据");
             todayWeather.setWeather(((JSONObject) forecast.get(0)).getString("type"));
             todayWeather.setWeek(TimeUtil.getWeek(new Date()));
@@ -379,7 +379,7 @@ public class IWeatherServiceImpl implements IWeatherService {
                 JSONObject tmp = (JSONObject) forecast.get(i);
 
                 futureWeather.setDate(new SimpleDateFormat("yyyy-MM-dd").format(TimeUtil.addDay(new Date(), i)));
-                futureWeather.setTemperature((tmp).getString("low") + "~" + (tmp).getString("high"));
+                futureWeather.setTemperature((tmp).getString("low") + "~" + (tmp).getString("high")+"℃");
                 futureWeather.setWeather((tmp).getString("type"));
                 futureWeather.setWeek(TimeUtil.getWeek(TimeUtil.addDay(new Date(), i)));
                 futureWeather.setWind(CommonUtil.getCdata(tmp.getString("fengli")));
