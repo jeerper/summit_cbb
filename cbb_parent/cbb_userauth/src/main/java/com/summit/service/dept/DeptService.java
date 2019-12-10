@@ -244,7 +244,8 @@ public class DeptService {
      * @throws Exception
      */
     public Page<DeptBean> queryByPage(int start, int limit, JSONObject paramJson) throws Exception {
-        StringBuffer sql = new StringBuffer("SELECT dept.*, fdept.DEPTNAME as PDEPTNAME,AD.ADNM FROM SYS_DEPT dept left join SYS_DEPT fdept on dept.pid=fdept.id  ");
+        StringBuffer sql = new StringBuffer("SELECT dept.ID,dept.PID,dept.DEPTCODE,dept.DEPTNAME,dept.ADCD,dept.REMARK,us.NAME as deptHead, fdept.DEPTNAME as PDEPTNAME,AD.ADNM FROM SYS_DEPT dept left join SYS_DEPT fdept on dept.pid=fdept.id  ");
+        sql.append(" LEFT JOIN sys_user us ON dept.DEPTHEAD=us.USERNAME  ");
         sql.append(" LEFT JOIN SYS_AD_CD AD ON AD.ADCD=DEPT.ADCD where 1=1 ");
         Integer index = 1;
         LinkedMap linkedMap = new LinkedMap();
@@ -275,6 +276,7 @@ public class DeptService {
                 index++;
             }
         }
+
         Page<Object> rs = ur.queryByCustomPage(sql.toString(), start, limit, linkedMap);
         if (rs != null) {
             ArrayList<DeptBean> depts = JSON.parseObject(rs.getContent().toString(), new TypeReference<ArrayList<DeptBean>>() {
