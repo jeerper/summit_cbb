@@ -317,7 +317,7 @@ public class DeptService {
             }
         }
 
-        String sql = "INSERT INTO SYS_DEPT (ID, PID, DEPTCODE,DEPTNAME,ADCD,REMARK) VALUES (?, ? ,?, ?,?,?)";
+        String sql = "INSERT INTO SYS_DEPT (ID, PID, DEPTCODE,DEPTNAME,ADCD,REMARK) VALUES (?, ? ,?, ?,?,?,?)";
         jdbcTemplate.update(
                 sql,
                 SummitTools.getKey(),
@@ -325,6 +325,7 @@ public class DeptService {
                 ab.getDeptCode(),
                 ab.getDeptName(),
                 ab.getAdcd(),
+                ab.getDeptHead(),
                 ab.getRemark());
         return null;
     }

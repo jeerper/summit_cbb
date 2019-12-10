@@ -1,0 +1,1 @@
+﻿alter table sys_dept add column DEPTHEAD varchar(30) CHARACTER SET utf8 COLLATE utf8_bin COMMENT '部门负责人';
