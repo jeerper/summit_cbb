@@ -48,7 +48,7 @@ public class WeatherController {
     }
 
 
-    @ApiOperation(value = "依据经纬度获得实时天气，包括实时天气，当天天气，未来天天气")
+    @ApiOperation(value = "依据城市名获得实时天气，包括实时天气，当天天气，未来天天气")
     @RequestMapping(value = "/{cityName}", method = RequestMethod.GET)
     @ResponseBody
     public WeatherForecastVO findWeather(
