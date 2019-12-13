@@ -19,6 +19,7 @@ app:
     # business url
     - '/**/*.jpg'
     - '/**/*.png'
+    - '/**/not-auth/**'
     # actuator url
     - '/actuator/**'
     # swagger ui
