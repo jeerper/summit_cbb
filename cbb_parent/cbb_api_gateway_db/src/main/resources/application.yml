@@ -18,6 +18,7 @@ app:
   auth-white-list:
     # business url
     - '/**/*.jpg'
+    - '/**/*.jpeg'
     - '/**/*.png'
     - '/**/not-auth/**'
     # actuator url
