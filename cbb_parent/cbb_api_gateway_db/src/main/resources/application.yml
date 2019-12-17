@@ -39,6 +39,7 @@ mybatis-plus:
 
 
 zuul:
+  sensitiveHeaders: Cookie,Set-Cookie
   ignoredServices:
     - 'cbb-api-gateway-db'
     - 'cbb-register-center'
