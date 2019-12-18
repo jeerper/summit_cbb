@@ -103,7 +103,21 @@ public class UserService {
             }
             jdbcTemplate.batchUpdate(insertAdcdSql, userAdcdParams);
         }
-
+        //保存部门，用户, 职位关系表
+        if(userInfo.getUserName() !=null && userInfo.getDepts().length > 0 && userInfo.getDuty() !=null){
+            String insertSql="INSERT INTO sys_user_dept_duty(ID,USERNAME,DEPTID,DUTY) VALUES ( ?, ?, ?, ?)";
+            List params = new ArrayList();
+            for (String deptId : userInfo.getDepts()) {
+                Object glxxParam[] = {
+                        SummitTools.getKey(),
+                        userInfo.getUserName(),
+                        deptId,
+                        userInfo.getDuty(),
+                };
+                params.add(glxxParam);
+            }
+            jdbcTemplate.batchUpdate(insertSql, params);
+        }
         return null;
     }
 
@@ -172,6 +186,26 @@ public class UserService {
             }
             jdbcTemplate.batchUpdate(insertAdcdSql, userdeptParams);
         }
+
+
+        String uddSql = " delete from sys_user_dept_duty where USERNAME  IN ('" + userInfo.getUserName() + "') ";
+        jdbcTemplate.update(uddSql);
+        //保存部门，用户, 职位关系表
+        if(userInfo.getUserName() !=null && userInfo.getDepts().length > 0 && userInfo.getDuty() !=null){
+            String insertSql="INSERT INTO sys_user_dept_duty(ID,USERNAME,DEPTID,DUTY) VALUES ( ?, ?, ?, ?)";
+            List params = new ArrayList();
+            for (String deptId : userInfo.getDepts()) {
+                Object glxxParam[] = {
+                        SummitTools.getKey(),
+                        userInfo.getUserName(),
+                        deptId,
+                        userInfo.getDuty(),
+                };
+                params.add(glxxParam);
+            }
+            jdbcTemplate.batchUpdate(insertSql, params);
+        }
+
         return null;
     }
 
