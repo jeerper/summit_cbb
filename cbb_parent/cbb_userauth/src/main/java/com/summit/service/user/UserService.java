@@ -1,11 +1,13 @@
 package com.summit.service.user;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.TypeReference;
 import com.summit.MainAction;
 import com.summit.cbb.utils.page.Page;
 import com.summit.common.entity.FunctionBean;
 import com.summit.common.entity.ResponseCodeEnum;
+import com.summit.common.entity.UserDeptDutyBean;
 import com.summit.common.entity.UserInfo;
 import com.summit.common.util.Cryptographic;
 import com.summit.repository.UserRepository;
@@ -533,4 +535,16 @@ public class UserService {
         return null;
     }
 
+    public List<UserDeptDutyBean> queryDutyByDpetId(String deptId) throws Exception {
+        StringBuffer sql=new StringBuffer("SELECT * FROM sys_user_dept_duty udd where udd.DEPTID=? ");
+        LinkedMap lm = new LinkedMap();
+        lm.put(1,deptId);
+        List list = ur.queryAllCustom(sql.toString(), lm);
+        ArrayList<UserDeptDutyBean> userDeptDutyBeans =null;
+        if (list !=null){
+            userDeptDutyBeans=JSON.parseObject(list.toString(), new TypeReference<ArrayList<UserDeptDutyBean>>() {
+            });
+        }
+        return userDeptDutyBeans;
+    }
 }

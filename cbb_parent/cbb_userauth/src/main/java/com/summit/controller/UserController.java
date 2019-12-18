@@ -9,12 +9,7 @@ import com.alibaba.fastjson.TypeReference;
 import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import com.summit.MainAction;
 import com.summit.cbb.utils.page.Page;
-import com.summit.common.entity.FunctionBean;
-import com.summit.common.entity.LogBean;
-import com.summit.common.entity.ResponseCodeEnum;
-import com.summit.common.entity.RestfulEntityBySummit;
-import com.summit.common.entity.UserInfo;
-import com.summit.common.entity.UserPassWordInfo;
+import com.summit.common.entity.*;
 import com.summit.common.redis.user.UserInfoCache;
 import com.summit.common.util.ResultBuilder;
 import com.summit.common.web.filter.UserContextHolder;
@@ -667,5 +662,28 @@ public class UserController {
         }
     }
 
-
+    @ApiOperation(value = "根据部门id查询部门专员职位是否存在")
+    @GetMapping("/queryDutyByDpetId")
+    public RestfulEntityBySummit<List<String>> queryDutyByDpetId(@RequestParam(value = "deptId") String deptId) {
+        try {
+            boolean flag=false;
+            if (SummitTools.stringNotNull(deptId)){
+                List<UserDeptDutyBean> list = us.queryDutyByDpetId(deptId);
+                for (UserDeptDutyBean userDeptDutyBean:list){
+                    String duty = userDeptDutyBean.getDuty();
+                    if ("3".equals(duty)){
+                        flag=true;
+                        break;
+                    }
+                }
+            }
+            if (flag){
+                return ResultBuilder.buildError(ResponseCodeEnum.CODE_9992);
+            }
+            return ResultBuilder.buildError(ResponseCodeEnum.CODE_0000);
+        } catch (Exception e) {
+            logger.error("根据部门id查询部门专员职位是否存在失败：", e);
+            return ResultBuilder.buildError(ResponseCodeEnum.CODE_9999);
+        }
+    }
 }
