@@ -18,7 +18,9 @@ app:
   auth-white-list:
     # business url
     - '/**/*.jpg'
+    - '/**/*.jpeg'
     - '/**/*.png'
+    - '/**/not-auth/**'
     # actuator url
     - '/actuator/**'
     # swagger ui
@@ -37,6 +39,7 @@ mybatis-plus:
 
 
 zuul:
+  sensitiveHeaders: Cookie,Set-Cookie
   ignoredServices:
     - 'cbb-api-gateway-db'
     - 'cbb-register-center'
