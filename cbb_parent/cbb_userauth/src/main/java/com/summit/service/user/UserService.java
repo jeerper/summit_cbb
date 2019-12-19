@@ -547,4 +547,17 @@ public class UserService {
         }
         return userDeptDutyBeans;
     }
+
+    public UserDeptDutyBean editUserQueryDutyByDpetId(String username) throws Exception {
+        StringBuffer sql=new StringBuffer("SELECT * FROM sys_user_dept_duty udd where udd.USERNAME=?");
+        LinkedMap lm = new LinkedMap();
+        lm.put(1,username);
+        JSONObject jsonObject = ur.queryOneCustom(sql.toString(), lm);
+        UserDeptDutyBean userDeptDutyBean=new UserDeptDutyBean();
+        userDeptDutyBean.setId(jsonObject.getString("ID"));
+        userDeptDutyBean.setDeptId("DEPTID");
+        userDeptDutyBean.setDuty(jsonObject.getString("DUTY"));
+        userDeptDutyBean.setUsername(jsonObject.getString("USERNAME"));
+        return userDeptDutyBean;
+    }
 }

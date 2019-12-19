@@ -662,7 +662,7 @@ public class UserController {
         }
     }
 
-    @ApiOperation(value = "根据部门id查询部门专员职位是否存在")
+    @ApiOperation(value = "新增时根据部门id查询部门专员职位是否存在")
     @GetMapping("/queryDutyByDpetId")
     public RestfulEntityBySummit<List<String>> queryDutyByDpetId(@RequestParam(value = "duty") String duty,
             @RequestParam(value = "deptId") String deptId) {
@@ -682,6 +682,41 @@ public class UserController {
                 if (flag){
                     return ResultBuilder.buildError(ResponseCodeEnum.CODE_9992);
                 }
+            }
+            return ResultBuilder.buildError(ResponseCodeEnum.CODE_0000);
+        } catch (Exception e) {
+            logger.error("根据部门id查询部门专员职位是否存在失败：", e);
+            return ResultBuilder.buildError(ResponseCodeEnum.CODE_9999);
+        }
+    }
+
+
+    @ApiOperation(value = "编辑时根据部门id查询部门专员职位是否存在")
+    @GetMapping("/editUserQueryDutyByDpetId")
+    public RestfulEntityBySummit<List<String>> editUserQueryDutyByDpetId(@RequestParam(value = "duty") String duty,
+                                                                 @RequestParam(value = "deptId") String deptId,
+                                                                 @RequestParam(value = "username")String username) {
+        try {
+            boolean flag=false;
+            if (SummitTools.stringNotNull(username) && SummitTools.stringNotNull(duty)){
+                UserDeptDutyBean userDeptDutyBean= us.editUserQueryDutyByDpetId(username);
+                if (userDeptDutyBean.getDuty().equals("3") && duty.equals("3")){
+                    flag=true;
+                }else {
+                    if (SummitTools.stringNotNull(deptId)){
+                        List<UserDeptDutyBean> list = us.queryDutyByDpetId(deptId);
+                        for (UserDeptDutyBean udd:list){
+                            String duty1 = udd.getDuty();
+                            if ("3".equals(duty1)){
+                                flag=true;
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+            if (flag){
+                return ResultBuilder.buildError(ResponseCodeEnum.CODE_9992);
             }
             return ResultBuilder.buildError(ResponseCodeEnum.CODE_0000);
         } catch (Exception e) {
