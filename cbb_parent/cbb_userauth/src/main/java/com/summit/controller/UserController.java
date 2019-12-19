@@ -664,21 +664,24 @@ public class UserController {
 
     @ApiOperation(value = "根据部门id查询部门专员职位是否存在")
     @GetMapping("/queryDutyByDpetId")
-    public RestfulEntityBySummit<List<String>> queryDutyByDpetId(@RequestParam(value = "deptId") String deptId) {
+    public RestfulEntityBySummit<List<String>> queryDutyByDpetId(@RequestParam(value = "duty") String duty,
+            @RequestParam(value = "deptId") String deptId) {
         try {
-            boolean flag=false;
-            if (SummitTools.stringNotNull(deptId)){
-                List<UserDeptDutyBean> list = us.queryDutyByDpetId(deptId);
-                for (UserDeptDutyBean userDeptDutyBean:list){
-                    String duty = userDeptDutyBean.getDuty();
-                    if ("3".equals(duty)){
-                        flag=true;
-                        break;
+            if (SummitTools.stringNotNull(duty) && "3".equals(duty)){
+                boolean flag=false;
+                if (SummitTools.stringNotNull(deptId)){
+                    List<UserDeptDutyBean> list = us.queryDutyByDpetId(deptId);
+                    for (UserDeptDutyBean userDeptDutyBean:list){
+                        String duty1 = userDeptDutyBean.getDuty();
+                        if ("3".equals(duty1)){
+                            flag=true;
+                            break;
+                        }
                     }
                 }
-            }
-            if (flag){
-                return ResultBuilder.buildError(ResponseCodeEnum.CODE_9992);
+                if (flag){
+                    return ResultBuilder.buildError(ResponseCodeEnum.CODE_9992);
+                }
             }
             return ResultBuilder.buildError(ResponseCodeEnum.CODE_0000);
         } catch (Exception e) {
