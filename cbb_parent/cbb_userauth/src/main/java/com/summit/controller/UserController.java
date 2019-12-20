@@ -701,8 +701,9 @@ public class UserController {
             if (SummitTools.stringNotNull(username) && SummitTools.stringNotNull(duty)){
                 UserDeptDutyBean userDeptDutyBean= us.editUserQueryDutyByDpetId(username);
                 if (userDeptDutyBean.getDuty().equals("3") && duty.equals("3")){
-                    flag=true;
-                }else {
+                    return ResultBuilder.buildError(ResponseCodeEnum.CODE_0000);
+                }
+                if (SummitTools.stringNotNull(duty) && "3".equals(duty)){
                     if (SummitTools.stringNotNull(deptId)){
                         List<UserDeptDutyBean> list = us.queryDutyByDpetId(deptId);
                         for (UserDeptDutyBean udd:list){
