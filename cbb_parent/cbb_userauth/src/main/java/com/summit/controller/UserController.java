@@ -3,6 +3,7 @@ package com.summit.controller;
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.bean.copier.CopyOptions;
 import cn.hutool.core.io.FileUtil;
+import cn.hutool.core.util.StrUtil;
 import cn.hutool.system.SystemUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
@@ -700,7 +701,7 @@ public class UserController {
             boolean flag=false;
             if (SummitTools.stringNotNull(username) && SummitTools.stringNotNull(duty)){
                 UserDeptDutyBean userDeptDutyBean= us.editUserQueryDutyByDpetId(username);
-                if (userDeptDutyBean.getDuty().equals("3") && duty.equals("3")){
+                if (!StrUtil.isEmpty(userDeptDutyBean.getDuty()) && userDeptDutyBean.getDuty().equals("3") && duty.equals("3")){
                     return ResultBuilder.buildError(ResponseCodeEnum.CODE_0000);
                 }
                 if (SummitTools.stringNotNull(duty) && "3".equals(duty)){
