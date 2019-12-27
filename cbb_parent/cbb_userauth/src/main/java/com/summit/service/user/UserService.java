@@ -554,10 +554,12 @@ public class UserService {
         lm.put(1,username);
         JSONObject jsonObject = ur.queryOneCustom(sql.toString(), lm);
         UserDeptDutyBean userDeptDutyBean=new UserDeptDutyBean();
-        userDeptDutyBean.setId(jsonObject.getString("ID"));
-        userDeptDutyBean.setDeptId("DEPTID");
-        userDeptDutyBean.setDuty(jsonObject.getString("DUTY"));
-        userDeptDutyBean.setUsername(jsonObject.getString("USERNAME"));
+        if (jsonObject !=null){
+            userDeptDutyBean.setId(jsonObject.getString("ID"));
+            userDeptDutyBean.setDeptId("DEPTID");
+            userDeptDutyBean.setDuty(jsonObject.getString("DUTY"));
+            userDeptDutyBean.setUsername(jsonObject.getString("USERNAME"));
+        }
         return userDeptDutyBean;
     }
 }
