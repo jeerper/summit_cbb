@@ -1,35 +1,26 @@
-/*
- *    Copyright (c) 2018-2025, lengleng All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are met:
- *
- * Redistributions of source code must retain the above copyright notice,
- * this list of conditions and the following disclaimer.
- * Redistributions in binary form must reproduce the above copyright
- * notice, this list of conditions and the following disclaimer in the
- * documentation and/or other materials provided with the distribution.
- * Neither the name of the pig4cloud.com developer nor the names of its
- * contributors may be used to endorse or promote products derived from
- * this software without specific prior written permission.
- * Author: lengleng (wangiegie@gmail.com)
- */
-
 package com.summit.handle;
 
 import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.util.IdUtil;
+import com.summit.model.user.UserBean;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationListener;
 import org.springframework.security.authentication.event.AuthenticationSuccessEvent;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.util.Date;
+import java.util.List;
 
 /**
  * 用户登录验证成功事件处理器
+ *
  * @author liuyuan
  */
 @Slf4j
@@ -44,7 +35,29 @@ public class SummitAuthenticationSuccessEventHandler implements ApplicationListe
         }
         ServletRequestAttributes requestAttributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
         HttpServletRequest request = requestAttributes.getRequest();
-        log.debug(request.getRemoteAddr());
+        UserBean userBean = (UserBean) authentication.getPrincipal();
+
+        String loginId = IdUtil.objectId();
+        String loginUserName = userBean.getUserName();
+        String loginIp = "";
+        if ("0:0:0:0:0:0:0:1".equals(request.getRemoteAddr())) {
+            try {
+                loginIp = InetAddress.getLocalHost().toString();
+                int computNameIndex = loginIp.indexOf("/");
+                if (computNameIndex != -1) {
+                    loginIp = loginIp.substring(computNameIndex + 1);
+                }
+            } catch (UnknownHostException e) {
+                log.error("获取ip失败！" + e.getMessage());
+            }
+        }else{
+            loginIp = request.getRemoteAddr();
+        }
+        Date loginLogCreateTime = new Date();
+        List<GrantedAuthority> authorities = (List<GrantedAuthority>) authentication.getAuthorities();
+
+
+        //TODO:请求用户组件记录用户登录日志接口
 
     }
 
