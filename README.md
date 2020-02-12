@@ -49,9 +49,9 @@
 |用户,角色,菜单管理组件|cbb_userauth|192.168.140.155:45002|22224|刘永红|cbb_userauth|
 |共享组件脚手架|cbb_demo|192.168.140.155:45003|22223|刘源|cbb_demo|
 |雨情组件|cbb_pptn|❓|❓|❓|❓|
-|天气组件|cbb_weather|192.168.140.155:45004|22225|❓|cbb_weather|
-|测站管理组件|cbb_station|❓|❓|成虎|❓|
-|消息通知组件|cbb_notification|192.168.140.155:45011|22229|王泳鑫|cbb_notification|
+|天气组件|cbb_weather|192.168.140.155:45004|22225|刘源|cbb_weather|
+|测站管理组件|cbb_station|❓|❓|❓|❓|
+|消息通知组件|cbb_notification|192.168.140.155:45011|22229|钱云阳|cbb_notification|
 |组态通信组件|cbb_scada|❓|❓|刘源|❓|
 |数据转移组件|cbb_etl|❓|❓|❓|❓|
 |视频组件|cbb_video|❓|❓|❓|❓|
