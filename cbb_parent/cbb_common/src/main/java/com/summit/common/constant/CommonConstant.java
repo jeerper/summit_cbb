@@ -90,4 +90,6 @@ public interface CommonConstant {
      * 路由信息Redis保存的key
      */
     String ROUTE_KEY = "_ROUTE_KEY";
+
+    String LOGIN_LOG_PREFIX="LOGIN_LOG_KEY:";
 }
