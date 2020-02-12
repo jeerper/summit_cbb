@@ -12,6 +12,7 @@ import com.aliyuncs.exceptions.ClientException;
 import com.aliyuncs.exceptions.ServerException;
 import com.aliyuncs.http.MethodType;
 import com.aliyuncs.profile.DefaultProfile;
+import com.summit.common.Common;
 import com.summit.common.constant.ResponseCode;
 import com.summit.common.entity.ResponseCodeEnum;
 import com.summit.common.entity.RestfulEntityBySummit;
@@ -215,6 +216,7 @@ public class SendSmsServiceImpl implements SendSmsService {
                     Date date = new Date();
                     smsEntity.setCreateTime(date);
                     smsEntity.setUpdateTime(date);
+                    smsEntity.setSmsPublisher(Common.getLogUser().getUserName());
                     smsDao.insertSms(smsEntity);
                     //发送完成后启动定时任务，查询阿里短信接口，获取发送结果
                     Timer timer = new Timer();
