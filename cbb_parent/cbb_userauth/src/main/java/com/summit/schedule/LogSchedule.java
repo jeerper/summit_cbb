@@ -35,6 +35,9 @@ public class LogSchedule {
         for (String key : keys) {
             String loginId = (String) genericRedisTemplate.opsForValue().get(key);
             LoginLogBean loginLogBean = loginLogDao.selectOne(Wrappers.<LoginLogBean>lambdaQuery().eq(LoginLogBean::getId, loginId));
+            if(loginLogBean==null){
+                continue;
+            }
             long differMinute = DateUtil.between(loginLogBean.getLoginTime(), new Date(), DateUnit.MINUTE);
             loginLogDao.update(null, Wrappers.<LoginLogBean>lambdaUpdate()
                     .set(LoginLogBean::getOnlineTime, differMinute)

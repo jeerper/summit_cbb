@@ -1,7 +1,7 @@
 package com.summit.handle;
 
 import cn.hutool.core.collection.CollUtil;
-import cn.hutool.core.util.IdUtil;
+import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import com.summit.common.api.userauth.RemoteUserLogService;
 import com.summit.common.constant.CommonConstant;
 import com.summit.common.entity.LoginLogBean;
@@ -18,6 +18,9 @@ import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
+import rx.Observable;
+import rx.functions.Action1;
+import rx.schedulers.Schedulers;
 
 import javax.servlet.http.HttpServletRequest;
 import java.net.InetAddress;
@@ -65,27 +68,40 @@ public class SummitAuthenticationSuccessEventHandler implements ApplicationListe
         String loginUserName = userBean.getUsername();
         String loginLogKey = CommonConstant.LOGIN_LOG_PREFIX + loginIp + ":" + loginUserName;
 
-        if (authentication instanceof UsernamePasswordAuthenticationToken) {
-            //登陆完成后操作
-            String loginId = IdUtil.objectId();
-            genericRedisTemplate.opsForValue().set(loginLogKey, loginId, 5, TimeUnit.MINUTES);
-            //请求用户组件记录用户登录日志接口
-            remoteUserLogService.addLoginLog(loginId, loginUserName, loginIp);
+        Observable.just(loginIp)
+                .observeOn(Schedulers.io())
+                .subscribe(new Action1<String>() {
+                    @Override
+                    public void call(String loginIp) {
+                        if (authentication instanceof UsernamePasswordAuthenticationToken) {
+                            //登陆完成后操作
+                            String loginId = IdWorker.getIdStr();
+                            genericRedisTemplate.opsForValue().set(loginLogKey, loginId, 5, TimeUnit.MINUTES);
+                            //请求用户组件记录用户登录日志接口
+                            remoteUserLogService.addLoginLog(loginId, loginUserName, loginIp);
 
-        } else if (authentication instanceof OAuth2Authentication) {
-            //访问资源的操作
-            if (genericRedisTemplate.hasKey(loginLogKey)) {
-                //如果key存在则刷新过期时间
-                genericRedisTemplate.expire(loginLogKey, 5, TimeUnit.MINUTES);
-            } else {
-                //如果key不存在则拉取最后一次登陆记录ID并重新加入缓存
-                RestfulEntityBySummit<LoginLogBean> result = remoteUserLogService.getLastLoginLog(loginUserName, loginIp);
-                String loginId = result.getData().getId();
-                genericRedisTemplate.opsForValue().set(loginLogKey, loginId, 5, TimeUnit.MINUTES);
-            }
-        }
-
-
+                        } else if (authentication instanceof OAuth2Authentication) {
+                            //访问资源的操作
+                            if (genericRedisTemplate.hasKey(loginLogKey)) {
+                                //如果key存在则刷新过期时间
+                                genericRedisTemplate.expire(loginLogKey, 5, TimeUnit.MINUTES);
+                            } else {
+                                //如果key不存在则拉取最后一次登陆记录ID并重新加入缓存
+                                RestfulEntityBySummit<LoginLogBean> result = remoteUserLogService.getLastLoginLog(loginUserName, loginIp);
+                                if(result.getData()==null){
+                                    return;
+                                }
+                                String loginId = result.getData().getId();
+                                genericRedisTemplate.opsForValue().set(loginLogKey, loginId, 5, TimeUnit.MINUTES);
+                            }
+                        }
+                    }
+                }, new Action1<Throwable>() {
+                    @Override
+                    public void call(Throwable throwable) {
+                        log.error("消息分发线程执行异常", throwable);
+                    }
+                });
     }
 
 
