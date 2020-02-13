@@ -2,7 +2,10 @@ package com.summit.handle;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.IdUtil;
+import com.summit.common.api.userauth.RemoteUserLogService;
 import com.summit.common.constant.CommonConstant;
+import com.summit.common.entity.LoginLogBean;
+import com.summit.common.entity.RestfulEntityBySummit;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
@@ -10,7 +13,6 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.authentication.event.AuthenticationSuccessEvent;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.stereotype.Component;
@@ -20,8 +22,6 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import javax.servlet.http.HttpServletRequest;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.util.Date;
-import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -35,6 +35,8 @@ public class SummitAuthenticationSuccessEventHandler implements ApplicationListe
 
     @Autowired
     RedisTemplate<String, Object> genericRedisTemplate;
+    @Autowired
+    RemoteUserLogService remoteUserLogService;
 
     @Override
     public void onApplicationEvent(AuthenticationSuccessEvent event) {
@@ -67,10 +69,8 @@ public class SummitAuthenticationSuccessEventHandler implements ApplicationListe
             //登陆完成后操作
             String loginId = IdUtil.objectId();
             genericRedisTemplate.opsForValue().set(loginLogKey, loginId, 5, TimeUnit.MINUTES);
-
-            Date loginLogCreateTime = new Date();
-            List<GrantedAuthority> authorities = (List<GrantedAuthority>) authentication.getAuthorities();
-            //TODO:请求用户组件记录用户登录日志接口
+            //请求用户组件记录用户登录日志接口
+            remoteUserLogService.addLoginLog(loginId, loginUserName, loginIp);
 
         } else if (authentication instanceof OAuth2Authentication) {
             //访问资源的操作
@@ -78,8 +78,10 @@ public class SummitAuthenticationSuccessEventHandler implements ApplicationListe
                 //如果key存在则刷新过期时间
                 genericRedisTemplate.expire(loginLogKey, 5, TimeUnit.MINUTES);
             } else {
-                //TODO:如果key不存在则拉取最后一次登陆记录ID并重新加入缓存
-
+                //如果key不存在则拉取最后一次登陆记录ID并重新加入缓存
+                RestfulEntityBySummit<LoginLogBean> result = remoteUserLogService.getLastLoginLog(loginUserName, loginIp);
+                String loginId = result.getData().getId();
+                genericRedisTemplate.opsForValue().set(loginLogKey, loginId, 5, TimeUnit.MINUTES);
             }
         }
 

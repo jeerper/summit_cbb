@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.summit.dao.repository.LoginLogDao">
+
+    <sql id="sys_login_log_table_list">
+        sll.id as id,
+        sll.userName as loginUserName,
+        sll.callerIP as loginIp,
+        sll.loginTime as loginTime,
+        sll.onlineTime as onlineTime
+    </sql>
+
+    <select id="getLastLoginLog" parameterType="map" resultType="com.summit.common.entity.LoginLogBean">
+        SELECT
+        <include refid="sys_login_log_table_list"/>
+        FROM sys_login_log sll
+        where
+        sll.userName=#{loginUserName}
+        and
+        sll.callerIP=#{loginIp}
+        order by sll.loginTime desc
+        LIMIT 0,1
+    </select>
+
+</mapper>
