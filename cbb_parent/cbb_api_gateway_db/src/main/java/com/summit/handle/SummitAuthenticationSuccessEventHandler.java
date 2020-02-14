@@ -50,8 +50,20 @@ public class SummitAuthenticationSuccessEventHandler implements ApplicationListe
 
         ServletRequestAttributes requestAttributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
         HttpServletRequest request = requestAttributes.getRequest();
-        String loginIp = "";
-        if ("0:0:0:0:0:0:0:1".equals(request.getRemoteAddr())) {
+        //获取IP
+        String loginIp = request.getHeader("x-forwarded-for");
+
+        if (loginIp == null || loginIp.length() == 0 || "unknown".equalsIgnoreCase(loginIp) || "null".equalsIgnoreCase(loginIp)) {
+            loginIp = request.getHeader("Proxy-Client-IP");
+        }
+        if (loginIp == null || loginIp.length() == 0 || "unknown".equalsIgnoreCase(loginIp) || "null".equalsIgnoreCase(loginIp)) {
+            loginIp = request.getHeader("WL-Proxy-Client-IP");
+        }
+        if (loginIp == null || loginIp.length() == 0 || "unknown".equalsIgnoreCase(loginIp) || "null".equalsIgnoreCase(loginIp)) {
+            loginIp = request.getRemoteAddr();
+        }
+
+        if ("0:0:0:0:0:0:0:1".equals(loginIp)) {
             try {
                 loginIp = InetAddress.getLocalHost().toString();
                 int computNameIndex = loginIp.indexOf("/");
@@ -61,8 +73,6 @@ public class SummitAuthenticationSuccessEventHandler implements ApplicationListe
             } catch (UnknownHostException e) {
                 log.error("获取ip失败！" + e.getMessage());
             }
-        } else {
-            loginIp = request.getRemoteAddr();
         }
         UserDetails userBean = (UserDetails) authentication.getPrincipal();
         String loginUserName = userBean.getUsername();
