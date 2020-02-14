@@ -1,6 +1,7 @@
 package com.summit.handle;
 
 import cn.hutool.core.collection.CollUtil;
+import cn.hutool.extra.servlet.ServletUtil;
 import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import com.summit.common.api.userauth.RemoteUserLogService;
 import com.summit.common.constant.CommonConstant;
@@ -50,18 +51,9 @@ public class SummitAuthenticationSuccessEventHandler implements ApplicationListe
 
         ServletRequestAttributes requestAttributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
         HttpServletRequest request = requestAttributes.getRequest();
-        //获取IP
-        String loginIp = request.getHeader("x-forwarded-for");
 
-        if (loginIp == null || loginIp.length() == 0 || "unknown".equalsIgnoreCase(loginIp) || "null".equalsIgnoreCase(loginIp)) {
-            loginIp = request.getHeader("Proxy-Client-IP");
-        }
-        if (loginIp == null || loginIp.length() == 0 || "unknown".equalsIgnoreCase(loginIp) || "null".equalsIgnoreCase(loginIp)) {
-            loginIp = request.getHeader("WL-Proxy-Client-IP");
-        }
-        if (loginIp == null || loginIp.length() == 0 || "unknown".equalsIgnoreCase(loginIp) || "null".equalsIgnoreCase(loginIp)) {
-            loginIp = request.getRemoteAddr();
-        }
+        //获取IP
+        String loginIp=ServletUtil.getClientIP(request);
 
         if ("0:0:0:0:0:0:0:1".equals(loginIp)) {
             try {
