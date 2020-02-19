@@ -4,10 +4,12 @@ package com.summit.cbb.utils.page;
 import com.baomidou.mybatisplus.core.metadata.OrderItem;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 
 import java.util.List;
 
-
+@ApiModel(description="分页对象类")
 public class Page<T> extends com.baomidou.mybatisplus.extension.plugins.pagination.Page<T> {
 
     private Pageable pageable=null;
@@ -143,11 +145,11 @@ public class Page<T> extends com.baomidou.mybatisplus.extension.plugins.paginati
     }
 
 
-
+    @ApiModelProperty(value="当前分页的记录")
     public List<T> getContent() {
         return getRecords();
     }
-
+    @ApiModelProperty(value="分页属性")
     public Pageable getPageable() {
         return pageable;
     }
