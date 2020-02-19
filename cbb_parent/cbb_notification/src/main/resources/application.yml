@@ -46,6 +46,11 @@ jpush:
     cache: false
     mode: LEGACYHTML5
 
+geTuiPush:
+  appId : LcqlVsFeuSAMi17ERnQTg1
+  appKey: E32K8EBzZm8ex5qjpSKLL6
+  masterSecret: T3bpCc0CtO8RbvmJk4FtG1
+
 ccb_msg:
   sms:
     #短信AccessKeyID
