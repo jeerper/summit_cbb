@@ -24,11 +24,22 @@
     <select id="getLoginLog" parameterType="map" resultType="com.summit.dao.entity.LoginLogInfo">
         select sll.userName,
         su.NAME as `name`,
+        surn.roleName,
         sll.loginTime,
         sll.onlineTime,
         sll.callerIP
         from sys_login_log sll
         inner join sys_user su on sll.userName = su.USERNAME
+        INNER JOIN (
+        SELECT
+        sur.USERNAME,
+        GROUP_CONCAT( sr.`NAME` SEPARATOR ',' ) roleName
+        FROM
+        sys_user_role sur
+        INNER JOIN sys_role sr ON sur.ROLE_CODE = sr.`CODE`
+        GROUP BY
+        sur.USERNAME
+        ) surn ON sll.userName = surn.USERNAME
         <where>
             <if test="start != null">
                 and sll.loginTime &gt;= #{start}
@@ -37,7 +48,7 @@
                 and sll.loginTime &lt;= #{end}
             </if>
             <if test="nickName != null">
-                and su.NAME  like  concat('%', #{nickName}, '%')
+                and su.NAME like concat('%', #{nickName}, '%')
             </if>
         </where>
         order by sll.loginTime desc

@@ -1,33 +1,25 @@
 package com.summit.cbb.utils.page;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 
+@ApiModel(description="分页属性类")
 public class Pageable {
 
-    /**
-     * 总记录数
-     *
-     * @return
-     */
+
+    @ApiModelProperty(value="总记录数")
     private Integer rowsCount;
-    /**
-     * 总页数
-     *
-     * @return
-     */
+
+    @ApiModelProperty(value="总页数")
     private Integer pageCount;
-    /**
-     * 当前页
-     */
+
+    @ApiModelProperty(value="当前页")
     private Integer curPage;
 
-    /**
-     * 分页大小
-     */
+    @ApiModelProperty(value="每页显示条数")
     private Integer pageSize;
 
-    /**
-     * 当前页的总记录数
-     */
+    @ApiModelProperty(value="当前页的记录数")
     private Integer pageRowsCount;
 
     public Pageable() {
