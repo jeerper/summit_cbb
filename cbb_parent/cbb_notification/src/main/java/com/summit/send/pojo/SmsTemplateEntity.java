@@ -7,6 +7,7 @@ import java.util.Date;
 @Data
 public class SmsTemplateEntity {
     private String templateId;
+    private String templateName;
     private String templateContent;
     private String templateCode;
     private String templateType;

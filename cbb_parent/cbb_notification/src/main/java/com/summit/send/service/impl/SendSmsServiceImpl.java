@@ -21,6 +21,7 @@ import com.summit.common.util.ResultBuilder;
 import com.summit.send.dao.SmsDao;
 import com.summit.send.dao.SmsTemplateDao;
 import com.summit.send.pojo.SmsEntity;
+import com.summit.send.pojo.SmsTemplateEntity;
 import com.summit.send.service.SendSmsService;
 import com.summit.send.util.JSONUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -404,5 +405,12 @@ public class SendSmsServiceImpl implements SendSmsService {
 
     public SmsEntity querySmsRecordByBizId(String bizId) {
         return smsDao.querySmsRecordByBizId(bizId);
+    }
+
+
+
+    @Override
+    public List<SmsTemplateEntity> queryTemplate() {
+        return smsTemplateDao.queryTemplate();
     }
 }
