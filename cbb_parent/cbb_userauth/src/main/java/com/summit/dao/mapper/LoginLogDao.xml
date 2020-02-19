@@ -23,10 +23,10 @@
     </select>
     <select id="getLoginLog" parameterType="map" resultType="com.summit.dao.entity.LoginLogInfo">
         select sll.userName,
-               su.NAME as `name`,
-               sll.loginTime,
-               sll.onlineTime,
-               sll.callerIP
+        su.NAME as `name`,
+        sll.loginTime,
+        sll.onlineTime,
+        sll.callerIP
         from sys_login_log sll
         inner join sys_user su on sll.userName = su.USERNAME
         <where>
@@ -37,10 +37,9 @@
                 and sll.loginTime &lt;= #{end}
             </if>
             <if test="nickName != null">
-                and su.NAME = #{nickName}
+                and su.NAME  like  concat('%', #{nickName}, '%')
             </if>
         </where>
         order by sll.loginTime desc
     </select>
-
 </mapper>
