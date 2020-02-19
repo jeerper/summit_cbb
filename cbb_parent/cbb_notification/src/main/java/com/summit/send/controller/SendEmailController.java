@@ -26,12 +26,12 @@ public class SendEmailController {
     @ApiOperation(value = "发送邮件，可以添加附件，支持html格式")
     @PostMapping(value = "/email", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public RestfulEntityBySummit sendEmail(
-            @ApiParam(value = "邮件附件", required = false) @RequestPart("attachFiles") MultipartFile[] attachFiles,
+            @ApiParam(value = "邮件附件（文件大小限制1GB，支持163、qq、sina等常用邮箱）", required = false) @RequestPart("attachFiles") MultipartFile[] attachFiles,
             @ApiParam(value = "邮件编号", required = false) @RequestParam("emailId") String emailId,
             @ApiParam(value = "一个或多个接受者邮件地址", required = true) @RequestParam("toEmails") String[] toEmails,
             @ApiParam(value = "邮件标题", required = true) @RequestParam("title") String title,
             @ApiParam(value = "邮件内容", required = true) @RequestParam("content") String content,
-            @ApiParam(value = "邮件类型", required = true) @RequestParam("contentType") String contentType) {
+            @ApiParam(value = "邮件类型 (文本text、模板template、html)", required = true) @RequestParam("contentType") String contentType) {
 
         log.info("###收到发送邮件请求");
         EmailInfo emailInfo = new EmailInfo(emailId, toEmails, title, content, contentType, null, null);

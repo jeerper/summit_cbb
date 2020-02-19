@@ -1,5 +1,6 @@
 package com.summit.controller;
 
+import cn.hutool.core.date.DateUtil;
 import com.summit.cbb.utils.page.Page;
 import com.summit.common.entity.LogBean;
 import com.summit.common.entity.LoginLogBean;
@@ -7,12 +8,14 @@ import com.summit.common.entity.QueryLogBean;
 import com.summit.common.entity.ResponseCodeEnum;
 import com.summit.common.entity.RestfulEntityBySummit;
 import com.summit.common.util.ResultBuilder;
+import com.summit.dao.entity.LoginLogInfo;
 import com.summit.dao.repository.LoginLogDao;
 import com.summit.service.log.LogUtilImpl;
 import com.summit.util.SummitTools;
 import com.summit.util.SysConstants;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import net.sf.json.JSONObject;
 import org.slf4j.Logger;
@@ -28,6 +31,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Date;
+import java.util.List;
 
 @Api(description = "日志管理")
 @CrossOrigin(origins = "*", maxAge = 3600)
@@ -58,8 +62,39 @@ public class LogController {
         return ResultBuilder.buildSuccess();
     }
 
+    @GetMapping("/login")
+    @ApiOperation(value = "查询登录记录")
+    public RestfulEntityBySummit<Page<LoginLogInfo>> getLoginLog(@ApiParam(value = "用户名称") @RequestParam(value = "nickName", required = false) String nickName,
+                                                                 @ApiParam(value = "起始时间") @RequestParam(value = "startTime", required = false) String startTime,
+                                                                 @ApiParam(value = "结束时间") @RequestParam(value = "endTime", required = false) String endTime,
+                                                                 @ApiParam(value = "当前页，大于等于1") @RequestParam(value = "current", required = false) Integer current,
+                                                                 @ApiParam(value = "每页条数，大于等于0") @RequestParam(value = "pageSize", required = false) Integer pageSize) {
+        try {
+            Date start = DateUtil.parse(startTime);
+            Date end = DateUtil.parse(endTime);
+
+            Page<LoginLogInfo> pageParam = null;
+
+            if (current != null && pageSize != null) {
+                pageParam = new Page<>(current, pageSize);
+            }
+            List<LoginLogInfo> loginLogInfoList = loginLogDao.getLoginLog(pageParam, nickName, start, end);
+
+            if (pageParam != null) {
+                pageParam.setRecords(loginLogInfoList);
+            } else {
+                pageParam = new Page<>(loginLogInfoList, null);
+            }
+            return ResultBuilder.buildSuccess(pageParam);
+        } catch (Exception e) {
+            log.error("查询登录记录失败", e);
+            return ResultBuilder.buildError(ResponseCodeEnum.CODE_9999);
+        }
+    }
+
+
     @GetMapping("/last-login-log")
-    @ApiOperation(value = "查询最后一次登陆记录")
+    @ApiOperation(value = "查询最后一次登录记录")
     public RestfulEntityBySummit<LoginLogBean> getLastLoginLog(@RequestParam("loginUserName") String loginUserName,
                                                                @RequestParam("loginIp") String loginIp) {
         LoginLogBean loginLogBean = loginLogDao.getLastLoginLog(loginUserName, loginIp);
