@@ -28,8 +28,8 @@ spring:
             class: javax.net.ssl.SSLSocketFactory
             port: 465
 jpush:
-  appKey: c78f300905cfeb5318a073c5
-  masterSecret: 9d55daa976eb8a502e8594ea
+  appKey: 9db8e0594c0f91e2f55ee69f
+  masterSecret: eb84752c78727e48256841af
   liveTime: 300000
   #安塞现场
   #appKey: 43d2500b962982d568d6d000
