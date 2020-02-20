@@ -18,7 +18,6 @@ public class SummitJwtAccessTokenConverter extends JwtAccessTokenConverter {
    public OAuth2AccessToken enhance(OAuth2AccessToken accessToken, OAuth2Authentication authentication) {
        final Map<String, Object> additionalInfo = new HashMap<>(2);
        UserBean user = (UserBean) authentication.getUserAuthentication().getPrincipal();
-       log.debug("用户名称:"+user.getUserName());
        if (user != null) {
            additionalInfo.put("username", user.getUsername());
        }
