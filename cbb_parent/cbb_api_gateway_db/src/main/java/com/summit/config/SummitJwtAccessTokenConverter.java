@@ -3,6 +3,7 @@ package com.summit.config;
 
 import com.summit.common.constant.CommonConstant;
 import com.summit.model.user.UserBean;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.oauth2.common.DefaultOAuth2AccessToken;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
@@ -11,12 +12,13 @@ import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenCo
 import java.util.HashMap;
 import java.util.Map;
 
-
+@Slf4j
 public class SummitJwtAccessTokenConverter extends JwtAccessTokenConverter {
    @Override
    public OAuth2AccessToken enhance(OAuth2AccessToken accessToken, OAuth2Authentication authentication) {
        final Map<String, Object> additionalInfo = new HashMap<>(2);
        UserBean user = (UserBean) authentication.getUserAuthentication().getPrincipal();
+       log.debug("用户名称:"+user.getUserName());
        if (user != null) {
            additionalInfo.put("username", user.getUsername());
        }
