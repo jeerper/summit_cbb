@@ -17,7 +17,7 @@
     </resultMap>
 
     <sql id="Base_Column">
-        sms_id,template_id,res_phone,biz_id,sms_signname,sms_content,send_state,create_time,update_time
+        sms_id,template_id,res_phone,biz_id,sms_signname,sms_content,send_state,create_time,update_time,sms_publisher
     </sql>
 
     <insert id="insertSms" parameterType="com.summit.send.pojo.SmsEntity">
