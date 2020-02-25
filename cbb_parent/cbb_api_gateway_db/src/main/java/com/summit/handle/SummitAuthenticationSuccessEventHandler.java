@@ -50,7 +50,12 @@ public class SummitAuthenticationSuccessEventHandler implements ApplicationListe
         }
 
         ServletRequestAttributes requestAttributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+        if(requestAttributes==null){
+            return;
+        }
+
         HttpServletRequest request = requestAttributes.getRequest();
+
 
         //获取IP
         String loginIp=ServletUtil.getClientIP(request);
