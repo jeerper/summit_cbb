@@ -30,7 +30,7 @@
 
         select template_code from sms_template
         <where>
-            template_code = #{templateCode}
+            template_id = #{templateCode}
         </where>
     </select>
 
