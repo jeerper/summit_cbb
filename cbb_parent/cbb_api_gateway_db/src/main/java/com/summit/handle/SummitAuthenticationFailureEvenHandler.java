@@ -1,6 +1,5 @@
 package com.summit.handle;
 
-import cn.hutool.core.collection.CollUtil;
 import cn.hutool.extra.servlet.ServletUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationListener;
@@ -29,9 +28,7 @@ public  class SummitAuthenticationFailureEvenHandler implements ApplicationListe
 	@Override
 	public void onApplicationEvent(AbstractAuthenticationFailureEvent event) {
 		Authentication authentication = (Authentication) event.getSource();
-		if (CollUtil.isEmpty(authentication.getAuthorities())) {
-			return;
-		}
+
 		ServletRequestAttributes requestAttributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
 		if(requestAttributes==null){
 			return;
@@ -55,7 +52,7 @@ public  class SummitAuthenticationFailureEvenHandler implements ApplicationListe
 		}
 		AuthenticationException authenticationException = event.getException();
 		authenticationException.getLocalizedMessage();
-		authentication.getPrincipal();
+		log.debug("用户名:"+authentication.getPrincipal());
 
 
 
