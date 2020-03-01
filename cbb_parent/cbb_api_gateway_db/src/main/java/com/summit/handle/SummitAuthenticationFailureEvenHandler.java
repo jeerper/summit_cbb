@@ -22,39 +22,43 @@ import java.net.UnknownHostException;
  */
 @Slf4j
 @Component
-public  class SummitAuthenticationFailureEvenHandler implements ApplicationListener<AbstractAuthenticationFailureEvent> {
+public class SummitAuthenticationFailureEvenHandler implements ApplicationListener<AbstractAuthenticationFailureEvent> {
 
 
-	@Override
-	public void onApplicationEvent(AbstractAuthenticationFailureEvent event) {
-		Authentication authentication = (Authentication) event.getSource();
+    @Override
+    public void onApplicationEvent(AbstractAuthenticationFailureEvent event) {
+        Authentication authentication = (Authentication) event.getSource();
+        if (authentication.getDetails() == null) {
+            return;
+        }
 
-		ServletRequestAttributes requestAttributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
-		if(requestAttributes==null){
-			return;
-		}
-		HttpServletRequest request = requestAttributes.getRequest();
-		HttpServletResponse response = requestAttributes.getResponse();
+        ServletRequestAttributes requestAttributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+        if (requestAttributes == null) {
+            return;
+        }
+        HttpServletRequest request = requestAttributes.getRequest();
+        HttpServletResponse response = requestAttributes.getResponse();
 
-		//获取IP
-		String loginIp= ServletUtil.getClientIP(request);
+        //获取IP
+        String loginIp = ServletUtil.getClientIP(request);
 
-		if ("0:0:0:0:0:0:0:1".equals(loginIp)) {
-			try {
-				loginIp = InetAddress.getLocalHost().toString();
-				int computNameIndex = loginIp.indexOf("/");
-				if (computNameIndex != -1) {
-					loginIp = loginIp.substring(computNameIndex + 1);
-				}
-			} catch (UnknownHostException e) {
-				log.error("获取ip失败！" + e.getMessage());
-			}
-		}
-		AuthenticationException authenticationException = event.getException();
-		authenticationException.getLocalizedMessage();
-		log.debug("用户名:"+authentication.getPrincipal());
+        if ("0:0:0:0:0:0:0:1".equals(loginIp)) {
+            try {
+                loginIp = InetAddress.getLocalHost().toString();
+                int computNameIndex = loginIp.indexOf("/");
+                if (computNameIndex != -1) {
+                    loginIp = loginIp.substring(computNameIndex + 1);
+                }
+            } catch (UnknownHostException e) {
+                log.error("获取ip失败！" + e.getMessage());
+            }
+        }
+        AuthenticationException authenticationException = event.getException();
+
+        authenticationException.getLocalizedMessage();
+
+        log.debug("用户名:" + authentication.getPrincipal());
 
 
-
-	}
+    }
 }
