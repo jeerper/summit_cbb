@@ -51,7 +51,7 @@ public class LogController {
     public RestfulEntityBySummit<String> addLoginLog(@RequestParam("loginId") String loginId,
                                                      @RequestParam("loginUserName") String loginUserName,
                                                      @RequestParam("loginIp") String loginIp,
-                                                     @RequestParam("logSucesssOrNot") String logSucesssOrNot) {
+                                                     @RequestParam("logSuccessOrNot") String logSucesssOrNot) {
 
         LoginLogBean loginLogBean = new LoginLogBean();
         loginLogBean.setId(loginId);

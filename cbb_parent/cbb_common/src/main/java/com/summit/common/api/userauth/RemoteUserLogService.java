@@ -26,7 +26,7 @@ public interface RemoteUserLogService {
     RestfulEntityBySummit<String> addLoginLog(@RequestParam("loginId") String loginId,
                                               @RequestParam("loginUserName") String loginUserName,
                                               @RequestParam("loginIp") String loginIp,
-                                              @RequestParam("logSucesssOrNot") String logSucesssOrNot);
+                                              @RequestParam("logSuccessOrNot") String logSucesssOrNot);
     /**
      * 查询最后一次登陆记录
      * @param loginUserName 登陆用户名
