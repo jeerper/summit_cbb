@@ -3,11 +3,13 @@ package com.summit.schedule;
 
 import cn.hutool.core.date.DateUnit;
 import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.summit.common.constant.CommonConstant;
 import com.summit.common.entity.LoginLogBean;
 import com.summit.dao.repository.LoginLogDao;
 import lombok.extern.slf4j.Slf4j;
+import org.mockito.internal.util.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -38,7 +40,7 @@ public class LogSchedule {
             if(loginLogBean==null){
                 continue;
             }
-            if (loginLogBean.getLogSucesssOrNot().equals("0")){
+            if (!StrUtil.isEmpty(loginLogBean.getLogSucesssOrNot()) && loginLogBean.getLogSucesssOrNot().equals("0")){
                 long differMinute = DateUtil.between(loginLogBean.getLoginTime(), new Date(), DateUnit.MINUTE);
                 loginLogDao.update(null, Wrappers.<LoginLogBean>lambdaUpdate()
                         .set(LoginLogBean::getOnlineTime, differMinute)
