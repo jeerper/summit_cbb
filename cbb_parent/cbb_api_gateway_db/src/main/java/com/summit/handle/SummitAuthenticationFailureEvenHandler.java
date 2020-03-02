@@ -70,8 +70,7 @@ public class SummitAuthenticationFailureEvenHandler implements ApplicationListen
 
         log.debug("用户名:" + authentication.getPrincipal());
         //todo
-        UserDetails userBean = (UserDetails) authentication.getPrincipal();
-        String loginUserName = userBean.getUsername();
+        String loginUserName =(String) authentication.getPrincipal();
         Observable.just(loginIp)
                 .observeOn(Schedulers.io())
                 .subscribe(new Action1<String>() {
