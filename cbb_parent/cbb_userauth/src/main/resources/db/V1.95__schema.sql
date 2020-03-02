@@ -1,0 +1,1 @@
+﻿alter table sys_login_log add column log_sucesss_or_not varchar(30) CHARACTER SET utf8 COLLATE utf8_bin COMMENT '是否登录成功(0:成功，1：失败)';

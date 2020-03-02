@@ -24,6 +24,8 @@ public class LoginLogBean {
     private Date loginTime;
     @TableField(value = "onlineTime")
     private int onlineTime;
+    @TableField(value = "log_sucesss_or_not")
+    private String logSucesssOrNot;
 
 
 }

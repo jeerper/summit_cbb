@@ -50,7 +50,8 @@ public class LogController {
     @ApiOperation(value = "新增用户登录日志")
     public RestfulEntityBySummit<String> addLoginLog(@RequestParam("loginId") String loginId,
                                                      @RequestParam("loginUserName") String loginUserName,
-                                                     @RequestParam("loginIp") String loginIp) {
+                                                     @RequestParam("loginIp") String loginIp,
+                                                     @RequestParam("logSucesssOrNot") String logSucesssOrNot) {
 
         LoginLogBean loginLogBean = new LoginLogBean();
         loginLogBean.setId(loginId);
@@ -58,6 +59,7 @@ public class LogController {
         loginLogBean.setLoginIp(loginIp);
         loginLogBean.setLoginTime(new Date());
         loginLogBean.setOnlineTime(0);
+        loginLogBean.setLogSucesssOrNot(logSucesssOrNot);
         loginLogDao.insert(loginLogBean);
         return ResultBuilder.buildSuccess();
     }
