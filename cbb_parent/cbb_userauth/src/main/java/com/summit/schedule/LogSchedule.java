@@ -40,7 +40,7 @@ public class LogSchedule {
             if(loginLogBean==null){
                 continue;
             }
-            if (!StrUtil.isEmpty(loginLogBean.getLogSucesssOrNot()) && loginLogBean.getLogSucesssOrNot().equals("0")){
+            if (!StrUtil.isEmpty(loginLogBean.getLogSuccessOrNot()) && loginLogBean.getLogSuccessOrNot().equals("0")){
                 long differMinute = DateUtil.between(loginLogBean.getLoginTime(), new Date(), DateUnit.MINUTE);
                 loginLogDao.update(null, Wrappers.<LoginLogBean>lambdaUpdate()
                         .set(LoginLogBean::getOnlineTime, differMinute)
