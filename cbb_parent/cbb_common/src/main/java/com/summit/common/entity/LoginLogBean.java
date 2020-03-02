@@ -25,7 +25,7 @@ public class LoginLogBean {
     @TableField(value = "onlineTime")
     private int onlineTime;
     @TableField(value = "log_sucesss_or_not")
-    private String logSucesssOrNot;
+    private String logSuccessOrNot;
 
 
 }

@@ -7,6 +7,7 @@ import com.summit.common.api.userauth.RemoteUserLogService;
 import com.summit.common.constant.CommonConstant;
 import com.summit.common.entity.LoginLogBean;
 import com.summit.common.entity.RestfulEntityBySummit;
+import com.summit.model.user.LogSuccessOrNot;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
@@ -74,7 +75,7 @@ public class SummitAuthenticationSuccessEventHandler implements ApplicationListe
         UserDetails userBean = (UserDetails) authentication.getPrincipal();
         String loginUserName = userBean.getUsername();
         String loginLogKey = CommonConstant.LOGIN_LOG_PREFIX + loginIp + ":" + loginUserName;
-
+        String logSuccessOrNot=LogSuccessOrNot.Success.getCode();
         Observable.just(loginIp)
                 .observeOn(Schedulers.io())
                 .subscribe(new Action1<String>() {
@@ -85,7 +86,7 @@ public class SummitAuthenticationSuccessEventHandler implements ApplicationListe
                             String loginId = IdWorker.getIdStr();
                             genericRedisTemplate.opsForValue().set(loginLogKey, loginId, 5, TimeUnit.MINUTES);
                             //请求用户组件记录用户登录日志接口
-                            remoteUserLogService.addLoginLog(loginId, loginUserName, loginIp,"0");
+                            remoteUserLogService.addLoginLog(loginId, loginUserName, loginIp, logSuccessOrNot);
 
                         } else if (authentication instanceof OAuth2Authentication) {
                             //访问资源的操作

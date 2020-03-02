@@ -19,14 +19,14 @@ public interface RemoteUserLogService {
      * @param loginId 登陆ID
      * @param loginUserName 登陆用户名
      * @param loginIp 登陆IP
-      *@param logSucesssOrNot 是否登录成功
+      *@param logSuccessOrNot 是否登录成功
      * @return
      */
     @PostMapping("/log/login")
     RestfulEntityBySummit<String> addLoginLog(@RequestParam("loginId") String loginId,
                                               @RequestParam("loginUserName") String loginUserName,
                                               @RequestParam("loginIp") String loginIp,
-                                              @RequestParam("logSuccessOrNot") String logSucesssOrNot);
+                                              @RequestParam("logSuccessOrNot") String logSuccessOrNot);
     /**
      * 查询最后一次登陆记录
      * @param loginUserName 登陆用户名

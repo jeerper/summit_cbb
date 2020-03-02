@@ -3,6 +3,7 @@ package com.summit.handle;
 import cn.hutool.extra.servlet.ServletUtil;
 import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import com.summit.common.api.userauth.RemoteUserLogService;
+import com.summit.model.user.LogSuccessOrNot;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
@@ -77,7 +78,8 @@ public class SummitAuthenticationFailureEvenHandler implements ApplicationListen
                     @Override
                     public void call(String loginIp) {
                         String loginId = IdWorker.getIdStr();
-                        remoteUserLogService.addLoginLog(loginId, loginUserName, loginIp,"1");
+                        String logSuccessOrNot=LogSuccessOrNot.Failure.getCode();
+                        remoteUserLogService.addLoginLog(loginId, loginUserName, loginIp, logSuccessOrNot);
                     }
                 }, new Action1<Throwable>() {
                     @Override
