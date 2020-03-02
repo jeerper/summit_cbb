@@ -1,14 +1,21 @@
 package com.summit.handle;
 
 import cn.hutool.extra.servlet.ServletUtil;
+import com.baomidou.mybatisplus.core.toolkit.IdWorker;
+import com.summit.common.api.userauth.RemoteUserLogService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
 import org.springframework.security.authentication.event.AbstractAuthenticationFailureEvent;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
+import rx.Observable;
+import rx.functions.Action1;
+import rx.schedulers.Schedulers;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -23,6 +30,9 @@ import java.net.UnknownHostException;
 @Slf4j
 @Component
 public class SummitAuthenticationFailureEvenHandler implements ApplicationListener<AbstractAuthenticationFailureEvent> {
+
+    @Autowired
+    RemoteUserLogService remoteUserLogService;
 
 
     @Override
@@ -58,7 +68,22 @@ public class SummitAuthenticationFailureEvenHandler implements ApplicationListen
         authenticationException.getLocalizedMessage();
 
         log.debug("用户名:" + authentication.getPrincipal());
-
-
+        //todo
+        UserDetails userBean = (UserDetails) authentication.getPrincipal();
+        String loginUserName = userBean.getUsername();
+        Observable.just(loginIp)
+                .observeOn(Schedulers.io())
+                .subscribe(new Action1<String>() {
+                    @Override
+                    public void call(String loginIp) {
+                        String loginId = IdWorker.getIdStr();
+                        remoteUserLogService.addLoginLog(loginId, loginUserName, loginIp,"1");
+                    }
+                }, new Action1<Throwable>() {
+                    @Override
+                    public void call(Throwable throwable) {
+                        log.error("消息分发线程执行异常", throwable);
+                    }
+                });
     }
 }

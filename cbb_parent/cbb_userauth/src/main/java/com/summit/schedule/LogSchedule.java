@@ -38,10 +38,13 @@ public class LogSchedule {
             if(loginLogBean==null){
                 continue;
             }
-            long differMinute = DateUtil.between(loginLogBean.getLoginTime(), new Date(), DateUnit.MINUTE);
-            loginLogDao.update(null, Wrappers.<LoginLogBean>lambdaUpdate()
-                    .set(LoginLogBean::getOnlineTime, differMinute)
-                    .eq(LoginLogBean::getId, loginId));
+            if (loginLogBean.getLogSucesssOrNot().equals("0")){
+                long differMinute = DateUtil.between(loginLogBean.getLoginTime(), new Date(), DateUnit.MINUTE);
+                loginLogDao.update(null, Wrappers.<LoginLogBean>lambdaUpdate()
+                        .set(LoginLogBean::getOnlineTime, differMinute)
+                        .eq(LoginLogBean::getId, loginId));
+            }
+
         }
     }
 }

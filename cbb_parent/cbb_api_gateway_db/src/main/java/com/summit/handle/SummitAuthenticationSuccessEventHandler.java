@@ -85,7 +85,7 @@ public class SummitAuthenticationSuccessEventHandler implements ApplicationListe
                             String loginId = IdWorker.getIdStr();
                             genericRedisTemplate.opsForValue().set(loginLogKey, loginId, 5, TimeUnit.MINUTES);
                             //请求用户组件记录用户登录日志接口
-                            remoteUserLogService.addLoginLog(loginId, loginUserName, loginIp);
+                            remoteUserLogService.addLoginLog(loginId, loginUserName, loginIp,"0");
 
                         } else if (authentication instanceof OAuth2Authentication) {
                             //访问资源的操作
