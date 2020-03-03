@@ -648,8 +648,8 @@ public class UserService {
                 );
             }
             //修改用户表中的audit字段为发起申请
-            StringBuffer sql2=new StringBuffer("UPDATE SYS_USER SET isAudited = ? ");
-            jdbcTemplate.update(sql2.toString(),"0");
+            StringBuffer sql2=new StringBuffer("UPDATE SYS_USER SET isAudited = ? where USERNAME=? ");
+            jdbcTemplate.update(sql2.toString(),"0",userAuditBean.getUserNameAuth());
             return null;
         }
         return ResponseCodeEnum.CODE_9991;
