@@ -281,8 +281,6 @@ public class UserController {
             if (c != null) {
                 return ResultBuilder.buildError(c);
             }
-
-
             UserInfo cacheUserInfo = userInfoCache.getUserInfo(userInfo.getUserName());
             if (cacheUserInfo != null) {
                 BeanUtil.copyProperties(userInfo, cacheUserInfo, CopyOptions.create().setIgnoreNullValue(true));
@@ -302,6 +300,73 @@ public class UserController {
             return ResultBuilder.buildSuccess();
         }
     }
+
+    @ApiOperation(value = "修改用户审批", notes = "昵称(name)，用户名(userName),密码(password)都是必输项")
+    @PostMapping("/editAudit")
+    public RestfulEntityBySummit<String> editAudit(@RequestBody UserAuditBean userAuditBean) {
+        LogBean logBean = new LogBean();
+        logBean.setStime(DateUtil.DTFormat("yyyy-MM-dd HH:mm:ss", new Date()));
+        try{
+            if (!permissionUtil.checkLoginUserAccessPermissionToOtherUser(userAuditBean.getUserNameAuth())) {
+                return ResultBuilder.buildError(ResponseCodeEnum.CODE_4012);
+            }
+            String base64Str = userAuditBean.getHeadPortraitAuth();
+            if (SummitTools.stringNotNull(base64Str)) {
+                StringBuffer fileName = new StringBuffer();
+                fileName.append(UUID.randomUUID().toString().replaceAll("-", ""));
+                if (base64Str.indexOf("data:image/png;") != -1) {
+                    base64Str = base64Str.replace("data:image/png;base64,", "");
+                    fileName.append(".png");
+                } else if (base64Str.indexOf("data:image/jpeg;") != -1) {
+                    base64Str = base64Str.replace("data:image/jpeg;base64,", "");
+                    fileName.append(".jpeg");
+                }
+                String picId = IdWorker.getIdStr();
+                String headPicpath = new StringBuilder()
+                        .append(SystemUtil.getUserInfo().getCurrentDir())
+                        .append(File.separator)
+                        .append(MainAction.SnapshotFileName)
+                        .append(File.separator)
+                        .append(picId)
+                        .append("_Head_Auth.jpg")
+                        .toString();
+                String headPicUrl = new StringBuilder()
+                        .append("/")
+                        .append(MainAction.SnapshotFileName)
+                        .append("/")
+                        .append(picId)
+                        .append("_Head_Auth.jpg")
+                        .toString();
+                byte[] fileBytes = null;
+                try {
+                    fileBytes = Base64.getDecoder().decode(base64Str);
+                } catch (Exception e) {
+                    log.error("图片base64格式有误!");
+                    userAuditBean.setHeadPortraitAuth("图片base64格式有误!");
+                }
+                FileUtil.writeBytes(fileBytes, headPicpath);
+                userAuditBean.setHeadPortraitAuth(headPicUrl);
+            }
+            ResponseCodeEnum c = us.editAudit(userAuditBean, key);
+            if (c != null) {
+                return ResultBuilder.buildError(c);
+            }
+            logBean.setActionFlag("1");
+        }catch (Exception e){
+            logger.error("修改用户失败:", e);
+            logBean.setActionFlag("0");
+            logBean.setErroInfo(e.getMessage());
+        }
+        SummitTools.getLogBean(logBean, "用户管理", "修改用户审批:" + JSONObject.fromObject(userAuditBean).toString(), "2");
+        logUtil.insertLog(logBean);
+        if ("0".equals(logBean.getActionFlag())) {
+            return ResultBuilder.buildError(ResponseCodeEnum.CODE_9999);
+        } else {
+            return ResultBuilder.buildSuccess();
+        }
+    }
+
+
 
 
     @ApiOperation(value = "修改密码", notes = "旧密码和新密码必须是加密后的数据")

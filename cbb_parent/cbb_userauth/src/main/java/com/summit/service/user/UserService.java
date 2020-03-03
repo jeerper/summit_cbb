@@ -3,12 +3,10 @@ package com.summit.service.user;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.TypeReference;
+import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import com.summit.MainAction;
 import com.summit.cbb.utils.page.Page;
-import com.summit.common.entity.FunctionBean;
-import com.summit.common.entity.ResponseCodeEnum;
-import com.summit.common.entity.UserDeptDutyBean;
-import com.summit.common.entity.UserInfo;
+import com.summit.common.entity.*;
 import com.summit.common.util.Cryptographic;
 import com.summit.repository.UserRepository;
 import com.summit.util.DateUtil;
@@ -349,7 +347,7 @@ public class UserService {
             //	}
 
         }
-
+        System.out.println("sb:"+sb.toString());
         Page<Object> page = ur.queryByCustomPage(sb.toString(), start, limit, linkedMap);
         if (page != null) {
             List<UserInfo> userInfoList = new ArrayList<UserInfo>();
@@ -561,5 +559,109 @@ public class UserService {
             userDeptDutyBean.setUsername(jsonObject.getString("USERNAME"));
         }
         return userDeptDutyBean;
+    }
+
+    @Transactional
+    public ResponseCodeEnum editAudit(UserAuditBean userAuditBean, String key) throws Exception {
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+        if (userAuditBean.getPasswordAuth() != null && !"".equals(userAuditBean.getPasswordAuth())) {
+            //解密
+            try {
+                userAuditBean.setPasswordAuth(Cryptographic.decryptAES(userAuditBean.getPasswordAuth(), key));
+            } catch (Exception e) {
+                return ResponseCodeEnum.CODE_4014;
+            }
+        }
+        //处理行政区划
+        StringBuilder sbAdcd = new StringBuilder();
+        String[] adcdAuths = userAuditBean.getAdcdAuth();
+        if (adcdAuths !=null && adcdAuths.length>0){
+            for (int i = 0; i <adcdAuths.length; i++) {
+                if (i<adcdAuths.length-1){
+                    sbAdcd.append(adcdAuths[i]+",");
+                }else {
+                    sbAdcd.append(adcdAuths[i]);
+                }
+
+            }
+        }
+        String adcdAuth = sbAdcd.toString();
+        //处理部门
+        StringBuilder sbDept = new StringBuilder();
+        String[] deptAuths = userAuditBean.getDeptAuth();
+        if (deptAuths !=null && deptAuths.length>0){
+            for (int i = 0; i <deptAuths.length; i++) {
+                if (i<deptAuths.length-1){
+                    sbDept.append(deptAuths[i]+",");
+                }else {
+                    sbDept.append(deptAuths[i]);
+                }
+
+            }
+        }
+        String deptAuth = sbDept.toString();
+        String sql="INSERT INTO sys_user_auth (id,userName_auth,name_auth,sex_auth,password_auth,email_auth,phone_number_auth,is_enabled_auth,headPortrait_auth,duty_auth,dept_auth,adcd_auth,post_auth,auth_person,isAudited,auth_time,submitted_to) VALUES " +
+                "(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,now(),?)";
+        //查找原来头像
+        UserInfo userInfo = queryByUserName(userAuditBean.getUserNameAuth());
+        //上级部门
+        JSONObject jsonObject=queryBySuperDeptByUserName(userAuditBean.getUserNameAuth());
+        if (jsonObject !=null && SummitTools.stringNotNull(jsonObject.getString("PID")) ){
+            if (SummitTools.stringNotNull(userAuditBean.getHeadPortraitAuth())) {
+                jdbcTemplate.update(sql,
+                        IdWorker.getIdStr(),
+                        userAuditBean.getUserNameAuth(),
+                        userAuditBean.getNameAuth(),
+                        userAuditBean.getSexAuth(),
+                        encoder.encode(userAuditBean.getPasswordAuth()),
+                        userAuditBean.getEmailAuth(),
+                        userAuditBean.getPhoneNumberAuth(),
+                        userAuditBean.getIsEnabledAuth(),
+                        userAuditBean.getHeadPortraitAuth(),
+                        userAuditBean.getDutyAuth(),
+                        deptAuth,
+                        adcdAuth,
+                        userAuditBean.getPostAuth(),
+                        null,
+                        "0",
+                        jsonObject.getString("PID")
+
+                );
+            }else {
+                jdbcTemplate.update(sql,
+                        IdWorker.getIdStr(),
+                        userAuditBean.getUserNameAuth(),
+                        userAuditBean.getNameAuth(),
+                        userAuditBean.getSexAuth(),
+                        encoder.encode(userAuditBean.getPasswordAuth()),
+                        userAuditBean.getEmailAuth(),
+                        userAuditBean.getPhoneNumberAuth(),
+                        userAuditBean.getIsEnabledAuth(),
+                        userInfo.getHeadPortrait(),
+                        userAuditBean.getDutyAuth(),
+                        deptAuth,
+                        adcdAuth,
+                        userAuditBean.getPostAuth(),
+                        null,
+                        "0",
+                        jsonObject.getString("PID")
+                );
+            }
+            //修改用户表中的audit字段为发起申请
+            StringBuffer sql2=new StringBuffer("UPDATE SYS_USER SET isAudited = ? ");
+            jdbcTemplate.update(sql2.toString(),"0");
+            return null;
+        }
+        return ResponseCodeEnum.CODE_9991;
+    }
+
+    private JSONObject queryBySuperDeptByUserName(String userNameAuth) throws Exception {
+        StringBuffer sql=new StringBuffer("SELECT dept.ID,dept.PID,dept.DEPTCODE,dept.DEPTNAME,dept.ADCD from sys_user user ");
+        sql.append("INNER JOIN sys_user_dept userDpet on user.USERNAME =userDpet.USERNAME INNER JOIN sys_dept dept on userDpet.DEPTID=dept.ID ");
+        sql.append("WHERE user.USERNAME=? ");
+        LinkedMap lm = new LinkedMap();
+        lm.put(1, userNameAuth);
+        JSONObject jsonObject = ur.queryOneCustom(sql.toString(), lm);
+        return  jsonObject;
     }
 }
