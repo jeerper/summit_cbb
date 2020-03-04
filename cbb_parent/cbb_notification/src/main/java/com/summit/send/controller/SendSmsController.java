@@ -10,6 +10,7 @@ import com.summit.send.pojo.SmsTemplateEntity;
 import com.summit.send.service.SendSmsService;
 import com.summit.send.util.RedisUtil;
 import com.summit.send.util.VCodeGenerator;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +25,7 @@ import java.util.Map;
 @Slf4j
 @RestController
 @RequestMapping("/msg")
+@Api(value = "/sms", tags = "短信服务")
 public class SendSmsController {
 
     @Autowired

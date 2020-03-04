@@ -19,3 +19,12 @@ eureka:
     serviceUrl:
       defaultZone: "http://ucp:Summit2018@192.168.140.155:45000/eureka/"
 #      defaultZone: "http://ucp:Summit2018@localhost:8761/eureka/"
+
+#    #本地测试，不进行注册时使用
+#    fetch-registry: false
+#    register-with-eureka: false
+
+file:
+  upload:
+    url: http://192.168.140.155:45001/cbb-api-gateway-db/msg/downFile/?filePath=
+    path: /home/hsp/cbb-notification/uploadfiles/

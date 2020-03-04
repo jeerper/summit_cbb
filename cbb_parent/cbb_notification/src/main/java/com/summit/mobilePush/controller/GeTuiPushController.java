@@ -7,6 +7,7 @@ import com.summit.common.entity.ResponseCodeEnum;
 import com.summit.common.entity.RestfulEntityBySummit;
 import com.summit.common.util.ResultBuilder;
 import com.summit.send.service.GeTuiPushService;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +22,7 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequestMapping("/geTuiPush")
+@Api(value = "/geTuiPush", tags = "个推服务")
 public class GeTuiPushController {
     @Value("${geTuiPush.appId}")
     private String appId;

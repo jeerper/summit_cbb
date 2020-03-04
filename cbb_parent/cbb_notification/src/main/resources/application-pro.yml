@@ -21,3 +21,8 @@ eureka:
       enabled: true
     serviceUrl:
       defaultZone: "${Registry_Center_URL:http://ucp:Summit2018@localhost:${Registry_Center_Port}/eureka/}"
+
+file:
+  upload:
+    url: http://${ApiGateway_IP}:${ApiGateway_Port}/cbb-api-gateway-db/msg/downFile/?filePath=
+    path: /home/hsp/cbb-notification/uploadfiles/
