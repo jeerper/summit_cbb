@@ -35,6 +35,8 @@ networkCardName="`ip addr | grep 'state UP' | sed -r -n ' s/^[0-9]+: (.*):.*/\1/
 
 echo "networkCardName：${networkCardName}"
 
+#API网关IP
+ApiGateway_IP=192.168.140.155
 #注册中心IP
 Registry_Center_IP="`ifconfig ${networkCardName} | grep "inet 1" | awk '{print $2}'`"
 echo "Registry_Center_IP：${Registry_Center_IP}"

@@ -3,6 +3,7 @@ package com.summit.mobilePush.controller;
 import java.util.List;
 import java.util.Map;
 
+import io.swagger.annotations.Api;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
@@ -43,6 +44,7 @@ import sun.misc.BASE64Encoder;
 @Slf4j
 @RestController
 @RequestMapping("/jiguangJPush")
+@Api(value = "/jiguangJPush", tags = "极光推送服务")
 public class JiguangJpushController {
     @Value("${jpush.appKey}")
     private String appkey;
