@@ -354,6 +354,7 @@ public class UserService {
             if (page.getContent() != null && page.getContent().size() > 0) {
                 for (Object o : page.getContent()) {
                     JSONObject jsonObject = (JSONObject) o;
+                    System.out.println(o.toString());
                     UserInfo userInfo = JSON.parseObject(o.toString(), new TypeReference<UserInfo>() {
                     });
                     userInfo.setAdcds(jsonObject.containsKey("ADCD") ? jsonObject.getString("ADCD").split(",") : null);

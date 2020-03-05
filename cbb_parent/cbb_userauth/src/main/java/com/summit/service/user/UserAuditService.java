@@ -2,12 +2,22 @@ package com.summit.service.user;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.bean.copier.CopyOptions;
+import cn.hutool.core.date.DateUtil;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.TypeReference;
+import com.summit.cbb.utils.page.Page;
 import com.summit.common.Common;
 import com.summit.common.entity.ResponseCodeEnum;
+import com.summit.common.entity.UserAuditBean;
 import com.summit.common.entity.UserInfo;
 import com.summit.common.redis.user.UserInfoCache;
+import com.summit.dao.repository.UserAuditDao;
+import com.summit.exception.ErrorMsgException;
 import com.summit.repository.UserRepository;
+import com.summit.service.dept.DeptsService;
 import com.summit.util.SummitTools;
+import lombok.extern.slf4j.Slf4j;
+import net.logstash.logback.encoder.org.apache.commons.lang.StringUtils;
 import net.sf.json.JSONObject;
 import org.apache.commons.collections.map.LinkedMap;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -16,10 +26,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 @Service
 @Transactional
+@Slf4j
 public class UserAuditService {
 
     @Autowired
@@ -29,7 +42,14 @@ public class UserAuditService {
     @Autowired
     private SummitTools st;
     @Autowired
-    public JdbcTemplate jdbcTemplate;
+    private JdbcTemplate jdbcTemplate;
+
+    @Autowired
+    private DeptsService deptsService;
+
+    @Autowired
+    private UserAuditDao userAuditDao;
+
 
     @Transactional
     public ResponseCodeEnum userAudit(String id,String username, String isAudited) throws Exception {
@@ -151,5 +171,189 @@ public class UserAuditService {
         lm.put(1, username);
         JSONObject jsonObject = ur.queryOneCustom(sql.toString(), lm);
         return  jsonObject;
+    }
+
+    public Page<UserAuditBean> queryByPage(Integer currentPage, Integer pageSize, com.alibaba.fastjson.JSONObject paramJson) throws Exception {
+        List rolesList = null;
+        if (Common.getLogUser() != null) {
+            rolesList = Arrays.asList(Common.getLogUser().getRoles());
+        }
+        String depts = deptsService.DeptsService();
+        if (!SummitTools.stringIsNull(depts)){
+            StringBuffer sql=new StringBuffer("SELECT  sua.id,sua.userName_auth,sua.name_auth,sua.sex_auth,sua.password_auth,sua.email_auth,sua.phone_number_auth,sua.is_enabled_auth,sua.headPortrait_auth, ");
+            sql.append("sua.duty_auth,sua.dept_auth,sua.adcd_auth, sua.post_auth, sua.auth_person,sua.isAudited,date_format(sua.auth_time, '%Y-%m-%d %H:%i:%s')as auth_time ");
+            sql.append("from  sys_user_auth  sua  where 1=1 ");
+            sql.append("and sua.submitted_to in ('"+depts+"')");
+            Integer index = 1;
+            LinkedMap linkedMap = new LinkedMap();
+            List<Object> list = new ArrayList();
+            if (paramJson.containsKey("userName")) {
+                sql.append(" and sua.userName_auth like ? ");
+                linkedMap.put(index, "%" + paramJson.get("userName") + "%");
+                index++;
+            }
+            if (paramJson.containsKey("name")) {
+                sql.append(" and sua.name_auth like ? ");
+                linkedMap.put(index, "%" + paramJson.get("name") + "%");
+                index++;
+            }
+            if (paramJson.containsKey("isEnabled")) {
+                sql.append(" and sua.is_enabled_auth like ? ");
+                linkedMap.put(index, "%" + paramJson.get("isEnabled") + "%");
+                index++;
+            }
+            if (paramJson.containsKey("phone")) {
+                sql.append(" and sua.phone_number_auth like ? ");
+                linkedMap.put(index, "%" + paramJson.get("phone") + "%");
+                index++;
+            }
+            list.add(sql.toString());
+            list.add(linkedMap);
+            Page<Object>  page = ur.queryByCustomPage(list.get(0).toString(), currentPage, pageSize, (LinkedMap) list.get(1));
+            if (page != null){
+                Page<UserAuditBean> backContent = getBackContent(page);
+                return backContent;
+            }
+        }else if (rolesList.contains("ROLE_SUPERUSER")){
+            StringBuffer sql=new StringBuffer("SELECT  sua.id,sua.userName_auth,sua.name_auth,sua.sex_auth,sua.password_auth,sua.email_auth,sua.phone_number_auth,sua.is_enabled_auth,sua.headPortrait_auth, ");
+            sql.append("sua.duty_auth,sua.dept_auth,sua.adcd_auth, sua.post_auth, sua.auth_person,sua.isAudited,date_format(sua.auth_time, '%Y-%m-%d %H:%i:%s')as auth_time ");
+            sql.append("from  sys_user_auth  sua  where 1=1 ");
+            Integer index = 1;
+            LinkedMap linkedMap = new LinkedMap();
+            List<Object> list = new ArrayList();
+            if (paramJson.containsKey("userName")) {
+                sql.append(" and sua.userName_auth like ? ");
+                linkedMap.put(index, "%" + paramJson.get("userName") + "%");
+                index++;
+            }
+            if (paramJson.containsKey("name")) {
+                sql.append(" and sua.name_auth like ? ");
+                linkedMap.put(index, "%" + paramJson.get("name") + "%");
+                index++;
+            }
+            if (paramJson.containsKey("isEnabled")) {
+                sql.append(" and sua.is_enabled_auth like ? ");
+                linkedMap.put(index, "%" + paramJson.get("isEnabled") + "%");
+                index++;
+            }
+            if (paramJson.containsKey("phone")) {
+                sql.append(" and sua.phone_number_auth like ? ");
+                linkedMap.put(index, "%" + paramJson.get("phone") + "%");
+                index++;
+            }
+            list.add(sql.toString());
+            list.add(linkedMap);
+            Page<Object>  page = ur.queryByCustomPage(list.get(0).toString(), currentPage, pageSize, (LinkedMap) list.get(1));
+            if (page != null){
+                Page<UserAuditBean> backContent = getBackContent(page);
+                return backContent;
+            }
+        }
+         return null;
+    }
+
+
+    public Page<UserAuditBean>  getBackContent(Page<Object>  page) throws Exception {
+        List<UserAuditBean> userAuditBeans = new ArrayList<>();
+        List<JSONObject> contents = new ArrayList<>();
+        if (page.getContent() != null && page.getContent().size() > 0) {
+            for (Object o : page.getContent()) {
+                JSONObject jsonObject = (JSONObject) o;
+                String dept_auth = jsonObject.getString("dept_auth");
+                if (dept_auth ==null){
+                    continue;
+                }
+                String[] deptAuths = dept_auth.split(",");
+                List<String> dept_json = new ArrayList<>();
+                if (deptAuths !=null && deptAuths.length>0){
+                    for (int j = 0; j < deptAuths.length; j++) {
+                        StringBuffer stringBuffer=new StringBuffer("SELECT dept.DEPTNAME from sys_dept dept where dept.ID=? ");
+                        LinkedMap lm = new LinkedMap();
+                        lm.put(1, deptAuths[j]);
+                        JSONObject deptName  = ur.queryOneCustom(stringBuffer.toString(), lm);
+                        if(deptName ==null){
+                            continue;
+                        }
+                        String name = deptName.getString("DEPTNAME");
+                        dept_json.add(name);
+                    }
+                    String dept = StringUtils.join(dept_json, ",");
+                    jsonObject.put("dept_auth",dept);
+                    contents.add(jsonObject);
+                }
+                String adcd_auth = jsonObject.getString("adcd_auth");
+                if (null == adcd_auth){
+                    continue;
+                }
+                String[] adcdAuths = adcd_auth.split(",");
+                List<String> adcd_json = new ArrayList<>();
+                if (adcdAuths !=null && adcdAuths.length>0){
+                    for (int j = 0; j < adcdAuths.length; j++) {
+                        StringBuffer stringBuffer=new StringBuffer("SELECT adcd.ADNM from sys_ad_cd adcd where adcd.ADCD=? ");
+                        LinkedMap lm = new LinkedMap();
+                        lm.put(1, adcdAuths[j]);
+                        JSONObject adnm  = ur.queryOneCustom(stringBuffer.toString(), lm);
+                        if (adnm==null){
+                            continue;
+                        }
+                        String name = adnm.getString("ADNM");
+                        adcd_json.add(name);
+                    }
+                    String adcd = StringUtils.join(adcd_json, ",");
+                    jsonObject.put("adcd_auth",adcd);
+                    contents.add(jsonObject);
+                }
+
+            }
+            for (Object o : contents) {
+                JSONObject jsonObject = (JSONObject) o;
+                /*
+                System.out.println(o.toString());
+                UserAuditBean userAuditBean = JSON.parseObject(o.toString(),UserAuditBean.class);
+                userAuditBean.setDeptAuth(jsonObject.containsKey("dept_auth") ? jsonObject.getString("dept_auth").split(",") : null);
+                userAuditBean.setAdcdAuth(jsonObject.containsKey("adcd_auth") ? jsonObject.getString("adcd_auth").split(",") : null);
+                userAuditBeans.add(userAuditBean);*/
+                UserAuditBean userAuditBean = getUserAuditBean(jsonObject);
+                userAuditBeans.add(userAuditBean);
+            }
+        }
+        return new Page<UserAuditBean>(userAuditBeans, page.getPageable());
+    }
+
+
+    public  UserAuditBean getUserAuditBean(JSONObject jsonObject){
+        UserAuditBean userAuditBean=new UserAuditBean();
+        userAuditBean.setId(jsonObject.containsKey("id") ? jsonObject.getString("id") : null);
+        userAuditBean.setDeptAuth(jsonObject.containsKey("dept_auth") ? jsonObject.getString("dept_auth").split(",") : null);
+        userAuditBean.setPasswordAuth(jsonObject.containsKey("password_auth") ? jsonObject.getString("password_auth") : null);
+        userAuditBean.setHeadPortraitAuth(jsonObject.containsKey("headPortrait_auth") ? jsonObject.getString("headPortrait_auth") : null);
+        userAuditBean.setAdcdAuth(jsonObject.containsKey("adcd_auth") ? jsonObject.getString("adcd_auth").split(",") : null);
+        if (jsonObject.containsKey("auth_time")){
+            Date auth_time = DateUtil.parse(jsonObject.getString("auth_time"));
+            userAuditBean.setAuth_time(auth_time);
+        }else{
+            userAuditBean.setAuth_time(null);
+        }
+        userAuditBean.setDutyAuth(jsonObject.containsKey("duty_auth") ? jsonObject.getString("duty_auth"): null);
+        userAuditBean.setAuthPerson(jsonObject.containsKey("auth_person") ? jsonObject.getString("auth_person"): null);
+        userAuditBean.setEmailAuth(jsonObject.containsKey("email_auth") ? jsonObject.getString("email_auth"): null);
+        userAuditBean.setIsAudited(jsonObject.containsKey("isAudited") ? jsonObject.getString("isAudited"): null);
+        userAuditBean.setIsEnabledAuth(jsonObject.containsKey("is_enabled_auth") ? jsonObject.getString("is_enabled_auth"): null);
+        userAuditBean.setNameAuth(jsonObject.containsKey("name_auth") ? jsonObject.getString("name_auth"): null);
+        userAuditBean.setPhoneNumberAuth(jsonObject.containsKey("phone_number_auth") ? jsonObject.getString("phone_number_auth"): null);
+        userAuditBean.setPostAuth(jsonObject.containsKey("post_auth") ? jsonObject.getString("post_auth"): null);
+        userAuditBean.setSexAuth(jsonObject.containsKey("sex_auth") ? jsonObject.getString("sex_auth"): null);
+        userAuditBean.setUserNameAuth(jsonObject.containsKey("userName_auth") ? jsonObject.getString("userName_auth"): null);
+        return userAuditBean;
+    }
+
+
+    public void delUserAudit(List<String> userAuditIds) {
+        try {
+             userAuditDao.deleteBatchIds(userAuditIds);
+        } catch (Exception e) {
+            log.error("删除统计信息失败");
+            throw new ErrorMsgException("删除统计信息失败");
+        }
     }
 }
