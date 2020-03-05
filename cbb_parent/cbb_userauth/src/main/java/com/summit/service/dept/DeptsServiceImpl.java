@@ -38,6 +38,7 @@ public class DeptsServiceImpl implements DeptsService {
                         substring = dept.substring(0,j-1);
                     }
                     dept_string = dept_string+",'"+substring+"'";
+
                 }
                 String ss = dept_string.substring(0,1);
                 String es = dept_string.substring(dept_string.length()-1,dept_string.length());
