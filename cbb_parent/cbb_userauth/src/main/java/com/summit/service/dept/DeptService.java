@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.baomidou.mybatisplus.core.toolkit.IdWorker;
+import com.summit.common.entity.DeptAuditBean;
 import org.apache.commons.collections.map.LinkedMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -355,5 +357,48 @@ public class DeptService {
         }
     }
 
+    @Transactional
+    public ResponseCodeEnum editAudit(DeptAuditBean deptAuditBean) throws Exception {
+
+        String sql="INSERT INTO sys_dept_auth(id,deptId_auth,pId_auth,deptcode_auth,deptName_auth,adcd_auth,auth_person,isAudited,auth_time,submitted_to ) VALUES " +
+                "(?,?,?,?,?,?,?,?,now(),?) ";
+        //上级部门
+        JSONObject jsonObject=queryBySuperDeptByDeptId(deptAuditBean.getDeptIdAuth());
+        String  superDept=null;
+        if (jsonObject !=null && !SummitTools.stringIsNull( jsonObject.getString("ID"))){
+            superDept=jsonObject.getString("ID");
+        }
+        try{
+            jdbcTemplate.update(sql,
+                    IdWorker.getIdStr(),
+                    deptAuditBean.getDeptIdAuth(),
+                    deptAuditBean.getPIdAuth(),
+                    deptAuditBean.getDeptcodeAuth(),
+                    deptAuditBean.getDeptNameAuth(),
+                    deptAuditBean.getAdcdAuth(),
+                    null,
+                    "0",
+                    superDept
+            );
+            //修改用户表中的audit字段为发起申请
+            StringBuffer sql2=new StringBuffer("UPDATE sys_dept SET isAudited = ? where ID=? ");
+            jdbcTemplate.update(sql2.toString(),"0", deptAuditBean.getDeptIdAuth());
+            return null;
+        }catch (Exception e){
+            e.printStackTrace();
+            return ResponseCodeEnum.CODE_9999;
+        }
+
+    }
+
+    //查找上级部门
+    private JSONObject queryBySuperDeptByDeptId(String deptIdAuth) throws Exception {
+        StringBuffer sql=new StringBuffer("SELECT superDept.ID,superDept.DEPTNAME from sys_dept dept INNER JOIN sys_dept superDept on dept.PID=superDept.ID where dept.ID=? ");
+        LinkedMap lm = new LinkedMap();
+        lm.put(1, deptIdAuth);
+        JSONObject jsonObject = ur.queryOneCustom(sql.toString(), lm);
+        return  jsonObject;
+
+    }
 
 }

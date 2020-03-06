@@ -607,7 +607,11 @@ public class UserService {
         UserInfo userInfo = queryByUserName(userAuditBean.getUserNameAuth());
         //上级部门
         JSONObject jsonObject=queryBySuperDeptByUserName(userAuditBean.getUserNameAuth());
-        if (jsonObject !=null && SummitTools.stringNotNull(jsonObject.getString("PID")) ){
+        String  superDept=null;
+        if (jsonObject !=null && !SummitTools.stringIsNull( jsonObject.getString("ID"))){
+            superDept=jsonObject.getString("ID");
+        }
+        try{
             if (SummitTools.stringNotNull(userAuditBean.getHeadPortraitAuth())) {
                 jdbcTemplate.update(sql,
                         IdWorker.getIdStr(),
@@ -625,8 +629,7 @@ public class UserService {
                         userAuditBean.getPostAuth(),
                         null,
                         "0",
-                        jsonObject.getString("PID")
-
+                        superDept
                 );
             }else {
                 jdbcTemplate.update(sql,
@@ -645,21 +648,22 @@ public class UserService {
                         userAuditBean.getPostAuth(),
                         null,
                         "0",
-                        jsonObject.getString("PID")
+                        superDept
                 );
             }
             //修改用户表中的audit字段为发起申请
             StringBuffer sql2=new StringBuffer("UPDATE SYS_USER SET isAudited = ? where USERNAME=? ");
             jdbcTemplate.update(sql2.toString(),"0",userAuditBean.getUserNameAuth());
             return null;
+        }catch (Exception e){
+            return ResponseCodeEnum.CODE_9991;
         }
-        return ResponseCodeEnum.CODE_9991;
     }
 
     private JSONObject queryBySuperDeptByUserName(String userNameAuth) throws Exception {
-        StringBuffer sql=new StringBuffer("SELECT dept.ID,dept.PID,dept.DEPTCODE,dept.DEPTNAME,dept.ADCD from sys_user user ");
-        sql.append("INNER JOIN sys_user_dept userDpet on user.USERNAME =userDpet.USERNAME INNER JOIN sys_dept dept on userDpet.DEPTID=dept.ID ");
-        sql.append("WHERE user.USERNAME=? ");
+        StringBuffer sql=new StringBuffer("SELECT superDept.ID,superDept.DEPTCODE,superDept.DEPTNAME from sys_dept superDept INNER JOIN ");
+        sql.append("(SELECT dept.ID,dept.PID from sys_user user INNER JOIN sys_user_dept userDpet on user.USERNAME =userDpet.USERNAME ");
+        sql.append("INNER JOIN sys_dept dept on userDpet.DEPTID=dept.ID WHERE user.USERNAME=? )dept on dept.PID=superDept.ID ");
         LinkedMap lm = new LinkedMap();
         lm.put(1, userNameAuth);
         JSONObject jsonObject = ur.queryOneCustom(sql.toString(), lm);

@@ -29,14 +29,14 @@ public class DeptUtil  {
             }
         }
         if(pdept!=null && !SummitTools.stringIsNull(pdept)){
-            StringBuffer sql=new StringBuffer("SELECT dept.ID,dept.DEPTNAME  from  sys_dept dept where dept.PID=? ");
+            StringBuffer sql=new StringBuffer("SELECT dept.ID,dept.DEPTNAME  from  sys_dept superDept INNER JOIN sys_dept dept on superDept.PID=dept.id  where superDept.PID=? ");
             LinkedMap lm = new LinkedMap();
             lm.put(1, pdept);
             JSONArray jsonArray = userRepository.queryAllCustomJsonArray(sql.toString(), lm);
             if(jsonArray!=null && jsonArray.size()>0){
                 for (int i=0;i<jsonArray.size();i++){
                     JSONObject jsonObject = jsonArray.getJSONObject(i);
-                    if (jsonObject !=null && jsonObject.containsKey("ID")){
+                    if (jsonObject !=null && !SummitTools.stringNotNull(jsonObject.getString("ID"))){
                         deptData.add(jsonObject.getString("ID"));
                     }
                 }
