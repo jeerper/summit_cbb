@@ -1,6 +1,7 @@
-package com.summit.service.dept;
+package com.summit.service.dept.impl;
 
 import com.alibaba.fastjson.JSONObject;
+import com.summit.service.dept.DeptsService;
 import com.summit.util.DeptUtil;
 
 import com.summit.util.SummitTools;
