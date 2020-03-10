@@ -390,7 +390,7 @@ public class DeptService {
             jdbcTemplate.update(sql2.toString(),"0", deptAuditBean.getDeptIdAuth());
             return null;
         }catch (Exception e){
-            logger.error("修改用户失败:", e);
+            logger.error("修改部门失败:", e);
             return ResponseCodeEnum.CODE_9999;
         }
 
