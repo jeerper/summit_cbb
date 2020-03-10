@@ -181,7 +181,7 @@ public class UserAuditService {
         String depts = deptsService.DeptsService();
         if (!SummitTools.stringIsNull(depts)){
             StringBuffer sql=new StringBuffer("SELECT  sua.id,sua.userName_auth,sua.name_auth,sua.sex_auth,sua.password_auth,sua.email_auth,sua.phone_number_auth,sua.is_enabled_auth,sua.headPortrait_auth, ");
-            sql.append("sua.duty_auth,sua.dept_auth,sua.adcd_auth, sua.post_auth, sua.auth_person,sua.isAudited,date_format(sua.auth_time, '%Y-%m-%d %H:%i:%s')as auth_time ");
+            sql.append("sua.duty_auth,sua.dept_auth,sua.adcd_auth, sua.post_auth, sua.auth_person,sua.isAudited,date_format(sua.auth_time, '%Y-%m-%d %H:%i:%s')as auth_time,remark ");
             sql.append("from  sys_user_auth  sua  where 1=1 ");
             sql.append("and sua.submitted_to in ('"+depts+"')");
             Integer index = 1;
@@ -344,6 +344,7 @@ public class UserAuditService {
         userAuditBean.setPostAuth(jsonObject.containsKey("post_auth") ? jsonObject.getString("post_auth"): null);
         userAuditBean.setSexAuth(jsonObject.containsKey("sex_auth") ? jsonObject.getString("sex_auth"): null);
         userAuditBean.setUserNameAuth(jsonObject.containsKey("userName_auth") ? jsonObject.getString("userName_auth"): null);
+        userAuditBean.setRemark(jsonObject.containsKey("remark") ? jsonObject.getString("remark"): null);
         return userAuditBean;
     }
 

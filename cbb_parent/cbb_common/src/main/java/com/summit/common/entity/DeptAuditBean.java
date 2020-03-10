@@ -67,6 +67,10 @@ public class DeptAuditBean implements Serializable {
     private String submittedTo;
 
 
+    @ApiModelProperty(value = "备注", name = "remark")
+    @TableField(value = "remark")
+    private String remark;
+
     public DeptAuditBean() {
     }
 }

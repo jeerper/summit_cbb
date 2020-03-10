@@ -101,6 +101,11 @@ public class UserAuditBean  implements Serializable {
     private String submittedTo;
 
 
+    @ApiModelProperty(value = "备注", name = "remark")
+    @TableField(value = "remark")
+    private String remark;
+
+
 
     public UserAuditBean() {
     }
@@ -239,5 +244,12 @@ public class UserAuditBean  implements Serializable {
 
     public void setSubmittedTo(String submittedTo) {
         this.submittedTo = submittedTo;
+    }
+    public String getRemark() {
+        return remark;
+    }
+
+    public void setRemark(String remark) {
+        this.remark = remark;
     }
 }

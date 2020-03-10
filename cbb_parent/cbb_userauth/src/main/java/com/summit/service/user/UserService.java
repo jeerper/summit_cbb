@@ -601,8 +601,8 @@ public class UserService {
             }
         }
         String deptAuth = sbDept.toString();
-        String sql="INSERT INTO sys_user_auth (id,userName_auth,name_auth,sex_auth,password_auth,email_auth,phone_number_auth,is_enabled_auth,headPortrait_auth,duty_auth,dept_auth,adcd_auth,post_auth,auth_person,isAudited,auth_time,submitted_to) VALUES " +
-                "(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,now(),?)";
+        String sql="INSERT INTO sys_user_auth (id,userName_auth,name_auth,sex_auth,password_auth,email_auth,phone_number_auth,is_enabled_auth,headPortrait_auth,duty_auth,dept_auth,adcd_auth,post_auth,auth_person,isAudited,auth_time,submitted_to,remark) VALUES " +
+                "(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,now(),?,?)";
         //查找原来头像
         UserInfo userInfo = queryByUserName(userAuditBean.getUserNameAuth());
         //上级部门
@@ -629,7 +629,8 @@ public class UserService {
                         userAuditBean.getPostAuth(),
                         null,
                         "0",
-                        superDept
+                        superDept,
+                        userAuditBean.getRemark()
                 );
             }else {
                 jdbcTemplate.update(sql,
