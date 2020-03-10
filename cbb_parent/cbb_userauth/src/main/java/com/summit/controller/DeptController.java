@@ -191,6 +191,7 @@ public class DeptController {
         logBean.setStime(DateUtil.DTFormat("yyyy-MM-dd HH:mm:ss", new Date()));
         SummitTools.getLogBean(logBean, "部门审核管理", "修改部门信息:" + JSONObject.fromObject(deptAuditBean).toString(), "2");
         try {
+            logger.debug("编辑部门信息："+deptAuditBean);
             ResponseCodeEnum c =ds.editAudit(deptAuditBean);
             if (c != null) {
                 return ResultBuilder.buildError(c);

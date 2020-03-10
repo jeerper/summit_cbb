@@ -347,6 +347,7 @@ public class UserController {
                 FileUtil.writeBytes(fileBytes, headPicpath);
                 userAuditBean.setHeadPortraitAuth(headPicUrl);
             }
+            logger.debug("编辑用户信息："+userAuditBean);
             ResponseCodeEnum c = us.editAudit(userAuditBean, key);
             if (c != null) {
                 return ResultBuilder.buildError(c);
