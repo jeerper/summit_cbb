@@ -9,11 +9,14 @@ import com.summit.cbb.utils.page.Page;
 import com.summit.common.entity.*;
 import com.summit.common.util.Cryptographic;
 import com.summit.repository.UserRepository;
+import com.summit.service.dept.DeptService;
 import com.summit.util.DateUtil;
 import com.summit.util.SummitTools;
 import com.summit.util.SysConstants;
 import net.sf.json.JSONObject;
 import org.apache.commons.collections.map.LinkedMap;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -27,7 +30,7 @@ import java.util.List;
 @Service
 @Transactional
 public class UserService {
-
+    private static final Logger logger = LoggerFactory.getLogger(UserService.class);
     @Autowired
     private UserRepository ur;
     @Autowired
@@ -657,7 +660,7 @@ public class UserService {
             jdbcTemplate.update(sql2.toString(),"0",userAuditBean.getUserNameAuth());
             return null;
         }catch (Exception e){
-            e.printStackTrace();
+            logger.error("修改用户失败:", e);
             return ResponseCodeEnum.CODE_9991;
         }
     }

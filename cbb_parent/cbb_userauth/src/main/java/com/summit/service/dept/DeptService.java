@@ -7,7 +7,10 @@ import java.util.Map;
 
 import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import com.summit.common.entity.DeptAuditBean;
+import com.summit.controller.DeptController;
 import org.apache.commons.collections.map.LinkedMap;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
@@ -27,6 +30,7 @@ import net.sf.json.JSONObject;
 @Service
 @Transactional
 public class DeptService {
+    private static final Logger logger = LoggerFactory.getLogger(DeptService.class);
     @Autowired
     private UserRepository ur;
     @Autowired
@@ -386,7 +390,7 @@ public class DeptService {
             jdbcTemplate.update(sql2.toString(),"0", deptAuditBean.getDeptIdAuth());
             return null;
         }catch (Exception e){
-            e.printStackTrace();
+            logger.error("修改用户失败:", e);
             return ResponseCodeEnum.CODE_9999;
         }
 
