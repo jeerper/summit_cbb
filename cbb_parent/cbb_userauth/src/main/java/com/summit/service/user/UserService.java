@@ -652,7 +652,8 @@ public class UserService {
                         userAuditBean.getPostAuth(),
                         null,
                         "0",
-                        superDept
+                        superDept,
+                        userAuditBean.getRemark()
                 );
             }
             //修改用户表中的audit字段为发起申请
