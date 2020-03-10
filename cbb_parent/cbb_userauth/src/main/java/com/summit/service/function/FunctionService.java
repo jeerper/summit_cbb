@@ -282,14 +282,36 @@ public class FunctionService {
         StringBuffer sql = new StringBuffer("SELECT * FROM SYS_FUNCTION where 1=1 ");
         LinkedMap linkedMap = null;
         if (SummitTools.stringNotNull(pId)) {
+        	/**
+        	 * ri 2019.11.1 加入了权限过滤
+        	 */
+            linkedMap = new LinkedMap();
+            linkedMap.put(1, pId);
             if (isSuperUser(userName)) {
                 sql.append(" and PID = ? ");
             } else {
                 sql.append(" and  PID = ? AND SUPER_FUN = 0 ");
+                sql.append(" and ID in (SELECT  DISTINCT SF.id FROM SYS_USER_ROLE SUR INNER JOIN SYS_ROLE_FUNCTION SRF ON " + 
+                		"( SUR.ROLE_CODE = SRF.ROLE_CODE ) INNER JOIN SYS_FUNCTION SF ON (SRF.FUNCTION_ID = SF.ID) " + 
+                		"WHERE SF.IS_ENABLED = '1'  AND SUR.USERNAME = ? )");
+                linkedMap.put(2, userName);
             }
+        }else {
+        	/**
+        	 * ri 2019.11.1 加入了权限过滤
+        	 */
             linkedMap = new LinkedMap();
-            linkedMap.put(1, pId);
-        }
+            if (isSuperUser(userName)) {
+               
+            } else {
+                sql.append(" AND SUPER_FUN = 0 ");
+                sql.append(" and ID in (SELECT  DISTINCT SF.id FROM SYS_USER_ROLE SUR INNER JOIN SYS_ROLE_FUNCTION SRF ON " + 
+                		"( SUR.ROLE_CODE = SRF.ROLE_CODE ) INNER JOIN SYS_FUNCTION SF ON (SRF.FUNCTION_ID = SF.ID) " + 
+                		"WHERE SF.IS_ENABLED = '1'  AND SUR.USERNAME = ? )");
+                linkedMap.put(1, userName);
+            }
+			
+		}
         sql.append(" ORDER BY FDESC");
         Page<Object> rs = ur.queryByCustomPage(sql.toString(), start, limit, linkedMap);
         if (rs != null) {
@@ -308,13 +330,13 @@ public class FunctionService {
         StringBuffer sql = new StringBuffer("select A.ID as PID,B.ID AS ID,B.IS_ENABLED,B.ID AS CHILD_ID,B.NAME AS CHILD_NAME,B.FDESC,B.FURL,B.IMGULR,B.NOTE, B.SUPER_FUN  ");
         LinkedMap linkedMap = new LinkedMap();
         if (isSuroleCode) {
-            sql.append(" FROM  (SELECT  DISTINCT * FROM SYS_FUNCTION WHERE IS_ENABLED = '1'  and id!='root'   order by fdesc)A  ");
-            sql.append(" JOIN SYS_FUNCTION AS B ON B.PID = A.ID ORDER BY a.id,fdesc ");
+            sql.append(" FROM  (SELECT  DISTINCT * FROM SYS_FUNCTION WHERE  id!='root'   order by fdesc)A  ");
+            sql.append(" JOIN SYS_FUNCTION AS B ON B.PID = A.ID WHERE B.IS_ENABLED = '1'  ORDER BY a.id,fdesc ");
         } else {
-            sql.append(" ,c.id AS CID,c.name AS CNAME FROM (SELECT  DISTINCT SF.* FROM SYS_USER_ROLE SUR INNER JOIN SYS_ROLE_FUNCTION SRF ON ( SUR.ROLE_CODE = SRF.ROLE_CODE ) INNER JOIN SYS_FUNCTION SF ON (SRF.FUNCTION_ID = SF.ID) WHERE SF.IS_ENABLED = '1'  AND SUR.USERNAME = '" + userName + "' and SF.id!='root'    order by fdesc)B ");
+            sql.append(" ,c.id AS CID,c.name AS CNAME FROM (SELECT  DISTINCT SF.* FROM SYS_USER_ROLE SUR INNER JOIN SYS_ROLE_FUNCTION SRF ON ( SUR.ROLE_CODE = SRF.ROLE_CODE ) INNER JOIN SYS_FUNCTION SF ON (SRF.FUNCTION_ID = SF.ID) WHERE SUR.USERNAME = '" + userName + "' and SF.id!='root'    order by fdesc)B ");
             // linkedMap.put(1, userName);
             sql.append(" JOIN SYS_FUNCTION AS A ON B.PID = A.ID  ");
-            sql.append(" LEFT JOIN SYS_FUNCTION AS C ON a.pid=c.id ORDER BY a.id,fdesc ");
+            sql.append(" LEFT JOIN SYS_FUNCTION AS C ON a.pid=c.id WHERE B.IS_ENABLED = '1' ORDER BY a.id,fdesc ");
         }
 
         List menuList = ur.queryAllCustom(sql.toString(), linkedMap);
@@ -343,7 +365,15 @@ public class FunctionService {
                     funInfoList.add(functionBean);
                 }
             }
-            return funInfoList;
+            /**
+             * 2019.11.1 rj 添加根节点
+             */
+            List<FunctionBean> funInfoRoot = new ArrayList<FunctionBean>();
+            FunctionBean functionBean =new FunctionBean("root", "", "功能树", 1,1,"","", "","0");
+            functionBean.setChildren(funInfoList);
+            funInfoRoot.add(functionBean);
+            return funInfoRoot;
+            //return funInfoList;
         }
         return null;
     }
