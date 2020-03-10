@@ -657,6 +657,7 @@ public class UserService {
             jdbcTemplate.update(sql2.toString(),"0",userAuditBean.getUserNameAuth());
             return null;
         }catch (Exception e){
+            e.printStackTrace();
             return ResponseCodeEnum.CODE_9991;
         }
     }
