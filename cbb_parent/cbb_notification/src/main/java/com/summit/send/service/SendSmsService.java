@@ -4,6 +4,7 @@ package com.summit.send.service;
 import com.summit.common.entity.RestfulEntityBySummit;
 import com.summit.common.entity.notification.SendSms;
 import com.summit.send.pojo.SmsEntity;
+import com.summit.send.pojo.SmsTemplateEntity;
 
 import java.util.List;
 import java.util.Map;
@@ -31,5 +32,11 @@ public interface SendSmsService {
     SmsEntity querySmsRecordByBizId(String bizId);
 
     int directToAliQueryState(String bizId);
+
+    /**
+     * 查询所有短信模板信息
+     * @return
+     */
+    List<SmsTemplateEntity> queryTemplate();
 
 }

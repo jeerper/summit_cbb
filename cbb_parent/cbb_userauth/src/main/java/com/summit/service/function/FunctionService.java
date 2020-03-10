@@ -1,13 +1,11 @@
 package com.summit.service.function;
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.TypeReference;
 import com.summit.cbb.utils.page.Page;
 import com.summit.common.entity.FunctionBean;
 import com.summit.common.entity.FunctionTreeBean;
 import com.summit.repository.UserRepository;
-import com.summit.util.ListUtils;
 import com.summit.util.SummitTools;
 import com.summit.util.SysConstants;
 import net.sf.json.JSONObject;
@@ -19,7 +17,10 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Service
 @Transactional
@@ -37,18 +38,18 @@ public class FunctionService {
      */
     public FunctionBean queryFunTree(String pid) throws Exception {
         LinkedMap linkedMap = new LinkedMap();
-        StringBuffer sql = new StringBuffer("SELECT * from  sys_function fun where IS_ENABLED = '1' ");
+        StringBuffer sql = new StringBuffer("SELECT * from  sys_function fun where  ");
         if (pid == null || "".equals(pid)) {
-            sql.append(" and (pid is null  or pid='-1' )");
+            sql.append(" (pid is null  or pid='-1' )");
         } else {
-            sql.append(" and id =? ");
+            sql.append(" id =? ");
             linkedMap.put(1, pid);
         }
 
         StringBuffer querySql = new StringBuffer(" SELECT A.ID, A.NAME,B.PID,B.IS_ENABLED, B.ID AS CHILD_ID, B.NAME AS CHILD_NAME,B.FDESC,B.FURL,B.IMGULR,B.NOTE, B.SUPER_FUN FROM SYS_FUNCTION AS A ");
         querySql.append("  JOIN SYS_FUNCTION AS B ON B.PID = A.ID ");
         // querySql.append("  where a.id!='root' ");
-        querySql.append("  where B.IS_ENABLED = '1' ");
+//        querySql.append("  where B.IS_ENABLED = '1' ");
         querySql.append("   ORDER BY a.id,fdesc ");
         Map<String, List<Object>> orgMaps = getMap(querySql.toString());
 
@@ -246,9 +247,9 @@ public class FunctionService {
     public List<FunctionBean> queryById(String id, String userName) throws Exception {
         String sql;
         if (isSuperUser(userName)) {
-            sql = "SELECT * FROM SYS_FUNCTION WHERE ID = ? and IS_ENABLED = '1'";
+            sql = "SELECT * FROM SYS_FUNCTION WHERE ID = ? ";
         } else {
-            sql = "SELECT * FROM SYS_FUNCTION WHERE ID = ? AND SUPER_FUN = 0 and IS_ENABLED = '1' order by fdesc ";
+            sql = "SELECT * FROM SYS_FUNCTION WHERE ID = ? AND SUPER_FUN = 0  order by fdesc ";
         }
         LinkedMap linkedMap = new LinkedMap();
         linkedMap.put(1, id);

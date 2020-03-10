@@ -14,4 +14,10 @@ public interface SendEmailService {
      */
     RestfulEntityBySummit sendMail(SendEmail sendEmail);
 
+    /**
+     * 发送短信（异步）
+     * @param sendEmail
+     * @return
+     */
+    RestfulEntityBySummit sendMailAsynchronization(SendEmail sendEmail);
 }

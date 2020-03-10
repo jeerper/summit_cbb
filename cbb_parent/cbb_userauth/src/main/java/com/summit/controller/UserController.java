@@ -3,18 +3,14 @@ package com.summit.controller;
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.bean.copier.CopyOptions;
 import cn.hutool.core.io.FileUtil;
+import cn.hutool.core.util.StrUtil;
 import cn.hutool.system.SystemUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
 import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import com.summit.MainAction;
 import com.summit.cbb.utils.page.Page;
-import com.summit.common.entity.FunctionBean;
-import com.summit.common.entity.LogBean;
-import com.summit.common.entity.ResponseCodeEnum;
-import com.summit.common.entity.RestfulEntityBySummit;
-import com.summit.common.entity.UserInfo;
-import com.summit.common.entity.UserPassWordInfo;
+import com.summit.common.entity.*;
 import com.summit.common.redis.user.UserInfoCache;
 import com.summit.common.util.ResultBuilder;
 import com.summit.common.web.filter.UserContextHolder;
@@ -285,8 +281,6 @@ public class UserController {
             if (c != null) {
                 return ResultBuilder.buildError(c);
             }
-
-
             UserInfo cacheUserInfo = userInfoCache.getUserInfo(userInfo.getUserName());
             if (cacheUserInfo != null) {
                 BeanUtil.copyProperties(userInfo, cacheUserInfo, CopyOptions.create().setIgnoreNullValue(true));
@@ -306,6 +300,73 @@ public class UserController {
             return ResultBuilder.buildSuccess();
         }
     }
+
+    @ApiOperation(value = "修改用户审批", notes = "昵称(name)，用户名(userName),密码(password)都是必输项")
+    @PostMapping("/editAudit")
+    public RestfulEntityBySummit<String> editAudit(@RequestBody UserAuditBean userAuditBean) {
+        LogBean logBean = new LogBean();
+        logBean.setStime(DateUtil.DTFormat("yyyy-MM-dd HH:mm:ss", new Date()));
+        try{
+            if (!permissionUtil.checkLoginUserAccessPermissionToOtherUser(userAuditBean.getUserNameAuth())) {
+                return ResultBuilder.buildError(ResponseCodeEnum.CODE_4012);
+            }
+            String base64Str = userAuditBean.getHeadPortraitAuth();
+            if (SummitTools.stringNotNull(base64Str)) {
+                StringBuffer fileName = new StringBuffer();
+                fileName.append(UUID.randomUUID().toString().replaceAll("-", ""));
+                if (base64Str.indexOf("data:image/png;") != -1) {
+                    base64Str = base64Str.replace("data:image/png;base64,", "");
+                    fileName.append(".png");
+                } else if (base64Str.indexOf("data:image/jpeg;") != -1) {
+                    base64Str = base64Str.replace("data:image/jpeg;base64,", "");
+                    fileName.append(".jpeg");
+                }
+                String picId = IdWorker.getIdStr();
+                String headPicpath = new StringBuilder()
+                        .append(SystemUtil.getUserInfo().getCurrentDir())
+                        .append(File.separator)
+                        .append(MainAction.SnapshotFileName)
+                        .append(File.separator)
+                        .append(picId)
+                        .append("_Head_Auth.jpg")
+                        .toString();
+                String headPicUrl = new StringBuilder()
+                        .append("/")
+                        .append(MainAction.SnapshotFileName)
+                        .append("/")
+                        .append(picId)
+                        .append("_Head_Auth.jpg")
+                        .toString();
+                byte[] fileBytes = null;
+                try {
+                    fileBytes = Base64.getDecoder().decode(base64Str);
+                } catch (Exception e) {
+                    log.error("图片base64格式有误!");
+                    userAuditBean.setHeadPortraitAuth("图片base64格式有误!");
+                }
+                FileUtil.writeBytes(fileBytes, headPicpath);
+                userAuditBean.setHeadPortraitAuth(headPicUrl);
+            }
+            ResponseCodeEnum c = us.editAudit(userAuditBean, key);
+            if (c != null) {
+                return ResultBuilder.buildError(c);
+            }
+            logBean.setActionFlag("1");
+        }catch (Exception e){
+            logger.error("修改用户失败:", e);
+            logBean.setActionFlag("0");
+            logBean.setErroInfo(e.getMessage());
+        }
+        SummitTools.getLogBean(logBean, "用户管理", "修改用户审批:" + JSONObject.fromObject(userAuditBean).toString(), "2");
+        logUtil.insertLog(logBean);
+        if ("0".equals(logBean.getActionFlag())) {
+            return ResultBuilder.buildError(ResponseCodeEnum.CODE_9999);
+        } else {
+            return ResultBuilder.buildSuccess();
+        }
+    }
+
+
 
 
     @ApiOperation(value = "修改密码", notes = "旧密码和新密码必须是加密后的数据")
@@ -667,5 +728,67 @@ public class UserController {
         }
     }
 
+    @ApiOperation(value = "新增时根据部门id查询部门专员职位是否存在")
+    @GetMapping("/queryDutyByDpetId")
+    public RestfulEntityBySummit<List<String>> queryDutyByDpetId(@RequestParam(value = "duty") String duty,
+            @RequestParam(value = "deptId") String deptId) {
+        try {
+            if (SummitTools.stringNotNull(duty) && "3".equals(duty)){
+                boolean flag=false;
+                if (SummitTools.stringNotNull(deptId)){
+                    List<UserDeptDutyBean> list = us.queryDutyByDpetId(deptId);
+                    for (UserDeptDutyBean userDeptDutyBean:list){
+                        String duty1 = userDeptDutyBean.getDuty();
+                        if ("3".equals(duty1)){
+                            flag=true;
+                            break;
+                        }
+                    }
+                }
+                if (flag){
+                    return ResultBuilder.buildError(ResponseCodeEnum.CODE_9992);
+                }
+            }
+            return ResultBuilder.buildError(ResponseCodeEnum.CODE_0000);
+        } catch (Exception e) {
+            logger.error("根据部门id查询部门专员职位是否存在失败：", e);
+            return ResultBuilder.buildError(ResponseCodeEnum.CODE_9999);
+        }
+    }
 
+
+    @ApiOperation(value = "编辑时根据部门id查询部门专员职位是否存在")
+    @GetMapping("/editUserQueryDutyByDpetId")
+    public RestfulEntityBySummit<List<String>> editUserQueryDutyByDpetId(@RequestParam(value = "duty") String duty,
+                                                                 @RequestParam(value = "deptId") String deptId,
+                                                                 @RequestParam(value = "username")String username) {
+        try {
+            boolean flag=false;
+            if (SummitTools.stringNotNull(username) && SummitTools.stringNotNull(duty)){
+                UserDeptDutyBean userDeptDutyBean= us.editUserQueryDutyByDpetId(username);
+                if (!StrUtil.isEmpty(userDeptDutyBean.getDuty()) && userDeptDutyBean.getDuty().equals("3") && duty.equals("3")){
+                    return ResultBuilder.buildError(ResponseCodeEnum.CODE_0000);
+                }
+                if (SummitTools.stringNotNull(duty) && "3".equals(duty)){
+                    if (SummitTools.stringNotNull(deptId)){
+                        List<UserDeptDutyBean> list = us.queryDutyByDpetId(deptId);
+                        for (UserDeptDutyBean udd:list){
+                            String duty1 = udd.getDuty();
+                            if ("3".equals(duty1)){
+                                flag=true;
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+            if (flag){
+                return ResultBuilder.buildError(ResponseCodeEnum.CODE_9992);
+            }
+            return ResultBuilder.buildError(ResponseCodeEnum.CODE_0000);
+        } catch (Exception e) {
+            logger.error("根据部门id查询部门专员职位是否存在失败：", e);
+            return ResultBuilder.buildError(ResponseCodeEnum.CODE_9999);
+        }
+    }
 }

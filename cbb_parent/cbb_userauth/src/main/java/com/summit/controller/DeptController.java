@@ -3,22 +3,13 @@ package com.summit.controller;
 import java.util.Date;
 import java.util.List;
 
+import com.summit.common.entity.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.summit.cbb.utils.page.Page;
-import com.summit.common.entity.DeptBean;
-import com.summit.common.entity.DeptTreeBean;
-import com.summit.common.entity.LogBean;
-import com.summit.common.entity.ResponseCodeEnum;
-import com.summit.common.entity.RestfulEntityBySummit;
 import com.summit.common.util.ResultBuilder;
 import com.summit.service.dept.DeptService;
 import com.summit.service.log.LogUtilImpl;
@@ -191,6 +182,31 @@ public class DeptController {
             return ResultBuilder.buildError(ResponseCodeEnum.CODE_9999);
         }
     }
+
+
+    @ApiOperation(value = "修改部门审批", notes = "id,部门名称(deptName),上级部门(pid)都是必输项,没有上级部门为pid=-1")
+    @PostMapping("/editAudit")
+    public RestfulEntityBySummit<String> editAudit(@RequestBody DeptAuditBean deptAuditBean){
+        LogBean logBean = new LogBean();
+        logBean.setStime(DateUtil.DTFormat("yyyy-MM-dd HH:mm:ss", new Date()));
+        SummitTools.getLogBean(logBean, "部门审核管理", "修改部门信息:" + JSONObject.fromObject(deptAuditBean).toString(), "2");
+        try {
+            ResponseCodeEnum c =ds.editAudit(deptAuditBean);
+            if (c != null) {
+                return ResultBuilder.buildError(c);
+            }
+            logBean.setActionFlag("1");
+            logUtil.insertLog(logBean);
+            return ResultBuilder.buildSuccess();
+        }catch (Exception e){
+            logger.error("操作失败：", e);
+            logBean.setActionFlag("0");
+            logBean.setErroInfo(e.getMessage());
+            logUtil.insertLog(logBean);
+            return ResultBuilder.buildError(ResponseCodeEnum.CODE_9999);
+        }
+    }
+
 
     /**
      * 删除

@@ -29,7 +29,7 @@ public class LogBean implements Serializable {
     @ApiModelProperty(value = "功能模块", name = "funName", required = true)
     private String funName;
 
-    @ApiModelProperty(value = "操作类型(1：新增,  2：修改,   3：删除,  4：授权 ,  5：查询  )", name = "operType")
+    @ApiModelProperty(value = "操作类型(1：新增,  2：修改,   3：删除,  4：授权 ,  5：查询 ,6:审核  )", name = "operType")
     private String operType;
 
     @ApiModelProperty(value = "错误信息", name = "erroInfo")

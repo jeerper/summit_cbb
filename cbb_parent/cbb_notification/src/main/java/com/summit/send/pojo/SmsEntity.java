@@ -16,5 +16,6 @@ public class SmsEntity {
     private int sendState;
     private Date createTime;
     private Date updateTime;
+    private String smsPublisher;
 
 }

@@ -1,12 +1,12 @@
 package com.summit.service.user;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.TypeReference;
+import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import com.summit.MainAction;
 import com.summit.cbb.utils.page.Page;
-import com.summit.common.entity.FunctionBean;
-import com.summit.common.entity.ResponseCodeEnum;
-import com.summit.common.entity.UserInfo;
+import com.summit.common.entity.*;
 import com.summit.common.util.Cryptographic;
 import com.summit.repository.UserRepository;
 import com.summit.util.DateUtil;
@@ -103,7 +103,21 @@ public class UserService {
             }
             jdbcTemplate.batchUpdate(insertAdcdSql, userAdcdParams);
         }
-
+        //保存部门，用户, 职位关系表
+        if(userInfo.getUserName() !=null && userInfo.getDepts().length > 0 && userInfo.getDuty() !=null){
+            String insertSql="INSERT INTO sys_user_dept_duty(ID,USERNAME,DEPTID,DUTY) VALUES ( ?, ?, ?, ?)";
+            List params = new ArrayList();
+            for (String deptId : userInfo.getDepts()) {
+                Object glxxParam[] = {
+                        SummitTools.getKey(),
+                        userInfo.getUserName(),
+                        deptId,
+                        userInfo.getDuty(),
+                };
+                params.add(glxxParam);
+            }
+            jdbcTemplate.batchUpdate(insertSql, params);
+        }
         return null;
     }
 
@@ -172,6 +186,26 @@ public class UserService {
             }
             jdbcTemplate.batchUpdate(insertAdcdSql, userdeptParams);
         }
+
+
+        String uddSql = " delete from sys_user_dept_duty where USERNAME  IN ('" + userInfo.getUserName() + "') ";
+        jdbcTemplate.update(uddSql);
+        //保存部门，用户, 职位关系表
+        if(userInfo.getUserName() !=null && userInfo.getDepts().length > 0 && userInfo.getDuty() !=null){
+            String insertSql="INSERT INTO sys_user_dept_duty(ID,USERNAME,DEPTID,DUTY) VALUES ( ?, ?, ?, ?)";
+            List params = new ArrayList();
+            for (String deptId : userInfo.getDepts()) {
+                Object glxxParam[] = {
+                        SummitTools.getKey(),
+                        userInfo.getUserName(),
+                        deptId,
+                        userInfo.getDuty(),
+                };
+                params.add(glxxParam);
+            }
+            jdbcTemplate.batchUpdate(insertSql, params);
+        }
+
         return null;
     }
 
@@ -313,13 +347,14 @@ public class UserService {
             //	}
 
         }
-
+        System.out.println("sb:"+sb.toString());
         Page<Object> page = ur.queryByCustomPage(sb.toString(), start, limit, linkedMap);
         if (page != null) {
             List<UserInfo> userInfoList = new ArrayList<UserInfo>();
             if (page.getContent() != null && page.getContent().size() > 0) {
                 for (Object o : page.getContent()) {
                     JSONObject jsonObject = (JSONObject) o;
+                    System.out.println(o.toString());
                     UserInfo userInfo = JSON.parseObject(o.toString(), new TypeReference<UserInfo>() {
                     });
                     userInfo.setAdcds(jsonObject.containsKey("ADCD") ? jsonObject.getString("ADCD").split(",") : null);
@@ -499,4 +534,141 @@ public class UserService {
         return null;
     }
 
+    public List<UserDeptDutyBean> queryDutyByDpetId(String deptId) throws Exception {
+        StringBuffer sql=new StringBuffer("SELECT * FROM sys_user_dept_duty udd where udd.DEPTID=? ");
+        LinkedMap lm = new LinkedMap();
+        lm.put(1,deptId);
+        List list = ur.queryAllCustom(sql.toString(), lm);
+        ArrayList<UserDeptDutyBean> userDeptDutyBeans =null;
+        if (list !=null){
+            userDeptDutyBeans=JSON.parseObject(list.toString(), new TypeReference<ArrayList<UserDeptDutyBean>>() {
+            });
+        }
+        return userDeptDutyBeans;
+    }
+
+    public UserDeptDutyBean editUserQueryDutyByDpetId(String username) throws Exception {
+        StringBuffer sql=new StringBuffer("SELECT * FROM sys_user_dept_duty udd where udd.USERNAME=?");
+        LinkedMap lm = new LinkedMap();
+        lm.put(1,username);
+        JSONObject jsonObject = ur.queryOneCustom(sql.toString(), lm);
+        UserDeptDutyBean userDeptDutyBean=new UserDeptDutyBean();
+        if (jsonObject !=null){
+            userDeptDutyBean.setId(jsonObject.getString("ID"));
+            userDeptDutyBean.setDeptId("DEPTID");
+            userDeptDutyBean.setDuty(jsonObject.getString("DUTY"));
+            userDeptDutyBean.setUsername(jsonObject.getString("USERNAME"));
+        }
+        return userDeptDutyBean;
+    }
+
+    @Transactional
+    public ResponseCodeEnum editAudit(UserAuditBean userAuditBean, String key) throws Exception {
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+        if (userAuditBean.getPasswordAuth() != null && !"".equals(userAuditBean.getPasswordAuth())) {
+            //解密
+            try {
+                userAuditBean.setPasswordAuth(Cryptographic.decryptAES(userAuditBean.getPasswordAuth(), key));
+            } catch (Exception e) {
+                return ResponseCodeEnum.CODE_4014;
+            }
+        }
+        //处理行政区划
+        StringBuilder sbAdcd = new StringBuilder();
+        String[] adcdAuths = userAuditBean.getAdcdAuth();
+        if (adcdAuths !=null && adcdAuths.length>0){
+            for (int i = 0; i <adcdAuths.length; i++) {
+                if (i<adcdAuths.length-1){
+                    sbAdcd.append(adcdAuths[i]+",");
+                }else {
+                    sbAdcd.append(adcdAuths[i]);
+                }
+
+            }
+        }
+        String adcdAuth = sbAdcd.toString();
+        //处理部门
+        StringBuilder sbDept = new StringBuilder();
+        String[] deptAuths = userAuditBean.getDeptAuth();
+        if (deptAuths !=null && deptAuths.length>0){
+            for (int i = 0; i <deptAuths.length; i++) {
+                if (i<deptAuths.length-1){
+                    sbDept.append(deptAuths[i]+",");
+                }else {
+                    sbDept.append(deptAuths[i]);
+                }
+
+            }
+        }
+        String deptAuth = sbDept.toString();
+        String sql="INSERT INTO sys_user_auth (id,userName_auth,name_auth,sex_auth,password_auth,email_auth,phone_number_auth,is_enabled_auth,headPortrait_auth,duty_auth,dept_auth,adcd_auth,post_auth,auth_person,isAudited,auth_time,submitted_to,remark) VALUES " +
+                "(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,now(),?,?)";
+        //查找原来头像
+        UserInfo userInfo = queryByUserName(userAuditBean.getUserNameAuth());
+        //上级部门
+        JSONObject jsonObject=queryBySuperDeptByUserName(userAuditBean.getUserNameAuth());
+        String  superDept=null;
+        if (jsonObject !=null && !SummitTools.stringIsNull( jsonObject.getString("ID"))){
+            superDept=jsonObject.getString("ID");
+        }
+        try{
+            if (SummitTools.stringNotNull(userAuditBean.getHeadPortraitAuth())) {
+                jdbcTemplate.update(sql,
+                        IdWorker.getIdStr(),
+                        userAuditBean.getUserNameAuth(),
+                        userAuditBean.getNameAuth(),
+                        userAuditBean.getSexAuth(),
+                        encoder.encode(userAuditBean.getPasswordAuth()),
+                        userAuditBean.getEmailAuth(),
+                        userAuditBean.getPhoneNumberAuth(),
+                        userAuditBean.getIsEnabledAuth(),
+                        userAuditBean.getHeadPortraitAuth(),
+                        userAuditBean.getDutyAuth(),
+                        deptAuth,
+                        adcdAuth,
+                        userAuditBean.getPostAuth(),
+                        null,
+                        "0",
+                        superDept,
+                        userAuditBean.getRemark()
+                );
+            }else {
+                jdbcTemplate.update(sql,
+                        IdWorker.getIdStr(),
+                        userAuditBean.getUserNameAuth(),
+                        userAuditBean.getNameAuth(),
+                        userAuditBean.getSexAuth(),
+                        encoder.encode(userAuditBean.getPasswordAuth()),
+                        userAuditBean.getEmailAuth(),
+                        userAuditBean.getPhoneNumberAuth(),
+                        userAuditBean.getIsEnabledAuth(),
+                        userInfo.getHeadPortrait(),
+                        userAuditBean.getDutyAuth(),
+                        deptAuth,
+                        adcdAuth,
+                        userAuditBean.getPostAuth(),
+                        null,
+                        "0",
+                        superDept
+                );
+            }
+            //修改用户表中的audit字段为发起申请
+            StringBuffer sql2=new StringBuffer("UPDATE SYS_USER SET isAudited = ? where USERNAME=? ");
+            jdbcTemplate.update(sql2.toString(),"0",userAuditBean.getUserNameAuth());
+            return null;
+        }catch (Exception e){
+            e.printStackTrace();
+            return ResponseCodeEnum.CODE_9991;
+        }
+    }
+
+    private JSONObject queryBySuperDeptByUserName(String userNameAuth) throws Exception {
+        StringBuffer sql=new StringBuffer("SELECT superDept.ID,superDept.DEPTCODE,superDept.DEPTNAME from sys_dept superDept INNER JOIN ");
+        sql.append("(SELECT dept.ID,dept.PID from sys_user user INNER JOIN sys_user_dept userDpet on user.USERNAME =userDpet.USERNAME ");
+        sql.append("INNER JOIN sys_dept dept on userDpet.DEPTID=dept.ID WHERE user.USERNAME=? )dept on dept.PID=superDept.ID ");
+        LinkedMap lm = new LinkedMap();
+        lm.put(1, userNameAuth);
+        JSONObject jsonObject = ur.queryOneCustom(sql.toString(), lm);
+        return  jsonObject;
+    }
 }

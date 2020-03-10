@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.summit.common.entity.UserInfo;
 import org.apache.commons.collections.map.LinkedMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -487,6 +488,25 @@ public class ADCDService {
         }
         return null;
     }
+    /**
+     * 根据行政区划编码查询当前行政区划下的所有人员
+     * @param adcd
+     * @return
+     */
+
+    public List<UserInfo> queryCurrentUserByAdcd(String adcd) throws Exception {
+        StringBuilder sqlBuffer = new StringBuilder("SELECT us.NAME,us.USERNAME  from sys_user_adcd acd,sys_user us ");
+        sqlBuffer.append("where acd.USERNAME=us.USERNAME and acd .ADCD = ?");
+        LinkedMap lm = new LinkedMap();
+        lm.put(1, adcd);
+        List dataList = ur.queryAllCustom(sqlBuffer.toString(), lm);
+        if (dataList != null && dataList.size() > 0) {
+            List<UserInfo> adcdBeanList = JSON.parseObject(dataList.toString(), new TypeReference<List<UserInfo>>() {
+            });
+            return adcdBeanList;
+        }
+        return null;
+    }
 
     /**
      * 编辑（查询）
@@ -574,6 +594,5 @@ public class ADCDService {
             return ResponseCodeEnum.CODE_0000;
         }
     }
-
 
 }

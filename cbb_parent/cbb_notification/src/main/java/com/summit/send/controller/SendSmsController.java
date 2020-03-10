@@ -6,9 +6,11 @@ import com.summit.common.entity.notification.SendSms;
 import com.summit.common.entity.notification.VerificationSms;
 import com.summit.common.util.ResultBuilder;
 import com.summit.send.pojo.SmsEntity;
+import com.summit.send.pojo.SmsTemplateEntity;
 import com.summit.send.service.SendSmsService;
 import com.summit.send.util.RedisUtil;
 import com.summit.send.util.VCodeGenerator;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +25,7 @@ import java.util.Map;
 @Slf4j
 @RestController
 @RequestMapping("/msg")
+@Api(value = "/sms", tags = "短信服务")
 public class SendSmsController {
 
     @Autowired
@@ -118,6 +121,15 @@ public class SendSmsController {
         log.info("###SendSmsController.querySmsRecordByBizId");
         int state = sendSmsService.directToAliQueryState(bizId);
         return ResultBuilder.buildError(ResponseCodeEnum.CODE_0000, state);
+
+    }
+
+    @ApiOperation(value = "查询短信模板信息", notes = "查询阿里云短信服务配置的短信模板，templateId模板id，templateName模板名称，templateContent模板内容，templateCode模板编码，templateType模板类型，createTime创建时间，updateTime更新时间")
+    @GetMapping("/template")
+    public RestfulEntityBySummit queryTemplate() {
+        log.info("###查询阿里云短信所有模板");
+        List<SmsTemplateEntity> templates = sendSmsService.queryTemplate();
+        return ResultBuilder.buildError(ResponseCodeEnum.CODE_0000, templates);
 
     }
 }

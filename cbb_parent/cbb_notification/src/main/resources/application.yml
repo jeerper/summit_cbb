@@ -15,9 +15,9 @@ spring:
     #关闭占位符替换功能
     placeholder-replacement: false
   mail:
-    host: smtp.qq.com
-    username: 3421988273@qq.com
-    password: fdgeeukxcdncdaeg
+    host: smtp.summit.com.cn
+    username: system-application@summit.com.cn
+    password: Summit123.
     #    port: 465
     default-encoding: UTF-8
     properties:
@@ -28,8 +28,8 @@ spring:
             class: javax.net.ssl.SSLSocketFactory
             port: 465
 jpush:
-  appKey: c78f300905cfeb5318a073c5
-  masterSecret: 9d55daa976eb8a502e8594ea
+  appKey: 9db8e0594c0f91e2f55ee69f
+  masterSecret: eb84752c78727e48256841af
   liveTime: 300000
   #安塞现场
   #appKey: 43d2500b962982d568d6d000
@@ -45,6 +45,11 @@ jpush:
     content-type: text/html
     cache: false
     mode: LEGACYHTML5
+
+geTuiPush:
+  appId : LcqlVsFeuSAMi17ERnQTg1
+  appKey: E32K8EBzZm8ex5qjpSKLL6
+  masterSecret: T3bpCc0CtO8RbvmJk4FtG1
 
 ccb_msg:
   sms:

@@ -79,6 +79,9 @@ public class UserInfo implements Serializable {
     @ApiModelProperty(value = "用户头像", name = "headPortrait")
     private String headPortrait;
 
+    @ApiModelProperty(value = "审核是否通过(0：发起审核，1：通过，2：不通过)", name = "isAudited")
+    private String isAudited;
+
     /**
      * 备注
      */
@@ -284,5 +287,14 @@ public class UserInfo implements Serializable {
     public void setHeadPortrait(String headPortrait) {
         this.headPortrait = headPortrait;
     }
+
+    public String getIsAudited() {
+        return isAudited;
+    }
+
+    public void setIsAudited(String isAudited) {
+        this.isAudited = isAudited;
+    }
+
 
 }

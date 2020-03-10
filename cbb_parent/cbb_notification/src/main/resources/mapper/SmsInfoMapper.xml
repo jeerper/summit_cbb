@@ -13,10 +13,11 @@
         <result column="send_state" javaType="java.lang.Integer" property="sendState"/>
         <result column="create_time" javaType="java.util.Date" property="createTime"/>
         <result column="update_time" javaType="java.util.Date" property="updateTime"/>
+        <result column="sms_publisher" javaType="java.lang.String" property="smsPublisher"/>
     </resultMap>
 
     <sql id="Base_Column">
-        sms_id,template_id,res_phone,biz_id,sms_signname,sms_content,send_state,create_time,update_time
+        sms_id,template_id,res_phone,biz_id,sms_signname,sms_content,send_state,create_time,update_time,sms_publisher
     </sql>
 
     <insert id="insertSms" parameterType="com.summit.send.pojo.SmsEntity">
@@ -24,7 +25,7 @@
         (
         <include refid="Base_Column"/>
         ) values
-        (#{smsId},#{templateId},#{resPhone},#{bizId},#{smsSignname},#{smsContent},#{sendState},#{createTime},#{updateTime})
+        (#{smsId},#{templateId},#{resPhone},#{bizId},#{smsSignname},#{smsContent},#{sendState},#{createTime},#{updateTime},#{smsPublisher})
     </insert>
 
     <update id="updateSms" parameterType="com.summit.send.pojo.SmsEntity">

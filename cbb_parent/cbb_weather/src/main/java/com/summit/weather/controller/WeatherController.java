@@ -1,5 +1,8 @@
 package com.summit.weather.controller;
 
+import com.summit.common.entity.ResponseCodeEnum;
+import com.summit.common.entity.RestfulEntityBySummit;
+import com.summit.common.util.ResultBuilder;
 import com.summit.weather.service.IWeatherService;
 import com.summit.weather.vo.WeatherForecastVO;
 import com.summit.weather.vo.WeatherHistoryVO;
@@ -40,33 +43,45 @@ public class WeatherController {
     @ApiOperation(value = "依据经纬度获得实时天气，包括实时天气，当天天气，未来天气")
     @RequestMapping(value = "/{lgtd}/{lttd}", method = RequestMethod.GET)
     @ResponseBody
-    public WeatherForecastVO findWeather(
+    public RestfulEntityBySummit<WeatherForecastVO> findWeather(
             @ApiParam(value = "经度", required = true) @PathVariable(name = "lgtd") String lgtd,
             @ApiParam(value = "纬度", required = true) @PathVariable(name = "lttd") String lttd) {
-        WeatherForecastVO weatherDataVo = iWeatherService.getWeatherForecast(lgtd, lttd);
-        return weatherDataVo;
+        try {
+            WeatherForecastVO weatherDataVo = iWeatherService.getWeatherForecast(lgtd, lttd);
+            return ResultBuilder.buildSuccess(weatherDataVo);
+        } catch (Exception e) {
+            return ResultBuilder.buildError(ResponseCodeEnum.CODE_4033);
+        }
     }
 
 
-    @ApiOperation(value = "依据经纬度获得实时天气，包括实时天气，当天天气，未来天天气")
+    @ApiOperation(value = "依据城市名获得实时天气，包括实时天气，当天天气，未来天天气")
     @RequestMapping(value = "/{cityName}", method = RequestMethod.GET)
     @ResponseBody
-    public WeatherForecastVO findWeather(
+    public RestfulEntityBySummit<WeatherForecastVO> findWeather(
             @ApiParam(value = "城市名", required = true) @PathVariable(name = "cityName") String cityName) {
-        WeatherForecastVO weatherDataVo = iWeatherService.getWeatherForecast(cityName);
-        return weatherDataVo;
+        try {
+            WeatherForecastVO weatherDataVo = iWeatherService.getWeatherForecast(cityName);
+            return ResultBuilder.buildSuccess(weatherDataVo);
+        } catch (Exception e) {
+            return ResultBuilder.buildError(ResponseCodeEnum.CODE_4033);
+        }
     }
 
     @ApiOperation(value = "依据城市名获取历史天气")
     @RequestMapping(value = "/history/{cityName}/{startTime}/{endTime}", method = RequestMethod.GET)
     @ResponseBody
-    public List<WeatherHistoryVO> findHistoryWeather(
+    public RestfulEntityBySummit<List<WeatherHistoryVO>> findHistoryWeather(
             @ApiParam(value = "城市名", required = true) @PathVariable(name = "cityName") String cityName,
             @ApiParam(value = "开始时间", required = true) @PathVariable(name = "startTime") Long startTime,
             @ApiParam(value = "结束时间", required = true) @PathVariable(name = "endTime") Long endTime) {
-        Date sDate = new Date(startTime);
-        Date eDate = new Date(endTime);
-        List<WeatherHistoryVO> weatherHistoryVOs = iWeatherService.getWeatherHistory(cityName, sDate, eDate);
-        return weatherHistoryVOs;
+        try {
+            Date sDate = new Date(startTime);
+            Date eDate = new Date(endTime);
+            List<WeatherHistoryVO> weatherHistoryVOs = iWeatherService.getWeatherHistory(cityName, sDate, eDate);
+            return ResultBuilder.buildSuccess(weatherHistoryVOs);
+        } catch (Exception e) {
+            return ResultBuilder.buildError(ResponseCodeEnum.CODE_4033);
+        }
     }
 }

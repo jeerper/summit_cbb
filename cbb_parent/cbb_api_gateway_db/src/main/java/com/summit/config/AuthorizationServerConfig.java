@@ -2,7 +2,6 @@ package com.summit.config;
 
 import com.summit.common.constant.CommonConstant;
 import com.summit.handle.SummitWebResponseExceptionTranslator;
-import com.summit.model.user.UserBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -11,7 +10,6 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.oauth2.common.DefaultOAuth2AccessToken;
 import org.springframework.security.oauth2.config.annotation.configurers.ClientDetailsServiceConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.AuthorizationServerConfigurerAdapter;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableAuthorizationServer;
@@ -19,15 +17,10 @@ import org.springframework.security.oauth2.config.annotation.web.configurers.Aut
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerSecurityConfigurer;
 import org.springframework.security.oauth2.provider.ClientDetailsService;
 import org.springframework.security.oauth2.provider.client.JdbcClientDetailsService;
-import org.springframework.security.oauth2.provider.token.TokenEnhancer;
-import org.springframework.security.oauth2.provider.token.TokenEnhancerChain;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter;
 
 import javax.sql.DataSource;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * @author Administrator
@@ -58,18 +51,19 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
 
     @Override
     public void configure(AuthorizationServerEndpointsConfigurer endpoints) {
-        //token增强配置
-        TokenEnhancerChain tokenEnhancerChain = new TokenEnhancerChain();
-        tokenEnhancerChain.setTokenEnhancers(Arrays.asList(tokenEnhancer(), jwtAccessTokenConverter()));
         endpoints
                 .allowedTokenEndpointRequestMethods(HttpMethod.GET, HttpMethod.POST)
                 .tokenStore(tokenStore())
-                .tokenEnhancer(tokenEnhancerChain)
+                .tokenEnhancer(jwtAccessTokenConverter())
                 .authenticationManager(authenticationManager)
                 .reuseRefreshTokens(false)
                 .exceptionTranslator(new SummitWebResponseExceptionTranslator());
     }
 
+    /**
+     * token修饰配置
+     * @return
+     */
     @Bean
     public JwtAccessTokenConverter jwtAccessTokenConverter() {
         SummitJwtAccessTokenConverter jwtAccessTokenConverter = new SummitJwtAccessTokenConverter();
@@ -97,24 +91,5 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
         redisTemplate.setKeySerializer(new StringRedisSerializer());
         redisTemplate.setValueSerializer(new StringRedisSerializer());
         return redisTemplate;
-    }
-
-    /**
-     * jwt 生成token 定制化处理
-     *
-     * @return TokenEnhancer
-     */
-    @Bean
-    public TokenEnhancer tokenEnhancer() {
-        return (accessToken, authentication) -> {
-            final Map<String, Object> additionalInfo = new HashMap<>(2);
-            additionalInfo.put("license", CommonConstant.LICENSE);
-            UserBean user = (UserBean) authentication.getUserAuthentication().getPrincipal();
-            if (user != null) {
-                additionalInfo.put("username", user.getUsername());
-            }
-            ((DefaultOAuth2AccessToken) accessToken).setAdditionalInformation(additionalInfo);
-            return accessToken;
-        };
     }
 }

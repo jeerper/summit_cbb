@@ -12,6 +12,7 @@ import com.aliyuncs.exceptions.ClientException;
 import com.aliyuncs.exceptions.ServerException;
 import com.aliyuncs.http.MethodType;
 import com.aliyuncs.profile.DefaultProfile;
+import com.summit.common.Common;
 import com.summit.common.constant.ResponseCode;
 import com.summit.common.entity.ResponseCodeEnum;
 import com.summit.common.entity.RestfulEntityBySummit;
@@ -20,6 +21,7 @@ import com.summit.common.util.ResultBuilder;
 import com.summit.send.dao.SmsDao;
 import com.summit.send.dao.SmsTemplateDao;
 import com.summit.send.pojo.SmsEntity;
+import com.summit.send.pojo.SmsTemplateEntity;
 import com.summit.send.service.SendSmsService;
 import com.summit.send.util.JSONUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -215,6 +217,7 @@ public class SendSmsServiceImpl implements SendSmsService {
                     Date date = new Date();
                     smsEntity.setCreateTime(date);
                     smsEntity.setUpdateTime(date);
+                    smsEntity.setSmsPublisher(Common.getLogUser().getUserName());
                     smsDao.insertSms(smsEntity);
                     //发送完成后启动定时任务，查询阿里短信接口，获取发送结果
                     Timer timer = new Timer();
@@ -402,5 +405,12 @@ public class SendSmsServiceImpl implements SendSmsService {
 
     public SmsEntity querySmsRecordByBizId(String bizId) {
         return smsDao.querySmsRecordByBizId(bizId);
+    }
+
+
+
+    @Override
+    public List<SmsTemplateEntity> queryTemplate() {
+        return smsTemplateDao.queryTemplate();
     }
 }

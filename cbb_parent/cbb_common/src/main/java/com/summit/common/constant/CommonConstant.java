@@ -5,7 +5,7 @@ public interface CommonConstant {
     /**
      * token请求头名称
      */
-    String REQ_HEADER = "Authorization";
+    String REQ_HEADER = "authorization";
 
     /**
      * token分割符
@@ -90,4 +90,6 @@ public interface CommonConstant {
      * 路由信息Redis保存的key
      */
     String ROUTE_KEY = "_ROUTE_KEY";
+
+    String LOGIN_LOG_PREFIX="LOGIN_LOG_KEY:";
 }
