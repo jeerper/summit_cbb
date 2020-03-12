@@ -85,6 +85,17 @@ public class UserInfo implements Serializable {
     @ApiModelProperty(value = "机构类型(0:内部机构;1:外部机构)", name = "deptType")
     private String deptType;
 
+    @ApiModelProperty(value = "部门联系人", name = "deptContact")
+    private String deptContact;
+
+    public String getDeptContact() {
+        return deptContact;
+    }
+
+    public void setDeptContact(String deptContact) {
+        this.deptContact = deptContact;
+    }
+
     public String getDeptType() {
         return deptType;
     }

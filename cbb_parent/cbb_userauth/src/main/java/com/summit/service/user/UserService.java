@@ -286,11 +286,11 @@ public class UserService {
         LinkedMap linkedMap = new LinkedMap();
         Integer index = 1;
         StringBuilder sb = new StringBuilder(
-                "SELECT user1.USERNAME,NAME,PASSWORD,SEX,IS_ENABLED,EMAIL,PHONE_NUMBER,STATE,NOTE,COMPANY,DUTY,POST,SN,USERADCD.ADCD,useradcd.adnms,userdept.DEPTID,userdept.deptNames,userdept.deptType,userRole.roleCodes,userRole.roleNames,date_format(user1.LAST_UPDATE_TIME, '%Y-%m-%d %H:%i:%s') as lastUpdateTime,user1.HEADPORTRAIT FROM SYS_USER user1 ");
+                "SELECT user1.USERNAME,NAME,PASSWORD,SEX,IS_ENABLED,EMAIL,PHONE_NUMBER,STATE,NOTE,COMPANY,DUTY,POST,SN,USERADCD.ADCD,useradcd.adnms,userdept2.DEPTID,userdept2.deptNames,userdept2.deptType,userdept2.deptContact,userRole.roleCodes,userRole.roleNames,date_format(user1.LAST_UPDATE_TIME, '%Y-%m-%d %H:%i:%s') as lastUpdateTime,user1.HEADPORTRAIT FROM SYS_USER user1 ");
         sb.append(" left join (SELECT username,GROUP_CONCAT(useradcd.`adcd`)AS adcd ,GROUP_CONCAT(`adnm`)AS adnms ");
         sb.append(" FROM sys_user_adcd useradcd inner join sys_ad_cd ad on useradcd.adcd=ad.adcd GROUP BY username)useradcd on useradcd.username=user1.USERNAME ");
-        sb.append(" left join (SELECT username,GROUP_CONCAT(userdept.`deptid`)AS DEPTID,GROUP_CONCAT(dept.`deptname`)AS deptNames,dept.deptType FROM sys_user_dept userdept ");
-        sb.append(" inner join sys_dept dept on userdept.deptid=dept.id GROUP BY username)userdept on userdept.username=user1.USERNAME");
+        sb.append(" left join (SELECT userdept.username,userdept.DEPTID,userdept.deptNames,userdept.deptType,user2.NAME as deptContact from (SELECT username,GROUP_CONCAT(userdept.`deptid`)AS DEPTID,GROUP_CONCAT(dept.`deptname`)AS deptNames,dept.deptType,dept.DEPTHEAD FROM sys_user_dept userdept");
+        sb.append(" inner join sys_dept dept on userdept.deptid=dept.id GROUP BY username)userdept  INNER JOIN sys_user user2 on user2.USERNAME=userdept.DEPTHEAD)userdept2  on userdept2.username=user1.USERNAME");
         sb.append(" left join ( SELECT USERNAME,GROUP_CONCAT(userRole.`ROLE_CODE`)AS roleCodes, GROUP_CONCAT(role.NAME)AS roleNames  FROM sys_user_role userRole ");
         sb.append(" inner join sys_role role on userRole.ROLE_CODE=role.CODE  GROUP BY USERNAME)userRole on userRole.USERNAME=user1.USERNAME ");
         sb.append(" WHERE user1.USERNAME <> '");
@@ -414,6 +414,7 @@ public class UserService {
                 userInfo.setRoleNames(jsonObject.containsKey("roleNames") ? jsonObject.getString("roleNames"): null);
                 userInfo.setLastUpdateTime(jsonObject.containsKey("lastUpdateTime") ? jsonObject.getString("lastUpdateTime"): null);
                 userInfo.setHeadPortrait(jsonObject.containsKey("HEADPORTRAIT") ? jsonObject.getString("HEADPORTRAIT"): null);
+                userInfo.setDeptContact(jsonObject.containsKey("deptContact") ? jsonObject.getString("deptContact"): null);
                 userInfos.add(userInfo);
             }
         }
