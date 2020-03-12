@@ -82,6 +82,33 @@ public class UserInfo implements Serializable {
     @ApiModelProperty(value = "审核是否通过(0：发起审核，1：通过，2：不通过)", name = "isAudited")
     private String isAudited;
 
+    @ApiModelProperty(value = "机构类型(0:内部机构;1:外部机构)", name = "deptType")
+    private String deptType;
+
+    public String getDeptType() {
+        return deptType;
+    }
+
+    public void setDeptType(String deptType) {
+        this.deptType = deptType;
+    }
+
+    public String getAdnms() {
+        return adnms;
+    }
+
+    public void setAdnms(String adnms) {
+        this.adnms = adnms;
+    }
+
+    public String getDeptNames() {
+        return deptNames;
+    }
+
+    public void setDeptNames(String deptNames) {
+        this.deptNames = deptNames;
+    }
+
     /**
      * 备注
      */
@@ -105,11 +132,23 @@ public class UserInfo implements Serializable {
      */
     @ApiModelProperty(value = "查询用--权限标识集合，查询用", name = "permissions", hidden = true)
     private String[] permissions;
+
+    public String getRoleNames() {
+        return roleNames;
+    }
+
+    public void setRoleNames(String roleNames) {
+        this.roleNames = roleNames;
+    }
+
     /**
      * 角色集合
      */
-    @ApiModelProperty(value = "查询用--角色集合", name = "roles")
+    @ApiModelProperty(value = "查询用--角色编码集合", name = "roles")
     private String[] roles;
+
+    @ApiModelProperty(value = "查询用--角色名称，以,分割", name = "roleNames", hidden = true)
+    private String roleNames;
 
 
     public int getState() {
@@ -200,6 +239,8 @@ public class UserInfo implements Serializable {
         this.roles = roles;
     }
 
+
+
     public String[] getAdcds() {
         return adcds;
     }
@@ -224,21 +265,7 @@ public class UserInfo implements Serializable {
         this.sex = sex;
     }
 
-    public String getAdnms() {
-        return adnms;
-    }
 
-    public void setAdnms(String adnms) {
-        this.adnms = adnms;
-    }
-
-    public String getDeptNames() {
-        return deptNames;
-    }
-
-    public void setDeptNames(String deptNames) {
-        this.deptNames = deptNames;
-    }
 
     public String getImei() {
         return imei;

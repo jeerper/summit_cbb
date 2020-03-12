@@ -18,6 +18,7 @@ import org.apache.commons.collections.map.LinkedMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -37,7 +38,8 @@ public class UserService {
     private SummitTools st;
     @Autowired
     public JdbcTemplate jdbcTemplate;
-
+    @Value("${password.encode.key}")
+    private String key;
 
     @Transactional
     public ResponseCodeEnum add(UserInfo userInfo, String key) {
@@ -284,11 +286,13 @@ public class UserService {
         LinkedMap linkedMap = new LinkedMap();
         Integer index = 1;
         StringBuilder sb = new StringBuilder(
-                "SELECT user1.USERNAME,NAME,SEX,IS_ENABLED,EMAIL,PHONE_NUMBER,STATE,NOTE,COMPANY,DUTY,POST,SN,USERADCD.ADCD,useradcd.adnms,userdept.DEPTID,userdept.deptNames,date_format(LAST_UPDATE_TIME, '%Y-%m-%d %H:%i:%s') as lastUpdateTime,HEADPORTRAIT FROM SYS_USER user1 ");
+                "SELECT user1.USERNAME,NAME,PASSWORD,SEX,IS_ENABLED,EMAIL,PHONE_NUMBER,STATE,NOTE,COMPANY,DUTY,POST,SN,USERADCD.ADCD,useradcd.adnms,userdept.DEPTID,userdept.deptNames,userdept.deptType,userRole.roleCodes,userRole.roleNames,date_format(user1.LAST_UPDATE_TIME, '%Y-%m-%d %H:%i:%s') as lastUpdateTime,user1.HEADPORTRAIT FROM SYS_USER user1 ");
         sb.append(" left join (SELECT username,GROUP_CONCAT(useradcd.`adcd`)AS adcd ,GROUP_CONCAT(`adnm`)AS adnms ");
-        sb.append(" FROM sys_user_adcd useradcd inner join sys_ad_cd ad on useradcd.adcd=ad.adcd GROUP BY username)useradcd on useradcd.username=user1.USERNAME");
-        sb.append(" left join (SELECT username,GROUP_CONCAT(userdept.`deptid`)AS DEPTID,GROUP_CONCAT(dept.`deptname`)AS deptNames FROM sys_user_dept userdept ");
+        sb.append(" FROM sys_user_adcd useradcd inner join sys_ad_cd ad on useradcd.adcd=ad.adcd GROUP BY username)useradcd on useradcd.username=user1.USERNAME ");
+        sb.append(" left join (SELECT username,GROUP_CONCAT(userdept.`deptid`)AS DEPTID,GROUP_CONCAT(dept.`deptname`)AS deptNames,dept.deptType FROM sys_user_dept userdept ");
         sb.append(" inner join sys_dept dept on userdept.deptid=dept.id GROUP BY username)userdept on userdept.username=user1.USERNAME");
+        sb.append(" left join ( SELECT USERNAME,GROUP_CONCAT(userRole.`ROLE_CODE`)AS roleCodes, GROUP_CONCAT(role.NAME)AS roleNames  FROM sys_user_role userRole ");
+        sb.append(" inner join sys_role role on userRole.ROLE_CODE=role.CODE  GROUP BY USERNAME)userRole on userRole.USERNAME=user1.USERNAME ");
         sb.append(" WHERE user1.USERNAME <> '");
         sb.append(SysConstants.SUPER_USERNAME);
         sb.append("'");
@@ -353,7 +357,7 @@ public class UserService {
         System.out.println("sb:"+sb.toString());
         Page<Object> page = ur.queryByCustomPage(sb.toString(), start, limit, linkedMap);
         if (page != null) {
-            List<UserInfo> userInfoList = new ArrayList<UserInfo>();
+            /*List<UserInfo> userInfoList = new ArrayList<UserInfo>();
             if (page.getContent() != null && page.getContent().size() > 0) {
                 for (Object o : page.getContent()) {
                     JSONObject jsonObject = (JSONObject) o;
@@ -365,10 +369,55 @@ public class UserService {
                     userInfoList.add(userInfo);
                 }
             }
+            return new Page<UserInfo>(userInfoList, page.getPageable());*/
+            Page<UserInfo> backContent = getBackContent(page);
+            return backContent;
 
-            return new Page<UserInfo>(userInfoList, page.getPageable());
         }
         return null;
+    }
+
+    private Page<UserInfo> getBackContent(Page<Object> page) {
+        List<UserInfo> userInfos = new ArrayList<>();
+        if (page.getContent() != null && page.getContent().size() > 0) {
+            for (Object o : page.getContent()) {
+                JSONObject jsonObject = (JSONObject) o;
+                UserInfo userInfo=new UserInfo();
+                userInfo.setUserName(jsonObject.containsKey("USERNAME") ? jsonObject.getString("USERNAME") : null);
+                userInfo.setName(jsonObject.containsKey("NAME") ? jsonObject.getString("NAME") : null);
+                userInfo.setSex(jsonObject.containsKey("SEX") ? jsonObject.getString("SEX") : null);
+                if (jsonObject !=null && SummitTools.stringNotNull(jsonObject.getString("IS_ENABLED"))){
+                    userInfo.setIsEnabled(Integer.parseInt(jsonObject.containsKey("IS_ENABLED") ? jsonObject.getString("IS_ENABLED") : null));
+                }
+                userInfo.setEmail(jsonObject.containsKey("EMAIL") ? jsonObject.getString("EMAIL") : null);
+                userInfo.setPhoneNumber(jsonObject.containsKey("PHONE_NUMBER") ? jsonObject.getString("PHONE_NUMBER") : null);
+                if (jsonObject !=null && SummitTools.stringNotNull(jsonObject.getString("STATE"))){
+                    userInfo.setState(Integer.parseInt(jsonObject.containsKey("STATE") ? jsonObject.getString("STATE") : null));
+                }
+                userInfo.setNote(jsonObject.containsKey("NOTE") ? jsonObject.getString("NOTE") : null);
+                userInfo.setCompany(jsonObject.containsKey("COMPANY") ? jsonObject.getString("COMPANY") : null);
+                userInfo.setDuty(jsonObject.containsKey("DUTY") ? jsonObject.getString("DUTY") : null);
+                userInfo.setPost(jsonObject.containsKey("POST") ? jsonObject.getString("POST") : null);
+                if (jsonObject !=null && jsonObject.containsKey("SN")&& SummitTools.stringNotNull(jsonObject.getString("SN"))){
+                    userInfo.setSn(Integer.parseInt(jsonObject.containsKey("SN") ? jsonObject.getString("SN") : null));
+                }
+                if (jsonObject !=null && jsonObject.containsKey("PASSWORD")&& SummitTools.stringNotNull(jsonObject.getString("PASSWORD"))){
+                    String password = jsonObject.getString("PASSWORD");
+                    userInfo.setPassword("123456");
+                }
+                userInfo.setAdcds(jsonObject.containsKey("ADCD") ? jsonObject.getString("ADCD").split(",") : null);
+                userInfo.setAdnms(jsonObject.containsKey("adnms") ? jsonObject.getString("adnms") : null);
+                userInfo.setDepts(jsonObject.containsKey("DEPTID") ? jsonObject.getString("DEPTID").split(",") : null);
+                userInfo.setDeptNames(jsonObject.containsKey("deptNames") ? jsonObject.getString("deptNames"): null);
+                userInfo.setDeptType(jsonObject.containsKey("deptType") ? jsonObject.getString("deptType"): null);
+                userInfo.setRoles(jsonObject.containsKey("roleCodes") ? jsonObject.getString("roleCodes").split(",") : null);
+                userInfo.setRoleNames(jsonObject.containsKey("roleNames") ? jsonObject.getString("roleNames"): null);
+                userInfo.setLastUpdateTime(jsonObject.containsKey("lastUpdateTime") ? jsonObject.getString("lastUpdateTime"): null);
+                userInfo.setHeadPortrait(jsonObject.containsKey("HEADPORTRAIT") ? jsonObject.getString("HEADPORTRAIT"): null);
+                userInfos.add(userInfo);
+            }
+        }
+        return new Page<UserInfo>(userInfos, page.getPageable());
     }
 
 

@@ -511,8 +511,7 @@ public class UserController {
                 String[] adcdsArray = JSON.parseObject(objcet.get("adcds").toString(), new TypeReference<String[]>() {
                 });
                 ub.setAdcds(adcdsArray);
-                String adnms = objcet.getString("adnms");
-                ub.setAdnms(adnms);
+                ub.setAdnms( objcet.getString("adnms"));
             }
 
             JSONObject objcetdept = us.queryDeptByUserName(userName);
