@@ -1,0 +1,2 @@
+﻿alter table sys_dept add column deptType varchar(20) CHARACTER SET utf8 COLLATE utf8_bin COMMENT '机构类型(0:内部机构;1:外部机构)';
+alter table sys_dept_auth add column deptType_auth varchar(20) CHARACTER SET utf8 COLLATE utf8_bin COMMENT '机构类型(0:内部机构;1:外部机构)';
