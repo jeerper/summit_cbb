@@ -1,1 +1,1 @@
-﻿alter table sys_auth alter column apply_name varchar(50) NULL;
+﻿alter table sys_auth modify column apply_name varchar(50)NULL;
