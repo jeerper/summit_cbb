@@ -105,7 +105,17 @@ public class UserAuditBean  implements Serializable {
     @TableField(value = "remark")
     private String remark;
 
+    @ApiModelProperty(value = "申请人姓名", name = "applyName")
+    @TableField(value = "apply_name")
+    private String applyName;
 
+    public String getApplyName() {
+        return applyName;
+    }
+
+    public void setApplyName(String applyName) {
+        this.applyName = applyName;
+    }
 
     public UserAuditBean() {
     }

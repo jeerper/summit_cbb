@@ -20,12 +20,13 @@ public class DeptsServiceImpl implements DeptsService {
     @Override
     public String DeptsService() throws Exception {
         JSONObject subordinate_dept = deptUtil.getSubordinateDeptByPDept(null);
-        //String pdept=subordinate_dept.getString("pdept");
+        String pdept=subordinate_dept.getString("pdept");
         String deptData = subordinate_dept.getString("deptData");
         if (deptData !=null){
             String[] depts = deptData.split(",");
             List<String> deptList = Arrays.asList(depts);
-            String dept_string = "";
+           // String dept_string = "";
+            String dept_string = "'"+pdept+"'";
             if (deptList.size()>0){
                 for (int i=0;i<deptList.size();i++){
                     String dept = deptList.get(i);
@@ -43,8 +44,8 @@ public class DeptsServiceImpl implements DeptsService {
                 }
                 String ss = dept_string.substring(0,1);
                 String es = dept_string.substring(dept_string.length()-1,dept_string.length());
-                if(ss.equals(",") && es.equals("'")){
-                    return dept_string.substring(2,dept_string.length()-1);
+                if(ss.equals("'") && es.equals("'")){
+                    return dept_string.substring(1,dept_string.length()-1);
                 }else{
                     return null;
                 }
@@ -59,6 +60,25 @@ public class DeptsServiceImpl implements DeptsService {
             }*/
         }
 
+        return null;
+    }
+
+    @Override
+    public String currentDeptService() throws Exception {
+        JSONObject current_dept = deptUtil.getCurrentDeptByPDept(null);
+        String currentDept=current_dept.getString("currentDept");
+        String dept_string  = null;
+        if (currentDept !=null){
+             dept_string = currentDept.replace("''","" );
+            /*String ss = dept_string.substring(0,1);
+            String es = dept_string.substring(dept_string.length()-1,dept_string.length());
+            if(ss.equals("'") && es.equals("'")){
+                return dept_string.substring(1,dept_string.length()-1);
+            }else{
+                return null;
+            }*/
+            return dept_string;
+        }
         return null;
     }
 }

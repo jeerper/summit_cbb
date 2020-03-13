@@ -47,4 +47,18 @@ public class DeptUtil  {
         jsonOject.put("deptData", deptData);
         return jsonOject;
     }
+
+    public  JSONObject getCurrentDeptByPDept(JSONObject paramJson) throws Exception {
+        String currentDept=null;
+        if(paramJson!=null && paramJson.containsKey("dept") &&  !SummitTools.stringIsNull(paramJson.getString("dept")) ){
+            currentDept=paramJson.getString("dept");
+        }else{
+            if(Common.getLogUser().getDepts()!=null && Common.getLogUser().getDepts().length>0){
+                currentDept=Common.getLogUser().getDepts()[0];
+            }
+        }
+        JSONObject jsonOject=new JSONObject();
+        jsonOject.put("currentDept", currentDept);
+        return jsonOject;
+    }
 }

@@ -3,6 +3,7 @@ package com.summit.service.user;
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.bean.copier.CopyOptions;
 import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
 import com.summit.cbb.utils.page.Page;
@@ -178,11 +179,11 @@ public class UserAuditService {
         if (Common.getLogUser() != null) {
             rolesList = Arrays.asList(Common.getLogUser().getRoles());
         }
-        String depts = deptsService.DeptsService();
-        if (!SummitTools.stringIsNull(depts)){
+        String depts = deptsService.currentDeptService();
+        if (!rolesList.contains("ROLE_SUPERUSER") && !SummitTools.stringIsNull(depts)){
             StringBuffer sql=new StringBuffer("SELECT  sua.id,sua.userName_auth,sua.name_auth,sua.sex_auth,sua.password_auth,sua.email_auth,sua.phone_number_auth,sua.is_enabled_auth,sua.headPortrait_auth, ");
-            sql.append("sua.duty_auth,sua.dept_auth,sua.adcd_auth, sua.post_auth, sua.auth_person,sua.isAudited,date_format(sua.auth_time, '%Y-%m-%d %H:%i:%s')as auth_time,remark ");
-            sql.append("from  sys_user_auth  sua  where 1=1 ");
+            sql.append("sua.duty_auth,sua.dept_auth,sua.adcd_auth, sua.post_auth, sua.auth_person,sua.isAudited,date_format(sua.auth_time, '%Y-%m-%d %H:%i:%s')as auth_time,remark,user.NAME as apply_name ");
+            sql.append("from  sys_user_auth  sua inner join sys_user user on sua.apply_name=user.USERNAME  where 1=1 ");
             sql.append("and sua.submitted_to in ('"+depts+"')");
             Integer index = 1;
             LinkedMap linkedMap = new LinkedMap();
@@ -216,8 +217,8 @@ public class UserAuditService {
             }
         }else if (rolesList.contains("ROLE_SUPERUSER")){
             StringBuffer sql=new StringBuffer("SELECT  sua.id,sua.userName_auth,sua.name_auth,sua.sex_auth,sua.password_auth,sua.email_auth,sua.phone_number_auth,sua.is_enabled_auth,sua.headPortrait_auth, ");
-            sql.append("sua.duty_auth,sua.dept_auth,sua.adcd_auth, sua.post_auth, sua.auth_person,sua.isAudited,date_format(sua.auth_time, '%Y-%m-%d %H:%i:%s')as auth_time ");
-            sql.append("from  sys_user_auth  sua  where 1=1 ");
+            sql.append("sua.duty_auth,sua.dept_auth,sua.adcd_auth, sua.post_auth, sua.auth_person,sua.isAudited,date_format(sua.auth_time, '%Y-%m-%d %H:%i:%s')as auth_time,remark,user.NAME as apply_name ");
+            sql.append("from  sys_user_auth  sua inner join sys_user user on sua.apply_name=user.USERNAME where 1=1 ");
             Integer index = 1;
             LinkedMap linkedMap = new LinkedMap();
             List<Object> list = new ArrayList();
@@ -260,12 +261,9 @@ public class UserAuditService {
             for (Object o : page.getContent()) {
                 JSONObject jsonObject = (JSONObject) o;
                 String dept_auth = jsonObject.getString("dept_auth");
-                if (dept_auth ==null){
-                    continue;
-                }
-                String[] deptAuths = dept_auth.split(",");
                 List<String> dept_json = new ArrayList<>();
-                if (deptAuths !=null && deptAuths.length>0){
+                if (StrUtil.isEmpty(dept_auth)){
+                    String[] deptAuths = dept_auth.split(",");
                     for (int j = 0; j < deptAuths.length; j++) {
                         StringBuffer stringBuffer=new StringBuffer("SELECT dept.DEPTNAME from sys_dept dept where dept.ID=? ");
                         LinkedMap lm = new LinkedMap();
@@ -279,15 +277,11 @@ public class UserAuditService {
                     }
                     String dept = StringUtils.join(dept_json, ",");
                     jsonObject.put("dept_auth",dept);
-                    contents.add(jsonObject);
                 }
                 String adcd_auth = jsonObject.getString("adcd_auth");
-                if (null == adcd_auth){
-                    continue;
-                }
-                String[] adcdAuths = adcd_auth.split(",");
                 List<String> adcd_json = new ArrayList<>();
-                if (adcdAuths !=null && adcdAuths.length>0){
+                if (StrUtil.isEmpty(adcd_auth)){
+                    String[] adcdAuths = adcd_auth.split(",");
                     for (int j = 0; j < adcdAuths.length; j++) {
                         StringBuffer stringBuffer=new StringBuffer("SELECT adcd.ADNM from sys_ad_cd adcd where adcd.ADCD=? ");
                         LinkedMap lm = new LinkedMap();
@@ -301,9 +295,8 @@ public class UserAuditService {
                     }
                     String adcd = StringUtils.join(adcd_json, ",");
                     jsonObject.put("adcd_auth",adcd);
-                    contents.add(jsonObject);
                 }
-
+                contents.add(jsonObject);
             }
             for (Object o : contents) {
                 JSONObject jsonObject = (JSONObject) o;
@@ -345,6 +338,7 @@ public class UserAuditService {
         userAuditBean.setSexAuth(jsonObject.containsKey("sex_auth") ? jsonObject.getString("sex_auth"): null);
         userAuditBean.setUserNameAuth(jsonObject.containsKey("userName_auth") ? jsonObject.getString("userName_auth"): null);
         userAuditBean.setRemark(jsonObject.containsKey("remark") ? jsonObject.getString("remark"): null);
+        userAuditBean.setApplyName(jsonObject.containsKey("apply_name") ? jsonObject.getString("apply_name"): null);
         return userAuditBean;
     }
 

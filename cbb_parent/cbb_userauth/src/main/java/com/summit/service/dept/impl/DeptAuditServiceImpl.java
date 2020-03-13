@@ -79,10 +79,10 @@ public class DeptAuditServiceImpl  implements DeptAuditService {
         if (Common.getLogUser() != null) {
             rolesList = Arrays.asList(Common.getLogUser().getRoles());
         }
-        String depts = deptsService.DeptsService();
-        if (!SummitTools.stringIsNull(depts)){
+        String depts = deptsService.currentDeptService();
+        if (!rolesList.contains("ROLE_SUPERUSER") && !SummitTools.stringIsNull(depts)){
             StringBuffer sql=new StringBuffer("SELECT deptAuth.id,deptAuth.deptId_auth,deptAuth.pId_auth,deptAuth.deptcode_auth,deptAuth.deptName_auth,deptAuth.adcd_auth,deptAuth.auth_person,deptAuth.isAudited, ");
-            sql.append("date_format(deptAuth.auth_time,'%Y-%m-%d %H:%i:%s')as auth_time,remark FROM  sys_dept_auth  deptAuth ");
+            sql.append("date_format(deptAuth.auth_time,'%Y-%m-%d %H:%i:%s')as auth_time,remark,user.NAME as applyName FROM  sys_dept_auth  deptAuth  inner join sys_user user on deptAuth.apply_name=user.USERNAME  ");
             sql.append("WHERE 1=1 and deptAuth.submitted_to in ('"+depts+"')");
             Integer index = 1;
             LinkedMap linkedMap = new LinkedMap();
@@ -115,7 +115,7 @@ public class DeptAuditServiceImpl  implements DeptAuditService {
 
         }else if (rolesList.contains("ROLE_SUPERUSER")){
             StringBuffer sql=new StringBuffer("SELECT deptAuth.id,deptAuth.deptId_auth,deptAuth.pId_auth,deptAuth.deptcode_auth,deptAuth.deptName_auth,deptAuth.adcd_auth,deptAuth.auth_person,deptAuth.isAudited, ");
-            sql.append("date_format(deptAuth.auth_time,'%Y-%m-%d %H:%i:%s')as auth_time,remark FROM  sys_dept_auth  deptAuth ");
+            sql.append("date_format(deptAuth.auth_time,'%Y-%m-%d %H:%i:%s')as auth_time,remark,user.NAME as applyName FROM  sys_dept_auth  deptAuth  inner join sys_user user on deptAuth.apply_name=user.USERNAME ");
             sql.append("WHERE 1=1 ");
             Integer index = 1;
             LinkedMap linkedMap = new LinkedMap();

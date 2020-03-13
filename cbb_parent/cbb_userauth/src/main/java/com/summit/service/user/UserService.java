@@ -654,8 +654,8 @@ public class UserService {
             }
         }
         String deptAuth = sbDept.toString();
-        String sql="INSERT INTO sys_user_auth (id,userName_auth,name_auth,sex_auth,password_auth,email_auth,phone_number_auth,is_enabled_auth,headPortrait_auth,duty_auth,dept_auth,adcd_auth,post_auth,auth_person,isAudited,auth_time,submitted_to,remark) VALUES " +
-                "(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,now(),?,?)";
+        String sql="INSERT INTO sys_user_auth (id,userName_auth,name_auth,sex_auth,password_auth,email_auth,phone_number_auth,is_enabled_auth,headPortrait_auth,duty_auth,dept_auth,adcd_auth,post_auth,auth_person,isAudited,auth_time,submitted_to,remark,apply_name) VALUES " +
+                "(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,now(),?,?,?)";
         //查找原来头像
         UserInfo userInfo = queryByUserName(userAuditBean.getUserNameAuth());
         //上级部门
@@ -683,7 +683,8 @@ public class UserService {
                         null,
                         "0",
                         superDept,
-                        userAuditBean.getRemark()
+                        userAuditBean.getRemark(),
+                        userAuditBean.getUserNameAuth()
                 );
             }else {
                 jdbcTemplate.update(sql,
@@ -703,7 +704,8 @@ public class UserService {
                         null,
                         "0",
                         superDept,
-                        userAuditBean.getRemark()
+                        userAuditBean.getRemark(),
+                        userAuditBean.getUserNameAuth()
                 );
             }
             //修改用户表中的audit字段为发起申请

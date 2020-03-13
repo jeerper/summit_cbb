@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.baomidou.mybatisplus.core.toolkit.IdWorker;
+import com.summit.common.Common;
 import com.summit.common.entity.DeptAuditBean;
 import com.summit.controller.DeptController;
 import org.apache.commons.collections.map.LinkedMap;
@@ -364,8 +365,8 @@ public class DeptService {
     @Transactional
     public ResponseCodeEnum editAudit(DeptAuditBean deptAuditBean) throws Exception {
 
-        String sql="INSERT INTO sys_dept_auth(id,deptId_auth,pId_auth,deptcode_auth,deptName_auth,adcd_auth,auth_person,isAudited,auth_time,submitted_to,remark ) VALUES " +
-                "(?,?,?,?,?,?,?,?,now(),?,?) ";
+        String sql="INSERT INTO sys_dept_auth(id,deptId_auth,pId_auth,deptcode_auth,deptName_auth,adcd_auth,auth_person,isAudited,auth_time,submitted_to,remark,apply_name ) VALUES " +
+                "(?,?,?,?,?,?,?,?,now(),?,?,?) ";
         //上级部门
         JSONObject jsonObject=queryBySuperDeptByDeptId(deptAuditBean.getDeptIdAuth());
         String  superDept=null;
@@ -383,7 +384,8 @@ public class DeptService {
                     null,
                     "0",
                     superDept,
-                    deptAuditBean.getRemark()
+                    deptAuditBean.getRemark(),
+                    Common.getLogUser().getUserName()
             );
             //修改用户表中的audit字段为发起申请
             StringBuffer sql2=new StringBuffer("UPDATE sys_dept SET isAudited = ? where ID=? ");
