@@ -29,7 +29,13 @@ public class Test1 {
     }
     @Test
     public void test2(){
-        Page page=new Page(1,2);
+        String key="summitsummitsumm";
+        String s = Cryptographic.decryptAES("I/l/9a/mS7Wq8T5kzIJvmg==","summitsummitsumm");
+        System.out.println(s);
+
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+        String encode = encoder.encode("123456");
+        System.out.println(encode);
     }
 
 }

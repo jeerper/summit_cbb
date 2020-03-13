@@ -6,6 +6,7 @@ import com.alibaba.fastjson.TypeReference;
 import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import com.summit.MainAction;
 import com.summit.cbb.utils.page.Page;
+import com.summit.common.Common;
 import com.summit.common.entity.*;
 import com.summit.common.util.Cryptographic;
 import com.summit.repository.UserRepository;
@@ -664,10 +665,11 @@ public class UserService {
         if (jsonObject !=null && !SummitTools.stringIsNull( jsonObject.getString("ID"))){
             superDept=jsonObject.getString("ID");
         }
+        String idStr = IdWorker.getIdStr();
         try{
             if (SummitTools.stringNotNull(userAuditBean.getHeadPortraitAuth())) {
                 jdbcTemplate.update(sql,
-                        IdWorker.getIdStr(),
+                        idStr,
                         userAuditBean.getUserNameAuth(),
                         userAuditBean.getNameAuth(),
                         userAuditBean.getSexAuth(),
@@ -688,7 +690,7 @@ public class UserService {
                 );
             }else {
                 jdbcTemplate.update(sql,
-                        IdWorker.getIdStr(),
+                        idStr,
                         userAuditBean.getUserNameAuth(),
                         userAuditBean.getNameAuth(),
                         userAuditBean.getSexAuth(),
@@ -711,11 +713,27 @@ public class UserService {
             //修改用户表中的audit字段为发起申请
             StringBuffer sql2=new StringBuffer("UPDATE SYS_USER SET isAudited = ? where USERNAME=? ");
             jdbcTemplate.update(sql2.toString(),"0",userAuditBean.getUserNameAuth());
-            return null;
         }catch (Exception e){
             logger.error("修改用户失败:", e);
             return ResponseCodeEnum.CODE_9991;
         }
+        //保存审核表
+        String sql_auth="INSERT INTO sys_auth(id,apply_name,apply_type,submitted_to,isAudited,apply_time,apply_Id ) VALUES (?,?,?,?,?,now(),?) ";
+        try{
+            jdbcTemplate.update(sql_auth,
+                    IdWorker.getIdStr(),
+                    userAuditBean.getUserNameAuth(),
+                    "1",
+                    superDept,
+                    "0",
+                    idStr
+            );
+        }catch (Exception e){
+            logger.error("修改部门失败:", e);
+            return ResponseCodeEnum.CODE_9999;
+        }
+        return null;
+
     }
 
     private JSONObject queryBySuperDeptByUserName(String userNameAuth) throws Exception {

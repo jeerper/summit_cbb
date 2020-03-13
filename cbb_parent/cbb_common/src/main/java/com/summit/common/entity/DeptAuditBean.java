@@ -56,7 +56,7 @@ public class DeptAuditBean implements Serializable {
     @TableField(value = "isAudited")
     private String isAudited;
 
-    @ApiModelProperty(value = "审核是否通过(0：发起审核，1：通过，2：不通过)", name = "authPerson")
+    @ApiModelProperty(value = "审核时间", name = "authPerson")
     @TableField(value = "auth_time")
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")

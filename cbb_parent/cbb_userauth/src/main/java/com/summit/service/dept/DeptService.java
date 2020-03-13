@@ -373,9 +373,10 @@ public class DeptService {
         if (jsonObject !=null && !SummitTools.stringIsNull( jsonObject.getString("ID"))){
             superDept=jsonObject.getString("ID");
         }
+        String idStr = IdWorker.getIdStr();
         try{
             jdbcTemplate.update(sql,
-                    IdWorker.getIdStr(),
+                    idStr,
                     deptAuditBean.getDeptIdAuth(),
                     deptAuditBean.getPIdAuth(),
                     deptAuditBean.getDeptcodeAuth(),
@@ -390,11 +391,27 @@ public class DeptService {
             //修改用户表中的audit字段为发起申请
             StringBuffer sql2=new StringBuffer("UPDATE sys_dept SET isAudited = ? where ID=? ");
             jdbcTemplate.update(sql2.toString(),"0", deptAuditBean.getDeptIdAuth());
-            return null;
         }catch (Exception e){
             logger.error("修改部门失败:", e);
             return ResponseCodeEnum.CODE_9999;
         }
+        //保存审核表
+        String sql_auth="INSERT INTO sys_auth(id,apply_name,apply_type,submitted_to,isAudited,apply_time,apply_Id ) VALUES (?,?,?,?,?,now(),?) ";
+        try{
+            jdbcTemplate.update(sql_auth,
+                    IdWorker.getIdStr(),
+                    Common.getLogUser().getUserName(),
+                    "0",
+                    superDept,
+                    "0",
+                    idStr
+            );
+
+        }catch (Exception e){
+            logger.error("修改部门失败:", e);
+            return ResponseCodeEnum.CODE_9999;
+        }
+        return null;
 
     }
 
