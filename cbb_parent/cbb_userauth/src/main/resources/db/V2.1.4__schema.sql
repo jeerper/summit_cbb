@@ -1,0 +1,1 @@
+﻿alter table sys_auth add column apply_Id varchar(50) CHARACTER SET utf8 COLLATE utf8_bin COMMENT '申请人Id(分别来自用户审核表和部门审核表)';
