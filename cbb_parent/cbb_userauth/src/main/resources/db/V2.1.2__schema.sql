@@ -1,0 +1,2 @@
+﻿alter table sys_dept_auth add column apply_name varchar(50) CHARACTER SET utf8 COLLATE utf8_bin COMMENT '申请人姓名';
+alter table sys_user_auth add column apply_name varchar(50) CHARACTER SET utf8 COLLATE utf8_bin COMMENT '申请人姓名';
