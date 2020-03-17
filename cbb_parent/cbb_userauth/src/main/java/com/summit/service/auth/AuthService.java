@@ -9,6 +9,8 @@ import java.util.Map;
 
 public interface AuthService {
     Page<AuthBean> queryByPage(Integer page, Integer pageSize, JSONObject paramJson) throws Exception;
+
     Map<String,Object> findById(String id) throws Exception;
 
+    int authByIdBatch(List<String> authIds, String isAudited) throws Exception;
 }
