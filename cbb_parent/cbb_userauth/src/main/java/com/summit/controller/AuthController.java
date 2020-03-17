@@ -1,11 +1,10 @@
 package com.summit.controller;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.summit.cbb.utils.page.Page;
-import com.summit.common.entity.AuthBean;
-import com.summit.common.entity.DeptAuditBean;
-import com.summit.common.entity.ResponseCodeEnum;
-import com.summit.common.entity.RestfulEntityBySummit;
+import com.summit.common.MsgBean;
+import com.summit.common.entity.*;
 import com.summit.common.util.ResultBuilder;
 import com.summit.service.auth.AuthService;
 import com.summit.util.SummitTools;
@@ -18,6 +17,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.Map;
 
 @Api(description = "基本信息审核管理")
 @CrossOrigin(origins = "*", maxAge = 3600)
@@ -63,7 +65,30 @@ public class AuthController {
             logger.error("部门修改信息审核分页查询失败：", e);
             return ResultBuilder.buildError(ResponseCodeEnum.CODE_9999);
         }
-
-
     }
+
+
+
+    @ApiOperation(value = "基本信息审核详情展示")
+    @GetMapping("/queryAuthfoByAuthId")
+    public MsgBean queryAuthfoByAuthId(@RequestParam(value = "id") String id) {
+        MsgBean mb = new MsgBean();
+        try {
+            Map<String,Object> authInfo = authService.findById(id);
+            mb.setCode(ResponseCodeEnum.CODE_0000.name());
+            mb.setMessage(ResponseCodeEnum.CODE_0000.getMessage());
+            if(null != authInfo){
+                JSONArray jsonArray = new JSONArray();
+                jsonArray.add(authInfo);
+                mb.setData(jsonArray);
+            }
+        }catch (Exception ex){
+            mb.setCode(ResponseCodeEnum.CODE_9999.name());
+            mb.setMessage(ResponseCodeEnum.CODE_9999.getMessage());
+            logger.error("基本信息审核详情展示查询！", ex);
+        }
+        return mb;
+    }
+
+
 }
