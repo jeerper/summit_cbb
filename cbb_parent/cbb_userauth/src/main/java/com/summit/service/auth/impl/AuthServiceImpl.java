@@ -138,9 +138,10 @@ public class AuthServiceImpl  implements AuthService {
         map.put("apply_name",auth_json.getString("apply_name"));
         map.put("apply_time",auth_json.getString("apply_time"));
         if ("0".equals(apply_type)){//机构
-            StringBuffer deptAuth_sql=new StringBuffer("select du.id,du.deptId_auth,dept.DEPTNAME as pId_auth,du.deptcode_auth,du.deptName_auth,adcd.ADNM as adcd_auth,du.auth_person,dic.NAME AS deptType_auth from  ");
+            StringBuffer deptAuth_sql=new StringBuffer("select du.id,du.deptId_auth,dept.DEPTNAME as pId_auth,du.deptcode_auth,du.deptName_auth,adcd.ADNM as adcd_auth,du.auth_person,dic.NAME AS deptType_auth,dic1.NAME as isAudited from  ");
             deptAuth_sql.append("sys_dept_auth du LEFT JOIN sys_dept dept on du.pId_auth=dept.ID LEFT JOIN sys_ad_cd adcd ");
             deptAuth_sql.append("on du.adcd_auth=adcd.ADCD LEFT JOIN  sys_dictionary dic on dic.PCODE='dept_type' and du.deptType_auth=dic.CKEY ");
+            deptAuth_sql.append("LEFT JOIN  sys_dictionary dic1 on dic1.PCODE='isAudited' and du.isAudited=dic1.CKEY ");
             deptAuth_sql.append("where du.id=? ");
             LinkedMap deptAuth_lm = new LinkedMap();
             deptAuth_lm.put(1, apply_id);
@@ -156,12 +157,14 @@ public class AuthServiceImpl  implements AuthService {
             List<Map<String,JSONObject>> json=compareToDept(new_deptJson,old_deptJson);
             map.put("updateType","机构基础类型");
             map.put("updateContent",json);
+            map.put("isAudited",new_deptJson.getString("isAudited"));
             return map;
         }else if ("1".equals(apply_type)){//用户基础信息
             map.put("updateType","人员基础类型");
-            StringBuffer userAuth_sql=new StringBuffer("SELECT usa.id,usa.userName_auth,usa.name_auth,dic.NAME as sex_auth,usa.password_auth,usa.email_auth,usa.phone_number_auth,dic2.NAME as is_enabled_auth,usa.headPortrait_auth,usa.duty_auth,dept.DEPTNAME AS dept_auth,adcd.ADNM as adcd_auth,usa.post_auth ");
+            StringBuffer userAuth_sql=new StringBuffer("SELECT usa.id,usa.userName_auth,usa.name_auth,dic.NAME as sex_auth,usa.password_auth,usa.email_auth,usa.phone_number_auth,dic2.NAME as is_enabled_auth,usa.headPortrait_auth,usa.duty_auth,dept.DEPTNAME AS dept_auth,adcd.ADNM as adcd_auth,usa.post_auth,dic3.NAME as isAudited ");
             userAuth_sql.append("from sys_user_auth usa LEFT JOIN  sys_dictionary dic on dic.PCODE='sex' and usa.sex_auth=dic.CKEY ");
             userAuth_sql.append("LEFT JOIN sys_dictionary  dic2 on dic2.PCODE='isEnabled' and usa.is_enabled_auth=dic2.CKEY ");
+            userAuth_sql.append("LEFT JOIN sys_dictionary  dic3 on dic3.PCODE='isAudited' and usa.isAudited=dic3.CKEY ");
             userAuth_sql.append("LEFT JOIN sys_dept dept on usa.dept_auth=dept.ID ");
             userAuth_sql.append("LEFT JOIN sys_ad_cd adcd on usa.adcd_auth=adcd.ADCD ");
             userAuth_sql.append(" where usa.id=? ");
@@ -182,6 +185,7 @@ public class AuthServiceImpl  implements AuthService {
             net.sf.json.JSONObject old_userJson = ur.queryOneCustom(user_sql.toString(), user_lm);
             List<Map<String,JSONObject>> json=compareToUser(new_userJson,old_userJson);
             map.put("updateContent",json);
+            map.put("isAudited",new_userJson.getString("isAudited"));
             return map;
         }
         return null;
