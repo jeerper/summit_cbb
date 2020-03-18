@@ -398,9 +398,9 @@ public class AuthServiceImpl  implements AuthService {
        // List<Map<String,JSONObject>> compares=new ArrayList<>();
         List<JSONObject> compares=new ArrayList<>();
         if (null !=new_userJson && new_userJson.containsKey("name_auth") && !SummitTools.stringIsNull(new_userJson.getString("name_auth"))){
-            if (null !=old_userJson && old_userJson.containsKey("NAME") && !SummitTools.stringIsNull(old_userJson.getString("NAME"))){
+            if (null !=old_userJson && old_userJson.containsKey("name") && !SummitTools.stringIsNull(old_userJson.getString("name"))){
                 String name_auth = new_userJson.getString("name_auth");
-                String name = old_userJson.getString("NAME");
+                String name = old_userJson.getString("name");
                 if (!name_auth.equals(name)){
                     JSONObject comapre=new JSONObject();
                     comapre.put("id","姓名");
