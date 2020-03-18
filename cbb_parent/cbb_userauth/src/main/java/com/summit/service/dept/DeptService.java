@@ -367,8 +367,8 @@ public class DeptService {
     @Transactional
     public ResponseCodeEnum editAudit(DeptAuditBean deptAuditBean) throws Exception {
 
-        String sql="INSERT INTO sys_dept_auth(id,deptId_auth,pId_auth,deptcode_auth,deptName_auth,adcd_auth,auth_person,isAudited,auth_time,submitted_to,remark,apply_name ) VALUES " +
-                "(?,?,?,?,?,?,?,?,now(),?,?,?) ";
+        String sql="INSERT INTO sys_dept_auth(id,deptId_auth,pId_auth,deptcode_auth,deptName_auth,adcd_auth,auth_person,isAudited,auth_time,submitted_to,remark,apply_name,deptType_auth,deptHead_auth ) VALUES " +
+                "(?,?,?,?,?,?,?,?,now(),?,?,?,?,?) ";
         //上级部门
         JSONObject jsonObject=queryBySuperDeptByDeptId(deptAuditBean.getDeptIdAuth());
         String  superDept=null;
@@ -388,7 +388,9 @@ public class DeptService {
                     "0",
                     superDept,
                     deptAuditBean.getRemark(),
-                    Common.getLogUser().getUserName()
+                    Common.getLogUser().getUserName(),
+                    deptAuditBean.getDeptTypeAuth(),
+                    deptAuditBean.getDeptHeadAuth()
             );
             //修改用户表中的audit字段为发起申请
             StringBuffer sql2=new StringBuffer("UPDATE sys_dept SET isAudited = ? where ID=? ");

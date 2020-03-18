@@ -88,7 +88,7 @@ public class AuthController {
 
 
     @ApiOperation(value = "参数为id数组,isAudited:审核方式(1:批准,2:拒绝)", notes = "根据id审核用户信息")
-    @GetMapping(value = "/authByIdBatch")
+    @PostMapping(value = "/authByIdBatch")
     public RestfulEntityBySummit<String> authByIdBatch(@ApiParam(value = "主键id", required = true) @RequestParam(value = "authIds") List<String> authIds,
                                                        @ApiParam(value = "审核方式(1:批准,2:拒绝)")@RequestParam(value = "isAudited",required = true) String isAudited) {
         LogBean logBean = new LogBean();

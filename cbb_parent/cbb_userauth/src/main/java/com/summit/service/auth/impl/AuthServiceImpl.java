@@ -242,7 +242,7 @@ public class AuthServiceImpl  implements AuthService {
                         continue;
                     }
                     if (null !=deptAuth_json){
-                        StringBuffer dept_sql=new StringBuffer("UPDATE SYS_DEPT SET PID=?, DEPTCODE=?,DEPTNAME=?,ADCD=?,isAudited=?,deptType=? ");
+                        StringBuffer dept_sql=new StringBuffer("UPDATE SYS_DEPT SET PID=?, DEPTCODE=?,DEPTNAME=?,ADCD=?,isAudited=?,deptType=?,DEPTHEAD=? ");
                         dept_sql.append("WHERE id=? ");
                         jdbcTemplate.update(dept_sql.toString(),
                                 deptAuth_json.containsKey("pId_auth") ? deptAuth_json.getString("pId_auth") : null,
@@ -251,6 +251,7 @@ public class AuthServiceImpl  implements AuthService {
                                 deptAuth_json.containsKey("adcd_auth") ? deptAuth_json.getString("adcd_auth") : null,
                                 isAudited,
                                 deptAuth_json.containsKey("deptType_auth") ? deptAuth_json.getString("deptType_auth") : null,
+                                deptAuth_json.containsKey("deptHead_auth") ? deptAuth_json.getString("deptHead_auth") : null,
                                 deptAuth_json.getString("deptId_auth")
                         );
                     }
@@ -383,7 +384,7 @@ public class AuthServiceImpl  implements AuthService {
     }
 
     private net.sf.json.JSONObject queryDeptByApplyId(String apply_id) throws Exception {
-        StringBuffer sql=new StringBuffer(" SELECT deptAuth.id,deptAuth.deptId_auth,deptAuth.pId_auth,deptAuth.deptcode_auth,deptAuth.deptName_auth,deptAuth.adcd_auth,deptAuth.auth_person,deptAuth.auth_time,deptAuth.submitted_to ,deptAuth.deptType_auth ");
+        StringBuffer sql=new StringBuffer(" SELECT deptAuth.id,deptAuth.deptId_auth,deptAuth.pId_auth,deptAuth.deptcode_auth,deptAuth.deptName_auth,deptAuth.adcd_auth,deptAuth.auth_person,deptAuth.auth_time,deptAuth.submitted_to ,deptAuth.deptType_auth,deptAuth.deptHead_auth ");
         sql.append("from sys_dept_auth  deptAuth WHERE deptAuth.id= ? ");
         LinkedMap lm = new LinkedMap();
         lm.put(1, apply_id);
