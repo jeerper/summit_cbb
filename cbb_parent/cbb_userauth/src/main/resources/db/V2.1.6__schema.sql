@@ -1,0 +1,1 @@
+﻿alter table sys_dept_auth add column deptHead_auth varchar(50) CHARACTER SET utf8 COLLATE utf8_bin COMMENT '部门联系人';

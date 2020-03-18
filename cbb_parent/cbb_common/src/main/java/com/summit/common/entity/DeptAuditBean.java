@@ -76,6 +76,13 @@ public class DeptAuditBean implements Serializable {
     @TableField(value = "apply_name")
     private String applyName;
 
+    @ApiModelProperty(value = "部门类型", name = "deptTypeAuth")
+    @TableField(value = "deptType_auth")
+    private String deptTypeAuth;
+
+    @ApiModelProperty(value = "部门联系人", name = "deptHeadAuth")
+    @TableField(value = "deptHead_auth")
+    private String deptHeadAuth;
 
     public DeptAuditBean() {
     }

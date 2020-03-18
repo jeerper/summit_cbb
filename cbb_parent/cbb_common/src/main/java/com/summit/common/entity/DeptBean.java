@@ -31,7 +31,12 @@ public class DeptBean implements Serializable {
     @ApiModelProperty(value = "部门负责人", name = "deptHead", required = true)
     private String deptHead;
 
-    public DeptBean(String id, String pid, String deptCode, String deptName, String adcd, String adnm, String remark, List<DeptBean> children, String pdeptName, String deptHead) {
+    @ApiModelProperty(value = "机构类型(0:内部机构;1:外部机构)", name = "deptType")
+    private String deptType;
+
+
+
+    public DeptBean(String id, String pid, String deptCode, String deptName, String adcd, String adnm, String remark, List<DeptBean> children, String pdeptName, String deptHead, String deptType) {
         super();
         this.id = id;
         this.pid = pid;
@@ -41,13 +46,20 @@ public class DeptBean implements Serializable {
         this.adnm = adnm;
         this.remark = remark;
         this.deptHead = deptHead;
+        this.deptType = deptType;
     }
 
     public DeptBean() {
         super();
     }
 
+    public String getDeptType() {
+        return deptType;
+    }
 
+    public void setDeptType(String deptType) {
+        this.deptType = deptType;
+    }
     public String getDeptHead() {
         return deptHead;
     }
