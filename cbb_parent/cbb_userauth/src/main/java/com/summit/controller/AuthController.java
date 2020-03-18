@@ -7,6 +7,7 @@ import com.summit.common.CommonConstants;
 import com.summit.common.MsgBean;
 import com.summit.common.entity.*;
 import com.summit.common.util.ResultBuilder;
+import com.summit.dao.entity.AuditTyptInfo;
 import com.summit.service.auth.AuthService;
 import com.summit.service.log.LogUtilImpl;
 import com.summit.util.DateUtil;
@@ -19,6 +20,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
@@ -89,11 +92,16 @@ public class AuthController {
 
     @ApiOperation(value = "参数为id数组,isAudited:审核方式(1:批准,2:拒绝)", notes = "根据id审核用户信息")
     @PostMapping(value = "/authByIdBatch")
-    public RestfulEntityBySummit<String> authByIdBatch(@ApiParam(value = "主键id", required = true) @RequestParam(value = "authIds") List<String> authIds,
-                                                       @ApiParam(value = "审核方式(1:批准,2:拒绝)")@RequestParam(value = "isAudited",required = true) String isAudited) {
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = {Exception.class})
+    public RestfulEntityBySummit<String> authByIdBatch(@RequestBody AuditTyptInfo auditTyptInfo) {
         LogBean logBean = new LogBean();
         logBean.setStime(DateUtil.DTFormat("yyyy-MM-dd HH:mm:ss", new Date()));
         try {
+            if(auditTyptInfo == null ){
+                return ResultBuilder.buildError(ResponseCodeEnum.CODE_9993,"门禁id列表为空",null);
+            }
+            List<String> authIds = auditTyptInfo.getAuthIds();
+            String isAudited = auditTyptInfo.getIsAudited();
             int result=authService.authByIdBatch(authIds,isAudited);
             if(result == CommonConstants.UPDATE_ERROR){
                 log.error("审核处理失败");
@@ -104,7 +112,7 @@ public class AuthController {
             logBean.setActionFlag("0");
             return ResultBuilder.buildError(ResponseCodeEnum.CODE_9999, e.getMessage(), null);
         }
-        SummitTools.getLogBean(logBean, "审核管理", "审核用户:" +authIds, "6");
+        //SummitTools.getLogBean(logBean, "审核管理", "审核用户:" +authIds, "6");
         logUtil.insertLog(logBean);
         if ("0".equals(logBean.getActionFlag())) {
             return ResultBuilder.buildError(ResponseCodeEnum.CODE_9999);
