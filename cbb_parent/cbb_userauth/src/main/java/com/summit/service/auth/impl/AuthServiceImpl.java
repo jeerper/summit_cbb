@@ -274,57 +274,56 @@ public class AuthServiceImpl  implements AuthService {
                                 isAudited,
                                 user_json.containsKey("userName_auth") ? user_json.getString("userName_auth") : null
                         );
-                    }
-                    //3、保存行政区划
-                    String adcdSql = " delete from sys_user_adcd where USERNAME  IN ('" + user_json.getString("userName_auth") + "') ";
-                    jdbcTemplate.update(adcdSql);
-                    if (null != user_json && SummitTools.stringNotNull(user_json.getString("adcd_auth"))){
-                        String adcd_auth = user_json.getString("adcd_auth");
-                        String[] adcds = adcd_auth.split(",");
-                        if (adcds != null && adcds.length > 0) {
-                            String insertAdcdSql = "INSERT INTO SYS_USER_ADCD(ID,USERNAME,ADCD,CREATETIME) VALUES ( ?, ?, ?, now())";
-                            List userAdcdParams = new ArrayList();
-                            for (String adcd : adcds) {
-                                Object adcdParam[] = {
-                                        SummitTools.getKey(),
-                                        user_json.getString("userName_auth"),
-                                        adcd,
-                                };
-                                userAdcdParams.add(adcdParam);
+                        //3、保存行政区划
+                        String adcdSql = " delete from sys_user_adcd where USERNAME  IN ('" + user_json.getString("userName_auth") + "') ";
+                        jdbcTemplate.update(adcdSql);
+                        if (null != user_json && SummitTools.stringNotNull(user_json.getString("adcd_auth"))){
+                            String adcd_auth = user_json.getString("adcd_auth");
+                            String[] adcds = adcd_auth.split(",");
+                            if (adcds != null && adcds.length > 0) {
+                                String insertAdcdSql = "INSERT INTO SYS_USER_ADCD(ID,USERNAME,ADCD,CREATETIME) VALUES ( ?, ?, ?, now())";
+                                List userAdcdParams = new ArrayList();
+                                for (String adcd : adcds) {
+                                    Object adcdParam[] = {
+                                            SummitTools.getKey(),
+                                            user_json.getString("userName_auth"),
+                                            adcd,
+                                    };
+                                    userAdcdParams.add(adcdParam);
+                                }
+                                jdbcTemplate.batchUpdate(insertAdcdSql, userAdcdParams);
+
                             }
-                            jdbcTemplate.batchUpdate(insertAdcdSql, userAdcdParams);
+                        }
+                        //4、保存部门表
+                        String deptSql = " delete from SYS_USER_DEPT where USERNAME  IN ('" + user_json.getString("userName_auth") + "') ";
+                        jdbcTemplate.update(deptSql);
+                        if (null != user_json && SummitTools.stringNotNull(user_json.getString("dept_auth"))){
+                            String dept_auth = user_json.getString("dept_auth");
+                            String[] depts = dept_auth.split(",");
+                            if (depts != null && depts.length > 0) {
+                                String insertAdcdSql = "INSERT INTO SYS_USER_DEPT(ID,USERNAME,DEPTID,CREATETIME) VALUES ( ?, ?, ?, now())";
+                                List userdeptParams = new ArrayList();
+                                for (String deptId : depts) {
+                                    Object deptParam[] = {
+                                            SummitTools.getKey(),
+                                            user_json.getString("userName_auth"),
+                                            deptId,
+                                    };
+                                    userdeptParams.add(deptParam);
+                                }
+                                jdbcTemplate.batchUpdate(insertAdcdSql, userdeptParams);
+                            }
 
                         }
-                    }
-                    //4、保存部门表
-                    String deptSql = " delete from SYS_USER_DEPT where USERNAME  IN ('" + user_json.getString("userName_auth") + "') ";
-                    jdbcTemplate.update(deptSql);
-                    if (null != user_json && SummitTools.stringNotNull(user_json.getString("dept_auth"))){
-                        String dept_auth = user_json.getString("dept_auth");
-                        String[] depts = dept_auth.split(",");
-                        if (depts != null && depts.length > 0) {
-                            String insertAdcdSql = "INSERT INTO SYS_USER_DEPT(ID,USERNAME,DEPTID,CREATETIME) VALUES ( ?, ?, ?, now())";
-                            List userdeptParams = new ArrayList();
-                            for (String deptId : depts) {
-                                Object deptParam[] = {
-                                        SummitTools.getKey(),
-                                        user_json.getString("userName_auth"),
-                                        deptId,
-                                };
-                                userdeptParams.add(deptParam);
-                            }
-                            jdbcTemplate.batchUpdate(insertAdcdSql, userdeptParams);
+                        //5、设置redis缓存
+                        UserInfo cacheUserInfo = userInfoCache.getUserInfo( user_json.getString("userName_auth"));
+                        if (cacheUserInfo != null) {
+                            UserInfo userInfo=getUserInfo(user_json);
+                            BeanUtil.copyProperties(userInfo, cacheUserInfo, CopyOptions.create().setIgnoreNullValue(true));
+                            userInfoCache.setUserInfo(userInfo.getUserName(), cacheUserInfo);
                         }
-
                     }
-                    //5、设置redis缓存
-                    UserInfo cacheUserInfo = userInfoCache.getUserInfo( user_json.getString("userName_auth"));
-                    if (cacheUserInfo != null) {
-                        UserInfo userInfo=getUserInfo(user_json);
-                        BeanUtil.copyProperties(userInfo, cacheUserInfo, CopyOptions.create().setIgnoreNullValue(true));
-                        userInfoCache.setUserInfo(userInfo.getUserName(), cacheUserInfo);
-                    }
-
                 }
             }else if ("2".equals(isAudited)){//拒绝
                 if ("0".equals(apply_type)){//机构
@@ -352,20 +351,24 @@ public class AuthServiceImpl  implements AuthService {
 
     private UserInfo getUserInfo(net.sf.json.JSONObject user_json) {
         UserInfo userInfo=new UserInfo();
-        userInfo.setName( user_json.getString("name_auth"));//姓名
-        userInfo.setPhoneNumber( user_json.getString("phone_number_auth"));//电话
-        userInfo.setPost( user_json.getString("post_auth"));//职位
-        String adcd_auth = user_json.getString("adcd_auth");
-        String[] adcds = adcd_auth.split(",");
-        userInfo.setAdcds(adcds);//行政区划
-        userInfo.setUserName(user_json.getString("userName_auth"));//用户名
-        String dept_auth = user_json.getString("dept_auth");
-        String[] depts = dept_auth.split(",");
-        userInfo.setDepts(depts);//部门
-        userInfo.setDuty(user_json.getString("duty_auth"));//岗位
-        userInfo.setEmail(user_json.getString("email_auth"));//邮箱
-        userInfo.setSex(user_json.getString("sex_auth"));//性别
-        userInfo.setHeadPortrait(user_json.getString("headPortrait_auth"));//头像
+        userInfo.setName( user_json.containsKey("name_auth") ? user_json.getString("name_auth") : null);//姓名
+        userInfo.setPhoneNumber(user_json.containsKey("phone_number_auth") ? user_json.getString("phone_number_auth") : null);//电话
+        userInfo.setPost( user_json.containsKey("post_auth") ? user_json.getString("post_auth") : null);//职位
+        if (user_json.containsKey("adcd_auth") && !SummitTools.stringIsNull(user_json.getString("adcd_auth"))){
+            String adcd_auth = user_json.getString("adcd_auth");
+            String[] adcds = adcd_auth.split(",");
+            userInfo.setAdcds(adcds);//行政区划
+        }
+        userInfo.setUserName(user_json.containsKey("userName_auth") ? user_json.getString("userName_auth") : null);//用户名
+        if (user_json.containsKey("dept_auth") && !SummitTools.stringIsNull(user_json.getString("dept_auth"))){
+            String dept_auth = user_json.getString("dept_auth");
+            String[] depts = dept_auth.split(",");
+            userInfo.setDepts(depts);//部门
+        }
+        userInfo.setDuty(user_json.containsKey("duty_auth") ? user_json.getString("duty_auth") : null);//岗位
+        userInfo.setEmail(user_json.containsKey("email_auth") ? user_json.getString("email_auth") : null);//邮箱
+        userInfo.setSex(user_json.containsKey("sex_auth") ? user_json.getString("sex_auth") : null);//性别
+        userInfo.setHeadPortrait( user_json.containsKey("headPortrait_auth") ? user_json.getString("headPortrait_auth") : null);//头像
         if (user_json.containsKey("is_enabled_auth") && !SummitTools.stringIsNull(user_json.getString("is_enabled_auth"))){
             userInfo.setIsEnabled(Integer.parseInt(user_json.getString("is_enabled_auth")));
         }
