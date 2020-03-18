@@ -263,16 +263,16 @@ public class AuthServiceImpl  implements AuthService {
                         sql_user.append(" ,DUTY=?,POST=?,HEADPORTRAIT=?,isAudited=? ");
                         sql_user.append("WHERE USERNAME = ? AND STATE = 1");
                         jdbcTemplate.update(sql_user.toString(),
-                                user_json.getString("name_auth"),
-                                user_json.getString("sex_auth"),
-                                user_json.getString("email_auth"),
-                                user_json.getString("phone_number_auth"),
-                                user_json.getString("is_enabled_auth"),
-                                user_json.getString("duty_auth"),
-                                user_json.getString("post_auth"),
-                                user_json.getString("headPortrait_auth"),
+                                user_json.containsKey("name_auth") ? user_json.getString("name_auth") : null,
+                                user_json.containsKey("sex_auth") ? user_json.getString("sex_auth") : null,
+                                user_json.containsKey("email_auth") ? user_json.getString("email_auth") : null,
+                                user_json.containsKey("phone_number_auth") ? user_json.getString("phone_number_auth") : null,
+                                user_json.containsKey("is_enabled_auth") ? user_json.getString("is_enabled_auth") : null,
+                                user_json.containsKey("duty_auth") ? user_json.getString("duty_auth") : null,
+                                user_json.containsKey("post_auth") ? user_json.getString("post_auth") : null,
+                                user_json.containsKey("headPortrait_auth") ? user_json.getString("headPortrait_auth") : null,
                                 isAudited,
-                                user_json.getString("userName_auth")
+                                user_json.containsKey("userName_auth") ? user_json.getString("userName_auth") : null
                         );
                     }
                     //3、保存行政区划
