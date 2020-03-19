@@ -459,7 +459,7 @@ public class DeptService {
 
     //保存部门记录表
     private boolean insertSysDeptRecord(JSONObject old_dept,String recordId ) {
-        String sql_dept_record="INSERT INTO sys_dept_record(id,pId,deptcode,deptName,adcd,deptHead,deptType,deptId ) VALUES (?,?,?,?,?,?,?) ";
+        String sql_dept_record="INSERT INTO sys_dept_record(id,pId,deptcode,deptName,adcd,deptHead,deptType,deptId ) VALUES (?,?,?,?,?,?,?,?) ";
         try{
             jdbcTemplate.update(sql_dept_record,
                     recordId,

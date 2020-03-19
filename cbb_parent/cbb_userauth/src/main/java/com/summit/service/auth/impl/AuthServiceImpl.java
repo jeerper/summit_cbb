@@ -70,6 +70,7 @@ public class AuthServiceImpl  implements AuthService {
                 linkedMap.put(index, paramJson.get("startTime"));
                 index++;
             }
+            sql_auth.append(" ORDER BY auth.apply_time DESC ");
             list.add(sql_auth.toString());
             list.add(linkedMap);
             Page<Object>  page = ur.queryByCustomPage(list.get(0).toString(), currentPage, pageSize, (LinkedMap) list.get(1));
@@ -114,6 +115,7 @@ public class AuthServiceImpl  implements AuthService {
                 linkedMap.put(index, paramJson.get("startTime"));
                 index++;
             }
+            sql_auth.append(" ORDER BY auth.apply_time DESC ");
             list.add(sql_auth.toString());
             list.add(linkedMap);
             Page<Object>  page = ur.queryByCustomPage(list.get(0).toString(), currentPage, pageSize, (LinkedMap) list.get(1));
