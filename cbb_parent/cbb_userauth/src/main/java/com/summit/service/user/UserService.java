@@ -618,6 +618,7 @@ public class UserService {
 
     @Transactional
     public ResponseCodeEnum editAudit(UserAuditBean userAuditBean, String key) throws Exception {
+
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
         if (userAuditBean.getPasswordAuth() != null && !"".equals(userAuditBean.getPasswordAuth())) {
             //解密

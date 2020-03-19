@@ -146,22 +146,9 @@ public class AuthServiceImpl  implements AuthService {
         map.put("apply_name",auth_json.getString("apply_name"));
         map.put("apply_time",auth_json.getString("apply_time"));
         if ("0".equals(apply_type)){//机构
-            StringBuffer deptAuth_sql=new StringBuffer("select du.id,du.deptId_auth,dept.DEPTNAME as pId_auth,du.deptcode_auth,du.deptName_auth,adcd.ADNM as adcd_auth,du.auth_person,dic.NAME AS deptType_auth,dic1.NAME as isAudited from  ");
-            deptAuth_sql.append("sys_dept_auth du LEFT JOIN sys_dept dept on du.pId_auth=dept.ID LEFT JOIN sys_ad_cd adcd ");
-            deptAuth_sql.append("on du.adcd_auth=adcd.ADCD LEFT JOIN  sys_dictionary dic on dic.PCODE='dept_type' and du.deptType_auth=dic.CKEY ");
-            deptAuth_sql.append("LEFT JOIN  sys_dictionary dic1 on dic1.PCODE='isAudited' and du.isAudited=dic1.CKEY ");
-            deptAuth_sql.append("where du.id=? ");
-            LinkedMap deptAuth_lm = new LinkedMap();
-            deptAuth_lm.put(1, apply_id);
-            net.sf.json.JSONObject new_deptJson = ur.queryOneCustom(deptAuth_sql.toString(), deptAuth_lm);
+            net.sf.json.JSONObject new_deptJson=queryDeptAuthByDeptID(apply_id);
             String old_deptId = new_deptJson.getString("deptId_auth");
-            StringBuffer dept_sql=new StringBuffer("SELECT dept.ID, deptName.DEPTNAME AS PID, dept.DEPTCODE,dept.DEPTNAME,adcd.ADNM as ADCD,dic.NAME as deptType,dept.DEPTHEAD  from sys_dept dept ");
-            dept_sql.append(" LEFT JOIN sys_dept deptName  on dept.PID=deptName.ID  LEFT JOIN sys_ad_cd adcd on dept.ADCD=adcd.ADCD ");
-            dept_sql.append(" LEFT JOIN  sys_dictionary dic on dic.PCODE='dept_type' and dept.deptType=dic.CKEY ");
-            dept_sql.append("where dept.id=? ");
-            LinkedMap dept_lm = new LinkedMap();
-            dept_lm.put(1, old_deptId);
-            net.sf.json.JSONObject old_deptJson = ur.queryOneCustom(dept_sql.toString(), dept_lm);
+            net.sf.json.JSONObject old_deptJson=queryDeptRecordByDeptID(old_deptId);
             List<JSONObject> json=compareToDept(new_deptJson,old_deptJson);
             map.put("updateType","机构基础类型");
             map.put("updateContent",json);
@@ -197,6 +184,31 @@ public class AuthServiceImpl  implements AuthService {
             return map;
         }
         return null;
+    }
+
+    private net.sf.json.JSONObject queryDeptAuthByDeptID(String apply_id) throws Exception {
+        StringBuffer deptAuth_sql=new StringBuffer("select du.id,du.deptId_auth,dept.DEPTNAME as pId_auth,du.deptcode_auth,du.deptName_auth,adcd.ADNM as adcd_auth,du.auth_person,dic.NAME AS deptType_auth,dic1.NAME as isAudited,user.NAME as deptHead_auth from  ");
+        deptAuth_sql.append("sys_dept_auth du LEFT JOIN sys_dept dept on du.pId_auth=dept.ID LEFT JOIN sys_ad_cd adcd ");
+        deptAuth_sql.append("on du.adcd_auth=adcd.ADCD LEFT JOIN  sys_dictionary dic on dic.PCODE='dept_type' and du.deptType_auth=dic.CKEY ");
+        deptAuth_sql.append("LEFT JOIN  sys_dictionary dic1 on dic1.PCODE='isAudited' and du.isAudited=dic1.CKEY ");
+        deptAuth_sql.append("LEFT JOIN sys_user user on user.USERNAME=du.deptHead_auth ");
+        deptAuth_sql.append("where du.id=? ");
+        LinkedMap deptAuth_lm = new LinkedMap();
+        deptAuth_lm.put(1, apply_id);
+        net.sf.json.JSONObject new_deptJson = ur.queryOneCustom(deptAuth_sql.toString(), deptAuth_lm);
+        return new_deptJson;
+    }
+
+    private net.sf.json.JSONObject queryDeptRecordByDeptID(String old_deptId) throws Exception {
+        StringBuffer dept_sql=new StringBuffer("SELECT dr.id, deptName.DEPTNAME AS pid, dr.deptcode,dr.deptName,adcd.ADNM as adcd,dic.NAME as deptType,user.NAME as deptHead  from ");
+        dept_sql.append("sys_dept_record dr LEFT JOIN sys_dept deptName  on dr.pid=deptName.ID ");
+        dept_sql.append("LEFT JOIN sys_ad_cd adcd on dr.adcd=adcd.ADCD ");
+        dept_sql.append("LEFT JOIN  sys_dictionary dic on dic.PCODE='dept_type' and dr.deptType=dic.CKEY ");
+        dept_sql.append("LEFT JOIN sys_user user on user.USERNAME=dr.deptHead where dr.id=? ");
+        LinkedMap dept_lm = new LinkedMap();
+        dept_lm.put(1, old_deptId);
+        net.sf.json.JSONObject old_deptJson = ur.queryOneCustom(dept_sql.toString(), dept_lm);
+        return old_deptJson;
     }
 
     @Override
@@ -570,9 +582,9 @@ public class AuthServiceImpl  implements AuthService {
         List<JSONObject> compares=new ArrayList<>();
         //Integer index=1;
         if (null !=new_deptJson && new_deptJson.containsKey("pId_auth") && !SummitTools.stringIsNull(new_deptJson.getString("pId_auth"))){
-            if (null !=old_deptJson && old_deptJson.containsKey("PID") && !SummitTools.stringIsNull(old_deptJson.getString("PID"))){
+            if (null !=old_deptJson && old_deptJson.containsKey("pid") && !SummitTools.stringIsNull(old_deptJson.getString("pid"))){
                 String pId_auth = new_deptJson.getString("pId_auth");
-                String pid = old_deptJson.getString("PID");
+                String pid = old_deptJson.getString("pid");
                 if (!pId_auth.equals(pid)){
                     JSONObject comapre=new JSONObject();
                     comapre.put("id","上级部门");
@@ -587,9 +599,9 @@ public class AuthServiceImpl  implements AuthService {
 
         }
         if (null !=new_deptJson && new_deptJson.containsKey("deptcode_auth") && !SummitTools.stringIsNull(new_deptJson.getString("deptcode_auth"))){
-            if (null !=old_deptJson && old_deptJson.containsKey("DEPTCODE") && !SummitTools.stringIsNull(old_deptJson.getString("DEPTCODE"))){
+            if (null !=old_deptJson && old_deptJson.containsKey("deptcode") && !SummitTools.stringIsNull(old_deptJson.getString("deptcode"))){
                 String deptcode_auth = new_deptJson.getString("deptcode_auth");
-                String deptcode = old_deptJson.getString("DEPTCODE");
+                String deptcode = old_deptJson.getString("deptcode");
                 if (!deptcode_auth.equals(deptcode)){
                     JSONObject comapre=new JSONObject();
                     comapre.put("id","机构编码");
@@ -604,9 +616,9 @@ public class AuthServiceImpl  implements AuthService {
 
         }
         if (null !=new_deptJson && new_deptJson.containsKey("deptName_auth")&& !SummitTools.stringIsNull(new_deptJson.getString("deptName_auth"))){
-            if (null !=old_deptJson && old_deptJson.containsKey("DEPTNAME") && !SummitTools.stringIsNull(old_deptJson.getString("DEPTNAME"))){
+            if (null !=old_deptJson && old_deptJson.containsKey("deptName") && !SummitTools.stringIsNull(old_deptJson.getString("deptName"))){
                 String deptName_auth = new_deptJson.getString("deptName_auth");
-                String deptname = old_deptJson.getString("DEPTNAME");
+                String deptname = old_deptJson.getString("deptName");
                 if (!deptName_auth.equals(deptname)){
                     JSONObject comapre=new JSONObject();
                     comapre.put("id","机构名称");
@@ -621,9 +633,9 @@ public class AuthServiceImpl  implements AuthService {
 
         }
         if (null !=new_deptJson && new_deptJson.containsKey("adcd_auth")&& !SummitTools.stringIsNull(new_deptJson.getString("adcd_auth"))){
-            if (null !=old_deptJson && old_deptJson.containsKey("ADCD") && !SummitTools.stringIsNull(old_deptJson.getString("ADCD"))){
+            if (null !=old_deptJson && old_deptJson.containsKey("adcd") && !SummitTools.stringIsNull(old_deptJson.getString("adcd"))){
                 String adcd_auth = new_deptJson.getString("adcd_auth");
-                String adcd = old_deptJson.getString("ADCD");
+                String adcd = old_deptJson.getString("adcd");
                 if (!adcd_auth.equals(adcd)){
                     JSONObject comapre=new JSONObject();
                     comapre.put("id","行政区划");
@@ -650,6 +662,24 @@ public class AuthServiceImpl  implements AuthService {
                     map.put("deptType",comapre);*/
                     compares.add(comapre);
                    // index++;
+                }
+            }
+
+        }
+
+        if (null !=new_deptJson && new_deptJson.containsKey("deptHead_auth") && !SummitTools.stringIsNull(new_deptJson.getString("deptHead_auth"))){
+            if (null !=old_deptJson && old_deptJson.containsKey("deptHead") && !SummitTools.stringIsNull(old_deptJson.getString("deptHead"))){
+                String deptHead_auth = new_deptJson.getString("deptHead_auth");
+                String deptHead = old_deptJson.getString("deptHead");
+                if (!deptHead_auth.equals(deptHead)){
+                    JSONObject comapre=new JSONObject();
+                    comapre.put("id","机构联系人");
+                    comapre.put("old",deptHead);
+                    comapre.put("new",deptHead_auth);
+                  /*  Map<String,JSONObject> map=new HashMap<>();
+                    map.put("deptType",comapre);*/
+                    compares.add(comapre);
+                    // index++;
                 }
             }
 

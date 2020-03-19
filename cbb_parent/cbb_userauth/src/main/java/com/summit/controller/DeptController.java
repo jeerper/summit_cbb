@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.List;
 
 import com.summit.common.entity.*;
+import com.summit.util.EditInvalidUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,7 +35,8 @@ public class DeptController {
     private DeptService ds;
     @Autowired
     LogUtilImpl logUtil;
-
+    @Autowired
+    EditInvalidUtil editInvalidUtil;
     /**
      * 查询部门树
      *
@@ -191,7 +193,11 @@ public class DeptController {
         logBean.setStime(DateUtil.DTFormat("yyyy-MM-dd HH:mm:ss", new Date()));
         SummitTools.getLogBean(logBean, "部门审核管理", "修改部门信息:" + JSONObject.fromObject(deptAuditBean).toString(), "2");
         try {
-            logger.debug("编辑部门信息："+deptAuditBean);
+            boolean b=editInvalidUtil.editInvalid(deptAuditBean);
+            if (b){
+                logger.error("无效的编辑");
+                return ResultBuilder.buildSuccess();
+            }
             ResponseCodeEnum c =ds.editAudit(deptAuditBean);
             if (c != null) {
                 return ResultBuilder.buildError(c);
