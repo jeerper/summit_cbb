@@ -21,7 +21,7 @@ CREATE TABLE IF NOT EXISTS `sys_dept_record` (
   `deptcode` varchar(20) DEFAULT NULL COMMENT '部门编号',
   `deptName` varchar(200) DEFAULT NULL COMMENT '部门名称',
   `adcd` varchar(20) DEFAULT NULL COMMENT '行政区划',
-  `deptHead` varchar(50)   NULL COMMENT '部门联系人',
-  `deptType` varchar(10)  DEFDEFAULTAULT NULL COMMENT '机构类型(0:内部机构;1:外部机构)',
+  `deptHead` varchar(50) DEFAULT NULL COMMENT '部门联系人',
+  `deptType` varchar(10) DEFAULT NULL COMMENT '机构类型(0:内部机构;1:外部机构)',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
