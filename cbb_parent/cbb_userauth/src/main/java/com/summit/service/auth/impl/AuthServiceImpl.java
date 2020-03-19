@@ -147,8 +147,8 @@ public class AuthServiceImpl  implements AuthService {
         map.put("apply_time",auth_json.getString("apply_time"));
         if ("0".equals(apply_type)){//机构
             net.sf.json.JSONObject new_deptJson=queryDeptAuthByDeptID(apply_id);
-            String old_deptId = new_deptJson.getString("deptId_auth");
-            net.sf.json.JSONObject old_deptJson=queryDeptRecordByDeptID(old_deptId);
+            String deptRecord_id = new_deptJson.getString("deptRecord_id");
+            net.sf.json.JSONObject old_deptJson=queryDeptRecordByDeptID(deptRecord_id);
             List<JSONObject> json=compareToDept(new_deptJson,old_deptJson);
             map.put("updateType","机构基础类型");
             map.put("updateContent",json);
@@ -187,7 +187,7 @@ public class AuthServiceImpl  implements AuthService {
     }
 
     private net.sf.json.JSONObject queryDeptAuthByDeptID(String apply_id) throws Exception {
-        StringBuffer deptAuth_sql=new StringBuffer("select du.id,du.deptId_auth,dept.DEPTNAME as pId_auth,du.deptcode_auth,du.deptName_auth,adcd.ADNM as adcd_auth,du.auth_person,dic.NAME AS deptType_auth,dic1.NAME as isAudited,user.NAME as deptHead_auth from  ");
+        StringBuffer deptAuth_sql=new StringBuffer("select du.id,du.deptId_auth,dept.DEPTNAME as pId_auth,du.deptcode_auth,du.deptName_auth,adcd.ADNM as adcd_auth,du.auth_person,dic.NAME AS deptType_auth,dic1.NAME as isAudited,user.NAME as deptHead_auth,du.deptRecord_id from  ");
         deptAuth_sql.append("sys_dept_auth du LEFT JOIN sys_dept dept on du.pId_auth=dept.ID LEFT JOIN sys_ad_cd adcd ");
         deptAuth_sql.append("on du.adcd_auth=adcd.ADCD LEFT JOIN  sys_dictionary dic on dic.PCODE='dept_type' and du.deptType_auth=dic.CKEY ");
         deptAuth_sql.append("LEFT JOIN  sys_dictionary dic1 on dic1.PCODE='isAudited' and du.isAudited=dic1.CKEY ");
@@ -199,14 +199,14 @@ public class AuthServiceImpl  implements AuthService {
         return new_deptJson;
     }
 
-    private net.sf.json.JSONObject queryDeptRecordByDeptID(String old_deptId) throws Exception {
-        StringBuffer dept_sql=new StringBuffer("SELECT dr.id, deptName.DEPTNAME AS pid, dr.deptcode,dr.deptName,adcd.ADNM as adcd,dic.NAME as deptType,user.NAME as deptHead  from ");
+    private net.sf.json.JSONObject queryDeptRecordByDeptID(String deptRecord_id) throws Exception {
+        StringBuffer dept_sql=new StringBuffer("SELECT dr.id, deptName.DEPTNAME AS pid, dr.deptcode,dr.deptName,adcd.ADNM as adcd,dic.NAME as deptType,user.NAME as deptHead,dr.deptId from ");
         dept_sql.append("sys_dept_record dr LEFT JOIN sys_dept deptName  on dr.pid=deptName.ID ");
         dept_sql.append("LEFT JOIN sys_ad_cd adcd on dr.adcd=adcd.ADCD ");
         dept_sql.append("LEFT JOIN  sys_dictionary dic on dic.PCODE='dept_type' and dr.deptType=dic.CKEY ");
         dept_sql.append("LEFT JOIN sys_user user on user.USERNAME=dr.deptHead where dr.id=? ");
         LinkedMap dept_lm = new LinkedMap();
-        dept_lm.put(1, old_deptId);
+        dept_lm.put(1, deptRecord_id);
         net.sf.json.JSONObject old_deptJson = ur.queryOneCustom(dept_sql.toString(), dept_lm);
         return old_deptJson;
     }

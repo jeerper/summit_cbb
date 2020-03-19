@@ -367,9 +367,13 @@ public class DeptService {
     @Transactional
     public ResponseCodeEnum editAudit(DeptAuditBean deptAuditBean) throws Exception {
         JSONObject old_dept=queryOldDeptByDeptId(deptAuditBean.getDeptIdAuth());
-        JSONObject old_dept_record= queryDeptRecordByDeptId(deptAuditBean.getDeptIdAuth());
-        if (null ==old_dept_record ){
-            boolean b =insertSysDeptRecord(old_dept);
+        //JSONObject old_dept_record= queryDeptRecordByDeptId(deptAuditBean.getDeptIdAuth());
+        String recordId = IdWorker.getIdStr();
+        boolean b =insertSysDeptRecord(old_dept,recordId);
+        if (!b){
+            return ResponseCodeEnum.CODE_9999;
+        }
+        /*if (null ==old_dept_record ){
             if (!b){
                 return ResponseCodeEnum.CODE_9999;
             }
@@ -378,9 +382,9 @@ public class DeptService {
             if (!b){
                 return ResponseCodeEnum.CODE_9999;
             }
-        }
-        String sql="INSERT INTO sys_dept_auth(id,deptId_auth,pId_auth,deptcode_auth,deptName_auth,adcd_auth,auth_person,isAudited,auth_time,submitted_to,remark,apply_name,deptType_auth,deptHead_auth ) VALUES " +
-                "(?,?,?,?,?,?,?,?,now(),?,?,?,?,?) ";
+        }*/
+        String sql="INSERT INTO sys_dept_auth(id,deptId_auth,pId_auth,deptcode_auth,deptName_auth,adcd_auth,auth_person,isAudited,auth_time,submitted_to,remark,apply_name,deptType_auth,deptHead_auth,deptRecord_id ) VALUES " +
+                "(?,?,?,?,?,?,?,?,now(),?,?,?,?,?,?) ";
         //上级部门
         JSONObject jsonObject=queryBySuperDeptByDeptId(deptAuditBean.getDeptIdAuth());
         String  superDept=null;
@@ -402,7 +406,8 @@ public class DeptService {
                     deptAuditBean.getRemark(),
                     Common.getLogUser().getUserName(),
                     deptAuditBean.getDeptTypeAuth(),
-                    deptAuditBean.getDeptHeadAuth()
+                    deptAuditBean.getDeptHeadAuth(),
+                    recordId
             );
             //修改用户表中的audit字段为发起申请
             StringBuffer sql2=new StringBuffer("UPDATE sys_dept SET isAudited = ? where ID=? ");
@@ -453,17 +458,18 @@ public class DeptService {
     }
 
     //保存部门记录表
-    private boolean insertSysDeptRecord(JSONObject old_dept) {
-        String sql_dept_record="INSERT INTO sys_dept_record(id,pId,deptcode,deptName,adcd,deptHead,deptType ) VALUES (?,?,?,?,?,?,?) ";
+    private boolean insertSysDeptRecord(JSONObject old_dept,String recordId ) {
+        String sql_dept_record="INSERT INTO sys_dept_record(id,pId,deptcode,deptName,adcd,deptHead,deptType,deptId ) VALUES (?,?,?,?,?,?,?) ";
         try{
             jdbcTemplate.update(sql_dept_record,
-                    old_dept.containsKey("ID") ? old_dept.getString("ID") : null,
+                    recordId,
                     old_dept.containsKey("PID") ? old_dept.getString("PID") : null,
                     old_dept.containsKey("DEPTCODE") ? old_dept.getString("DEPTCODE") : null,
                     old_dept.containsKey("DEPTNAME") ? old_dept.getString("DEPTNAME") : null,
                     old_dept.containsKey("ADCD") ? old_dept.getString("ADCD") : null,
                     old_dept.containsKey("DEPTHEAD") ? old_dept.getString("DEPTHEAD") : null,
-                    old_dept.containsKey("deptType") ? old_dept.getString("deptType") : null
+                    old_dept.containsKey("deptType") ? old_dept.getString("deptType") : null,
+                    old_dept.containsKey("ID") ? old_dept.getString("ID") : null
             );
 
         }catch (Exception e){
