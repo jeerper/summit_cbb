@@ -21,15 +21,34 @@ public class EditInvalidUtil {
      */
     public  boolean editInvalid(DeptAuditBean deptAuditBean) throws Exception {
 
-        StringBuffer sql=new StringBuffer("select * from sys_dept dept where dept.DEPTCODE=? and dept.DEPTNAME=? and dept.DEPTHEAD=? and dept.deptType=? ");
+        StringBuffer sql=new StringBuffer("select * from sys_dept dept where 1=1  ");
         LinkedMap lm=new LinkedMap();
-        lm.put(1,deptAuditBean.getDeptcodeAuth());
-        lm.put(2,deptAuditBean.getDeptNameAuth());
-        lm.put(3,deptAuditBean.getDeptHeadAuth());
-        lm.put(4,deptAuditBean.getDeptTypeAuth());
+        Integer index =1;
+        if(!SummitTools.stringIsNull(deptAuditBean.getDeptcodeAuth())){
+            sql.append(" and dept.DEPTCODE=? ");
+            lm.put(index,deptAuditBean.getDeptcodeAuth());
+            index ++;
+        }
+
+        if(!SummitTools.stringIsNull(deptAuditBean.getDeptNameAuth())){
+            sql.append(" and dept.DEPTNAME=? ");
+            lm.put(index,deptAuditBean.getDeptNameAuth());
+            index ++;
+        }
         if(!SummitTools.stringIsNull(deptAuditBean.getPIdAuth())){
             sql.append(" and dept.PID=? ");
-            lm.put(5,deptAuditBean.getPIdAuth());
+            lm.put(index,deptAuditBean.getPIdAuth());
+            index ++;
+        }
+        if(!SummitTools.stringIsNull(deptAuditBean.getDeptHeadAuth())){
+            sql.append(" and dept.DEPTHEAD=? ");
+            lm.put(index,deptAuditBean.getDeptHeadAuth());
+            index ++;
+        }
+        if(!SummitTools.stringIsNull(deptAuditBean.getDeptTypeAuth())){
+            sql.append(" and dept.deptType=? ");
+            lm.put(index,deptAuditBean.getDeptTypeAuth());
+            index ++;
         }
         JSONObject jsonObject = ur.queryOneCustom(sql.toString(), lm);
         if (null !=jsonObject){
