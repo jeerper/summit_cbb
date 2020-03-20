@@ -193,7 +193,7 @@ public class DeptController {
         logBean.setStime(DateUtil.DTFormat("yyyy-MM-dd HH:mm:ss", new Date()));
         SummitTools.getLogBean(logBean, "部门审核管理", "修改部门信息:" + JSONObject.fromObject(deptAuditBean).toString(), "2");
         try {
-            boolean b=editInvalidUtil.editInvalid(deptAuditBean);
+            boolean b=editInvalidUtil.editDeptInvalid(deptAuditBean);
             if (b){
                 logger.error("无效的编辑");
                 return ResultBuilder.buildSuccess();

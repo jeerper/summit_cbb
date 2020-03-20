@@ -17,6 +17,7 @@ import com.summit.repository.UserRepository;
 import com.summit.service.auth.AuthService;
 import com.summit.service.dept.DeptsService;
 import com.summit.util.SummitTools;
+import net.logstash.logback.encoder.org.apache.commons.lang.StringUtils;
 import org.apache.commons.collections.map.LinkedMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -158,28 +159,9 @@ public class AuthServiceImpl  implements AuthService {
             return map;
         }else if ("1".equals(apply_type)){//用户基础信息
             map.put("updateType","人员基础类型");
-            StringBuffer userAuth_sql=new StringBuffer("SELECT usa.id,usa.userName_auth,usa.name_auth,dic.NAME as sex_auth,usa.password_auth,usa.email_auth,usa.phone_number_auth,dic2.NAME as is_enabled_auth,usa.headPortrait_auth,usa.duty_auth,dept.DEPTNAME AS dept_auth,adcd.ADNM as adcd_auth,usa.post_auth,dic3.NAME as isAudited ");
-            userAuth_sql.append("from sys_user_auth usa LEFT JOIN  sys_dictionary dic on dic.PCODE='sex' and usa.sex_auth=dic.CKEY ");
-            userAuth_sql.append("LEFT JOIN sys_dictionary  dic2 on dic2.PCODE='isEnabled' and usa.is_enabled_auth=dic2.CKEY ");
-            userAuth_sql.append("LEFT JOIN sys_dictionary  dic3 on dic3.PCODE='isAudited' and usa.isAudited=dic3.CKEY ");
-            userAuth_sql.append("LEFT JOIN sys_dept dept on usa.dept_auth=dept.ID ");
-            userAuth_sql.append("LEFT JOIN sys_ad_cd adcd on usa.adcd_auth=adcd.ADCD ");
-            userAuth_sql.append(" where usa.id=? ");
-            LinkedMap userAuth_lm = new LinkedMap();
-            userAuth_lm.put(1,apply_id);
-            net.sf.json.JSONObject new_userJson = ur.queryOneCustom(userAuth_sql.toString(), userAuth_lm);
-            String userName_auth = new_userJson.getString("userName_auth");
-            StringBuffer user_sql=new StringBuffer("SELECT user.USERNAME,user.name,dic.NAME as SEX,user.EMAIL,user.PHONE_NUMBER,dic2.name AS IS_ENABLED,user.DUTY,user.POST,dept2.names as DEPTNAME,adcd2.names as ADNM,user.HEADPORTRAIT ");
-            user_sql.append("from sys_user user LEFT JOIN sys_dictionary dic on dic.PCODE='sex' and user.SEX=dic.CKEY ");
-            user_sql.append("LEFT JOIN sys_dictionary  dic2 on dic2.PCODE='isEnabled' and user.IS_ENABLED=dic2.CKEY ");
-            user_sql.append("LEFT JOIN (SELECT USERNAME,GROUP_CONCAT(userDept.DEPTID)AS deptIds, GROUP_CONCAT(dept.DEPTNAME)AS names  FROM sys_user_dept userDept ");
-            user_sql.append("inner join sys_dept dept on userDept.DEPTID=dept.ID  GROUP BY USERNAME  )dept2 on user.USERNAME=dept2.USERNAME ");
-            user_sql.append("LEFT JOIN (SELECT USERNAME,GROUP_CONCAT(userAdcd.ADCD)AS adcds, GROUP_CONCAT(adcd.ADNM)AS names  FROM sys_user_adcd userAdcd  ");
-            user_sql.append("inner join sys_ad_cd adcd on userAdcd.ADCD=adcd.ADCD  GROUP BY USERNAME)adcd2 on user.USERNAME=adcd2.USERNAME ");
-            user_sql.append("WHERE user.USERNAME=? ");
-            LinkedMap user_lm = new LinkedMap();
-            user_lm.put(1, userName_auth);
-            net.sf.json.JSONObject old_userJson = ur.queryOneCustom(user_sql.toString(), user_lm);
+            net.sf.json.JSONObject new_userJson =queryUserAuthById(apply_id);
+            String userRecord_id = new_userJson.getString("userRecord_id");
+            net.sf.json.JSONObject old_userJson =queryUserRecordById(userRecord_id);
             List<JSONObject> json=compareToUser(new_userJson,old_userJson);
             map.put("updateContent",json);
             map.put("isAudited",new_userJson.getString("isAudited"));
@@ -187,6 +169,110 @@ public class AuthServiceImpl  implements AuthService {
         }
         return null;
     }
+
+    private net.sf.json.JSONObject queryUserRecordById(String userRecord_id) throws Exception {
+        /*StringBuffer user_sql=new StringBuffer("SELECT user.USERNAME,user.name,dic.NAME as SEX,user.EMAIL,user.PHONE_NUMBER,dic2.name AS IS_ENABLED,user.DUTY,user.POST,dept2.names as DEPTNAME,adcd2.names as ADNM,user.HEADPORTRAIT ");
+        user_sql.append("from sys_user user LEFT JOIN sys_dictionary dic on dic.PCODE='sex' and user.SEX=dic.CKEY ");
+        user_sql.append("LEFT JOIN sys_dictionary  dic2 on dic2.PCODE='isEnabled' and user.IS_ENABLED=dic2.CKEY ");
+        user_sql.append("LEFT JOIN (SELECT USERNAME,GROUP_CONCAT(userDept.DEPTID)AS deptIds, GROUP_CONCAT(dept.DEPTNAME)AS names  FROM sys_user_dept userDept ");
+        user_sql.append("inner join sys_dept dept on userDept.DEPTID=dept.ID  GROUP BY USERNAME  )dept2 on user.USERNAME=dept2.USERNAME ");
+        user_sql.append("LEFT JOIN (SELECT USERNAME,GROUP_CONCAT(userAdcd.ADCD)AS adcds, GROUP_CONCAT(adcd.ADNM)AS names  FROM sys_user_adcd userAdcd  ");
+        user_sql.append("inner join sys_ad_cd adcd on userAdcd.ADCD=adcd.ADCD  GROUP BY USERNAME)adcd2 on user.USERNAME=adcd2.USERNAME ");
+        user_sql.append("WHERE user.USERNAME=? ");*/
+        StringBuffer userRecord_sql=new StringBuffer("SELECT ur.id,ur.username,ur.name,dic.NAME as sex,ur.password,ur.email,ur.phoneNumber,dic2.name AS is_enable,ur.duty,ur.post,ur.dept,ur.adcd,ur.headPortrait ");
+        userRecord_sql.append("from sys_user_record ur LEFT JOIN sys_dictionary dic on dic.PCODE='sex' and ur.sex=dic.CKEY ");
+        userRecord_sql.append("LEFT JOIN sys_dictionary  dic2 on dic2.PCODE='isEnabled' and ur.is_enable=dic2.CKEY  WHERE ur.id=? ");
+        LinkedMap userRecord_lm = new LinkedMap();
+        userRecord_lm.put(1, userRecord_id);
+        net.sf.json.JSONObject old_userJson = ur.queryOneCustom(userRecord_sql.toString(), userRecord_lm);
+        if (null !=old_userJson && old_userJson.containsKey("dept") && !SummitTools.stringIsNull(old_userJson.getString("dept"))){
+            String dept = old_userJson.getString("dept");
+            String[] depts = dept.split(",");
+            List<String> json = new ArrayList<>();
+            for (int i = 0; i < depts.length; i++) {
+                StringBuffer stringBuffer=new StringBuffer("SELECT dept.ID,dept.DEPTNAME FROM sys_dept dept WHERE dept.ID=? ");
+                LinkedMap lm = new LinkedMap();
+                lm.put(1, depts[i]);
+                net.sf.json.JSONObject deptName_json  = ur.queryOneCustom(stringBuffer.toString(), lm);
+                if (null !=deptName_json){
+                    String deptName = deptName_json.getString("DEPTNAME");
+                    json.add(deptName);
+                }
+            }
+            String str = StringUtils.join(json, ",");
+            old_userJson.put("dept",str);
+
+        }
+        if (null !=old_userJson && old_userJson.containsKey("adcd") && !SummitTools.stringIsNull(old_userJson.getString("adcd"))){
+            String adcd = old_userJson.getString("adcd");
+            String[] adcds = adcd.split(",");
+            List<String> json = new ArrayList<>();
+            for (int i = 0; i < adcds.length; i++) {
+                StringBuffer stringBuffer=new StringBuffer("SELECT adcd.ADCD,adcd.ADNM from sys_ad_cd adcd WHERE adcd.ADCD=? ");
+                LinkedMap lm = new LinkedMap();
+                lm.put(1, adcds[i]);
+                net.sf.json.JSONObject adcd_json  = ur.queryOneCustom(stringBuffer.toString(), lm);
+                if (null !=adcd_json){
+                    String adnm = adcd_json.getString("ADNM");
+                    json.add(adnm);
+                }
+            }
+            String str = StringUtils.join(json, ",");
+            old_userJson.put("adcd",str);
+        }
+        return old_userJson;
+    }
+
+    private net.sf.json.JSONObject queryUserAuthById(String apply_id) throws Exception {
+        StringBuffer userAuth_sql=new StringBuffer("SELECT usa.id,usa.userName_auth,usa.name_auth,dic.NAME as sex_auth,usa.password_auth,usa.email_auth,usa.phone_number_auth,dic2.NAME as is_enabled_auth,usa.headPortrait_auth,usa.duty_auth,usa.dept_auth,usa.adcd_auth,usa.post_auth,dic3.NAME as isAudited,usa.userRecord_id ");
+        userAuth_sql.append("from sys_user_auth usa LEFT JOIN  sys_dictionary dic on dic.PCODE='sex' and usa.sex_auth=dic.CKEY ");
+        userAuth_sql.append("LEFT JOIN sys_dictionary  dic2 on dic2.PCODE='isEnabled' and usa.is_enabled_auth=dic2.CKEY ");
+        userAuth_sql.append("LEFT JOIN sys_dictionary  dic3 on dic3.PCODE='isAudited' and usa.isAudited=dic3.CKEY ");
+        userAuth_sql.append(" where usa.id=? ");
+        LinkedMap userAuth_lm = new LinkedMap();
+        userAuth_lm.put(1,apply_id);
+        net.sf.json.JSONObject new_userJson = ur.queryOneCustom(userAuth_sql.toString(), userAuth_lm);
+        if (null !=new_userJson && new_userJson.containsKey("dept_auth") && !SummitTools.stringIsNull(new_userJson.getString("dept_auth"))){
+            String dept_auth = new_userJson.getString("dept_auth");
+            String[] dept_auths = dept_auth.split(",");
+            List<String> json = new ArrayList<>();
+            for (int i = 0; i < dept_auths.length; i++) {
+                StringBuffer stringBuffer=new StringBuffer("SELECT dept.ID,dept.DEPTNAME FROM sys_dept dept WHERE dept.ID=? ");
+                LinkedMap lm = new LinkedMap();
+                lm.put(1, dept_auths[i]);
+                net.sf.json.JSONObject deptName_json  = ur.queryOneCustom(stringBuffer.toString(), lm);
+                if (null !=deptName_json){
+                    String deptName = deptName_json.getString("DEPTNAME");
+                    json.add(deptName);
+                }
+            }
+            String str = StringUtils.join(json, ",");
+            new_userJson.put("dept_auth",str);
+
+        }
+        if (null !=new_userJson && new_userJson.containsKey("adcd_auth") && !SummitTools.stringIsNull(new_userJson.getString("adcd_auth"))){
+            String adcd_auth = new_userJson.getString("adcd_auth");
+            String[] adcd_auths = adcd_auth.split(",");
+            List<String> json = new ArrayList<>();
+            for (int i = 0; i < adcd_auths.length; i++) {
+                StringBuffer stringBuffer=new StringBuffer("SELECT adcd.ADCD,adcd.ADNM from sys_ad_cd adcd WHERE adcd.ADCD=? ");
+                LinkedMap lm = new LinkedMap();
+                lm.put(1, adcd_auths[i]);
+                net.sf.json.JSONObject adcd_json  = ur.queryOneCustom(stringBuffer.toString(), lm);
+                if (null !=adcd_json){
+                    String adnm = adcd_json.getString("ADNM");
+                    json.add(adnm);
+                }
+            }
+            String str = StringUtils.join(json, ",");
+            new_userJson.put("adcd_auth",str);
+        }
+
+        return new_userJson;
+    }
+
+
+
 
     private net.sf.json.JSONObject queryDeptAuthByDeptID(String apply_id) throws Exception {
         StringBuffer deptAuth_sql=new StringBuffer("select du.id,du.deptId_auth,dept.DEPTNAME as pId_auth,du.deptcode_auth,du.deptName_auth,adcd.ADNM as adcd_auth,du.auth_person,dic.NAME AS deptType_auth,dic1.NAME as isAudited,user.NAME as deptHead_auth,du.deptRecord_id from  ");
@@ -431,9 +517,9 @@ public class AuthServiceImpl  implements AuthService {
             }
         }
         if (null !=new_userJson && new_userJson.containsKey("sex_auth") && !SummitTools.stringIsNull(new_userJson.getString("sex_auth"))){
-            if (null !=old_userJson && old_userJson.containsKey("SEX") && !SummitTools.stringIsNull(old_userJson.getString("SEX"))){
+            if (null !=old_userJson && old_userJson.containsKey("sex") && !SummitTools.stringIsNull(old_userJson.getString("sex"))){
                 String sex_auth = new_userJson.getString("sex_auth");
-                String sex = old_userJson.getString("SEX");
+                String sex = old_userJson.getString("sex");
                 if (!sex_auth.equals(sex)){
                     JSONObject comapre=new JSONObject();
                     comapre.put("id","性别");
@@ -447,9 +533,9 @@ public class AuthServiceImpl  implements AuthService {
             }
         }
         if (null !=new_userJson && new_userJson.containsKey("email_auth") && !SummitTools.stringIsNull(new_userJson.getString("email_auth"))){
-            if (null !=old_userJson && old_userJson.containsKey("EMAIL") && !SummitTools.stringIsNull(old_userJson.getString("EMAIL"))){
+            if (null !=old_userJson && old_userJson.containsKey("email") && !SummitTools.stringIsNull(old_userJson.getString("email"))){
                 String email_auth = new_userJson.getString("email_auth");
-                String email = old_userJson.getString("EMAIL");
+                String email = old_userJson.getString("email");
                 if (!email_auth.equals(email)){
                     JSONObject comapre=new JSONObject();
                     comapre.put("id","邮箱");
@@ -463,9 +549,9 @@ public class AuthServiceImpl  implements AuthService {
             }
         }
         if (null !=new_userJson && new_userJson.containsKey("phone_number_auth") && !SummitTools.stringIsNull(new_userJson.getString("phone_number_auth"))){
-            if (null !=old_userJson && old_userJson.containsKey("PHONE_NUMBER") && !SummitTools.stringIsNull(old_userJson.getString("PHONE_NUMBER"))){
+            if (null !=old_userJson && old_userJson.containsKey("phoneNumber") && !SummitTools.stringIsNull(old_userJson.getString("phoneNumber"))){
                 String phone_number_auth = new_userJson.getString("phone_number_auth");
-                String phone_number = old_userJson.getString("PHONE_NUMBER");
+                String phone_number = old_userJson.getString("phoneNumber");
                 if (!phone_number_auth.equals(phone_number)){
                     JSONObject comapre=new JSONObject();
                     comapre.put("id","电话号码");
@@ -480,9 +566,9 @@ public class AuthServiceImpl  implements AuthService {
         }
 
         if (null !=new_userJson && new_userJson.containsKey("is_enabled_auth") && !SummitTools.stringIsNull(new_userJson.getString("is_enabled_auth"))){
-            if (null !=old_userJson && old_userJson.containsKey("IS_ENABLED") && !SummitTools.stringIsNull(old_userJson.getString("IS_ENABLED"))){
+            if (null !=old_userJson && old_userJson.containsKey("is_enable") && !SummitTools.stringIsNull(old_userJson.getString("is_enable"))){
                 String is_enabled_auth = new_userJson.getString("is_enabled_auth");
-                String is_enabled = old_userJson.getString("IS_ENABLED");
+                String is_enabled = old_userJson.getString("is_enable");
                 if (!is_enabled_auth.equals(is_enabled)){
                     JSONObject comapre=new JSONObject();
                     comapre.put("id","是否启动");
@@ -497,9 +583,9 @@ public class AuthServiceImpl  implements AuthService {
         }
 
         if (null !=new_userJson && new_userJson.containsKey("duty_auth") && !SummitTools.stringIsNull(new_userJson.getString("duty_auth"))){
-            if (null !=old_userJson && old_userJson.containsKey("DUTY") && !SummitTools.stringIsNull(old_userJson.getString("DUTY"))){
+            if (null !=old_userJson && old_userJson.containsKey("duty") && !SummitTools.stringIsNull(old_userJson.getString("duty"))){
                 String duty_auth = new_userJson.getString("duty_auth");
-                String duty = old_userJson.getString("DUTY");
+                String duty = old_userJson.getString("duty");
                 if (!duty_auth.equals(duty)){
                     JSONObject comapre=new JSONObject();
                     comapre.put("id","岗位");
@@ -513,9 +599,9 @@ public class AuthServiceImpl  implements AuthService {
         }
 
         if (null !=new_userJson && new_userJson.containsKey("post_auth") && !SummitTools.stringIsNull(new_userJson.getString("post_auth"))){
-            if (null !=old_userJson && old_userJson.containsKey("POST") && !SummitTools.stringIsNull(old_userJson.getString("POST"))){
+            if (null !=old_userJson && old_userJson.containsKey("post") && !SummitTools.stringIsNull(old_userJson.getString("post"))){
                 String post_auth = new_userJson.getString("post_auth");
-                String post = old_userJson.getString("POST");
+                String post = old_userJson.getString("post");
                 if (!post_auth.equals(post)){
                     JSONObject comapre=new JSONObject();
                     comapre.put("id","职位");
@@ -529,9 +615,9 @@ public class AuthServiceImpl  implements AuthService {
         }
 
         if (null !=new_userJson && new_userJson.containsKey("dept_auth") && !SummitTools.stringIsNull(new_userJson.getString("dept_auth"))){
-            if (null !=old_userJson && old_userJson.containsKey("DEPTNAME") && !SummitTools.stringIsNull(old_userJson.getString("DEPTNAME"))){
+            if (null !=old_userJson && old_userJson.containsKey("dept") && !SummitTools.stringIsNull(old_userJson.getString("dept"))){
                 String dept_auth = new_userJson.getString("dept_auth");
-                String deptname = old_userJson.getString("DEPTNAME");
+                String deptname = old_userJson.getString("dept");
                 if (!dept_auth.equals(deptname)){
                     JSONObject comapre=new JSONObject();
                     comapre.put("id","部门");
@@ -545,9 +631,9 @@ public class AuthServiceImpl  implements AuthService {
         }
 
         if (null !=new_userJson && new_userJson.containsKey("adcd_auth") && !SummitTools.stringIsNull(new_userJson.getString("adcd_auth"))){
-            if (null !=old_userJson && old_userJson.containsKey("ADNM") && !SummitTools.stringIsNull(old_userJson.getString("ADNM"))){
+            if (null !=old_userJson && old_userJson.containsKey("adcd") && !SummitTools.stringIsNull(old_userJson.getString("adcd"))){
                 String adcd_auth = new_userJson.getString("adcd_auth");
-                String adnm = old_userJson.getString("ADNM");
+                String adnm = old_userJson.getString("adcd");
                 if (!adcd_auth.equals(adnm)){
                     JSONObject comapre=new JSONObject();
                     comapre.put("id","行政区划");
@@ -561,9 +647,9 @@ public class AuthServiceImpl  implements AuthService {
         }
 
         if (null !=new_userJson && new_userJson.containsKey("headPortrait_auth") && !SummitTools.stringIsNull(new_userJson.getString("headPortrait_auth"))){
-            if (null !=old_userJson && old_userJson.containsKey("HEADPORTRAIT") && !SummitTools.stringIsNull(old_userJson.getString("HEADPORTRAIT"))){
+            if (null !=old_userJson && old_userJson.containsKey("headPortrait") && !SummitTools.stringIsNull(old_userJson.getString("headPortrait"))){
                 String headPortrait_auth = new_userJson.getString("headPortrait_auth");
-                String headportrait = old_userJson.getString("HEADPORTRAIT");
+                String headportrait = old_userJson.getString("headPortrait");
                 if (!headPortrait_auth.equals(headportrait)){
                     JSONObject comapre=new JSONObject();
                     comapre.put("id","头像");

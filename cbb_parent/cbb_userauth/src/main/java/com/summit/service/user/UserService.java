@@ -618,7 +618,6 @@ public class UserService {
 
     @Transactional
     public ResponseCodeEnum editAudit(UserAuditBean userAuditBean, String key) throws Exception {
-
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
         if (userAuditBean.getPasswordAuth() != null && !"".equals(userAuditBean.getPasswordAuth())) {
             //解密
@@ -628,7 +627,12 @@ public class UserService {
                 return ResponseCodeEnum.CODE_4014;
             }
         }
-        //处理行政区划
+        JSONObject old_user=queryOldUserByUserName(userAuditBean.getUserNameAuth());
+        String recordId = IdWorker.getIdStr();
+        boolean b =insertSysUserRecord(old_user,recordId);
+        if (!b){
+            return ResponseCodeEnum.CODE_9999;
+        }
         StringBuilder sbAdcd = new StringBuilder();
         String[] adcdAuths = userAuditBean.getAdcdAuth();
         if (adcdAuths !=null && adcdAuths.length>0){
@@ -656,8 +660,8 @@ public class UserService {
             }
         }
         String deptAuth = sbDept.toString();
-        String sql="INSERT INTO sys_user_auth (id,userName_auth,name_auth,sex_auth,password_auth,email_auth,phone_number_auth,is_enabled_auth,headPortrait_auth,duty_auth,dept_auth,adcd_auth,post_auth,auth_person,isAudited,auth_time,submitted_to,remark,apply_name) VALUES " +
-                "(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,now(),?,?,?)";
+        String sql="INSERT INTO sys_user_auth (id,userName_auth,name_auth,sex_auth,password_auth,email_auth,phone_number_auth,is_enabled_auth,headPortrait_auth,duty_auth,dept_auth,adcd_auth,post_auth,auth_person,isAudited,auth_time,submitted_to,remark,apply_name,userRecord_id) VALUES " +
+                "(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,now(),?,?,?,?)";
         //查找原来头像
         UserInfo userInfo = queryByUserName(userAuditBean.getUserNameAuth());
         //上级部门
@@ -687,7 +691,8 @@ public class UserService {
                         "0",
                         superDept,
                         userAuditBean.getRemark(),
-                        userAuditBean.getUserNameAuth()
+                        userAuditBean.getUserNameAuth(),
+                        recordId
                 );
             }else {
                 jdbcTemplate.update(sql,
@@ -735,6 +740,45 @@ public class UserService {
         }
         return null;
 
+    }
+
+    private boolean insertSysUserRecord(JSONObject old_user, String recordId) {
+        String sql_user_record="INSERT INTO sys_user_record(username,name,sex,password,email,phoneNumber,is_enable,headPortrait,duty,post,dept,adcd,id ) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?) ";
+        try{
+            jdbcTemplate.update(sql_user_record,
+                    old_user.containsKey("USERNAME") ? old_user.getString("USERNAME") : null,
+                    old_user.containsKey("NAME") ? old_user.getString("NAME") : null,
+                    old_user.containsKey("SEX") ? old_user.getString("SEX") : null,
+                    old_user.containsKey("PASSWORD") ? old_user.getString("PASSWORD") : null,
+                    old_user.containsKey("EMAIL") ? old_user.getString("EMAIL") : null,
+                    old_user.containsKey("PHONE_NUMBER") ? old_user.getString("PHONE_NUMBER") : null,
+                    old_user.containsKey("IS_ENABLED") ? old_user.getString("IS_ENABLED") : null,
+                    old_user.containsKey("HEADPORTRAIT") ? old_user.getString("HEADPORTRAIT") : null,
+                    old_user.containsKey("DUTY") ? old_user.getString("DUTY") : null,
+                    old_user.containsKey("POST") ? old_user.getString("POST") : null,
+                    old_user.containsKey("deptIds") ? old_user.getString("deptIds") : null,
+                    old_user.containsKey("adcds") ? old_user.getString("adcds") : null,
+                    recordId
+
+            );
+        }catch (Exception e){
+            logger.error("保存用户记录表失败:", e);
+            return false;
+        }
+        return true;
+    }
+
+    private JSONObject queryOldUserByUserName(String userNameAuth) throws Exception {
+        StringBuffer user_sql=new StringBuffer("SELECT user.USERNAME,user.NAME,user.SEX,user.PASSWORD,user.EMAIL,user.PHONE_NUMBER,user.IS_ENABLED,user.DUTY,user.POST,user.HEADPORTRAIT,userdept2.deptIds,userAdcd1.adcds  from sys_user user ");
+        user_sql.append("LEFT JOIN (SELECT userdept.username,GROUP_CONCAT(userdept.deptid)AS deptIds,GROUP_CONCAT(dept.deptname)AS deptNames FROM sys_user_dept userdept ");
+        user_sql.append("inner join sys_dept dept on userdept.deptid=dept.id GROUP BY username)userdept2 on user.USERNAME=userdept2.username ");
+        user_sql.append("LEFT JOIN(SELECT USERNAME,GROUP_CONCAT(userAdcd.ADCD)AS adcds, GROUP_CONCAT(adcd.ADNM)AS names  FROM sys_user_adcd userAdcd  inner join sys_ad_cd ");
+        user_sql.append("adcd on userAdcd.ADCD=adcd.ADCD  GROUP BY USERNAME)userAdcd1 on user.USERNAME=userAdcd1.USERNAME ");
+        user_sql.append("WHERE user.USERNAME= ? ");
+        LinkedMap lm=new LinkedMap();
+        lm.put(1,userNameAuth);
+        JSONObject jsonObject = ur.queryOneCustom(user_sql.toString(), lm);
+        return jsonObject;
     }
 
     private JSONObject queryBySuperDeptByUserName(String userNameAuth) throws Exception {

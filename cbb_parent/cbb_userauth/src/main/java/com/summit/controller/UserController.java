@@ -16,10 +16,7 @@ import com.summit.common.util.ResultBuilder;
 import com.summit.common.web.filter.UserContextHolder;
 import com.summit.service.log.LogUtilImpl;
 import com.summit.service.user.UserService;
-import com.summit.util.DateUtil;
-import com.summit.util.PermissionUtil;
-import com.summit.util.SummitTools;
-import com.summit.util.SysConstants;
+import com.summit.util.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -67,6 +64,10 @@ public class UserController {
     private UserService us;
     @Value("${password.encode.key}")
     private String key;
+
+    @Autowired
+    EditInvalidUtil editInvalidUtil;
+
 
     @PostMapping("/add")
     @ApiOperation(value = "新增用户,可以上传base64格式的头像", notes = "昵称(name)，用户名(userName),密码(password)都是必输项")
@@ -309,6 +310,11 @@ public class UserController {
         try{
             if (!permissionUtil.checkLoginUserAccessPermissionToOtherUser(userAuditBean.getUserNameAuth())) {
                 return ResultBuilder.buildError(ResponseCodeEnum.CODE_4012);
+            }
+            boolean b=editInvalidUtil.editUserInvalid(userAuditBean);
+            if (b){
+                logger.error("无效的编辑");
+                return ResultBuilder.buildSuccess();
             }
             String base64Str = userAuditBean.getHeadPortraitAuth();
             if (SummitTools.stringNotNull(base64Str)) {
