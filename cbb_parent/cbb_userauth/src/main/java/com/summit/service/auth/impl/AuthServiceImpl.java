@@ -143,30 +143,33 @@ public class AuthServiceImpl  implements AuthService {
         LinkedMap lm = new LinkedMap();
         lm.put(1, id);
         net.sf.json.JSONObject auth_json = ur.queryOneCustom(auth_sql.toString(), lm);
-        String apply_type = auth_json.getString("apply_type");
-        String apply_id = auth_json.getString("apply_Id");
-        Map<String,Object> map =new HashMap<>();
-        map.put("apply_name",auth_json.getString("apply_name"));
-        map.put("apply_time",auth_json.getString("apply_time"));
-        if ("0".equals(apply_type)){//机构
-            net.sf.json.JSONObject new_deptJson=queryDeptAuthByDeptID(apply_id);
-            String deptRecord_id = new_deptJson.getString("deptRecord_id");
-            net.sf.json.JSONObject old_deptJson=queryDeptRecordByDeptID(deptRecord_id);
-            List<JSONObject> json=compareToDept(new_deptJson,old_deptJson);
-            map.put("updateType","机构基础类型");
-            map.put("updateContent",json);
-            map.put("isAudited",new_deptJson.getString("isAudited"));
-            return map;
-        }else if ("1".equals(apply_type)){//用户基础信息
-            map.put("updateType","人员基础类型");
-            net.sf.json.JSONObject new_userJson =queryUserAuthById(apply_id);
-            String userRecord_id = new_userJson.getString("userRecord_id");
-            net.sf.json.JSONObject old_userJson =queryUserRecordById(userRecord_id);
-            List<JSONObject> json=compareToUser(new_userJson,old_userJson);
-            map.put("updateContent",json);
-            map.put("isAudited",new_userJson.getString("isAudited"));
-            return map;
+        if (null !=auth_json){
+            String apply_type = auth_json.getString("apply_type");
+            String apply_id = auth_json.getString("apply_Id");
+            Map<String,Object> map =new HashMap<>();
+            map.put("apply_name",auth_json.getString("apply_name"));
+            map.put("apply_time",auth_json.getString("apply_time"));
+            if ("0".equals(apply_type)){//机构
+                net.sf.json.JSONObject new_deptJson=queryDeptAuthByDeptID(apply_id);
+                String deptRecord_id = new_deptJson.getString("deptRecord_id");
+                net.sf.json.JSONObject old_deptJson=queryDeptRecordByDeptID(deptRecord_id);
+                List<JSONObject> json=compareToDept(new_deptJson,old_deptJson);
+                map.put("updateType","机构基础类型");
+                map.put("updateContent",json);
+                map.put("isAudited",new_deptJson.getString("isAudited"));
+                return map;
+            }else if ("1".equals(apply_type)){//用户基础信息
+                map.put("updateType","人员基础类型");
+                net.sf.json.JSONObject new_userJson =queryUserAuthById(apply_id);
+                String userRecord_id = new_userJson.getString("userRecord_id");
+                net.sf.json.JSONObject old_userJson =queryUserRecordById(userRecord_id);
+                List<JSONObject> json=compareToUser(new_userJson,old_userJson);
+                map.put("updateContent",json);
+                map.put("isAudited",new_userJson.getString("isAudited"));
+                return map;
+            }
         }
+
         return null;
     }
 
