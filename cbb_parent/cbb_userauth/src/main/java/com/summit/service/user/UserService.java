@@ -713,7 +713,8 @@ public class UserService {
                         "0",
                         superDept,
                         userAuditBean.getRemark(),
-                        userAuditBean.getUserNameAuth()
+                        userAuditBean.getUserNameAuth(),
+                        recordId
                 );
             }
             //修改用户表中的audit字段为发起申请
