@@ -10,6 +10,7 @@ import com.summit.common.util.ResultBuilder;
 import com.summit.dao.entity.AuditTyptInfo;
 import com.summit.service.auth.AuthService;
 import com.summit.service.log.LogUtilImpl;
+import com.summit.util.CommonUtil;
 import com.summit.util.DateUtil;
 import com.summit.util.SummitTools;
 import com.summit.util.SysConstants;
@@ -120,4 +121,21 @@ public class AuthController {
             return ResultBuilder.buildSuccess();
         }
     }
+
+    @ApiOperation(value = "用审核id列表批量删除审核信息", notes = "authIds不能为空")
+    @DeleteMapping(value = "/delAuthByIdBatch")
+    public RestfulEntityBySummit<String> delAlarmByIdBatch(@ApiParam(value = "基本审核管理Id", required = true) @RequestParam(value = "authIds") List<String> authIds) {
+        if (CommonUtil.isEmptyList(authIds)) {
+            log.error("基本审核管理Id");
+            return ResultBuilder.buildError(ResponseCodeEnum.CODE_9993, "基本审核管理Id", null);
+        }
+        try {
+            authService.delAlarmByIdBatch(authIds);
+        } catch (Exception e) {
+            log.error("删除基本审核信息失败");
+            return ResultBuilder.buildError(ResponseCodeEnum.CODE_9999, "删除基本审核信息失败", null);
+        }
+        return ResultBuilder.buildError(ResponseCodeEnum.CODE_0000, "删除基本审核信息成功", null);
+    }
+
 }

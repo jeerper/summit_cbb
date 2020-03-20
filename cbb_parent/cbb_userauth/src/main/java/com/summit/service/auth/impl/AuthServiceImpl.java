@@ -13,6 +13,7 @@ import com.summit.common.entity.AuthBean;
 import com.summit.common.entity.DeptAuditBean;
 import com.summit.common.entity.UserInfo;
 import com.summit.common.redis.user.UserInfoCache;
+import com.summit.dao.repository.*;
 import com.summit.repository.UserRepository;
 import com.summit.service.auth.AuthService;
 import com.summit.service.dept.DeptsService;
@@ -35,6 +36,16 @@ public class AuthServiceImpl  implements AuthService {
     private UserRepository ur;
     @Autowired
     UserInfoCache userInfoCache;
+    @Autowired
+    private AuthDao authDao;
+    @Autowired
+    private UserRecordDao  userRecordDao;
+    @Autowired
+    private DeptAuditDao deptAuditDao;
+    @Autowired
+    private  DeptRecordDao deptRecordDao;
+    @Autowired
+    private UserAuditDao userAuditDao;
 
     @Override
     public Page<AuthBean> queryByPage(Integer currentPage, Integer pageSize, JSONObject paramJson) throws Exception {
@@ -450,6 +461,65 @@ public class AuthServiceImpl  implements AuthService {
             }
         }
         return 0;
+    }
+
+    @Override
+    public void delAlarmByIdBatch(List<String> authIds) throws Exception {
+        List<String> userRecords=new ArrayList<>();
+        List<String> deptRecords=new ArrayList<>();
+        List<String> userAuths=new ArrayList<>();
+        List<String> deptAuths=new ArrayList<>();
+        for (String authId:authIds){
+            StringBuffer sys_auth_sql=new StringBuffer("SELECT auth.id,auth.apply_type,auth.apply_Id,user.NAME as apply_name,date_format(auth.apply_time, '%Y-%m-%d %H:%i:%s') as apply_time from sys_auth auth INNER JOIN sys_user user on auth.apply_name=user.USERNAME where auth.id=? ");
+            LinkedMap lm = new LinkedMap();
+            lm.put(1, authId);
+            net.sf.json.JSONObject auth_json = ur.queryOneCustom(sys_auth_sql.toString(), lm);
+            if (null ==auth_json ){
+                continue;
+            }
+            String apply_type = auth_json.getString("apply_type");
+            String apply_id = auth_json.getString("apply_Id");
+            if ("0".equals(apply_type)){//机构
+                StringBuffer sys_dept_auth_sql=new StringBuffer("SELECT da.id,da.deptRecord_id from sys_dept_auth da WHERE da.id=? ");
+                LinkedMap sys_dept_auth_lm = new LinkedMap();
+                sys_dept_auth_lm.put(1, apply_id);
+                net.sf.json.JSONObject sys_dept_auth_json = ur.queryOneCustom(sys_dept_auth_sql.toString(), sys_dept_auth_lm);
+                if (null ==sys_dept_auth_json){
+                    continue;
+                }
+                String deptRecord_id = sys_dept_auth_json.getString("deptRecord_id");
+                deptRecords.add(deptRecord_id);
+                deptAuths.add(apply_id);
+            }else {
+                StringBuffer sys_user_auth_sql=new StringBuffer("SELECT usa.id,usa.userRecord_id from   sys_user_auth usa where usa.id=? ");
+                LinkedMap sys_user_auth_lm = new LinkedMap();
+                sys_user_auth_lm.put(1, apply_id);
+                net.sf.json.JSONObject sys_user_auth_json = ur.queryOneCustom(sys_user_auth_sql.toString(), sys_user_auth_lm);
+                if (null ==sys_user_auth_json){
+                    continue;
+                }
+                String userRecord_id = sys_user_auth_json.getString("userRecord_id");
+                userRecords.add(userRecord_id);
+                userAuths.add(apply_id);
+
+            }
+        }
+        if (authIds !=null && !authIds.isEmpty()){
+             authDao.deleteBatchIds(authIds);
+        }
+        if (userRecords !=null && !userRecords.isEmpty()){
+            userRecordDao.deleteBatchIds(userRecords);
+        }
+        if (userAuths !=null && !userAuths.isEmpty()){
+            userAuditDao.deleteBatchIds(userAuths);
+        }
+        if (deptRecords !=null && !deptRecords.isEmpty()){
+            deptRecordDao.deleteBatchIds(deptRecords);
+        }
+        if (deptAuths !=null && !deptAuths.isEmpty()){
+            deptAuditDao.deleteBatchIds(deptAuths);
+        }
+
     }
 
     private UserInfo getUserInfo(net.sf.json.JSONObject user_json) {

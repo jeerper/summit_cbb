@@ -13,4 +13,6 @@ public interface AuthService {
     Map<String,Object> findById(String id) throws Exception;
 
     int authByIdBatch(List<String> authIds, String isAudited) throws Exception;
+
+    void delAlarmByIdBatch(List<String> authIds) throws Exception;
 }
