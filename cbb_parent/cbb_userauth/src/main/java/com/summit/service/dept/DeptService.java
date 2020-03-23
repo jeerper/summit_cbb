@@ -506,4 +506,22 @@ public class DeptService {
 
     }
 
+    public List<String> getDeptBean(String pdept) throws Exception {
+        StringBuffer querySql = new StringBuffer("select ID from ( select t1.ID,if(find_in_set(PID, @pids) > 0, @pids := concat(@pids, ',', ID), 0) as ischild  ");
+        querySql.append("from ( select ID,PID from sys_dept t order by ID, PID) t1,(select @pids := ? )t2 ");
+        querySql.append(")t3 where ischild != 0 ");
+        LinkedMap linkedMap = new LinkedMap();
+        linkedMap.put(1, pdept);
+        List<Object> l = ur.queryAllCustom(querySql.toString(), linkedMap);
+        List<String> deptList = new ArrayList<String>();
+        if (l.size() > 0) {
+            // adcdList.add(pid);
+            for (Object dept : l) {
+                deptList.add(((JSONObject) dept).getString("ID"));
+            }
+            return deptList;
+        }
+        return null;
+
+    }
 }

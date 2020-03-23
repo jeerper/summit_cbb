@@ -240,4 +240,17 @@ public class DeptController {
         }
     }
 
+
+    @ApiOperation(value = "根据pdept查询下面所有的子节点")
+    @RequestMapping(value = "/queryAllDeptByPdept", method = RequestMethod.GET)
+    public RestfulEntityBySummit<List<String>> queryAllDeptByPdept(
+            @RequestParam(value = "pdept", required = true) String pdept){
+        try {
+            return ResultBuilder.buildSuccess(ds.getDeptBean(pdept));
+        } catch (Exception e) {
+            logger.error("数据查询失败！", e);
+            return ResultBuilder.buildError(ResponseCodeEnum.CODE_9999);
+        }
+    }
+
 }
