@@ -196,10 +196,15 @@ public class DeptService {
      * @throws Exception
      */
     public DeptBean queryById(String id) throws Exception {
-        String sql = "SELECT ID,PID,DEPTCODE,DEPTNAME,ADCD,REMARK FROM SYS_DEPT WHERE id = ?";
+        StringBuffer sql=new StringBuffer(" SELECT dept.ID,dept.PID,dept.DEPTCODE,dept.DEPTNAME,dept.ADCD,dept.REMARK,us.NAME as deptHead,fdept.DEPTNAME as PDEPTNAME,AD.ADNM,dic.NAME as deptType ");
+        sql.append("FROM SYS_DEPT dept LEFT JOIN SYS_DEPT fdept on dept.pid=fdept.id ");
+        sql.append("LEFT JOIN sys_user us ON dept.DEPTHEAD=us.USERNAME ");
+        sql.append("LEFT JOIN SYS_AD_CD AD ON AD.ADCD=DEPT.ADCD ");
+        sql.append("LEFT JOIN sys_dictionary dic on dic.PCODE='dept_type' and dept.deptType=dic.CKEY ");
+        sql.append("WHERE dept.ID =? ");
         LinkedMap linkedMap = new LinkedMap();
         linkedMap.put(1, id);
-        List dataList = ur.queryAllCustom(sql, linkedMap);
+        List dataList = ur.queryAllCustom(sql.toString(), linkedMap);
         if (dataList != null && dataList.size() > 0) {
             DeptBean deptBean = JSON.parseObject(dataList.get(0).toString(), new TypeReference<DeptBean>() {
             });
@@ -251,9 +256,11 @@ public class DeptService {
      * @throws Exception
      */
     public Page<DeptBean> queryByPage(int start, int limit, JSONObject paramJson) throws Exception {
-        StringBuffer sql = new StringBuffer("SELECT dept.ID,dept.PID,dept.DEPTCODE,dept.DEPTNAME,dept.ADCD,dept.REMARK,us.NAME as deptHead, fdept.DEPTNAME as PDEPTNAME,AD.ADNM FROM SYS_DEPT dept left join SYS_DEPT fdept on dept.pid=fdept.id  ");
+        StringBuffer sql = new StringBuffer("SELECT dept.ID,dept.PID,dept.DEPTCODE,dept.DEPTNAME,dept.ADCD,dept.REMARK,us.NAME as deptHead, fdept.DEPTNAME as PDEPTNAME,AD.ADNM,dic.NAME as deptType FROM SYS_DEPT dept left join SYS_DEPT fdept on dept.pid=fdept.id  ");
         sql.append(" LEFT JOIN sys_user us ON dept.DEPTHEAD=us.USERNAME  ");
-        sql.append(" LEFT JOIN SYS_AD_CD AD ON AD.ADCD=DEPT.ADCD where 1=1 ");
+        sql.append(" LEFT JOIN SYS_AD_CD AD ON AD.ADCD=DEPT.ADCD  ");
+        sql.append(" LEFT JOIN sys_dictionary dic on dic.PCODE='dept_type' and dept.deptType=dic.CKEY ");
+        sql.append(" where 1=1");
         Integer index = 1;
         LinkedMap linkedMap = new LinkedMap();
         if (paramJson != null && !paramJson.isEmpty()) {
