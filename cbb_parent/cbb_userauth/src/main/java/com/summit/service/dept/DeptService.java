@@ -196,7 +196,7 @@ public class DeptService {
      * @throws Exception
      */
     public DeptBean queryById(String id) throws Exception {
-        StringBuffer sql=new StringBuffer(" SELECT dept.ID,dept.PID,dept.DEPTCODE,dept.DEPTNAME,dept.ADCD,dept.REMARK,us.NAME as deptHead,fdept.DEPTNAME as PDEPTNAME,AD.ADNM,dic.NAME as deptType ");
+        StringBuffer sql=new StringBuffer(" SELECT dept.ID,dept.PID,dept.DEPTCODE,dept.DEPTNAME,dept.ADCD,dept.REMARK,dept.DEPTHEAD,us.NAME as deptHeadName,fdept.DEPTNAME as PDEPTNAME,AD.ADNM,dept.deptType,dic.NAME as deptTypeName ");
         sql.append("FROM SYS_DEPT dept LEFT JOIN SYS_DEPT fdept on dept.pid=fdept.id ");
         sql.append("LEFT JOIN sys_user us ON dept.DEPTHEAD=us.USERNAME ");
         sql.append("LEFT JOIN SYS_AD_CD AD ON AD.ADCD=DEPT.ADCD ");

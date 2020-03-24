@@ -4,8 +4,9 @@ import java.io.Serializable;
 import java.util.List;
 
 import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
 
-
+@Data
 public class DeptBean implements Serializable {
     private static final long serialVersionUID = 1L;
     @ApiModelProperty(value = "主键id(添加自动生成,修改必填)", name = "id")
@@ -31,8 +32,14 @@ public class DeptBean implements Serializable {
     @ApiModelProperty(value = "部门负责人", name = "deptHead", required = true)
     private String deptHead;
 
+    @ApiModelProperty(value = "部门负责人", name = "deptHead", required = true)
+    private String deptHeadName;
+
     @ApiModelProperty(value = "机构类型(0:内部机构;1:外部机构)", name = "deptType")
     private String deptType;
+
+    @ApiModelProperty(value = "机构类型(0:内部机构;1:外部机构)", name = "deptType")
+    private String deptTypeName;
 
 
 
