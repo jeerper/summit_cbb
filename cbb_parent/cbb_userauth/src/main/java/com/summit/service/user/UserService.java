@@ -200,7 +200,7 @@ public class UserService {
         String uddSql = " delete from sys_user_dept_duty where USERNAME  IN ('" + userInfo.getUserName() + "') ";
         jdbcTemplate.update(uddSql);
         //保存部门，用户, 职位关系表
-        if(userInfo.getUserName() !=null && !CommonUtil.isEmptyList(Arrays.asList(userInfo.getDepts())) && !StrUtil.isBlank(userInfo.getDuty())){
+        if(userInfo.getUserName() !=null && userInfo.getDepts() !=null && !CommonUtil.isEmptyList(Arrays.asList(userInfo.getDepts())) && userInfo.getDuty() !=null && !StrUtil.isBlank(userInfo.getDuty())){
             String insertSql="INSERT INTO sys_user_dept_duty(ID,USERNAME,DEPTID,DUTY) VALUES ( ?, ?, ?, ?)";
             List params = new ArrayList();
             for (String deptId : userInfo.getDepts()) {
