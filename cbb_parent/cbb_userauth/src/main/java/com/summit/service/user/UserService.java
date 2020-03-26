@@ -1,5 +1,6 @@
 package com.summit.service.user;
 
+import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.TypeReference;
@@ -11,6 +12,7 @@ import com.summit.common.entity.*;
 import com.summit.common.util.Cryptographic;
 import com.summit.repository.UserRepository;
 import com.summit.service.dept.DeptService;
+import com.summit.util.CommonUtil;
 import com.summit.util.DateUtil;
 import com.summit.util.SummitTools;
 import com.summit.util.SysConstants;
@@ -26,6 +28,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -197,7 +200,7 @@ public class UserService {
         String uddSql = " delete from sys_user_dept_duty where USERNAME  IN ('" + userInfo.getUserName() + "') ";
         jdbcTemplate.update(uddSql);
         //保存部门，用户, 职位关系表
-        if(userInfo.getUserName() !=null && userInfo.getDepts().length > 0 && userInfo.getDuty() !=null){
+        if(userInfo.getUserName() !=null && !CommonUtil.isEmptyList(Arrays.asList(userInfo.getDepts())) && !StrUtil.isBlank(userInfo.getDuty())){
             String insertSql="INSERT INTO sys_user_dept_duty(ID,USERNAME,DEPTID,DUTY) VALUES ( ?, ?, ?, ?)";
             List params = new ArrayList();
             for (String deptId : userInfo.getDepts()) {
