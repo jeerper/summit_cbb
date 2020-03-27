@@ -68,9 +68,10 @@ public class LogController {
 
     @GetMapping("/login")
     @ApiOperation(value = "查询登录记录")
-    public RestfulEntityBySummit<Page<LoginLogInfo>> getLoginLog(@ApiParam(value = "用户名称") @RequestParam(value = "nickName", required = false) String nickName,
+    public RestfulEntityBySummit<Page<LoginLogInfo>> getLoginLog(@ApiParam(value = "用户昵称、用户名") @RequestParam(value = "pubquery", required = false) String pubquery,
                                                                  @ApiParam(value = "起始时间") @RequestParam(value = "startTime", required = false) String startTime,
                                                                  @ApiParam(value = "结束时间") @RequestParam(value = "endTime", required = false) String endTime,
+                                                                 @ApiParam(value = "是否登录成功") @RequestParam(value = "logSuccessOrNot", required = false) String logSuccessOrNot,
                                                                  @ApiParam(value = "当前页，大于等于1") @RequestParam(value = "page", required = false) Integer current,
                                                                  @ApiParam(value = "每页条数，大于等于0") @RequestParam(value = "pageSize", required = false) Integer pageSize) {
         try {
@@ -82,7 +83,7 @@ public class LogController {
             if (current != null && pageSize != null) {
                 pageParam = new Page<>(current, pageSize);
             }
-            List<LoginLogInfo> loginLogInfoList = loginLogDao.getLoginLog(pageParam, nickName, start, end);
+            List<LoginLogInfo> loginLogInfoList = loginLogDao.getLoginLog(pageParam, pubquery, logSuccessOrNot,start, end);
 
             if (pageParam != null) {
                 pageParam.setRecords(loginLogInfoList);

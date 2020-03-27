@@ -106,7 +106,8 @@ public class DeptsServiceImpl implements DeptsService {
                     return "";
                 }
             }else{
-                return "";
+                pdept = pdept.replace("''","" );
+                return pdept;
             }
         }catch (Exception e){
             e.printStackTrace();

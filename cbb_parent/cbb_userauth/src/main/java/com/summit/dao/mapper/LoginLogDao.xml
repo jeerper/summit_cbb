@@ -61,8 +61,11 @@
             <if test="end != null">
                 and sll.loginTime &lt;= #{end}
             </if>
-            <if test="nickName != null">
-                and su.NAME like concat('%', #{nickName}, '%')
+            <if test="pubquery != null">
+                AND concat(sll.userName,su.name) like concat('%',#{pubquery}, '%')
+            </if>
+            <if test="logSuccessOrNot != null">
+                AND sll.log_sucesss_or_not=#{logSuccessOrNot}
             </if>
         </where>
         order by sll.loginTime desc

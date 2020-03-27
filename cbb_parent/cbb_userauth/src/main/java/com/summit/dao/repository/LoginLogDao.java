@@ -20,7 +20,9 @@ public interface LoginLogDao extends BaseMapper<LoginLogBean> {
      */
     LoginLogBean getLastLoginLog(@Param("loginUserName") String loginUserName, @Param("loginIp") String loginIp);
 
-    List<LoginLogInfo> getLoginLog(Page<LoginLogInfo> page, @Param("nickName") String nickName,
+    List<LoginLogInfo> getLoginLog(Page<LoginLogInfo> page,
+                                   @Param("pubquery") String pubquery,
+                                   @Param("logSuccessOrNot") String logSuccessOrNot,
                                    @Param("start") Date start,
                                    @Param("end") Date end);
 }
