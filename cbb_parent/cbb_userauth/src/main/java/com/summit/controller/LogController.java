@@ -1,6 +1,7 @@
 package com.summit.controller;
 
 import cn.hutool.core.date.DateUtil;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.summit.cbb.utils.page.Page;
 import com.summit.common.entity.LogBean;
 import com.summit.common.entity.LoginLogBean;
@@ -11,6 +12,7 @@ import com.summit.common.util.ResultBuilder;
 import com.summit.dao.entity.LoginLogInfo;
 import com.summit.dao.repository.LoginLogDao;
 import com.summit.service.log.LogUtilImpl;
+import com.summit.util.CommonUtil;
 import com.summit.util.SummitTools;
 import com.summit.util.SysConstants;
 import io.swagger.annotations.Api;
@@ -200,5 +202,23 @@ public class LogController {
         }
     }
 
+    @ApiOperation(value = "登录日志批量删除", notes = "loginIds不能为空")
+    @DeleteMapping(value = "/delLoginsByIdBatch")
+    public RestfulEntityBySummit<String> delLoginsByIdBatch(@ApiParam(value = "登录日志id", required = true) @RequestParam(value = "loginIds") List<String> loginIds) {
+        if (CommonUtil.isEmptyList(loginIds)) {
+            log.error("登录日志id为空");
+            return ResultBuilder.buildError(ResponseCodeEnum.CODE_9993, "登录日志id为空", null);
+        }
+        try {
+            for (String loginId:loginIds){
+                loginLogDao.delete(Wrappers.<LoginLogBean>lambdaQuery()
+                        .eq(LoginLogBean::getId,loginId));
+            }
+        } catch (Exception e) {
+            log.error("删除登录日志信息失败");
+            return ResultBuilder.buildError(ResponseCodeEnum.CODE_9999, "删除登录日志信息失败", null);
+        }
+        return ResultBuilder.buildError(ResponseCodeEnum.CODE_0000, "删除登录日志信息成功", null);
+    }
 
 }

@@ -271,8 +271,8 @@ public class UserService {
 //		String adcdSql=" delete from sys_user_adcd where USERNAME  IN ('"+userNames+"') ";
 //		jdbcTemplate.update(adcdSql);
 //		
-//		String deptSql=" delete from SYS_USER_DEPT where USERNAME  IN ('"+userNames+"') ";
-//		jdbcTemplate.update(deptSql);
+		String deptSql=" delete from SYS_USER_DEPT where USERNAME  IN ('"+userNames+"') ";
+		jdbcTemplate.update(deptSql);
     }
 
     public UserInfo queryByUserName(String userName) throws Exception {
