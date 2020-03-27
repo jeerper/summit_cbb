@@ -335,13 +335,13 @@ public class UserService {
         }
 
         if (paramJson.containsKey("deptName")) {
-            sb.append(" AND dept.detpName  like   ? ");
+            sb.append(" AND userdept2.deptNames  like   ? ");
             linkedMap.put(index, "%" + paramJson.get("deptName") + "%");
             index++;
         }
 
         if (paramJson.containsKey("deptId") && paramJson.getString("deptId") != null) {
-            sb.append(" and userdept.deptid= ? ");
+            sb.append(" and userdept2.DEPTID= ? ");
             linkedMap.put(index, paramJson.get("deptId"));
             index++;
         }
@@ -852,7 +852,7 @@ public class UserService {
             }
 
             if (paramJson.containsKey("deptId") && paramJson.getString("deptId") != null) {
-                sb.append(" and userdept.deptid= ? ");
+                sb.append(" and userdept2.DEPTID= ? ");
                 linkedMap.put(index, paramJson.get("deptId"));
                 index++;
             }
