@@ -44,6 +44,8 @@ public class UserService {
     public JdbcTemplate jdbcTemplate;
     @Value("${password.encode.key}")
     private String key;
+    @Autowired
+    private DeptService ds;
 
     @Transactional
     public ResponseCodeEnum add(UserInfo userInfo, String key) {
@@ -793,5 +795,107 @@ public class UserService {
         lm.put(1, userNameAuth);
         JSONObject jsonObject = ur.queryOneCustom(sql.toString(), lm);
         return  jsonObject;
+    }
+
+    public Page<UserInfo> queryUserByPage(int start, int limit, JSONObject paramJson) throws Exception {
+        String userNames=ds.queryUserNamesByCurrentDeptId();
+        if (userNames !=null && StrUtil.isNotBlank(userNames)){
+            LinkedMap linkedMap = new LinkedMap();
+            Integer index = 1;
+            StringBuilder sb = new StringBuilder("SELECT user1.USERNAME,NAME,PASSWORD,SEX,IS_ENABLED,EMAIL,PHONE_NUMBER,STATE,NOTE,COMPANY,DUTY,POST,SN,USERADCD.ADCD,useradcd.adnms,userdept2.DEPTID,userdept2.deptNames,userdept2.deptType,userdept2.deptContact,userRole.roleCodes,userRole.roleNames,date_format(user1.LAST_UPDATE_TIME, '%Y-%m-%d %H:%i:%s') as lastUpdateTime,user1.HEADPORTRAIT FROM SYS_USER user1 ");
+            sb.append(" left join (SELECT username,GROUP_CONCAT(useradcd.`adcd`)AS adcd ,GROUP_CONCAT(`adnm`)AS adnms ");
+            sb.append(" FROM sys_user_adcd useradcd inner join sys_ad_cd ad on useradcd.adcd=ad.adcd GROUP BY username)useradcd on useradcd.username=user1.USERNAME ");
+            sb.append(" left join (SELECT userdept.username,userdept.DEPTID,userdept.deptNames,userdept.deptType,user2.NAME as deptContact from (SELECT username,GROUP_CONCAT(userdept.`deptid`)AS DEPTID,GROUP_CONCAT(dept.`deptname`)AS deptNames,dept.deptType,dept.DEPTHEAD FROM sys_user_dept userdept");
+            sb.append(" inner join sys_dept dept on userdept.deptid=dept.id GROUP BY username)userdept  INNER JOIN sys_user user2 on user2.USERNAME=userdept.DEPTHEAD)userdept2  on userdept2.username=user1.USERNAME");
+            sb.append(" left join ( SELECT USERNAME,GROUP_CONCAT(userRole.`ROLE_CODE`)AS roleCodes, GROUP_CONCAT(role.NAME)AS roleNames  FROM sys_user_role userRole ");
+            sb.append(" inner join sys_role role on userRole.ROLE_CODE=role.CODE  GROUP BY USERNAME)userRole on userRole.USERNAME=user1.USERNAME ");
+            sb.append(" WHERE user1.USERNAME <> '");
+            sb.append(SysConstants.SUPER_USERNAME);
+            sb.append("'");
+            sb.append(" and user1.USERNAME IN('"+userNames+"') ");
+            if (paramJson.containsKey("name")) {
+                sb.append(" AND NAME LIKE ? ");
+                linkedMap.put(index, "%" + paramJson.get("name") + "%");
+                index++;
+            }
+            if (paramJson.containsKey("userName")) {
+                sb.append(" AND user1.USERNAME LIKE ? ");
+                linkedMap.put(index, "%" + paramJson.get("userName") + "%");
+                index++;
+            }
+            if (paramJson.containsKey("isEnabled")) {
+                sb.append(" AND IS_ENABLED = ? ");
+                linkedMap.put(index, paramJson.get("isEnabled"));
+                index++;
+            }
+            if (paramJson.containsKey("state")) {
+                sb.append(" AND STATE =  ? ");
+                linkedMap.put(index, paramJson.get("state"));
+                index++;
+            }
+            if (paramJson.containsKey("adcd")) {
+                sb.append(" AND USERADCD.ADCD like  ? ");
+                linkedMap.put(index, "%" + paramJson.get("adcd") + "%");
+                index++;
+            }
+
+            if (paramJson.containsKey("phone") && paramJson.getString("phone") != null) {
+                sb.append(" and  USER1.PHONE_NUMBER=  ? ");
+                linkedMap.put(index, paramJson.get("phone"));
+                index++;
+            }
+
+            if (paramJson.containsKey("deptName") && paramJson.getString("deptName") != null) {
+                sb.append(" AND userdept2.deptNames  like   ? ");
+                linkedMap.put(index, "%" + paramJson.get("deptName") + "%");
+                index++;
+            }
+
+            if (paramJson.containsKey("deptId") && paramJson.getString("deptId") != null) {
+                sb.append(" and userdept.deptid= ? ");
+                linkedMap.put(index, paramJson.get("deptId"));
+                index++;
+            }
+
+
+            if (paramJson.containsKey("sortColumn") && st.stringNotNull(paramJson.getString("sortColumn"))) {
+//			if("sn".equalsIgnoreCase(paramJson.getString("sortColumn"))){
+//				//sb.append(" order by  sn is null,cast(sn as SIGNED INTEGER) asc ");
+//			}else{
+                sb.append(" order by  ");
+                sb.append(paramJson.getString("sortColumn"));
+                sb.append(" is null , ");
+                sb.append(paramJson.getString("sortColumn"));
+                sb.append("  ");
+                if (paramJson.containsKey("sortName") && st.stringNotNull(paramJson.getString("sortName"))) {
+                    sb.append(paramJson.getString("sortName"));
+                }
+                //	}
+
+            }
+            System.out.println("sb:"+sb.toString());
+            Page<Object> page = ur.queryByCustomPage(sb.toString(), start, limit, linkedMap);
+            if (page != null) {
+            /*List<UserInfo> userInfoList = new ArrayList<UserInfo>();
+            if (page.getContent() != null && page.getContent().size() > 0) {
+                for (Object o : page.getContent()) {
+                    JSONObject jsonObject = (JSONObject) o;
+                    System.out.println(o.toString());
+                    UserInfo userInfo = JSON.parseObject(o.toString(), new TypeReference<UserInfo>() {
+                    });
+                    userInfo.setAdcds(jsonObject.containsKey("ADCD") ? jsonObject.getString("ADCD").split(",") : null);
+                    userInfo.setDepts(jsonObject.containsKey("DEPTID") ? jsonObject.getString("DEPTID").split(",") : null);
+                    userInfoList.add(userInfo);
+                }
+            }
+            return new Page<UserInfo>(userInfoList, page.getPageable());*/
+                Page<UserInfo> backContent = getBackContent(page);
+                return backContent;
+
+            }
+            return null;
+
+        }
+        return null;
     }
 }

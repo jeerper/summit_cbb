@@ -134,6 +134,28 @@ public class DeptController {
         }
     }
 
+    @ApiOperation(value = "部门分页查询加部门权限(即：当前登录人只能查询他所属部门以及子部门下的部门分页数据)")
+    @RequestMapping(value = "/queryDeptByPage", method = RequestMethod.GET)
+    public RestfulEntityBySummit<Page<DeptBean>> queryDeptByPage(
+            @RequestParam(value = "page") int page,
+            @RequestParam(value = "pageSize") int pageSize,
+            @RequestParam(value = "deptcode", required = false) String deptcode,
+            @RequestParam(value = "deptname", required = false) String deptname,
+            @RequestParam(value = "adcd", required = false) String adcd,
+            @RequestParam(value = "adnm", required = false) String adnm){
+        try{
+            JSONObject paramJson = new JSONObject();
+            paramJson.put("deptcode", deptcode);
+            paramJson.put("deptname", deptname);
+            paramJson.put("adcd", adcd);
+            paramJson.put("adnm", adnm);
+            return ResultBuilder.buildSuccess(ds.queryDeptByPage(page, pageSize, paramJson));
+        }catch (Exception e){
+            logger.error("查询失败：", e);
+            return ResultBuilder.buildError(ResponseCodeEnum.CODE_9999);
+        }
+
+    }
 
     /**
      * 新增
@@ -252,5 +274,7 @@ public class DeptController {
             return ResultBuilder.buildError(ResponseCodeEnum.CODE_9999);
         }
     }
+
+
 
 }

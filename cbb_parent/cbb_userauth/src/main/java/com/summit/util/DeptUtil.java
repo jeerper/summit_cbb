@@ -1,10 +1,12 @@
 package com.summit.util;
 
+import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.summit.common.Common;
 import com.summit.common.entity.RestfulEntityBySummit;
 import com.summit.repository.UserRepository;
+import com.summit.service.dept.DeptService;
 import org.apache.commons.collections.map.LinkedMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -17,6 +19,9 @@ public class DeptUtil  {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private DeptService ds;
 
     public  JSONObject getSubordinateDeptByPDept(JSONObject paramJson) throws Exception {
         List<String> deptData=new ArrayList<>();
@@ -60,5 +65,25 @@ public class DeptUtil  {
         JSONObject jsonOject=new JSONObject();
         jsonOject.put("currentDept", currentDept);
         return jsonOject;
+    }
+
+    public JSONObject getAllDeptByPdept(JSONObject paramJson) throws Exception {
+        List<String> deptData=null;
+        String pdept="";
+        if(paramJson!=null && paramJson.containsKey("pdept") &&  !StrUtil.isBlank(paramJson.getString("pdept")) ){
+            pdept=paramJson.getString("pdept");
+        }else{
+            if(Common.getLogUser().getDepts()!=null && Common.getLogUser().getDepts().length>0){
+                pdept=Common.getLogUser().getDepts()[0];
+            }
+        }
+        if(pdept!=null && !StrUtil.isBlank(pdept)){
+            deptData=ds.getDeptBean(pdept);
+        }
+        JSONObject jsonOject=new JSONObject();
+        jsonOject.put("pdept", pdept);
+        jsonOject.put("deptList", deptData);
+        return jsonOject;
+
     }
 }

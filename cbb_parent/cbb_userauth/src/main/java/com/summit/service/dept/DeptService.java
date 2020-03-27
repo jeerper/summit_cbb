@@ -7,7 +7,7 @@ import java.util.Map;
 
 import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import com.summit.common.Common;
-import com.summit.common.entity.DeptAuditBean;
+import com.summit.common.entity.*;
 import com.summit.controller.DeptController;
 import org.apache.commons.collections.map.LinkedMap;
 import org.slf4j.Logger;
@@ -20,9 +20,6 @@ import org.springframework.transaction.annotation.Transactional;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
 import com.summit.cbb.utils.page.Page;
-import com.summit.common.entity.DeptBean;
-import com.summit.common.entity.DeptTreeBean;
-import com.summit.common.entity.ResponseCodeEnum;
 import com.summit.repository.UserRepository;
 import com.summit.util.SummitTools;
 
@@ -38,6 +35,8 @@ public class DeptService {
     private SummitTools st;
     @Autowired
     public JdbcTemplate jdbcTemplate;
+    @Autowired
+    private DeptsService deptsService;
 
     /**
      * 查询部门树
@@ -515,7 +514,7 @@ public class DeptService {
 
     public List<String> getDeptBean(String pdept) throws Exception {
         StringBuffer querySql = new StringBuffer("select ID from ( select t1.ID,if(find_in_set(PID, @pids) > 0, @pids := concat(@pids, ',', ID), 0) as ischild  ");
-        querySql.append("from ( select ID,PID from sys_dept t order by ID, PID) t1,(select @pids := ? )t2 ");
+        querySql.append("from ( select ID,PID from sys_dept t order by PID) t1,(select @pids := ? )t2 ");
         querySql.append(")t3 where ischild != 0 ");
         LinkedMap linkedMap = new LinkedMap();
         linkedMap.put(1, pdept);
@@ -530,5 +529,87 @@ public class DeptService {
         }
         return null;
 
+    }
+
+    public Page<DeptBean> queryDeptByPage(int start, int limit, JSONObject paramJson) throws Exception {
+        StringBuffer sql = new StringBuffer("SELECT dept.ID,dept.PID,dept.DEPTCODE,dept.DEPTNAME,dept.ADCD,dept.REMARK,us.NAME as deptHead, fdept.DEPTNAME as PDEPTNAME,AD.ADNM,dic.NAME as deptType FROM SYS_DEPT dept left join SYS_DEPT fdept on dept.pid=fdept.id  ");
+        sql.append(" LEFT JOIN sys_user us ON dept.DEPTHEAD=us.USERNAME  ");
+        sql.append(" LEFT JOIN SYS_AD_CD AD ON AD.ADCD=DEPT.ADCD  ");
+        sql.append(" LEFT JOIN sys_dictionary dic on dic.PCODE='dept_type' and dept.deptType=dic.CKEY ");
+        sql.append(" where 1=1");
+        String depts = deptsService.getDeptsByPdept(null);
+        Integer index = 1;
+        LinkedMap linkedMap = new LinkedMap();
+        if(depts!=null && !depts.equals("")){
+            sql.append(" and dept.ID in('"+depts+"') ");
+        }
+        if (paramJson != null && !paramJson.isEmpty()) {
+            if (paramJson.containsKey("deptcode")) {
+                sql.append(" and dept.deptcode  like ? ");
+                linkedMap.put(index, "%" + paramJson.get("deptcode") + "%");
+                index++;
+            }
+            if (paramJson.containsKey("deptname")) {
+                sql.append(" and dept.deptname like ? ");
+                linkedMap.put(index, "%" + paramJson.get("deptname") + "%");
+                index++;
+            }
+            if (paramJson.containsKey("adnm")) {
+                sql.append(" and AD.ADNM like ? ");
+                linkedMap.put(index, "%" + paramJson.get("adnm") + "%");
+                index++;
+            }
+            if (paramJson.containsKey("adcd")) {
+                sql.append(" and AD.ADCD = ? ");
+                linkedMap.put(index, paramJson.get("adcd"));
+                index++;
+            }
+        }
+        Page<Object> rs = ur.queryByCustomPage(sql.toString(), start, limit, linkedMap);
+        if (rs != null) {
+            ArrayList<DeptBean> deptBeans = JSON.parseObject(rs.getContent().toString(), new TypeReference<ArrayList<DeptBean>>() {
+            });
+            return new Page<DeptBean>(deptBeans, rs.getPageable());
+        }
+        return null;
+    }
+
+    public String queryUserNamesByCurrentDeptId() throws Exception {
+        StringBuffer sql = new StringBuffer("SELECT DISTINCT ud.USERNAME FROM sys_user_dept ud where 1=1 ");
+        String querydepts = deptsService.getDeptsByPdept(null);
+        if(querydepts!=null && !querydepts.equals("")){
+            sql.append(" and ud.DEPTID IN('"+querydepts+"') ");
+        }
+        List<Object> l = ur.queryAllCustom(sql.toString(), new LinkedMap());
+        List<String> userNames = new ArrayList<String>();
+        if (l.size() > 0) {
+            for (Object username : l) {
+                userNames.add(((JSONObject) username).getString("USERNAME"));
+            }
+        }
+        try{
+            com.alibaba.fastjson.JSONObject jsonOject=new com.alibaba.fastjson.JSONObject();
+            jsonOject.put("userNames", userNames);
+            List<UserDept> nameData=(List)jsonOject.getJSONArray("userNames");
+            if(nameData!=null && nameData.size()>0) {
+                String user_names = "";
+                for(int i = 0; i < nameData.size() ; i++){
+                    String user_name = String.valueOf(nameData.get(i));
+                    user_names = user_names+"'"+ user_name+"',";
+                }
+                String ss = user_names.substring(0,1);
+                String es = user_names.substring(user_names.length()-1,user_names.length());
+                if(ss.equals("'") && es.equals(",")){
+                    return user_names.substring(1,user_names.length()-2);
+                }else{
+                    return "";
+                }
+            }else{
+                return "";
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+       return  null;
     }
 }

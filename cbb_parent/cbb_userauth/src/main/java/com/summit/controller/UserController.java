@@ -647,6 +647,67 @@ public class UserController {
         }
     }
 
+    @ApiOperation(value = "用户分页查询加部门权限(即：当前登录人只能查询他所属部门以及子部门下的用户分页数据)")
+    @GetMapping("/queryUserByPage")
+    public RestfulEntityBySummit<Page<UserInfo>> queryUserByPage(
+            @RequestParam(value = "page") int page,
+            @RequestParam(value = "pageSize") int pageSize,
+            @RequestParam(value = "name", required = false) String name,
+            @RequestParam(value = "userName", required = false) String userName,
+            @RequestParam(value = "isEnabled", required = false) String isEnabled,
+            @RequestParam(value = "phone", required = false) String phone,
+            @RequestParam(value = "state", required = false) String state,
+            @RequestParam(value = "adcd", required = false) String adcd,
+            @RequestParam(value = "deptName", required = false) String deptName,
+            @RequestParam(value = "deptId", required = false) String deptId,
+            @RequestParam(value = "sortColumn", required = false) String sortColumn,
+            @RequestParam(value = "sortName", required = false) String sortName) {
+        try {
+            page = (page == 0) ? 1 : page;
+            pageSize = (pageSize == 0) ? SysConstants.PAGE_SIZE : pageSize;
+
+            JSONObject paramJson = new JSONObject();
+            if (!SummitTools.stringIsNull(name)) {
+                paramJson.put("name", name);
+            }
+            if (!SummitTools.stringIsNull(userName)) {
+                paramJson.put("userName", userName);
+            }
+            if (!SummitTools.stringIsNull(isEnabled)) {
+                paramJson.put("isEnabled", isEnabled);
+            }
+            if (!SummitTools.stringIsNull(state)) {
+                paramJson.put("state", state);
+            }
+            if (!SummitTools.stringIsNull(adcd)) {
+                paramJson.put("adcd", adcd);
+            }
+            if (!SummitTools.stringIsNull(deptId)) {
+                paramJson.put("deptId", deptId);
+            }
+            if (!SummitTools.stringIsNull(phone)) {
+                paramJson.put("phone", phone);
+            }
+            if (!SummitTools.stringIsNull(sortColumn)) {
+                paramJson.put("sortColumn", sortColumn);
+            }
+            if (!SummitTools.stringIsNull(sortName)) {
+                paramJson.put("sortName", sortName);
+            }
+            if (!SummitTools.stringIsNull(deptName)) {
+                paramJson.put("deptName", deptName);
+            }
+            Page<UserInfo> pageList = us.queryUserByPage(page, pageSize, paramJson);
+            return ResultBuilder.buildSuccess(pageList);
+        } catch (Exception e) {
+            logger.error("用户分页查询失败：", e);
+            return ResultBuilder.buildError(ResponseCodeEnum.CODE_9999);
+        }
+    }
+
+
+
+
 
     @ApiOperation(value = "重置密码,只需输入UserName和Password", notes = "重置的密码必须是加密后的数据")
     @PutMapping("/resetPassword")

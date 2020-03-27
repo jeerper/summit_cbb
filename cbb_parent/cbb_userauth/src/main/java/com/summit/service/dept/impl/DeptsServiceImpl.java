@@ -1,6 +1,9 @@
 package com.summit.service.dept.impl;
 
+import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSONObject;
+import com.summit.common.entity.DeptBean;
+import com.summit.service.dept.DeptService;
 import com.summit.service.dept.DeptsService;
 import com.summit.util.DeptUtil;
 
@@ -17,6 +20,7 @@ import java.util.List;
 public class DeptsServiceImpl implements DeptsService {
     @Autowired
     private DeptUtil deptUtil;
+
     @Override
     public String DeptsService() throws Exception {
         JSONObject subordinate_dept = deptUtil.getSubordinateDeptByPDept(null);
@@ -78,6 +82,34 @@ public class DeptsServiceImpl implements DeptsService {
                 return null;
             }*/
             return dept_string;
+        }
+        return null;
+    }
+
+    @Override
+    public String getDeptsByPdept(JSONObject paramJson) {
+        try{
+            JSONObject objct= deptUtil.getAllDeptByPdept(paramJson);
+            String pdept=objct.getString("pdept");
+            List<DeptBean> deptData=(List)objct.getJSONArray("deptList");
+            if(deptData!=null && deptData.size()>0) {
+                String depts = "'"+pdept+"'";
+                for(int i = 0; i < deptData.size() ; i++){
+                    String dept = String.valueOf(deptData.get(i));
+                    depts = depts+",'"+ dept+"'";
+                }
+                String ss = depts.substring(0,1);
+                String es = depts.substring(depts.length()-1,depts.length());
+                if(ss.equals("'") && es.equals("'")){
+                    return depts.substring(1,depts.length()-1);
+                }else{
+                    return "";
+                }
+            }else{
+                return "";
+            }
+        }catch (Exception e){
+            e.printStackTrace();
         }
         return null;
     }
