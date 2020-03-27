@@ -53,7 +53,7 @@ public class AuthServiceImpl  implements AuthService {
         if (Common.getLogUser() != null) {
             rolesList = Arrays.asList(Common.getLogUser().getRoles());
         }
-        String depts = deptsService.currentDeptService();
+        String depts = deptsService.getCurrentDeptService();
         if (!rolesList.contains("ROLE_SUPERUSER") && !SummitTools.stringIsNull(depts)){
             StringBuffer sql_auth = new StringBuffer("SELECT auth.id,user.NAME as apply_name,auth.apply_type,auth.submitted_to,date_format(auth.apply_time, '%Y-%m-%d %H:%i:%s')as applytime,dic.NAME as isAudited  ");
             sql_auth.append("from sys_auth auth INNER JOIN sys_user user on auth.apply_name=user.USERNAME ");

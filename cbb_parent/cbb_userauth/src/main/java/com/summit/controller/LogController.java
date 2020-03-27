@@ -69,7 +69,7 @@ public class LogController {
     public RestfulEntityBySummit<Page<LoginLogInfo>> getLoginLog(@ApiParam(value = "用户名称") @RequestParam(value = "nickName", required = false) String nickName,
                                                                  @ApiParam(value = "起始时间") @RequestParam(value = "startTime", required = false) String startTime,
                                                                  @ApiParam(value = "结束时间") @RequestParam(value = "endTime", required = false) String endTime,
-                                                                 @ApiParam(value = "当前页，大于等于1") @RequestParam(value = "current", required = false) Integer current,
+                                                                 @ApiParam(value = "当前页，大于等于1") @RequestParam(value = "page", required = false) Integer current,
                                                                  @ApiParam(value = "每页条数，大于等于0") @RequestParam(value = "pageSize", required = false) Integer pageSize) {
         try {
             Date start = DateUtil.parse(startTime);

@@ -21,13 +21,27 @@
         order by sll.loginTime desc
         LIMIT 0,1
     </select>
-    <select id="getLoginLog" parameterType="map" resultType="com.summit.dao.entity.LoginLogInfo">
-        select sll.userName,
+
+    <resultMap id="loginInfo" type="com.summit.dao.entity.LoginLogInfo">
+        <result column="id"  jdbcType="VARCHAR" property="id"/>
+        <result column="userName"  jdbcType="VARCHAR" property="userName"/>
+        <result column="name"  jdbcType="VARCHAR" property="name"/>
+        <result column="roleName"  jdbcType="VARCHAR" property="roleName"/>
+        <result column="loginTime"  jdbcType="TIMESTAMP" property="loginTime"/>
+        <result column="onlineTime"  jdbcType="INTEGER" property="onlineTime"/>
+        <result column="callerIP"  jdbcType="VARCHAR" property="callerIP"/>
+        <result column="log_sucesss_or_not"  jdbcType="VARCHAR" property="logSuccessOrNot"/>
+    </resultMap>
+    <select id="getLoginLog" parameterType="map" resultMap="loginInfo" >
+        select
+        sll.id,
+        sll.userName,
         su.NAME as `name`,
         surn.roleName,
         sll.loginTime,
         sll.onlineTime,
-        sll.callerIP
+        sll.callerIP,
+        sll.log_sucesss_or_not
         from sys_login_log sll
         inner join sys_user su on sll.userName = su.USERNAME
         INNER JOIN (

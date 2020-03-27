@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import com.summit.common.Common;
 import com.summit.common.entity.*;
@@ -392,11 +393,16 @@ public class DeptService {
         String sql="INSERT INTO sys_dept_auth(id,deptId_auth,pId_auth,deptcode_auth,deptName_auth,adcd_auth,auth_person,isAudited,auth_time,submitted_to,remark,apply_name,deptType_auth,deptHead_auth,deptRecord_id ) VALUES " +
                 "(?,?,?,?,?,?,?,?,now(),?,?,?,?,?,?) ";
         //上级部门
-        JSONObject jsonObject=queryBySuperDeptByDeptId(deptAuditBean.getDeptIdAuth());
+
         String  superDept=null;
-        if (jsonObject !=null && !SummitTools.stringIsNull( jsonObject.getString("ID"))){
-            superDept=jsonObject.getString("ID");
+        if(Common.getLogUser()!=null && StrUtil.isNotBlank(Common.getLogUser().getUserName())){
+            String userName = Common.getLogUser().getUserName();
+            JSONObject jsonObject = queryBySuperDeptByUserName(userName);
+            if (jsonObject !=null && !SummitTools.stringIsNull( jsonObject.getString("ID"))){
+                superDept=jsonObject.getString("ID");
+            }
         }
+        //JSONObject jsonObject=queryBySuperDeptByDeptId(deptAuditBean.getDeptIdAuth());
         String idStr = IdWorker.getIdStr();
         try{
             jdbcTemplate.update(sql,
@@ -502,6 +508,18 @@ public class DeptService {
         return jsonObject;
     }
 
+    //根据用户用户名查找上级部门
+    private JSONObject queryBySuperDeptByUserName(String userNameAuth) throws Exception {
+        StringBuffer sql=new StringBuffer("SELECT superDept.ID,superDept.DEPTCODE,superDept.DEPTNAME from sys_dept superDept INNER JOIN ");
+        sql.append("(SELECT dept.ID,dept.PID from sys_user user INNER JOIN sys_user_dept userDpet on user.USERNAME =userDpet.USERNAME ");
+        sql.append("INNER JOIN sys_dept dept on userDpet.DEPTID=dept.ID WHERE user.USERNAME=? )dept on dept.PID=superDept.ID ");
+        LinkedMap lm = new LinkedMap();
+        lm.put(1, userNameAuth);
+        JSONObject jsonObject = ur.queryOneCustom(sql.toString(), lm);
+        return  jsonObject;
+    }
+
+
     //查找上级部门
     private JSONObject queryBySuperDeptByDeptId(String deptIdAuth) throws Exception {
         StringBuffer sql=new StringBuffer("SELECT superDept.ID,superDept.DEPTNAME from sys_dept dept INNER JOIN sys_dept superDept on dept.PID=superDept.ID where dept.ID=? ");
@@ -574,42 +592,83 @@ public class DeptService {
         return null;
     }
 
+    //根据当前登录人查询所属部门以及子部门下的用户昵称
     public String queryUserNamesByCurrentDeptId() throws Exception {
-        StringBuffer sql = new StringBuffer("SELECT DISTINCT ud.USERNAME FROM sys_user_dept ud where 1=1 ");
         String querydepts = deptsService.getDeptsByPdept(null);
         if(querydepts!=null && !querydepts.equals("")){
-            sql.append(" and ud.DEPTID IN('"+querydepts+"') ");
-        }
-        List<Object> l = ur.queryAllCustom(sql.toString(), new LinkedMap());
-        List<String> userNames = new ArrayList<String>();
-        if (l.size() > 0) {
-            for (Object username : l) {
-                userNames.add(((JSONObject) username).getString("USERNAME"));
-            }
-        }
-        try{
-            com.alibaba.fastjson.JSONObject jsonOject=new com.alibaba.fastjson.JSONObject();
-            jsonOject.put("userNames", userNames);
-            List<UserDept> nameData=(List)jsonOject.getJSONArray("userNames");
-            if(nameData!=null && nameData.size()>0) {
-                String user_names = "";
-                for(int i = 0; i < nameData.size() ; i++){
-                    String user_name = String.valueOf(nameData.get(i));
-                    user_names = user_names+"'"+ user_name+"',";
+            StringBuffer sql = new StringBuffer("SELECT DISTINCT ud.USERNAME FROM sys_user_dept ud where ");
+            sql.append("ud.DEPTID IN('"+querydepts+"') ");
+            List<Object> l = ur.queryAllCustom(sql.toString(), new LinkedMap());
+            List<String> userNames = new ArrayList<String>();
+            if (l.size() > 0) {
+                for (Object username : l) {
+                    userNames.add(((JSONObject) username).getString("USERNAME"));
                 }
-                String ss = user_names.substring(0,1);
-                String es = user_names.substring(user_names.length()-1,user_names.length());
-                if(ss.equals("'") && es.equals(",")){
-                    return user_names.substring(1,user_names.length()-2);
+            }
+            try{
+                com.alibaba.fastjson.JSONObject jsonOject=new com.alibaba.fastjson.JSONObject();
+                jsonOject.put("userNames", userNames);
+                List<UserDept> nameData=(List)jsonOject.getJSONArray("userNames");
+                if(nameData!=null && nameData.size()>0) {
+                    String user_names = "";
+                    for(int i = 0; i < nameData.size() ; i++){
+                        String user_name = String.valueOf(nameData.get(i));
+                        user_names = user_names+"'"+ user_name+"',";
+                    }
+                    String ss = user_names.substring(0,1);
+                    String es = user_names.substring(user_names.length()-1,user_names.length());
+                    if(ss.equals("'") && es.equals(",")){
+                        return user_names.substring(1,user_names.length()-2);
+                    }else{
+                        return "";
+                    }
                 }else{
                     return "";
                 }
-            }else{
-                return "";
+            }catch (Exception e){
+                e.printStackTrace();
             }
-        }catch (Exception e){
-            e.printStackTrace();
         }
        return  null;
+    }
+    //根据当前登录人查询所属部门下的用户昵称
+    public String queryUserNamesByCurrentLoginDeptId() throws Exception {
+        String currentDept = deptsService.getCurrentDeptService();
+        if (StrUtil.isNotBlank(currentDept)){
+            StringBuffer sql = new StringBuffer("SELECT DISTINCT ud.USERNAME FROM sys_user_dept ud where ");
+            sql.append("ud.DEPTID IN('"+currentDept+"') ");
+            List<Object> l = ur.queryAllCustom(sql.toString(), new LinkedMap());
+            List<String> userNames = new ArrayList<String>();
+            if (l.size() > 0) {
+                for (Object username : l) {
+                    userNames.add(((JSONObject) username).getString("USERNAME"));
+                }
+            }
+            try{
+                com.alibaba.fastjson.JSONObject jsonOject=new com.alibaba.fastjson.JSONObject();
+                jsonOject.put("userNames", userNames);
+                List<UserDept> nameData=(List)jsonOject.getJSONArray("userNames");
+                if(nameData!=null && nameData.size()>0) {
+                    String user_names = "";
+                    for(int i = 0; i < nameData.size() ; i++){
+                        String user_name = String.valueOf(nameData.get(i));
+                        user_names = user_names+"'"+ user_name+"',";
+                    }
+                    String ss = user_names.substring(0,1);
+                    String es = user_names.substring(user_names.length()-1,user_names.length());
+                    if(ss.equals("'") && es.equals(",")){
+                        return user_names.substring(1,user_names.length()-2);
+                    }else{
+                        return "";
+                    }
+                }else{
+                    return "";
+                }
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+        }
+        return null;
+
     }
 }

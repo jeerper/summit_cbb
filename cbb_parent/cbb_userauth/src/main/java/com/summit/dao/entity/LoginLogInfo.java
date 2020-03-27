@@ -1,5 +1,6 @@
 package com.summit.dao.entity;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -11,6 +12,8 @@ import java.util.Date;
 @ApiModel(description="封装登陆日志记录类")
 @Data
 public class LoginLogInfo {
+    @ApiModelProperty(value="id")
+    private String id;
     @ApiModelProperty(value="账户名称")
     private String userName;
     @ApiModelProperty(value="用户昵称")
@@ -25,5 +28,7 @@ public class LoginLogInfo {
     private int onlineTime;
     @ApiModelProperty(value="登陆IP")
     private String callerIP;
+    @ApiModelProperty(value = "是否登录成功")
+    private String logSuccessOrNot;
 
 }

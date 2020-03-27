@@ -79,7 +79,7 @@ public class DeptAuditServiceImpl  implements DeptAuditService {
         if (Common.getLogUser() != null) {
             rolesList = Arrays.asList(Common.getLogUser().getRoles());
         }
-        String depts = deptsService.currentDeptService();
+        String depts = deptsService.getCurrentDeptService();
         if (!rolesList.contains("ROLE_SUPERUSER") && !SummitTools.stringIsNull(depts)){
             StringBuffer sql=new StringBuffer("SELECT deptAuth.id,deptAuth.deptId_auth,deptAuth.pId_auth,deptAuth.deptcode_auth,deptAuth.deptName_auth,deptAuth.adcd_auth,deptAuth.auth_person,deptAuth.isAudited, ");
             sql.append("date_format(deptAuth.auth_time,'%Y-%m-%d %H:%i:%s')as auth_time,remark,user.NAME as applyName FROM  sys_dept_auth  deptAuth  inner join sys_user user on deptAuth.apply_name=user.USERNAME  ");

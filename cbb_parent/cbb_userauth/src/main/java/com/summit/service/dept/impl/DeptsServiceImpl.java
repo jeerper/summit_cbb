@@ -68,7 +68,7 @@ public class DeptsServiceImpl implements DeptsService {
     }
 
     @Override
-    public String currentDeptService() throws Exception {
+    public String getCurrentDeptService() throws Exception {
         JSONObject current_dept = deptUtil.getCurrentDeptByPDept(null);
         String currentDept=current_dept.getString("currentDept");
         String dept_string  = null;

@@ -705,6 +705,18 @@ public class UserController {
         }
     }
 
+    @ApiOperation(value = "根据当前登录人查找登录人所在部门下的用户(查找部门联系人接口)")
+    @RequestMapping(value = "/queryUsersByCurrentLoginName", method = RequestMethod.GET)
+    public RestfulEntityBySummit<List<UserInfo>> queryUsersByCurrentLoginName(){
+        List<UserInfo> userInfos=null;
+        try{
+            userInfos=us.queryUsersByCurrentLoginName();
+        }catch (Exception e){
+            logger.error("数据查询失败！", e);
+            return ResultBuilder.buildError(ResponseCodeEnum.CODE_9999,"查询数据失败", userInfos);
+        }
+        return ResultBuilder.buildError(ResponseCodeEnum.CODE_0000,"查询数据成功",userInfos);
+    }
 
 
 
@@ -754,7 +766,6 @@ public class UserController {
             @RequestParam(value = "userName") String userName) {
         try {
             UserInfo ub = UserContextHolder.getUserInfo();
-            ;
             if (ub == null) {
                 return ResultBuilder.buildError(ResponseCodeEnum.CODE_4023);
             }

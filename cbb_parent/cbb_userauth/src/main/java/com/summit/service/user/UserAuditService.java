@@ -179,7 +179,7 @@ public class UserAuditService {
         if (Common.getLogUser() != null) {
             rolesList = Arrays.asList(Common.getLogUser().getRoles());
         }
-        String depts = deptsService.currentDeptService();
+        String depts = deptsService.getCurrentDeptService();
         if (!rolesList.contains("ROLE_SUPERUSER") && !SummitTools.stringIsNull(depts)){
             StringBuffer sql=new StringBuffer("SELECT  sua.id,sua.userName_auth,sua.name_auth,sua.sex_auth,sua.password_auth,sua.email_auth,sua.phone_number_auth,sua.is_enabled_auth,sua.headPortrait_auth, ");
             sql.append("sua.duty_auth,sua.dept_auth,sua.adcd_auth, sua.post_auth, sua.auth_person,sua.isAudited,date_format(sua.auth_time, '%Y-%m-%d %H:%i:%s')as auth_time,remark,user.NAME as apply_name ");
