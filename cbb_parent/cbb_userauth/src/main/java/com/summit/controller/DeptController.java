@@ -142,13 +142,15 @@ public class DeptController {
             @RequestParam(value = "deptcode", required = false) String deptcode,
             @RequestParam(value = "deptname", required = false) String deptname,
             @RequestParam(value = "adcd", required = false) String adcd,
-            @RequestParam(value = "adnm", required = false) String adnm){
+            @RequestParam(value = "adnm", required = false) String adnm,
+            @RequestParam(value = "pid", required = false) String pid){
         try{
             JSONObject paramJson = new JSONObject();
             paramJson.put("deptcode", deptcode);
             paramJson.put("deptname", deptname);
             paramJson.put("adcd", adcd);
             paramJson.put("adnm", adnm);
+            paramJson.put("pid",pid);
             return ResultBuilder.buildSuccess(ds.queryDeptByPage(page, pageSize, paramJson));
         }catch (Exception e){
             logger.error("查询失败：", e);

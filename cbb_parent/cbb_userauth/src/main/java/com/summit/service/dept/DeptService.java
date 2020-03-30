@@ -549,8 +549,16 @@ public class DeptService {
 
     }
 
+    /**
+     * 部门分页查询加部门权限
+     * @param start
+     * @param limit
+     * @param paramJson
+     * @return
+     * @throws Exception
+     */
     public Page<DeptBean> queryDeptByPage(int start, int limit, JSONObject paramJson) throws Exception {
-        StringBuffer sql = new StringBuffer("SELECT dept.ID,dept.PID,dept.DEPTCODE,dept.DEPTNAME,dept.ADCD,dept.REMARK,us.NAME as deptHead, fdept.DEPTNAME as PDEPTNAME,AD.ADNM,dic.NAME as deptType FROM SYS_DEPT dept left join SYS_DEPT fdept on dept.pid=fdept.id  ");
+        StringBuffer sql = new StringBuffer("SELECT dept.ID,fdept.ID as PID,dept.DEPTCODE,dept.DEPTNAME,dept.ADCD,dept.REMARK,us.NAME as deptHead, fdept.DEPTNAME as PDEPTNAME,AD.ADNM,dic.NAME as deptType FROM SYS_DEPT dept left join SYS_DEPT fdept on dept.pid=fdept.id  ");
         sql.append(" LEFT JOIN sys_user us ON dept.DEPTHEAD=us.USERNAME  ");
         sql.append(" LEFT JOIN SYS_AD_CD AD ON AD.ADCD=DEPT.ADCD  ");
         sql.append(" LEFT JOIN sys_dictionary dic on dic.PCODE='dept_type' and dept.deptType=dic.CKEY ");
@@ -562,6 +570,11 @@ public class DeptService {
             sql.append(" and dept.ID in('"+depts+"') ");
         }
         if (paramJson != null && !paramJson.isEmpty()) {
+            if (paramJson.containsKey("pid") && SummitTools.stringNotNull(paramJson.getString("pid"))) {
+                sql.append(" and fdept.ID = ? ");
+                linkedMap.put(index, paramJson.get("pid"));
+                index++;
+            }
             if (paramJson.containsKey("deptcode")) {
                 sql.append(" and dept.deptcode  like ? ");
                 linkedMap.put(index, "%" + paramJson.get("deptcode") + "%");
