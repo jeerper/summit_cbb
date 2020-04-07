@@ -2,14 +2,26 @@ package com.summit.cbb.utils;
 
 import java.util.List;
 
+/**
+ * @author xjtuhgd
+ * @date 2019/12/09
+ */
 public class ReadExcelResult<T> {
 
-    private String errorMsg;// 错误信息
-    private String infoMsg;// 提示信息
-    private List<T> dataList;// 数据
+    /**
+     * 错误信息
+     */
+    private String errorMsg;
+    /**
+     * 提示信息
+     */
+    private String infoMsg;
+    /**
+     * 数据
+     */
+    private List<T> dataList;
 
-    public ReadExcelResult() {
-    }
+    public ReadExcelResult() {}
 
     public String getErrorMsg() {
         return errorMsg;
