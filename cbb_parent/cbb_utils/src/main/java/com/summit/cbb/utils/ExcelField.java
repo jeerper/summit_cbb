@@ -8,6 +8,10 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+/**
+ * @author xjtuhgd
+ * @date 2019/12/09
+ */
 @Target({ElementType.METHOD, ElementType.FIELD, ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ExcelField {
@@ -75,7 +79,7 @@ public @interface ExcelField {
     /**
      * 最小值  数据库是数字时设置
      */
-    double minValue() default 0;
+    double minValue() default -1111111;
 
     /**
      * 日期格式 默认"yyyy-MM-dd" 如果有变动请做相应调整

@@ -12,6 +12,7 @@ public class CommonException extends RuntimeException{
 
     private static final long serialVersionUID = 1L;
     private ResponseCode responseCode;
+    private String errorMsg;
 
     public CommonException() {
     }
@@ -28,5 +29,15 @@ public class CommonException extends RuntimeException{
         this.responseCode = responseCode;
     }
 
+    public CommonException(String errorMsg) {
+        this.errorMsg = errorMsg;
+    }
 
+    public String getErrorMsg() {
+        return errorMsg;
+    }
+
+    public void setErrorMsg(String errorMsg) {
+        this.errorMsg = errorMsg;
+    }
 }

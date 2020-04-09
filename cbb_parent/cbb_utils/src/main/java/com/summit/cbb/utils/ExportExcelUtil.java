@@ -1,13 +1,8 @@
-/**
- * Copyright &copy; 2015-2020 <a href="http://www.jeeplus.org/">JeePlus</a> All rights reserved.
- */
 package com.summit.cbb.utils;
 
 import com.google.common.collect.Lists;
-import com.summit.cbb.utils.constants.SystemConstants;
+import com.summit.cbb.utils.constants.ExportSheetVo;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.reflect.FieldUtils;
-import org.apache.commons.lang3.time.DateFormatUtils;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.streaming.SXSSFSheet;
@@ -28,16 +23,16 @@ import java.net.URLEncoder;
 import java.util.*;
 
 /**
- * 导出Excel文件（导出“XLSX”格式，支持大数据量导出 @see org.apache.poi.ss.SpreadsheetVersion）
- *
- * @author jeeplus
- * @version 2013-04-21
+ * 导出数据到EXCEL工具类
+ * 
+ * @author xjtuhgd
+ * @date 2020/03/10
  */
-public class ExportExcel {
+public class ExportExcelUtil {
 
     private static final String DEFAULT_URL_ENCODING = "UTF-8";
 
-    private static Logger log = LoggerFactory.getLogger(ExportExcel.class);
+    private static Logger log = LoggerFactory.getLogger(ExportExcelUtil.class);
 
     private static final String CHAR_ENTER = "\n";
 
@@ -46,70 +41,29 @@ public class ExportExcel {
      */
     private SXSSFWorkbook wb;
 
-    /**
-     * 工作表对象
-     */
-    private SXSSFSheet sheet;
-
-    /**
-     * 样式列表
-     */
-    private Map<String, CellStyle> styles;
-
-    /**
-     * 当前行号
-     */
-    private int rownum;
-
-    /**
-     * 注解列表（Object[]{ ExcelField, Field/Method }）
-     */
-    List<Object[]> annotationList = Lists.newArrayList();
-
-    /**
-     * 构造函数
-     *
-     * @param title
-     *            表格标题，传“空值”，表示无标题
-     * @param cls
-     *            实体对象，通过annotation.ExportField获取标题
-     */
-    public ExportExcel(String title, String note, Class<?> cls) {
-        this(title, note, null, cls, 1);
+    public ExportExcelUtil() {
+        this.wb = new SXSSFWorkbook(500);
     }
 
-    /**
-     * 构造函数
-     *
-     * @param title
-     *            表格标题，传“空值”，表示无标题
-     * @param sheetName
-     *            sheet页名称
-     * @param cls
-     *            实体对象，通过annotation.ExportField获取标题
-     */
-    public ExportExcel(String title, String note, String sheetName, Class<?> cls) {
-        this(title, note, sheetName, cls, 1);
+    public <E> void addSheet(ExportSheetVo<E> es) {
+        addSheet(es.getTitle(), es.getNote(), es.getSheetName(), es.getC(), es.getDataList(), 1);
     }
 
-    /**
-     * 构造函数
-     *
-     * @param title
-     *            表格标题，传“空值”，表示无标题
-     * @param note
-     *            备注，传“空值”，表示无备注
-     * @param cls
-     *            实体对象，通过annotation.ExportField获取标题
-     * @param type
-     *            导出类型（1:导出数据；2：导出模板）
-     * @param groups
-     *            导入分组
-     */
-    public ExportExcel(String title, String note, String sheetName, Class<?> cls, int type, int... groups) {
+    public <E> void addSheet(List<E> dataList, Class<E> c, String title, String note, String sheetName) {
+        addSheet(title, note, sheetName, c, dataList, 1);
+    }
+
+    public <E> void addSheet(String title, String note, String sheetName, Class<?> cls, List<E> list, int type,
+        int... groups) {
+
+        SXSSFSheet sheet =
+            wb.createSheet(StringUtils.isNotEmpty(sheetName) ? sheetName : "Export" + wb.getNumberOfSheets());
+        Map<String, CellStyle> styles = createStyles(wb);
+        // 注解列表（Object[]{ ExcelField, Field/Method }）
+        List<Object[]> annotationList = Lists.newArrayList();
+
         // Get annotation field
-        // Field[] fs = cls.getDeclaredFields();
-        Field[] fs = FieldUtils.getAllFields(cls);
+        Field[] fs = cls.getDeclaredFields();
         for (Field f : fs) {
             ExcelField ef = f.getAnnotation(ExcelField.class);
             if (ef != null) {
@@ -182,51 +136,14 @@ public class ExportExcel {
             }
             headerList.add(t);
         }
-        initialize(title, note, sheetName, headerList);
+        buildSheet(sheet, title, note, sheetName, headerList, annotationList, list, styles);
     }
 
-    /**
-     * 构造函数
-     *
-     * @param title
-     *            表格标题，传“空值”，表示无标题
-     * @param note
-     *            备注，传“空值”，表示无备注
-     * @param headers
-     *            表头数组
-     */
-    public ExportExcel(String title, String note, String[] headers) {
-        initialize(title, note, null, Lists.newArrayList(headers));
-    }
+    public <E> void buildSheet(SXSSFSheet sheet, String title, String note, String sheetName, List<String> headerList,
+        List<Object[]> annotationList, List<E> list, Map<String, CellStyle> styles) {
 
-    /**
-     * 构造函数
-     *
-     * @param title
-     *            表格标题，传“空值”，表示无标题
-     * @param note
-     *            备注，传“空值”，表示无备注
-     * @param headerList
-     *            表头列表
-     */
-    public ExportExcel(String title, String note, List<String> headerList) {
-        initialize(title, note, null, headerList);
-    }
+        int rownum = 0;
 
-    /**
-     * 初始化函数
-     *
-     * @param title
-     *            表格标题，传“空值”，表示无标题
-     * @param note
-     *            备注，传“空值”，表示无备注
-     * @param headerList
-     *            表头列表
-     */
-    private void initialize(String title, String note, String sheetName, List<String> headerList) {
-        this.wb = new SXSSFWorkbook(500);
-        this.sheet = wb.createSheet(StringUtils.isNotEmpty(sheetName) ? sheetName : "Export");
-        this.styles = createStyles(wb);
         // Create title
         if (StringUtils.isNotBlank(title)) {
             Row titleRow = sheet.createRow(rownum++);
@@ -266,7 +183,7 @@ public class ExportExcel {
             String[] ss = StringUtils.split(headerList.get(i), "**", 2);
             if (ss.length == 2) {
                 cell.setCellValue(ss[0]);
-                Comment comment = this.sheet.createDrawingPatriarch()
+                Comment comment = sheet.createDrawingPatriarch()
                     .createCellComment(new XSSFClientAnchor(0, 0, 0, 0, (short)3, 3, (short)5, 6));
                 comment.setString(new XSSFRichTextString(ss[1]));
                 cell.setCellComment(comment);
@@ -280,6 +197,45 @@ public class ExportExcel {
             sheet.setColumnWidth(i, colWidth < 4500 ? 4500 : colWidth);
         }
         log.debug("Initialize success.");
+        setDataList(sheet, list, annotationList, styles, rownum);
+    }
+
+    /**
+     * 添加数据（通过annotation.ExportField添加数据）
+     *
+     * @return list 数据列表
+     */
+    public <E> void setDataList(SXSSFSheet sheet, List<E> list, List<Object[]> annotationList,
+        Map<String, CellStyle> styles, int rownum) {
+        for (E e : list) {
+            int colunm = 0;
+            Row row = addRow(sheet, rownum++);
+            StringBuilder sb = new StringBuilder();
+            for (Object[] os : annotationList) {
+                ExcelField ef = (ExcelField)os[0];
+                Object val = null;
+                // Get entity value
+                try {
+                    if (StringUtils.isNotBlank(ef.value())) {
+                        val = Reflections.invokeGetter(e, ef.value());
+                    } else {
+                        if (os[1] instanceof Field) {
+                            val = Reflections.invokeGetter(e, ((Field)os[1]).getName());
+                        } else if (os[1] instanceof Method) {
+                            val =
+                                Reflections.invokeMethod(e, ((Method)os[1]).getName(), new Class[] {}, new Object[] {});
+                        }
+                    }
+                } catch (Exception ex) {
+                    // Failure to ignore
+                    log.info(ex.toString());
+                    val = "";
+                }
+                this.addCell(row, colunm++, val, ef.align(), ef.fieldType(), styles);
+                sb.append(val + ", ");
+            }
+            log.debug("Write success: [" + row.getRowNum() + "] " + sb.toString());
+        }
     }
 
     /**
@@ -384,39 +340,22 @@ public class ExportExcel {
      *
      * @return 行对象
      */
-    public Row addRow() {
-        return sheet.createRow(rownum++);
+    private Row addRow(SXSSFSheet sheet, int rownum) {
+        return sheet.createRow(rownum);
     }
+
 
     /**
      * 添加一个单元格
      *
-     * @param row
-     *            添加的行
-     * @param column
-     *            添加列号
-     * @param val
-     *            添加值
+     * @param row 添加的行
+     * @param column 添加列号
+     * @param val 添加值
+     * @param align 对齐方式（1：靠左；2：居中；3：靠右）
      * @return 单元格对象
      */
-    public Cell addCell(Row row, int column, Object val) {
-        return this.addCell(row, column, val, 0, Class.class);
-    }
-
-    /**
-     * 添加一个单元格
-     *
-     * @param row
-     *            添加的行
-     * @param column
-     *            添加列号
-     * @param val
-     *            添加值
-     * @param align
-     *            对齐方式（1：靠左；2：居中；3：靠右）
-     * @return 单元格对象
-     */
-    public Cell addCell(Row row, int column, Object val, int align, Class<?> fieldType) {
+    private Cell addCell(Row row, int column, Object val, int align, Class<?> fieldType,
+        Map<String, CellStyle> styles) {
         Cell cell = row.createCell(column);
         CellStyle style = styles.get("data" + (align >= 1 && align <= 3 ? align : ""));
         try {
@@ -455,115 +394,13 @@ public class ExportExcel {
     }
 
     /**
-     * 添加一个单元格
-     *
-     * @param row
-     *            添加的行
-     * @param column
-     *            添加列号
-     * @param val
-     *            添加值
-     * @param ef
-     *            对齐方式（1：靠左；2：居中；3：靠右）
-     * @return 单元格对象
-     */
-    public Cell addCell(Row row, int column, Object val, ExcelField ef) {
-        int align = ef.align();
-        Class<?> fieldType = ef.fieldType();
-        ef.fieldType();
-        Cell cell = row.createCell(column);
-        CellStyle style = styles.get("data" + (align >= 1 && align <= 3 ? align : ""));
-        try {
-            if (val == null) {
-                cell.setCellValue("");
-            } else if (val instanceof String) {
-                cell.setCellValue((String)val);
-            } else if (val instanceof Integer) {
-                cell.setCellValue((Integer)val);
-            } else if (val instanceof Long) {
-                cell.setCellValue((Long)val);
-            } else if (val instanceof Double) {
-                cell.setCellValue((Double)val);
-            } else if (val instanceof Float) {
-                cell.setCellValue((Float)val);
-            } else if (val instanceof Date) {
-                // DataFormat format = wb.createDataFormat();
-                // style.setDataFormat(format.getFormat("yyyy-MM-dd"));
-                cell.setCellValue(DateFormatUtils.format((Date)val, ef.dateFormat()));
-            } else {
-                if (fieldType != Class.class) {
-                    cell.setCellValue((String)fieldType.getMethod("setValue", Object.class).invoke(null, val));
-                } else {
-                    cell.setCellValue((String)Class
-                        .forName(this.getClass().getName().replaceAll(this.getClass().getSimpleName(),
-                            "fieldtype." + val.getClass().getSimpleName() + "Type"))
-                        .getMethod("setValue", Object.class).invoke(null, val));
-                }
-            }
-        } catch (Exception ex) {
-            log.info("Set cell value [" + row.getRowNum() + "," + column + "] error: " + ex.toString());
-            cell.setCellValue(val.toString());
-        }
-        cell.setCellStyle(style);
-        return cell;
-    }
-
-    /**
-     * 添加数据（通过annotation.ExportField添加数据）
-     *
-     * @return list 数据列表
-     */
-    public <E> ExportExcel setDataList(List<E> list) {
-        for (E e : list) {
-            int colunm = 0;
-            Row row = this.addRow();
-            StringBuilder sb = new StringBuilder();
-            for (Object[] os : annotationList) {
-                ExcelField ef = (ExcelField)os[0];
-                Object val = null;
-                // Get entity value
-                try {
-                    if (StringUtils.isNotBlank(ef.value())) {
-                        val = Reflections.invokeGetter(e, ef.value());
-                    } else {
-                        if (os[1] instanceof Field) {
-                            val = Reflections.invokeGetter(e, ((Field)os[1]).getName());
-                        } else if (os[1] instanceof Method) {
-                            val =
-                                Reflections.invokeMethod(e, ((Method)os[1]).getName(), new Class[] {}, new Object[] {});
-                        }
-                    }
-                } catch (Exception ex) {
-                    // Failure to ignore
-                    log.info(ex.toString());
-                    val = "";
-                }
-                // this.addCell(row, colunm++, val, ef.align(), ef.fieldType());
-                this.addCell(row, colunm++, val, ef);
-                sb.append(val + ", ");
-            }
-            log.debug("Write success: [" + row.getRowNum() + "] " + sb.toString());
-        }
-        // 自动调整日期列的列宽
-        ExcelField ef = null;
-        for (int i = 0; i < this.annotationList.size(); i++) {
-            ef = (ExcelField)annotationList.get(i)[0];
-            if(!SystemConstants.DATE.equals(ef.dateFormat())) {
-                this.sheet.autoSizeColumn((short)i);
-            }
-        }
-        return this;
-    }
-
-    /**
      * 输出数据流
      *
      * @param os
      *            输出数据流
      */
-    public ExportExcel write(OutputStream os) throws IOException {
+    public ExportExcelUtil write(OutputStream os) throws IOException {
         wb.write(os);
-        os.close();
         return this;
     }
 
@@ -573,36 +410,50 @@ public class ExportExcel {
      * @param fileName
      *            输出文件名
      */
-    public ExportExcel write(HttpServletResponse response, String fileName) throws IOException {
+    public ExportExcelUtil write(HttpServletResponse response, String fileName) throws IOException {
         response.reset();
         response.setContentType("application/octet-stream; charset=utf-8");
         response.setHeader("Content-Disposition",
             "attachment; filename=" + URLEncoder.encode(fileName, DEFAULT_URL_ENCODING));
-        OutputStream out = response.getOutputStream();
-        write(out);
-        out.close();
+        write(response.getOutputStream());
         return this;
     }
 
+    /**
+     * 输出到客户端
+     *
+     * @param fileName
+     *            输出文件名
+     */
+    public ExportExcelUtil writeExcle(HttpServletResponse response, String fileName) throws IOException {
+        response.reset();
+        //配置返回response参数
+        response.setContentType("application/vnd.ms-excel");
+        response.setCharacterEncoding("utf-8");
+        // 这里URLEncoder.encode可以防止中文乱码 当然和easyexcel没有关系
+        String exportName = URLEncoder.encode(fileName, "UTF-8");
+        response.setHeader("Content-disposition", "attachment;filename=" + exportName + ".xlsx");
+        write(response.getOutputStream());
+        return this;
+    }
+    
     /**
      * 输出到文件
      *
      * @param name
      *            输出文件名
      */
-    public ExportExcel writeFile(String name) throws FileNotFoundException, IOException {
+    public ExportExcelUtil writeFile(String name) throws FileNotFoundException, IOException {
         FileOutputStream os = new FileOutputStream(name);
         this.write(os);
-        os.close();
         return this;
     }
 
     /**
      * 清理临时文件
      */
-    public ExportExcel dispose() {
+    public ExportExcelUtil dispose() {
         wb.dispose();
         return this;
     }
-
 }
