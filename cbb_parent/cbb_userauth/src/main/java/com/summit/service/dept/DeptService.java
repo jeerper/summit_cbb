@@ -79,7 +79,7 @@ public class DeptService {
             pid = Common.getLogUser().getDepts()[0];
         }
         LinkedMap linkedMap = new LinkedMap();
-        StringBuffer sql = new StringBuffer("SELECT dept.ID,fdept.ID as PID,dept.DEPTCODE,dept.DEPTNAME,dept.ADCD,dept.REMARK,us.NAME as deptHead,fdept.DEPTNAME as PDEPTNAME,AD.ADNM,dic.NAME as deptType ");
+        StringBuffer sql = new StringBuffer("SELECT dept.ID,dept.PID,dept.DEPTCODE,dept.DEPTNAME,dept.REMARK,us.NAME as deptHead,fdept.DEPTNAME as PDEPTNAME,dic.NAME as deptType ");
         sql.append("FROM SYS_DEPT dept ");
         sql.append("left join SYS_DEPT fdept on dept.pid=fdept.id ");
         sql.append("LEFT JOIN sys_user us ON dept.DEPTHEAD=us.USERNAME ");
@@ -103,12 +103,11 @@ public class DeptService {
 
     private List<DeptBean> generateOrgMapToTreeAuth(Map<String, List<Object>> orgMaps, String pid) throws Exception {
         if (null == orgMaps || orgMaps.size() == 0) {
-            StringBuffer sql = new StringBuffer("SELECT DEPT.ID,DEPT.DEPTNAME,DEPT.PID,FDEPT.ID AS CHILD_ID,FDEPT.DEPTCODE AS CHILD_CODE,FDEPT.DEPTNAME AS CHILD_NAME,FDEPT.DEPTCODE AS FDEPTCODE,dept.ADCD, dept.REMARK,us.NAME as deptHead, fdept.DEPTNAME as PDEPTNAME,AD.ADNM,dic.NAME as deptType ");
+            StringBuffer sql = new StringBuffer("SELECT DEPT.ID,DEPT.PID,DEPT.DEPTNAME,FDEPT.ID AS CHILD_ID,FDEPT.DEPTCODE AS CHILD_CODE,FDEPT.DEPTNAME AS CHILD_NAME, FDEPT.REMARK AS CHILD_REMARK,us.NAME as deptHead,dic.NAME as deptType ");
             sql.append("FROM SYS_DEPT DEPT ");
-            sql.append("INNER JOIN SYS_DEPT FDEPT ON FDEPT.PID= DEPT.ID ");
-            sql.append("LEFT JOIN sys_user us ON dept.DEPTHEAD=us.USERNAME ");
-            sql.append("LEFT JOIN SYS_AD_CD AD ON AD.ADCD=DEPT.ADCD ");
-            sql.append("LEFT JOIN sys_dictionary dic on dic.PCODE='dept_type' and dept.deptType=dic.CKEY ");
+            sql.append("INNER JOIN  SYS_DEPT FDEPT ON FDEPT.PID= DEPT.ID ");
+            sql.append("LEFT JOIN sys_user us ON FDEPT.deptHead=us.USERNAME ");
+            sql.append("LEFT JOIN sys_dictionary dic on dic.PCODE='dept_type' and FDEPT.deptType=dic.CKEY ");
             sql.append(" ORDER BY  DEPT.ID ASC,FDEPT.ID ASC ");
             List<Object> list = ur.queryAllCustom(sql.toString(), new LinkedMap());
             Map<String, List<Object>> map = new HashMap<String, List<Object>>();
@@ -143,11 +142,9 @@ public class DeptService {
                 deptBean.setId(json.containsKey("CHILD_ID") ? json.getString("CHILD_ID") : "");
                 deptBean.setDeptCode(json.containsKey("CHILD_CODE") ? json.getString("CHILD_CODE") : "");
                 deptBean.setDeptName(json.containsKey("CHILD_NAME") ? json.getString("CHILD_NAME") : "");
-                deptBean.setAdcd(json.containsKey("ADCD") ? json.getString("ADCD") : "");
-                deptBean.setAdnm(json.containsKey("ADNM") ? json.getString("ADNM") : "");
                 deptBean.setDeptHead(json.containsKey("deptHead") ? json.getString("deptHead") : "");
                 deptBean.setDeptType(json.containsKey("deptType") ? json.getString("deptType") : "");
-                deptBean.setRemark(json.containsKey("REMARK") ? json.getString("REMARK") : "");
+                deptBean.setRemark(json.containsKey("CHILD_REMARK") ? json.getString("CHILD_REMARK") : "");
                 deptBean.setPid(pid);
                 List<DeptBean> children = generateOrgMapToTreeAuth(orgMaps, json.get("CHILD_ID").toString());
                 //将子结果集存入当前对象的children字段中
