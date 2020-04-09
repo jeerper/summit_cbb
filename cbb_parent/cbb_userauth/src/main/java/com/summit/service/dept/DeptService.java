@@ -145,8 +145,8 @@ public class DeptService {
                 deptBean.setDeptName(json.containsKey("CHILD_NAME") ? json.getString("CHILD_NAME") : "");
                 deptBean.setAdcd(json.containsKey("ADCD") ? json.getString("ADCD") : "");
                 deptBean.setAdnm(json.containsKey("ADNM") ? json.getString("ADNM") : "");
-                deptBean.setDeptHeadName(json.containsKey("deptHead") ? json.getString("deptHead") : "");
-                deptBean.setDeptTypeName(json.containsKey("deptType") ? json.getString("deptType") : "");
+                deptBean.setDeptHead(json.containsKey("deptHead") ? json.getString("deptHead") : "");
+                deptBean.setDeptType(json.containsKey("deptType") ? json.getString("deptType") : "");
                 deptBean.setRemark(json.containsKey("REMARK") ? json.getString("REMARK") : "");
                 deptBean.setPid(pid);
                 List<DeptBean> children = generateOrgMapToTreeAuth(orgMaps, json.get("CHILD_ID").toString());
