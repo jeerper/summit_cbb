@@ -68,7 +68,7 @@ public class LogController {
 
     @GetMapping("/login")
     @ApiOperation(value = "查询登录记录")
-    public RestfulEntityBySummit<Page<LoginLogInfo>> getLoginLog(@ApiParam(value = "用户昵称、用户名") @RequestParam(value = "pubquery", required = false) String pubquery,
+    public RestfulEntityBySummit<Page<LoginLogInfo>> getLoginLog(@ApiParam(value = "用户昵称、用户名、登录ip") @RequestParam(value = "pubquery", required = false) String pubquery,
                                                                  @ApiParam(value = "起始时间") @RequestParam(value = "startTime", required = false) String startTime,
                                                                  @ApiParam(value = "结束时间") @RequestParam(value = "endTime", required = false) String endTime,
                                                                  @ApiParam(value = "是否登录成功") @RequestParam(value = "logSuccessOrNot", required = false) String logSuccessOrNot,

@@ -53,6 +53,23 @@ public class DeptController {
         }
     }
 
+    /**
+     * 查询部门树(加数据权限）
+     *
+     * @return
+     */
+    @ApiOperation(value = "查询部门树(加数据权限)")
+    @RequestMapping(value = "/queryTreeAuth", method = RequestMethod.GET)
+    public RestfulEntityBySummit<DeptBean> queryTreeAuth(@RequestParam(value = "pid", required = false) String pid) {
+        try {
+            return ResultBuilder.buildSuccess(ds.queryTreeAuth(pid));
+        } catch (Exception e) {
+            logger.error("查询部门树失败：", e);
+            return ResultBuilder.buildError(ResponseCodeEnum.CODE_9999);
+        }
+    }
+
+
     @ApiOperation(value = "查询部门--JSON 数据直接生成树结构", notes = "用于application/json格式")
     @GetMapping(value = "/queryDeptJsonTree")
     public RestfulEntityBySummit<DeptTreeBean> queryJsonTree(@RequestParam(value = "pid", required = false) String pid

@@ -5,7 +5,7 @@ ON DUPLICATE KEY UPDATE adcd='650100000000';
 
 
 
-INSERT INTO `sys_dept` (`ID`, `PID`, `DEPTCODE`, `DEPTNAME`, `ADCD`, `REMARK`) VALUES ('1', NULL, 'xahzb', '乌鲁木齐市', NULL, NULL)
+INSERT INTO `sys_dept` (`ID`, `PID`, `DEPTCODE`, `DEPTNAME`, `ADCD`, `REMARK`) VALUES ('1', '-1', '0000', '管理处', NULL, '根节点请勿删除或移动')
 ON DUPLICATE KEY UPDATE id='1';
 
 

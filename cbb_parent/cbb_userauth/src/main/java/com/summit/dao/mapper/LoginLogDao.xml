@@ -62,7 +62,7 @@
                 and sll.loginTime &lt;= #{end}
             </if>
             <if test="pubquery != null">
-                AND concat(sll.userName,su.name) like concat('%',#{pubquery}, '%')
+                AND concat(sll.userName,su.name,sll.callerIP) like concat('%',#{pubquery}, '%')
             </if>
             <if test="logSuccessOrNot != null">
                 AND sll.log_sucesss_or_not=#{logSuccessOrNot}

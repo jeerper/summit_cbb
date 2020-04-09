@@ -10,6 +10,7 @@ import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import com.summit.common.Common;
 import com.summit.common.entity.*;
 import com.summit.controller.DeptController;
+import com.summit.util.CommonUtil;
 import org.apache.commons.collections.map.LinkedMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -71,6 +72,95 @@ public class DeptService {
         //logger.debug("jSONOTree0: "+jSONOTree);
         return null;
     }
+
+
+    public DeptBean queryTreeAuth(String pid) throws Exception {
+        if (StrUtil.isBlank(pid)) {
+            pid = Common.getLogUser().getDepts()[0];
+        }
+        LinkedMap linkedMap = new LinkedMap();
+        StringBuffer sql = new StringBuffer("SELECT dept.ID,fdept.ID as PID,dept.DEPTCODE,dept.DEPTNAME,dept.ADCD,dept.REMARK,us.NAME as deptHead,fdept.DEPTNAME as PDEPTNAME,AD.ADNM,dic.NAME as deptType ");
+        sql.append("FROM SYS_DEPT dept ");
+        sql.append("left join SYS_DEPT fdept on dept.pid=fdept.id ");
+        sql.append("LEFT JOIN sys_user us ON dept.DEPTHEAD=us.USERNAME ");
+        sql.append("LEFT JOIN SYS_AD_CD AD ON AD.ADCD=DEPT.ADCD ");
+        sql.append("LEFT JOIN sys_dictionary dic on dic.PCODE='dept_type' and dept.deptType=dic.CKEY ");
+        sql.append("and dept.ID =? ");
+        linkedMap.put(1, pid);
+        List<Object> rootList = ur.queryAllCustom(sql.toString(), linkedMap);
+        if (rootList.size() > 0) {
+            String jsonTree = ((JSONObject) rootList.get(0)).toString();
+            DeptBean deptBeaneanTree = JSON.parseObject(jsonTree, new TypeReference<DeptBean>() {
+            });
+            List<DeptBean>  children= generateOrgMapToTreeAuth(null, deptBeaneanTree.getId());
+            if (!CommonUtil.isEmptyList(children)){
+                deptBeaneanTree.setChildren(children);
+            }
+            return deptBeaneanTree;
+        }
+        return null;
+    }
+
+    private List<DeptBean> generateOrgMapToTreeAuth(Map<String, List<Object>> orgMaps, String pid) throws Exception {
+        if (null == orgMaps || orgMaps.size() == 0) {
+            StringBuffer sql = new StringBuffer("SELECT DEPT.ID,DEPT.DEPTNAME,DEPT.PID,FDEPT.ID AS CHILD_ID,FDEPT.DEPTCODE AS CHILD_CODE,FDEPT.DEPTNAME AS CHILD_NAME,FDEPT.DEPTCODE AS FDEPTCODE,dept.ADCD, dept.REMARK,us.NAME as deptHead, fdept.DEPTNAME as PDEPTNAME,AD.ADNM,dic.NAME as deptType ");
+            sql.append("FROM SYS_DEPT DEPT ");
+            sql.append("INNER JOIN SYS_DEPT FDEPT ON FDEPT.PID= DEPT.ID ");
+            sql.append("LEFT JOIN sys_user us ON dept.DEPTHEAD=us.USERNAME ");
+            sql.append("LEFT JOIN SYS_AD_CD AD ON AD.ADCD=DEPT.ADCD ");
+            sql.append("LEFT JOIN sys_dictionary dic on dic.PCODE='dept_type' and dept.deptType=dic.CKEY ");
+            sql.append(" ORDER BY  DEPT.ID ASC,FDEPT.ID ASC ");
+            List<Object> list = ur.queryAllCustom(sql.toString(), new LinkedMap());
+            Map<String, List<Object>> map = new HashMap<String, List<Object>>();
+            List<Object> childrenList = new ArrayList<Object>();
+            String id = "";
+            int i = 0;
+            for (Object s : list) {
+                JSONObject JSONObject = (JSONObject) s;
+                if ((!"".equals(id) && !id.equals(JSONObject.getString("ID")))) {
+                    map.put(id, childrenList);
+                    childrenList = new ArrayList<Object>();
+                }
+                childrenList.add(JSONObject);
+                id = JSONObject.getString("ID");
+                if (i == list.size() - 1) {
+                    map.put(id, childrenList);
+                }
+                i++;
+            }
+            orgMaps = map;
+        }
+        List<DeptBean> orgList = new ArrayList<>();
+        if (orgMaps != null && orgMaps.size() > 0) {
+            List parenList = orgMaps.get(pid);
+            if (parenList == null) {
+                return orgList;
+            }
+            DeptBean deptBean = null;
+            for (Object obj : parenList) {
+                deptBean = new DeptBean();
+                JSONObject json = (JSONObject) obj;
+                deptBean.setId(json.containsKey("CHILD_ID") ? json.getString("CHILD_ID") : "");
+                deptBean.setDeptCode(json.containsKey("CHILD_CODE") ? json.getString("CHILD_CODE") : "");
+                deptBean.setDeptName(json.containsKey("CHILD_NAME") ? json.getString("CHILD_NAME") : "");
+                deptBean.setAdcd(json.containsKey("ADCD") ? json.getString("ADCD") : "");
+                deptBean.setAdnm(json.containsKey("ADNM") ? json.getString("ADNM") : "");
+                deptBean.setDeptHeadName(json.containsKey("deptHead") ? json.getString("deptHead") : "");
+                deptBean.setDeptTypeName(json.containsKey("deptType") ? json.getString("deptType") : "");
+                deptBean.setRemark(json.containsKey("REMARK") ? json.getString("REMARK") : "");
+                deptBean.setPid(pid);
+                List<DeptBean> children = generateOrgMapToTreeAuth(orgMaps, json.get("CHILD_ID").toString());
+                //将子结果集存入当前对象的children字段中
+                if (!CommonUtil.isEmptyList(children)){
+                    deptBean.setChildren(children);
+                }
+                //添加当前对象到主结果集中
+                orgList.add(deptBean);
+            }
+        }
+        return orgList;
+    }
+
 
     public List<DeptBean> generateOrgMapToTree(Map<String, List<Object>> orgMaps, String pid) throws Exception {
         if (null == orgMaps || orgMaps.size() == 0) {
@@ -684,4 +774,6 @@ public class DeptService {
         return null;
 
     }
+
+
 }

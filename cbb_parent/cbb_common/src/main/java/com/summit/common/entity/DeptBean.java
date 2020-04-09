@@ -24,7 +24,7 @@ public class DeptBean implements Serializable {
     @ApiModelProperty(value = "备注", name = "remark")
     private String remark;
     @ApiModelProperty(value = "下级部门", name = "children", hidden = true)
-    private List<DeptBean> children;
+    private List<DeptBean> children=null;
 
     @ApiModelProperty(value = "上级部门名称", name = "pdeptName", hidden = true)
     private String pdeptName;

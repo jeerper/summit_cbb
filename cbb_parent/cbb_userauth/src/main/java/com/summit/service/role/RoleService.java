@@ -48,7 +48,7 @@ public class RoleService {
         return null;
     }
 
-    @Transactional
+    @Transactional(rollbackFor = {Exception.class})
     public ResponseCodeEnum del(String codes) throws Exception {
         codes = codes.replaceAll(",", "','");
         String querySql = "SELECT count(0) FROM sys_user_role WHERE ROLE_CODE in('" + codes + "') and  ROLE_CODE <> '" + SysConstants.SUROLE_CODE + "'";
@@ -56,7 +56,7 @@ public class RoleService {
         // linkedMap.put(1,"'"+codes+"'");
         int countRow = ur.getRowCount(querySql, linkedMap);
         if (countRow > 0) {
-            return ResponseCodeEnum.CODE_9992;
+            throw new Exception("请先解除用户角色授权关系");
         }
 
         String sql = "DELETE FROM SYS_ROLE WHERE CODE IN ('" + codes + "') and  code <> '" + SysConstants.SUROLE_CODE + "'";

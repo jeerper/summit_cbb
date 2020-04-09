@@ -2,6 +2,7 @@ package com.summit.controller;
 
 import java.util.List;
 
+import com.summit.common.CommonConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -92,7 +93,7 @@ public class RoleController {
             logger.error("操作失败！", e);
             logBean.setActionFlag("0");
             logUtil.insertLog(logBean);
-            return ResultBuilder.buildError(ResponseCodeEnum.CODE_9999);
+            return ResultBuilder.buildError(ResponseCodeEnum.CODE_9999, e.getMessage(), null);
         }
     }
 
