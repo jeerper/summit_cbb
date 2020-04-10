@@ -85,7 +85,7 @@ public class DeptService {
         sql.append("LEFT JOIN sys_user us ON dept.DEPTHEAD=us.USERNAME ");
         sql.append("LEFT JOIN SYS_AD_CD AD ON AD.ADCD=DEPT.ADCD ");
         sql.append("LEFT JOIN sys_dictionary dic on dic.PCODE='dept_type' and dept.deptType=dic.CKEY ");
-        sql.append("and dept.ID =? ");
+        sql.append("where 1=1 and dept.ID =? ");
         linkedMap.put(1, pid);
         List<Object> rootList = ur.queryAllCustom(sql.toString(), linkedMap);
         if (rootList.size() > 0) {

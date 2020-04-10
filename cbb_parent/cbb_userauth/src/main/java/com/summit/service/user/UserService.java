@@ -903,7 +903,7 @@ public class UserService {
         String user_names = ds.queryUserNamesByCurrentLoginDeptId();
         List<UserInfo> userInfoList = new ArrayList<>();
         if (StrUtil.isNotBlank(user_names)){
-            StringBuffer sql = new StringBuffer("SELECT user.USERNAME,user.NAME from sys_user user where user.USERNAME <> 'admin' and user.USERNAME IN ('"+user_names+"')");
+            StringBuffer sql = new StringBuffer("SELECT user.USERNAME,user.NAME,user.PHONE_NUMBER from sys_user user where user.USERNAME <> 'admin' and user.USERNAME IN ('"+user_names+"')");
             List<Object> users = ur.queryAllCustom(sql.toString(), new LinkedMap());
             for (Object o : users) {
                 UserInfo userInfo = JSON.parseObject(o.toString(), new TypeReference<UserInfo>() {});
