@@ -6,11 +6,13 @@ import java.util.List;
 import java.util.Map;
 
 import cn.hutool.core.util.StrUtil;
+import com.alibaba.fastjson.JSONArray;
 import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import com.summit.common.Common;
 import com.summit.common.entity.*;
 import com.summit.controller.DeptController;
 import com.summit.util.CommonUtil;
+import com.summit.util.SysConstants;
 import org.apache.commons.collections.map.LinkedMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -450,6 +452,11 @@ public class DeptService {
         // linkedMap.put(1,ids);
         List<Object> list = ur.queryAllCustom(sql, linkedMap);
         if (list == null || list.size() == 0) {
+            String sql_userDept = "SELECT count(0) FROM sys_user_dept  userdept where userdept.DEPTID in (" + ids + ") and userdept.USERNAME <> '" + SysConstants.SUPER_USERNAME + "'";
+            int countRow = ur.getRowCount(sql_userDept, linkedMap);
+            if (countRow > 0) {
+                throw new Exception("本部门还有用户,无法删除");
+            }
             String updateSql = "DELETE FROM SYS_DEPT WHERE id IN (" + ids + ") ";
             jdbcTemplate.update(updateSql);
             return null;
@@ -616,7 +623,12 @@ public class DeptService {
         return  jsonObject;
 
     }
-
+    /**
+     * 根据部门父节点查询所有的子节点(不包括父节点)（5层关系）
+     * @param pdept
+     * @return
+     * @throws Exception
+     */
     public List<String> getDeptBean(String pdept) throws Exception {
         StringBuffer querySql = new StringBuffer("select ID from ( select t1.ID,if(find_in_set(PID, @pids) > 0, @pids := concat(@pids, ',', ID), 0) as ischild  ");
         querySql.append("from ( select ID,PID from sys_dept t order by PID) t1,(select @pids := ? )t2 ");
@@ -635,6 +647,51 @@ public class DeptService {
         return null;
 
     }
+
+    /**
+     * 根据部门父节点查询所有的子节点(不包括父节点)（多层关系）
+     * @param pid
+     * @return
+     * @throws Exception
+     */
+    public List<String> queryLowerAllDeptByPdept(String pid) throws Exception {
+        List<String> depts = new ArrayList<>();
+        // 将父id先存入集合
+        //tempList.add(pid);
+        // 递归查找所有子部门id
+        depts = getChild(pid,depts);
+       return depts;
+    }
+
+    public  List<String> getChild(String pid,List<String> depts) throws Exception {
+        List<String> list = getSonDeptIdByParentId(pid);
+        if (CommonUtil.isEmptyList(list)){
+            return null;
+        }
+        //根据当前部门id查询所有子部门的id
+        for(int i=0;i<list.size();i++){
+            depts.add(list.get(i));
+            getChild(list.get(i),depts);//递归查询
+        }
+        return depts ;
+    }
+
+    private List<String> getSonDeptIdByParentId(String id) throws Exception {
+        LinkedMap lm = new LinkedMap();
+        lm.put(1, id);
+        StringBuffer sql = new StringBuffer("SELECT dept.ID,dept.DEPTNAME  from  sys_dept dept INNER JOIN ");
+        sql.append("sys_dept superDept on dept.PID=superDept.id  where dept.PID=? ");
+        List<Object> list = ur.queryAllCustom(sql.toString(), lm);
+        List<String> detps=new ArrayList<>();
+        for (Object obj : list) {
+            JSONObject jsonObject = (JSONObject) obj;
+            if (jsonObject.containsKey("ID")&& StrUtil.isNotBlank(jsonObject.getString("ID"))){
+                detps.add(jsonObject.getString("ID"));
+            }
+        }
+        return detps;
+    }
+
 
     /**
      * 部门分页查询加部门权限
@@ -771,6 +828,7 @@ public class DeptService {
         return null;
 
     }
+
 
 
 }

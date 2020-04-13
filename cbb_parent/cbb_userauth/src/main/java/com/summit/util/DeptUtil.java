@@ -78,7 +78,7 @@ public class DeptUtil  {
             }
         }
         if(pdept!=null && !StrUtil.isBlank(pdept)){
-            deptData=ds.getDeptBean(pdept);
+            deptData=ds.queryLowerAllDeptByPdept(pdept);
         }
         JSONObject jsonOject=new JSONObject();
         jsonOject.put("pdept", pdept);

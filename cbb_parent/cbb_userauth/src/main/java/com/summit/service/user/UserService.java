@@ -51,83 +51,160 @@ public class UserService {
     public ResponseCodeEnum add(UserInfo userInfo, String key) {
         //保存用户
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-        String sql = "SELECT * FROM SYS_USER WHERE USERNAME = ?";
-        List<JSONObject> l = ur.queryAllCustom(sql, userInfo.getUserName());
+        String selectUserSql = "SELECT * FROM SYS_USER WHERE USERNAME = ?";
+        List<JSONObject> l = ur.queryAllCustom(selectUserSql, userInfo.getUserName());
         if (st.collectionNotNull(l)) {
-            return ResponseCodeEnum.CODE_4022;
-        }
-        if (userInfo.getIsEnabled() == null) {
-            userInfo.setIsEnabled(1);
-        }
-        if (userInfo.getPassword() != null && !"".equals(userInfo.getPassword())) {
-            //解密
-            try {
-                userInfo.setPassword(Cryptographic.decryptAES(userInfo.getPassword(), key));
-            } catch (Exception e) {
-                return ResponseCodeEnum.CODE_4014;
+            if (userInfo.getIsEnabled() == null) {
+                userInfo.setIsEnabled(1);
             }
-        }
+            userInfo.setState(1);
+            if (userInfo.getPassword() != null && !"".equals(userInfo.getPassword())) {
+                //解密
+                try {
+                    userInfo.setPassword(Cryptographic.decryptAES(userInfo.getPassword(), key));
+                } catch (Exception e) {
+                    return ResponseCodeEnum.CODE_4014;
+                }
+            }
+            StringBuffer sql = new StringBuffer("UPDATE SYS_USER SET NAME = ?,SEX=?, EMAIL = ?, PHONE_NUMBER =?, NOTE = ?, IS_ENABLED = ?, LAST_UPDATE_TIME = now() ");
+            sql.append(" ,STATE =?,COMPANY=?,DUTY=?,POST=?,SN=? ");
+            if (SummitTools.stringNotNull(userInfo.getHeadPortrait())) {
+                sql.append(" ,HEADPORTRAIT=? ");
+            }
+            sql.append(" WHERE USERNAME = ? ");
+            if (SummitTools.stringNotNull(userInfo.getHeadPortrait())) {
+                jdbcTemplate.update(sql.toString(), userInfo.getName(), userInfo.getSex(), userInfo.getEmail(),
+                        userInfo.getPhoneNumber(), userInfo.getNote(), userInfo
+                                .getIsEnabled(), userInfo.getState(), userInfo.getCompany(), userInfo.getDuty(),
+                        userInfo.getPost(), userInfo.getSn(), userInfo.getHeadPortrait(), userInfo.getUserName());
+            } else {
+                jdbcTemplate.update(sql.toString(), userInfo.getName(), userInfo.getSex(), userInfo.getEmail(),
+                        userInfo.getPhoneNumber(), userInfo.getNote(), userInfo
+                                .getIsEnabled(), userInfo.getState(), userInfo.getCompany(), userInfo.getDuty(),
+                        userInfo.getPost(), userInfo.getSn(), userInfo.getUserName());
+            }
+            String adcdSql = " delete from sys_user_adcd where USERNAME  IN ('" + userInfo.getUserName() + "') ";
+            jdbcTemplate.update(adcdSql);
+            //保存行政区划
+            if (userInfo.getAdcds() != null && userInfo.getAdcds().length > 0) {
+                String insertAdcdSql = "INSERT INTO SYS_USER_ADCD(ID,USERNAME,ADCD,CREATETIME) VALUES ( ?, ?, ?, now())";
+                List userAdcdParams = new ArrayList();
+                for (String adcd : userInfo.getAdcds()) {
+                    Object adcdParam[] = {
+                            SummitTools.getKey(),
+                            userInfo.getUserName(),
+                            adcd,
+                    };
+                    userAdcdParams.add(adcdParam);
+                }
+                jdbcTemplate.batchUpdate(insertAdcdSql, userAdcdParams);
+            }
+            String deptSql = " delete from SYS_USER_DEPT where USERNAME  IN ('" + userInfo.getUserName() + "') ";
+            jdbcTemplate.update(deptSql);
+            //保存部门
+            if (userInfo.getDepts() != null && userInfo.getDepts().length > 0) {
+                String insertAdcdSql = "INSERT INTO SYS_USER_DEPT(ID,USERNAME,DEPTID,CREATETIME) VALUES ( ?, ?, ?, now())";
+                List userdeptParams = new ArrayList();
+                for (String deptId : userInfo.getDepts()) {
+                    Object deptParam[] = {
+                            SummitTools.getKey(),
+                            userInfo.getUserName(),
+                            deptId,
+                    };
+                    userdeptParams.add(deptParam);
+                }
+                jdbcTemplate.batchUpdate(insertAdcdSql, userdeptParams);
+            }
+            String uddSql = " delete from sys_user_dept_duty where USERNAME  IN ('" + userInfo.getUserName() + "') ";
+            jdbcTemplate.update(uddSql);
+            //保存部门，用户, 职位关系表
+            if(userInfo.getUserName() !=null && userInfo.getDepts() !=null && !CommonUtil.isEmptyList(Arrays.asList(userInfo.getDepts())) && userInfo.getDuty() !=null && !StrUtil.isBlank(userInfo.getDuty())){
+                String insertSql="INSERT INTO sys_user_dept_duty(ID,USERNAME,DEPTID,DUTY) VALUES ( ?, ?, ?, ?)";
+                List params = new ArrayList();
+                for (String deptId : userInfo.getDepts()) {
+                    Object glxxParam[] = {
+                            SummitTools.getKey(),
+                            userInfo.getUserName(),
+                            deptId,
+                            userInfo.getDuty(),
+                    };
+                    params.add(glxxParam);
+                }
+                jdbcTemplate.batchUpdate(insertSql, params);
+            }
+        }else {
+            if (userInfo.getIsEnabled() == null) {
+                userInfo.setIsEnabled(1);
+            }
+            if (userInfo.getPassword() != null && !"".equals(userInfo.getPassword())) {
+                //解密
+                try {
+                    userInfo.setPassword(Cryptographic.decryptAES(userInfo.getPassword(), key));
+                } catch (Exception e) {
+                    return ResponseCodeEnum.CODE_4014;
+                }
+            }
 
-        sql = "INSERT INTO SYS_USER (USERNAME,NAME,SEX,PASSWORD,IS_ENABLED,EMAIL,PHONE_NUMBER,STATE,NOTE,LAST_UPDATE_TIME,COMPANY,DUTY,POST,SN,HEADPORTRAIT) VALUES ( ?,?, ?, ?, ?, ?, ?, ?, ?,now(), ?, ?, ?, ?,?)";
-        jdbcTemplate.update(sql,
-                userInfo.getUserName(),
-                userInfo.getName(),
-                userInfo.getSex(),
-                encoder.encode(userInfo.getPassword()),
-                userInfo.getIsEnabled(),
-                userInfo.getEmail(),
-                userInfo.getPhoneNumber(),
-                1,
-                userInfo.getNote(),
-                userInfo.getCompany(),
-                userInfo.getDuty(),
-                userInfo.getPost(),
-                userInfo.getSn(),
-                userInfo.getHeadPortrait()
-        );
-
-        //保存行政区划
-        if (userInfo.getAdcds() != null && userInfo.getAdcds().length > 0) {
-            String insertAdcdSql = "INSERT INTO SYS_USER_ADCD(ID,USERNAME,ADCD,CREATETIME) VALUES ( ?, ?, ?, now())";
-            List userAdcdParams = new ArrayList();
-            for (String adcd : userInfo.getAdcds()) {
-                Object glxxParam[] = {
-                        SummitTools.getKey(),
-                        userInfo.getUserName(),
-                        adcd,
-                };
-                userAdcdParams.add(glxxParam);
+            String sql = "INSERT INTO SYS_USER (USERNAME,NAME,SEX,PASSWORD,IS_ENABLED,EMAIL,PHONE_NUMBER,STATE,NOTE,LAST_UPDATE_TIME,COMPANY,DUTY,POST,SN,HEADPORTRAIT) VALUES ( ?,?, ?, ?, ?, ?, ?, ?, ?,now(), ?, ?, ?, ?,?)";
+            jdbcTemplate.update(sql,
+                    userInfo.getUserName(),
+                    userInfo.getName(),
+                    userInfo.getSex(),
+                    encoder.encode(userInfo.getPassword()),
+                    userInfo.getIsEnabled(),
+                    userInfo.getEmail(),
+                    userInfo.getPhoneNumber(),
+                    1,
+                    userInfo.getNote(),
+                    userInfo.getCompany(),
+                    userInfo.getDuty(),
+                    userInfo.getPost(),
+                    userInfo.getSn(),
+                    userInfo.getHeadPortrait()
+            );
+            //保存行政区划
+            if (userInfo.getAdcds() != null && userInfo.getAdcds().length > 0) {
+                String insertAdcdSql = "INSERT INTO SYS_USER_ADCD(ID,USERNAME,ADCD,CREATETIME) VALUES ( ?, ?, ?, now())";
+                List userAdcdParams = new ArrayList();
+                for (String adcd : userInfo.getAdcds()) {
+                    Object glxxParam[] = {
+                            SummitTools.getKey(),
+                            userInfo.getUserName(),
+                            adcd,
+                    };
+                    userAdcdParams.add(glxxParam);
+                }
+                jdbcTemplate.batchUpdate(insertAdcdSql, userAdcdParams);
             }
-            jdbcTemplate.batchUpdate(insertAdcdSql, userAdcdParams);
-        }
-        //保存部门
-        if (userInfo.getDepts() != null && userInfo.getDepts().length > 0) {
-            String insertAdcdSql = "INSERT INTO SYS_USER_DEPT(ID,USERNAME,DEPTID,CREATETIME) VALUES ( ?, ?, ?, now())";
-            List userAdcdParams = new ArrayList();
-            for (String deptId : userInfo.getDepts()) {
-                Object glxxParam[] = {
-                        SummitTools.getKey(),
-                        userInfo.getUserName(),
-                        deptId,
-                };
-                userAdcdParams.add(glxxParam);
+            //保存部门
+            if (userInfo.getDepts() != null && userInfo.getDepts().length > 0) {
+                String insertAdcdSql = "INSERT INTO SYS_USER_DEPT(ID,USERNAME,DEPTID,CREATETIME) VALUES ( ?, ?, ?, now())";
+                List userAdcdParams = new ArrayList();
+                for (String deptId : userInfo.getDepts()) {
+                    Object glxxParam[] = {
+                            SummitTools.getKey(),
+                            userInfo.getUserName(),
+                            deptId,
+                    };
+                    userAdcdParams.add(glxxParam);
+                }
+                jdbcTemplate.batchUpdate(insertAdcdSql, userAdcdParams);
             }
-            jdbcTemplate.batchUpdate(insertAdcdSql, userAdcdParams);
-        }
-        //保存部门，用户, 职位关系表
-        if(userInfo.getUserName() !=null && userInfo.getDepts().length > 0 && userInfo.getDuty() !=null){
-            String insertSql="INSERT INTO sys_user_dept_duty(ID,USERNAME,DEPTID,DUTY) VALUES ( ?, ?, ?, ?)";
-            List params = new ArrayList();
-            for (String deptId : userInfo.getDepts()) {
-                Object glxxParam[] = {
-                        SummitTools.getKey(),
-                        userInfo.getUserName(),
-                        deptId,
-                        userInfo.getDuty(),
-                };
-                params.add(glxxParam);
+            //保存部门，用户, 职位关系表
+            if(userInfo.getUserName() !=null && userInfo.getDepts().length > 0 && userInfo.getDuty() !=null){
+                String insertSql="INSERT INTO sys_user_dept_duty(ID,USERNAME,DEPTID,DUTY) VALUES ( ?, ?, ?, ?)";
+                List params = new ArrayList();
+                for (String deptId : userInfo.getDepts()) {
+                    Object glxxParam[] = {
+                            SummitTools.getKey(),
+                            userInfo.getUserName(),
+                            deptId,
+                            userInfo.getDuty(),
+                    };
+                    params.add(glxxParam);
+                }
+                jdbcTemplate.batchUpdate(insertSql, params);
             }
-            jdbcTemplate.batchUpdate(insertSql, params);
         }
         return null;
     }

@@ -8,6 +8,8 @@ import com.summit.util.EditInvalidUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import com.summit.cbb.utils.page.Page;
@@ -261,6 +263,7 @@ public class DeptController {
      */
     @ApiOperation(value = "部门删除，删除多个以,分割")
     @RequestMapping(value = "/del", method = RequestMethod.DELETE)
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = {Exception.class})
     public RestfulEntityBySummit<String> del(@RequestParam(value = "ids") String ids) {
         LogBean logBean = new LogBean();
         logBean.setStime(DateUtil.DTFormat("yyyy-MM-dd HH:mm:ss", new Date()));
@@ -277,12 +280,12 @@ public class DeptController {
             logBean.setActionFlag("0");
             logBean.setErroInfo(e.getMessage());
             logUtil.insertLog(logBean);
-            return ResultBuilder.buildError(ResponseCodeEnum.CODE_9999);
+            return ResultBuilder.buildError(ResponseCodeEnum.CODE_9999, e.getMessage(), null);
         }
     }
 
 
-    @ApiOperation(value = "根据pdept查询下面所有的子节点")
+    @ApiOperation(value = "根据pdept查询下面所有的子节点(四级)")
     @RequestMapping(value = "/queryAllDeptByPdept", method = RequestMethod.GET)
     public RestfulEntityBySummit<List<String>> queryAllDeptByPdept(
             @RequestParam(value = "pdept", required = true) String pdept){
@@ -294,6 +297,18 @@ public class DeptController {
         }
     }
 
+
+    @ApiOperation(value = "根据pdept查询下面所有的子节点(不包括父节点、多级)")
+    @RequestMapping(value = "/queryLowerAllDeptByPdept", method = RequestMethod.GET)
+    public RestfulEntityBySummit<List<String>> queryLowerAllDeptByPid(
+            @RequestParam(value = "pdept", required = true) String pdept){
+        try {
+            return ResultBuilder.buildSuccess(ds.queryLowerAllDeptByPdept(pdept));
+        } catch (Exception e) {
+            logger.error("数据查询失败！", e);
+            return ResultBuilder.buildError(ResponseCodeEnum.CODE_9999);
+        }
+    }
 
 
 }
