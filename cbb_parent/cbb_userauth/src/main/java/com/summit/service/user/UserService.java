@@ -730,8 +730,8 @@ public class UserService {
         String adcdAuth = sbAdcd.toString();
         //处理部门
         StringBuilder sbDept = new StringBuilder();
-        String[] deptAuths = userAuditBean.getDeptAuth();
-        if (deptAuths !=null && deptAuths.length>0){
+        if (userAuditBean.getDeptAuth() !=null){
+            String[] deptAuths = userAuditBean.getDeptAuth();
             for (int i = 0; i <deptAuths.length; i++) {
                 if (i<deptAuths.length-1){
                     sbDept.append(deptAuths[i]+",");
@@ -739,6 +739,15 @@ public class UserService {
                     sbDept.append(deptAuths[i]);
                 }
 
+            }
+        }else if (Common.getLogUser()!=null){
+            String[] depts = Common.getLogUser().getDepts();
+            for (int i = 0; i <depts.length; i++) {
+                if (i<depts.length-1){
+                    sbDept.append(depts[i]+",");
+                }else {
+                    sbDept.append(depts[i]);
+                }
             }
         }
         String deptAuth = sbDept.toString();
