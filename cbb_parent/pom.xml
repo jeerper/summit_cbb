@@ -171,7 +171,8 @@
 										<include>*.yml</include>
 										<include>db/*.sql</include>
 										<include>**/*.xls</include>
-										<include>**/*.xls</include>
+										<include>**/*.xlsx</include>
+										<include>**/*.xlsm</include>
 									</includes>
 									<filtering>true</filtering>
 								</resource>
