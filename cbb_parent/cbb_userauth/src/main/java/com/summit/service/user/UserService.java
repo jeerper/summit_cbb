@@ -892,7 +892,7 @@ public class UserService {
             sb.append(" left join (SELECT username,GROUP_CONCAT(useradcd.`adcd`)AS adcd ,GROUP_CONCAT(`adnm`)AS adnms ");
             sb.append(" FROM sys_user_adcd useradcd inner join sys_ad_cd ad on useradcd.adcd=ad.adcd GROUP BY username)useradcd on useradcd.username=user1.USERNAME ");
             sb.append(" left join (SELECT userdept.username,userdept.DEPTID,userdept.deptNames,userdept.deptType,user2.NAME as deptContact from (SELECT username,GROUP_CONCAT(userdept.`deptid`)AS DEPTID,GROUP_CONCAT(dept.`deptname`)AS deptNames,dept.deptType,dept.DEPTHEAD FROM sys_user_dept userdept");
-            sb.append(" inner join sys_dept dept on userdept.deptid=dept.id GROUP BY username)userdept  INNER JOIN sys_user user2 on user2.USERNAME=userdept.DEPTHEAD)userdept2  on userdept2.username=user1.USERNAME");
+            sb.append(" inner join sys_dept dept on userdept.deptid=dept.id GROUP BY username)userdept  left JOIN sys_user user2 on user2.USERNAME=userdept.DEPTHEAD)userdept2  on userdept2.username=user1.USERNAME");
             sb.append(" left join ( SELECT USERNAME,GROUP_CONCAT(userRole.`ROLE_CODE`)AS roleCodes, GROUP_CONCAT(role.NAME)AS roleNames  FROM sys_user_role userRole ");
             sb.append(" inner join sys_role role on userRole.ROLE_CODE=role.CODE  GROUP BY USERNAME)userRole on userRole.USERNAME=user1.USERNAME ");
             sb.append(" WHERE user1.USERNAME <> '");
@@ -959,7 +959,6 @@ public class UserService {
                 //	}
 
             }
-            System.out.println("sb:"+sb.toString());
             Page<Object> page = ur.queryByCustomPage(sb.toString(), start, limit, linkedMap);
             if (page != null) {
             /*List<UserInfo> userInfoList = new ArrayList<UserInfo>();

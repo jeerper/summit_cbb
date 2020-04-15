@@ -127,6 +127,18 @@ public class DeptController {
         }
     }
 
+    @ApiOperation(value = "查询所有的部门信息")
+    @RequestMapping(value = "/queryAllDept", method = RequestMethod.GET)
+    public RestfulEntityBySummit<List<DeptBean>> queryAllDept() {
+        try {
+            return ResultBuilder.buildSuccess(ds.queryAllDept());
+        } catch (Exception e) {
+            logger.error("查询失败：", e);
+            return ResultBuilder.buildError(ResponseCodeEnum.CODE_9999);
+        }
+    }
+
+
     @ApiOperation(value = "根据pid查询分页")
     @RequestMapping(value = "/queryByPidPage", method = RequestMethod.GET)
     public RestfulEntityBySummit<Page<DeptBean>> queryByPage(

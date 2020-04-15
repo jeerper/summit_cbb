@@ -830,5 +830,14 @@ public class DeptService {
     }
 
 
-
+    public  List<DeptBean> queryAllDept() throws Exception {
+        String sql = " SELECT dept.ID,dept.DEPTNAME,dept.DEPTCODE from sys_dept dept ";
+        List dataList = ur.queryAllCustom(sql, new LinkedMap());
+        if (dataList != null && dataList.size() > 0) {
+            List<DeptBean> deptList = JSON.parseObject(dataList.toString(), new TypeReference<List<DeptBean>>() {
+            });
+            return deptList;
+        }
+        return null;
+    }
 }
