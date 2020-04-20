@@ -17,6 +17,7 @@ import com.summit.dao.repository.*;
 import com.summit.repository.UserRepository;
 import com.summit.service.auth.AuthService;
 import com.summit.service.dept.DeptsService;
+import com.summit.util.CommonUtil;
 import com.summit.util.SummitTools;
 import net.logstash.logback.encoder.org.apache.commons.lang.StringUtils;
 import org.apache.commons.collections.map.LinkedMap;
@@ -50,7 +51,7 @@ public class AuthServiceImpl  implements AuthService {
     @Override
     public Page<AuthBean> queryByPage(Integer currentPage, Integer pageSize, JSONObject paramJson) throws Exception {
         List rolesList = null;
-        if (Common.getLogUser() != null) {
+        if (Common.getLogUser() != null && Common.getLogUser().getRoles()!=null) {
             rolesList = Arrays.asList(Common.getLogUser().getRoles());
         }
         String depts = deptsService.getCurrentDeptService();
@@ -170,11 +171,18 @@ public class AuthServiceImpl  implements AuthService {
                 map.put("isAudited",new_deptJson.getString("isAudited"));
                 return map;
             }else if ("1".equals(apply_type)){//用户基础信息
+                StringBuffer user_auth_sql=new StringBuffer("SELECT auth.id,auth.apply_type,auth.apply_Id,user.NAME as apply_name from sys_auth auth ");
+                user_auth_sql.append("INNER JOIN sys_user_auth authUser on auth.apply_Id=authUser.id ");
+                user_auth_sql.append("INNER JOIN sys_user user on authUser.userName_auth=user.USERNAME  where auth.id=? ");
+                LinkedMap user_auth = new LinkedMap();
+                user_auth.put(1, id);
+                net.sf.json.JSONObject user_auth_json = ur.queryOneCustom(user_auth_sql.toString(), user_auth);
+                String applyName = user_auth_json.getString("apply_name");
                 map.put("updateType","人员基础类型");
                 net.sf.json.JSONObject new_userJson =queryUserAuthById(apply_id);
                 String userRecord_id = new_userJson.getString("userRecord_id");
                 net.sf.json.JSONObject old_userJson =queryUserRecordById(userRecord_id);
-                List<JSONObject> json=compareToUser(new_userJson,old_userJson);
+                List<JSONObject> json=compareToUser(new_userJson,old_userJson,applyName);
                 map.put("updateContent",json);
                 map.put("isAudited",new_userJson.getString("isAudited"));
                 return map;
@@ -570,7 +578,7 @@ public class AuthServiceImpl  implements AuthService {
 
 
     //对比用户
-    private List<JSONObject> compareToUser(net.sf.json.JSONObject new_userJson, net.sf.json.JSONObject old_userJson) {
+    private List<JSONObject> compareToUser(net.sf.json.JSONObject new_userJson, net.sf.json.JSONObject old_userJson, String applyName) {
        // List<Map<String,JSONObject>> compares=new ArrayList<>();
         List<JSONObject> compares=new ArrayList<>();
         if (null !=new_userJson && new_userJson.containsKey("name_auth") && !SummitTools.stringIsNull(new_userJson.getString("name_auth"))){
@@ -579,6 +587,7 @@ public class AuthServiceImpl  implements AuthService {
                 String name = old_userJson.getString("name");
                 if (!name_auth.equals(name)){
                     JSONObject comapre=new JSONObject();
+                    comapre.put("applyPerson",applyName);
                     comapre.put("id","姓名");
                     comapre.put("old",name);
                     comapre.put("new",name_auth);
@@ -595,6 +604,7 @@ public class AuthServiceImpl  implements AuthService {
                 String sex = old_userJson.getString("sex");
                 if (!sex_auth.equals(sex)){
                     JSONObject comapre=new JSONObject();
+                    comapre.put("applyPerson",applyName);
                     comapre.put("id","性别");
                     comapre.put("old",sex);
                     comapre.put("new",sex_auth);
@@ -611,6 +621,7 @@ public class AuthServiceImpl  implements AuthService {
                 String email = old_userJson.getString("email");
                 if (!email_auth.equals(email)){
                     JSONObject comapre=new JSONObject();
+                    comapre.put("applyPerson",applyName);
                     comapre.put("id","邮箱");
                     comapre.put("old",email);
                     comapre.put("new",email_auth);
@@ -627,6 +638,7 @@ public class AuthServiceImpl  implements AuthService {
                 String phone_number = old_userJson.getString("phoneNumber");
                 if (!phone_number_auth.equals(phone_number)){
                     JSONObject comapre=new JSONObject();
+                    comapre.put("applyPerson",applyName);
                     comapre.put("id","电话号码");
                     comapre.put("old",phone_number);
                     comapre.put("new",phone_number_auth);
@@ -644,6 +656,7 @@ public class AuthServiceImpl  implements AuthService {
                 String is_enabled = old_userJson.getString("is_enable");
                 if (!is_enabled_auth.equals(is_enabled)){
                     JSONObject comapre=new JSONObject();
+                    comapre.put("applyPerson",applyName);
                     comapre.put("id","是否启动");
                     comapre.put("old",is_enabled);
                     comapre.put("new",is_enabled_auth);
@@ -661,6 +674,7 @@ public class AuthServiceImpl  implements AuthService {
                 String duty = old_userJson.getString("duty");
                 if (!duty_auth.equals(duty)){
                     JSONObject comapre=new JSONObject();
+                    comapre.put("applyPerson",applyName);
                     comapre.put("id","岗位");
                     comapre.put("old",duty);
                     comapre.put("new",duty_auth);
@@ -677,6 +691,7 @@ public class AuthServiceImpl  implements AuthService {
                 String post = old_userJson.getString("post");
                 if (!post_auth.equals(post)){
                     JSONObject comapre=new JSONObject();
+                    comapre.put("applyPerson",applyName);
                     comapre.put("id","职位");
                     comapre.put("old",post);
                     comapre.put("new",post_auth);
@@ -693,6 +708,7 @@ public class AuthServiceImpl  implements AuthService {
                 String deptname = old_userJson.getString("dept");
                 if (!dept_auth.equals(deptname)){
                     JSONObject comapre=new JSONObject();
+                    comapre.put("applyPerson",applyName);
                     comapre.put("id","部门");
                     comapre.put("old",deptname);
                     comapre.put("new",dept_auth);
@@ -709,6 +725,7 @@ public class AuthServiceImpl  implements AuthService {
                 String adnm = old_userJson.getString("adcd");
                 if (!adcd_auth.equals(adnm)){
                     JSONObject comapre=new JSONObject();
+                    comapre.put("applyPerson",applyName);
                     comapre.put("id","行政区划");
                     comapre.put("old",adcd_auth);
                     comapre.put("new",adnm);
@@ -725,6 +742,7 @@ public class AuthServiceImpl  implements AuthService {
                 String headportrait = old_userJson.getString("headPortrait");
                 if (!headPortrait_auth.equals(headportrait)){
                     JSONObject comapre=new JSONObject();
+                    comapre.put("applyPerson",applyName);
                     comapre.put("id","头像");
                     comapre.put("old",headportrait);
                     comapre.put("new",headPortrait_auth);

@@ -2,18 +2,16 @@ package com.summit.service.user;
 
 import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.TypeReference;
 import com.baomidou.mybatisplus.core.toolkit.IdWorker;
-import com.summit.MainAction;
 import com.summit.cbb.utils.page.Page;
 import com.summit.common.Common;
 import com.summit.common.entity.*;
 import com.summit.common.util.Cryptographic;
 import com.summit.repository.UserRepository;
 import com.summit.service.dept.DeptService;
+import com.summit.service.dept.DeptsService;
 import com.summit.util.CommonUtil;
-import com.summit.util.DateUtil;
 import com.summit.util.SummitTools;
 import com.summit.util.SysConstants;
 import net.sf.json.JSONObject;
@@ -46,7 +44,8 @@ public class UserService {
     private String key;
     @Autowired
     private DeptService ds;
-
+    @Autowired
+    private DeptsService deptsService;
     @Transactional
     public ResponseCodeEnum add(UserInfo userInfo, String key) {
         //保存用户
@@ -756,7 +755,7 @@ public class UserService {
         //查找原来头像
         UserInfo userInfo = queryByUserName(userAuditBean.getUserNameAuth());
         //上级部门
-        JSONObject jsonObject=queryBySuperDeptByUserName(userAuditBean.getUserNameAuth());
+        JSONObject jsonObject=queryBySuperDeptByUserName(Common.getLogUser().getUserName());
         String  superDept=null;
         if (jsonObject !=null && !SummitTools.stringIsNull( jsonObject.getString("ID"))){
             superDept=jsonObject.getString("ID");
@@ -820,7 +819,7 @@ public class UserService {
         try{
             jdbcTemplate.update(sql_auth,
                     IdWorker.getIdStr(),
-                    userAuditBean.getUserNameAuth(),
+                     Common.getLogUser().getUserName(),
                     "1",
                     superDept,
                     "0",
@@ -884,8 +883,48 @@ public class UserService {
     }
 
     public Page<UserInfo> queryUserByPage(int start, int limit, JSONObject paramJson) throws Exception {
-        String userNames=ds.queryUserNamesByCurrentDeptId();
-        if (userNames !=null && StrUtil.isNotBlank(userNames)){
+        List<String> dept_ids =new ArrayList<>();
+        if (paramJson.containsKey("deptId") && paramJson.getString("deptId") != null) {
+            String deptIds = paramJson.getString("deptId");
+            if (deptIds.contains(",")){//多个部门
+                String[] list = deptIds.split(",");
+                List<String> deptIdList = Arrays.asList(list);
+                for (String deptId:deptIdList){
+                    com.alibaba.fastjson.JSONObject jsonObject=new com.alibaba.fastjson.JSONObject();
+                    jsonObject.put("pdept",deptId);
+                    List<String> depts = deptsService.getAllDeptByPdept(jsonObject);
+                    if (!CommonUtil.isEmptyList(depts)){
+                        for (String dept_id:depts){
+                            dept_ids.add(dept_id);
+                        }
+                    }
+                }
+            }else {//一个部门
+                com.alibaba.fastjson.JSONObject jsonObject=new com.alibaba.fastjson.JSONObject();
+                jsonObject.put("pdept",deptIds);
+                List<String> depts = deptsService.getAllDeptByPdept(jsonObject);
+                if (!CommonUtil.isEmptyList(depts)){
+                    for (String dept_id:depts){
+                        dept_ids.add(dept_id);
+                    }
+                }
+            }
+        }else {
+            String currentDeptService = deptsService.getCurrentDeptService();
+            com.alibaba.fastjson.JSONObject jsonObject=new com.alibaba.fastjson.JSONObject();
+            jsonObject.put("pdept",currentDeptService);
+            List<String> depts = deptsService.getAllDeptByPdept(jsonObject);
+            if (!CommonUtil.isEmptyList(depts)){
+                for (String dept_id:depts){
+                    dept_ids.add(dept_id);
+                }
+            }
+        }
+        CommonUtil.removeDuplicate(dept_ids);//去重
+        String deptIds = String.join("','", dept_ids);
+        String usernames=queryUserNamesByDeptIds(deptIds);
+        //userNames=ds.queryUserNamesByCurrentDeptId();
+        if (usernames !=null && StrUtil.isNotBlank(usernames)){
             LinkedMap linkedMap = new LinkedMap();
             Integer index = 1;
             StringBuilder sb = new StringBuilder("SELECT user1.USERNAME,NAME,PASSWORD,SEX,IS_ENABLED,EMAIL,PHONE_NUMBER,STATE,NOTE,COMPANY,DUTY,POST,SN,USERADCD.ADCD,useradcd.adnms,userdept2.DEPTID,userdept2.deptNames,userdept2.deptType,userdept2.deptContact,userRole.roleCodes,userRole.roleNames,date_format(user1.LAST_UPDATE_TIME, '%Y-%m-%d %H:%i:%s') as lastUpdateTime,user1.HEADPORTRAIT FROM SYS_USER user1 ");
@@ -898,7 +937,7 @@ public class UserService {
             sb.append(" WHERE user1.USERNAME <> '");
             sb.append(SysConstants.SUPER_USERNAME);
             sb.append("'");
-            sb.append(" and user1.USERNAME IN('"+userNames+"') ");
+            sb.append(" and user1.USERNAME IN('"+usernames+"') ");
             if (paramJson.containsKey("name")) {
                 sb.append(" AND NAME LIKE ? ");
                 linkedMap.put(index, "%" + paramJson.get("name") + "%");
@@ -934,12 +973,6 @@ public class UserService {
             if (paramJson.containsKey("deptName") && paramJson.getString("deptName") != null) {
                 sb.append(" AND userdept2.deptNames  like   ? ");
                 linkedMap.put(index, "%" + paramJson.get("deptName") + "%");
-                index++;
-            }
-
-            if (paramJson.containsKey("deptId") && paramJson.getString("deptId") != null) {
-                sb.append(" and userdept2.DEPTID= ? ");
-                linkedMap.put(index, paramJson.get("deptId"));
                 index++;
             }
 
@@ -982,6 +1015,20 @@ public class UserService {
 
         }
         return null;
+    }
+
+    private String queryUserNamesByDeptIds(String deptIds) throws Exception {
+        StringBuffer sql = new StringBuffer("SELECT DISTINCT ud.USERNAME FROM sys_user_dept ud where ");
+        sql.append("ud.DEPTID IN('"+deptIds+"')");
+        List<Object> l = ur.queryAllCustom(sql.toString(), new LinkedMap());
+        List<String> userNames = new ArrayList<String>();
+        if (l.size() > 0) {
+            for (Object username : l) {
+                userNames.add(((JSONObject) username).getString("USERNAME"));
+            }
+        }
+        String username = String.join("','", userNames);
+        return username;
     }
 
     public List<UserInfo> queryUsersByCurrentLoginName() throws Exception {
