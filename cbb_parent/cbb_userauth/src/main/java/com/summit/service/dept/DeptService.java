@@ -565,7 +565,7 @@ public class DeptService {
 
     //保存部门记录表
     private boolean insertSysDeptRecord(JSONObject old_dept,String recordId ) {
-        String sql_dept_record="INSERT INTO sys_dept_record(id,pId,deptcode,deptName,adcd,deptHead,deptType,deptId ) VALUES (?,?,?,?,?,?,?,?) ";
+        String sql_dept_record="INSERT INTO sys_dept_record(id,pId,deptcode,deptName,adcd,deptHead,deptType,deptId,remark) VALUES (?,?,?,?,?,?,?,?,?) ";
         try{
             jdbcTemplate.update(sql_dept_record,
                     recordId,
@@ -575,7 +575,8 @@ public class DeptService {
                     old_dept.containsKey("ADCD") ? old_dept.getString("ADCD") : null,
                     old_dept.containsKey("DEPTHEAD") ? old_dept.getString("DEPTHEAD") : null,
                     old_dept.containsKey("deptType") ? old_dept.getString("deptType") : null,
-                    old_dept.containsKey("ID") ? old_dept.getString("ID") : null
+                    old_dept.containsKey("ID") ? old_dept.getString("ID") : null,
+                    old_dept.containsKey("remark") ? old_dept.getString("remark") : null
             );
 
         }catch (Exception e){
@@ -595,7 +596,7 @@ public class DeptService {
     }
 
     private JSONObject queryOldDeptByDeptId(String deptIdAuth) throws Exception {
-        StringBuffer queryOldDept_sql=new StringBuffer("SELECT  dept.ID,dept.PID,dept.DEPTCODE ,dept.DEPTNAME,dept.ADCD,dept.DEPTHEAD,dept.deptType from sys_dept dept where dept.ID=? ");
+        StringBuffer queryOldDept_sql=new StringBuffer("SELECT  dept.ID,dept.PID,dept.DEPTCODE ,dept.DEPTNAME,dept.ADCD,dept.DEPTHEAD,dept.deptType,dept.remark from sys_dept dept where dept.ID=? ");
         LinkedMap lm=new LinkedMap();
         lm.put(1,deptIdAuth);
         JSONObject jsonObject = ur.queryOneCustom(queryOldDept_sql.toString(), lm);
@@ -692,6 +693,38 @@ public class DeptService {
         return detps;
     }
 
+    public List<String> queryParentAllDeptByPdept(String pid) throws Exception {
+        List<String> depts = new ArrayList<>();
+        depts = getParent(pid,depts);
+        return depts;
+    }
+    public  List<String> getParent(String pid,List<String> depts) throws Exception {
+        List<String> list = getParentDeptIdBySonId(pid);
+        if (CommonUtil.isEmptyList(list)){
+            return null;
+        }
+        //根据当前部门id查询所有子部门的id
+        for(int i=0;i<list.size();i++){
+            depts.add(list.get(i));
+            getParent(list.get(i),depts);//递归查询
+        }
+        return depts ;
+    }
+    private List<String> getParentDeptIdBySonId(String id) throws Exception {
+        LinkedMap lm = new LinkedMap();
+        lm.put(1, id);
+        StringBuffer sql = new StringBuffer("SELECT dept.ID,dept.DEPTNAME  from  sys_dept dept INNER JOIN ");
+        sql.append("sys_dept sonDept on dept.ID=sonDept.PID  where sonDept.ID=? ");
+        List<Object> list = ur.queryAllCustom(sql.toString(), lm);
+        List<String> detps=new ArrayList<>();
+        for (Object obj : list) {
+            JSONObject jsonObject = (JSONObject) obj;
+            if (jsonObject.containsKey("ID")&& StrUtil.isNotBlank(jsonObject.getString("ID"))){
+                detps.add(jsonObject.getString("ID"));
+            }
+        }
+        return detps;
+    }
 
     /**
      * 部门分页查询加部门权限
@@ -840,4 +873,6 @@ public class DeptService {
         }
         return null;
     }
+
+
 }

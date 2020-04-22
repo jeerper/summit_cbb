@@ -8,6 +8,7 @@ import com.summit.cbb.utils.page.Page;
 import com.summit.common.Common;
 import com.summit.common.entity.*;
 import com.summit.common.util.Cryptographic;
+import com.summit.exception.ErrorMsgException;
 import com.summit.repository.UserRepository;
 import com.summit.service.dept.DeptService;
 import com.summit.service.dept.DeptsService;
@@ -23,6 +24,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
@@ -51,8 +53,10 @@ public class UserService {
         //保存用户
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
         String selectUserSql = "SELECT * FROM SYS_USER WHERE USERNAME = ?";
-        List<JSONObject> l = ur.queryAllCustom(selectUserSql, userInfo.getUserName());
-        if (st.collectionNotNull(l)) {
+        List<JSONObject> oldUsers = ur.queryAllCustom(selectUserSql, userInfo.getUserName());
+        if (st.collectionNotNull(oldUsers) && oldUsers.get(0).getString("STATE").equals("1")){
+            return ResponseCodeEnum.CODE_4022;
+        }else if (st.collectionNotNull(oldUsers) && oldUsers.get(0).getString("STATE").equals("0")) {
             if (userInfo.getIsEnabled() == null) {
                 userInfo.setIsEnabled(1);
             }
@@ -834,7 +838,7 @@ public class UserService {
     }
 
     private boolean insertSysUserRecord(JSONObject old_user, String recordId) {
-        String sql_user_record="INSERT INTO sys_user_record(username,name,sex,password,email,phoneNumber,is_enable,headPortrait,duty,post,dept,adcd,id ) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?) ";
+        String sql_user_record="INSERT INTO sys_user_record(username,name,sex,password,email,phoneNumber,is_enable,headPortrait,duty,post,dept,adcd,id,state) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?) ";
         try{
             jdbcTemplate.update(sql_user_record,
                     old_user.containsKey("USERNAME") ? old_user.getString("USERNAME") : null,
@@ -849,7 +853,8 @@ public class UserService {
                     old_user.containsKey("POST") ? old_user.getString("POST") : null,
                     old_user.containsKey("deptIds") ? old_user.getString("deptIds") : null,
                     old_user.containsKey("adcds") ? old_user.getString("adcds") : null,
-                    recordId
+                    recordId,
+                    old_user.containsKey("STATE") ? old_user.getString("STATE") : null
 
             );
         }catch (Exception e){
@@ -860,7 +865,7 @@ public class UserService {
     }
 
     private JSONObject queryOldUserByUserName(String userNameAuth) throws Exception {
-        StringBuffer user_sql=new StringBuffer("SELECT user.USERNAME,user.NAME,user.SEX,user.PASSWORD,user.EMAIL,user.PHONE_NUMBER,user.IS_ENABLED,user.DUTY,user.POST,user.HEADPORTRAIT,userdept2.deptIds,userAdcd1.adcds  from sys_user user ");
+        StringBuffer user_sql=new StringBuffer("SELECT user.USERNAME,user.NAME,user.SEX,user.PASSWORD,user.EMAIL,user.PHONE_NUMBER,user.IS_ENABLED,user.STATE,user.DUTY,user.POST,user.HEADPORTRAIT,userdept2.deptIds,userAdcd1.adcds  from sys_user user ");
         user_sql.append("LEFT JOIN (SELECT userdept.username,GROUP_CONCAT(userdept.deptid)AS deptIds,GROUP_CONCAT(dept.deptname)AS deptNames FROM sys_user_dept userdept ");
         user_sql.append("inner join sys_dept dept on userdept.deptid=dept.id GROUP BY username)userdept2 on user.USERNAME=userdept2.username ");
         user_sql.append("LEFT JOIN(SELECT USERNAME,GROUP_CONCAT(userAdcd.ADCD)AS adcds, GROUP_CONCAT(adcd.ADNM)AS names  FROM sys_user_adcd userAdcd  inner join sys_ad_cd ");
@@ -871,6 +876,17 @@ public class UserService {
         JSONObject jsonObject = ur.queryOneCustom(user_sql.toString(), lm);
         return jsonObject;
     }
+    private JSONObject queryOldUserStateByUserName(String userNameAuth) throws Exception {
+        StringBuffer user_sql=new StringBuffer("SELECT user.USERNAME,user.NAME,user.IS_ENABLED,user.STATE from sys_user user ");
+        user_sql.append("WHERE user.USERNAME= ? ");
+        LinkedMap lm=new LinkedMap();
+        lm.put(1,userNameAuth);
+        JSONObject jsonObject = ur.queryOneCustom(user_sql.toString(), lm);
+        return jsonObject;
+    }
+
+
+
 
     private JSONObject queryBySuperDeptByUserName(String userNameAuth) throws Exception {
         StringBuffer sql=new StringBuffer("SELECT superDept.ID,superDept.DEPTCODE,superDept.DEPTNAME from sys_dept superDept INNER JOIN ");
@@ -1043,5 +1059,89 @@ public class UserService {
             }
         }
         return userInfoList;
+    }
+    @Transactional(propagation= Propagation.REQUIRED,rollbackFor = {Exception.class} )
+    public void delAuth(String userNames) throws Exception {
+        //上级部门
+        JSONObject jsonObject=queryBySuperDeptByUserName(Common.getLogUser().getUserName());
+        String  superDept=null;
+        if (jsonObject !=null && !SummitTools.stringIsNull( jsonObject.getString("ID"))){
+            superDept=jsonObject.getString("ID");
+        }
+        if (userNames.contains(",")){
+            for (String username : userNames.split(",")) {
+                JSONObject old_user=queryOldUserStateByUserName(username);
+                String recordId = IdWorker.getIdStr();
+                boolean b =insertSysUserRecord(old_user,recordId);
+                if (!b){
+                    throw new ErrorMsgException("删除审批失败");
+                }
+                String idStr = IdWorker.getIdStr();
+                String user_auth="INSERT INTO sys_user_auth (id,userName_auth,name_auth,is_enabled_auth,state_auth,auth_person,isAudited,auth_time,submitted_to,apply_name,userRecord_id) VALUES " +
+                        "(?,?,?,?,?,?,?,now(),?,?,?)";
+                jdbcTemplate.update(user_auth,
+                        idStr,
+                        username,
+                        old_user.containsKey("NAME") ? old_user.getString("NAME") : null,
+                        "0",
+                        "0",
+                        null,
+                        "0",
+                        superDept,
+                        Common.getLogUser().getUserName(),
+                        recordId
+                );
+                //修改用户表中的audit字段为发起申请
+                StringBuffer update_user=new StringBuffer("UPDATE SYS_USER SET isAudited = ? where USERNAME=? ");
+                jdbcTemplate.update(update_user.toString(),"0",username);
+                //保存审核表
+                String sql_auth="INSERT INTO sys_auth(id,apply_name,apply_type,submitted_to,isAudited,apply_time,apply_Id ) VALUES (?,?,?,?,?,now(),?) ";
+                jdbcTemplate.update(sql_auth,
+                        IdWorker.getIdStr(),
+                        Common.getLogUser().getUserName(),
+                        "1",
+                        superDept,
+                        "0",
+                        idStr
+                );
+            }
+
+        }else {
+            JSONObject old_user=queryOldUserStateByUserName(userNames);
+            String recordId = IdWorker.getIdStr();
+            boolean b =insertSysUserRecord(old_user,recordId);
+            if (!b){
+                throw new ErrorMsgException("删除审批失败");
+            }
+            String idStr = IdWorker.getIdStr();
+            String user_auth="INSERT INTO sys_user_auth (id,userName_auth,name_auth,is_enabled_auth,state_auth,auth_person,isAudited,auth_time,submitted_to,apply_name,userRecord_id) VALUES " +
+                    "(?,?,?,?,?,?,?,now(),?,?,?)";
+            jdbcTemplate.update(user_auth,
+                    idStr,
+                    userNames,
+                    old_user.containsKey("NAME") ? old_user.getString("NAME") : null,
+                    "0",
+                    "0",
+                    null,
+                    "0",
+                    superDept,
+                    Common.getLogUser().getUserName(),
+                    recordId
+            );
+            //修改用户表中的audit字段为发起申请
+            StringBuffer update_user=new StringBuffer("UPDATE SYS_USER SET isAudited = ? where USERNAME=? ");
+            jdbcTemplate.update(update_user.toString(),"0",userNames);
+            //保存审核表
+            String sql_auth="INSERT INTO sys_auth(id,apply_name,apply_type,submitted_to,isAudited,apply_time,apply_Id ) VALUES (?,?,?,?,?,now(),?) ";
+            jdbcTemplate.update(sql_auth,
+                    IdWorker.getIdStr(),
+                    Common.getLogUser().getUserName(),
+                    "1",
+                    superDept,
+                    "0",
+                    idStr
+            );
+        }
+
     }
 }

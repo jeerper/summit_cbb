@@ -14,6 +14,7 @@ import com.summit.common.entity.*;
 import com.summit.common.redis.user.UserInfoCache;
 import com.summit.common.util.ResultBuilder;
 import com.summit.common.web.filter.UserContextHolder;
+import com.summit.exception.ErrorMsgException;
 import com.summit.service.log.LogUtilImpl;
 import com.summit.service.user.UserService;
 import com.summit.util.*;
@@ -229,6 +230,39 @@ public class UserController {
             return ResultBuilder.buildSuccess();
         }
 
+    }
+
+    @ApiOperation(value = "删除用户信息审批")
+    @DeleteMapping("/delAuth")
+    public RestfulEntityBySummit<String> delAuth(@RequestParam(value = "userNames") String userNames) {
+        LogBean logBean = new LogBean();
+        logBean.setStime(DateUtil.DTFormat("yyyy-MM-dd HH:mm:ss", new Date()));
+        String msg = "删除用户信息审批失败";
+        try{
+            if (!permissionUtil.checkLoginUserAccessPermissionToOtherUser(userNames)) {
+                return ResultBuilder.buildError(ResponseCodeEnum.CODE_4012);
+            }
+            us.delAuth(userNames);
+            logBean.setActionFlag("1");
+        }catch (Exception e){
+            msg = getErrorMsg(msg, e);
+            log.error(msg,e);
+            return ResultBuilder.buildError(ResponseCodeEnum.CODE_9999, msg, null);
+        }
+        SummitTools.getLogBean(logBean, "用户管理", "删除用户审批:" + userNames, "3");
+        logUtil.insertLog(logBean);
+        if ("0".equals(logBean.getActionFlag())) {
+            return ResultBuilder.buildError(ResponseCodeEnum.CODE_9999);
+        } else {
+            return ResultBuilder.buildSuccess();
+        }
+    }
+
+    private String getErrorMsg(String msg, Exception e) {
+        if(e instanceof ErrorMsgException){
+            return ((ErrorMsgException) e).getErrorMsg();
+        }
+        return msg;
     }
 
     @ApiOperation(value = "修改用户", notes = "昵称(name)，用户名(userName),密码(password)都是必输项")

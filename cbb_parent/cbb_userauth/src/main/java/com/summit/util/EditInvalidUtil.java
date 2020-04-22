@@ -55,6 +55,11 @@ public class EditInvalidUtil {
             lm.put(index,deptAuditBean.getDeptTypeAuth());
             index ++;
         }
+        if(!SummitTools.stringIsNull(deptAuditBean.getRemark())){
+            sql.append(" and dept.remark=? ");
+            lm.put(index,deptAuditBean.getRemark());
+            index ++;
+        }
         JSONObject jsonObject = ur.queryOneCustom(sql.toString(), lm);
         if (null !=jsonObject){
             return true;

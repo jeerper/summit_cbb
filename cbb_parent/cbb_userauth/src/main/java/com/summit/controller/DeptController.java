@@ -322,5 +322,17 @@ public class DeptController {
         }
     }
 
+    @ApiOperation(value = "根据当前节点查询当前节点以上所有的父节点(包括不当前节点、多级)")
+    @RequestMapping(value = "/queryParentAllDeptByPdept", method = RequestMethod.GET)
+    public RestfulEntityBySummit<List<String>> queryParentAllDeptByPdept(
+            @RequestParam(value = "pdept", required = true) String pdept){
+        try {
+            return ResultBuilder.buildSuccess(ds.queryParentAllDeptByPdept(pdept));
+        } catch (Exception e) {
+            logger.error("数据查询失败！", e);
+            return ResultBuilder.buildError(ResponseCodeEnum.CODE_9999);
+        }
+    }
+
 
 }
