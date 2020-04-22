@@ -78,27 +78,29 @@ public class DeptService {
 
     public DeptBean queryTreeAuth(String pid) throws Exception {
         if (StrUtil.isBlank(pid)) {
-            pid = Common.getLogUser().getDepts()[0];
-        }
-        LinkedMap linkedMap = new LinkedMap();
-        StringBuffer sql = new StringBuffer("SELECT dept.ID,dept.PID,dept.DEPTCODE,dept.DEPTNAME,dept.REMARK,us.NAME as deptHead,fdept.DEPTNAME as PDEPTNAME,dic.NAME as deptType ");
-        sql.append("FROM SYS_DEPT dept ");
-        sql.append("left join SYS_DEPT fdept on dept.pid=fdept.id ");
-        sql.append("LEFT JOIN sys_user us ON dept.DEPTHEAD=us.USERNAME ");
-        sql.append("LEFT JOIN SYS_AD_CD AD ON AD.ADCD=DEPT.ADCD ");
-        sql.append("LEFT JOIN sys_dictionary dic on dic.PCODE='dept_type' and dept.deptType=dic.CKEY ");
-        sql.append("where 1=1 and dept.ID =? ");
-        linkedMap.put(1, pid);
-        List<Object> rootList = ur.queryAllCustom(sql.toString(), linkedMap);
-        if (rootList.size() > 0) {
-            String jsonTree = ((JSONObject) rootList.get(0)).toString();
-            DeptBean deptBeaneanTree = JSON.parseObject(jsonTree, new TypeReference<DeptBean>() {
-            });
-            List<DeptBean>  children= generateOrgMapToTreeAuth(null, deptBeaneanTree.getId());
-            if (!CommonUtil.isEmptyList(children)){
-                deptBeaneanTree.setChildren(children);
+            if (Common.getLogUser()!=null && Common.getLogUser().getDepts()!=null && Common.getLogUser().getDepts().length>0 ){
+                pid = Common.getLogUser().getDepts()[0];
+                LinkedMap linkedMap = new LinkedMap();
+                StringBuffer sql = new StringBuffer("SELECT dept.ID,dept.PID,dept.DEPTCODE,dept.DEPTNAME,dept.REMARK,us.NAME as deptHead,fdept.DEPTNAME as PDEPTNAME,dic.NAME as deptType ");
+                sql.append("FROM SYS_DEPT dept ");
+                sql.append("left join SYS_DEPT fdept on dept.pid=fdept.id ");
+                sql.append("LEFT JOIN sys_user us ON dept.DEPTHEAD=us.USERNAME ");
+                sql.append("LEFT JOIN SYS_AD_CD AD ON AD.ADCD=DEPT.ADCD ");
+                sql.append("LEFT JOIN sys_dictionary dic on dic.PCODE='dept_type' and dept.deptType=dic.CKEY ");
+                sql.append("where 1=1 and dept.ID =? ");
+                linkedMap.put(1, pid);
+                List<Object> rootList = ur.queryAllCustom(sql.toString(), linkedMap);
+                if (rootList.size() > 0) {
+                    String jsonTree = ((JSONObject) rootList.get(0)).toString();
+                    DeptBean deptBeaneanTree = JSON.parseObject(jsonTree, new TypeReference<DeptBean>() {
+                    });
+                    List<DeptBean>  children= generateOrgMapToTreeAuth(null, deptBeaneanTree.getId());
+                    if (!CommonUtil.isEmptyList(children)){
+                        deptBeaneanTree.setChildren(children);
+                    }
+                    return deptBeaneanTree;
+                }
             }
-            return deptBeaneanTree;
         }
         return null;
     }

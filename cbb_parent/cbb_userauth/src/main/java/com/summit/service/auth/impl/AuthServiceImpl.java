@@ -13,6 +13,7 @@ import com.summit.common.entity.AuthBean;
 import com.summit.common.entity.DeptAuditBean;
 import com.summit.common.entity.UserInfo;
 import com.summit.common.redis.user.UserInfoCache;
+import com.summit.common.util.UserAuthUtils;
 import com.summit.dao.repository.*;
 import com.summit.repository.UserRepository;
 import com.summit.service.auth.AuthService;
@@ -51,12 +52,9 @@ public class AuthServiceImpl  implements AuthService {
 
     @Override
     public Page<AuthBean> queryByPage(Integer currentPage, Integer pageSize, JSONObject paramJson) throws Exception {
-        List rolesList = null;
-        if (Common.getLogUser() != null && Common.getLogUser().getRoles()!=null) {
-            rolesList = Arrays.asList(Common.getLogUser().getRoles());
-        }
+        List<String> roles = UserAuthUtils.getRoles();
         String depts = deptsService.getCurrentDeptService();
-        if (!rolesList.contains("ROLE_SUPERUSER") && !SummitTools.stringIsNull(depts)){
+        if (!roles.contains("ROLE_SUPERUSER") && !SummitTools.stringIsNull(depts)){
             StringBuffer sql_auth = new StringBuffer("SELECT auth.id,user.NAME as apply_name,auth.apply_type,auth.submitted_to,date_format(auth.apply_time, '%Y-%m-%d %H:%i:%s')as applytime,dic.NAME as isAudited  ");
             sql_auth.append("from sys_auth auth INNER JOIN sys_user user on auth.apply_name=user.USERNAME ");
             sql_auth.append("LEFT JOIN sys_dictionary dic on dic.PCODE='isAudited' and auth.isAudited=dic.CKEY ");
@@ -101,7 +99,7 @@ public class AuthServiceImpl  implements AuthService {
             }
             return null;
 
-        }else if (rolesList.contains("ROLE_SUPERUSER")){
+        }else if (roles.contains("ROLE_SUPERUSER")){
             StringBuffer sql_auth = new StringBuffer("SELECT auth.id,user.NAME as apply_name,auth.apply_type,auth.submitted_to,date_format(auth.apply_time, '%Y-%m-%d %H:%i:%s')as applytime,dic.NAME as isAudited ");
             sql_auth.append("from sys_auth auth INNER JOIN sys_user user on auth.apply_name=user.USERNAME ");
             sql_auth.append("LEFT JOIN sys_dictionary dic on dic.PCODE='isAudited' and auth.isAudited=dic.CKEY ");
