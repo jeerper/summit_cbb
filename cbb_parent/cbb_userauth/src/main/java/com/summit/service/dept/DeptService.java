@@ -693,6 +693,12 @@ public class DeptService {
         return detps;
     }
 
+    /**
+     * 根据当前节点查询当前节点以上所有的父节点(部门id)(包括不当前节点、多级)
+     * @param pid
+     * @return
+     * @throws Exception
+     */
     public List<String> queryParentAllDeptByPdept(String pid) throws Exception {
         List<String> depts = new ArrayList<>();
         depts = getParent(pid,depts);
@@ -725,6 +731,56 @@ public class DeptService {
         }
         return detps;
     }
+
+    /**
+     * 根据当前节点查询当前节点以上所有的父节点(部门名称)(包括不当前节点、多级)
+     * @param pid
+     * @return
+     * @throws Exception
+     */
+    public List<String> queryParentAllDeptNameByPdept(String pid) throws Exception {
+        List<JSONObject> dept_json = new ArrayList<>();
+        dept_json = getParentDept(pid,dept_json);
+        List<String> depts = new ArrayList<>();
+        if (!CommonUtil.isEmptyList(dept_json)){
+            for (JSONObject jsonObject:dept_json){
+                depts.add(jsonObject.getString("DEPTNAME"));
+            }
+        }
+        return depts;
+
+    }
+    private   List<JSONObject> getParentDept(String pid,List<JSONObject> depts) throws Exception {
+        List<JSONObject> list = getParentDeptNameBySonId(pid);
+        if (CommonUtil.isEmptyList(list)){
+            return null;
+        }
+        //根据当前部门id查询所有子部门的id
+        for(int i=0;i<list.size();i++){
+            depts.add(list.get(i));
+            getParentDept(list.get(i).getString("ID"),depts);//递归查询
+        }
+        return depts ;
+    }
+    private List<JSONObject> getParentDeptNameBySonId(String id) throws Exception {
+        LinkedMap lm = new LinkedMap();
+        lm.put(1, id);
+        StringBuffer sql = new StringBuffer("SELECT dept.ID,dept.DEPTNAME  from  sys_dept dept INNER JOIN ");
+        sql.append("sys_dept sonDept on dept.ID=sonDept.PID  where sonDept.ID=? ");
+        List<Object> list = ur.queryAllCustom(sql.toString(), lm);
+        List<JSONObject> detps=new ArrayList<>();
+        for (Object obj : list) {
+            JSONObject jsonObject = (JSONObject) obj;
+            if (jsonObject.containsKey("DEPTNAME")&& jsonObject.containsKey("ID")){
+                JSONObject dept_json=new JSONObject();
+                dept_json.put("DEPTNAME",jsonObject.getString("DEPTNAME"));
+                dept_json.put("ID",jsonObject.getString("ID"));
+                detps.add(dept_json);
+            }
+        }
+        return detps;
+    }
+
 
     /**
      * 部门分页查询加部门权限
