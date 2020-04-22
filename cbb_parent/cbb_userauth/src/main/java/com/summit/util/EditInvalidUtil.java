@@ -55,7 +55,7 @@ public class EditInvalidUtil {
             lm.put(index,deptAuditBean.getDeptTypeAuth());
             index ++;
         }
-        if(!SummitTools.stringIsNull(deptAuditBean.getRemark())){
+        if(deptAuditBean.getRemark()!=null){
             sql.append(" and dept.remark=? ");
             lm.put(index,deptAuditBean.getRemark());
             index ++;
