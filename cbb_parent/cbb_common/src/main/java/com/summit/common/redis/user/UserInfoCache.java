@@ -51,7 +51,7 @@ public class UserInfoCache {
         try {
             String userInfoString =
                     redisTemplateWithUserInfo.opsForValue().get(CommonConstant.USER_INFO_CACHE_PREFIX + userName);
-            LOGGER.debug("读取用户信息缓存:{}:{}", userName, userInfoString);
+//            LOGGER.debug("读取用户信息缓存:{}:{}", userName, userInfoString);
             if (StrUtil.isBlank(userInfoString)) {
                 return null;
             }
