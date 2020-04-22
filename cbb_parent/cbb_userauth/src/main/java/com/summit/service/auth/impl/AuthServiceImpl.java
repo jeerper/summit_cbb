@@ -164,15 +164,18 @@ public class AuthServiceImpl  implements AuthService {
             map.put("apply_username",auth_json.getString("USERNAME"));
             map.put("apply_time",auth_json.getString("apply_time"));
             if ("0".equals(apply_type)){//机构
+                StringBuffer dept_auth_sql=new StringBuffer("SELECT auth.id,auth.apply_type,auth.apply_Id,dept.DEPTNAME,dept.DEPTCODE from sys_auth auth  ");
+                dept_auth_sql.append("INNER JOIN sys_dept_auth authDept on auth.apply_Id=authDept.id  ");
+                dept_auth_sql.append("INNER JOIN sys_dept dept on authDept.deptId_auth=dept.ID  where auth.id=? ");
+                LinkedMap user_auth = new LinkedMap();
+                user_auth.put(1, id);
+                net.sf.json.JSONObject dept_auth_json = ur.queryOneCustom(dept_auth_sql.toString(), user_auth);
+                String deptname = dept_auth_json.getString("DEPTNAME");
+                String deptcode = dept_auth_json.getString("DEPTCODE");
                 net.sf.json.JSONObject new_deptJson=queryDeptAuthByDeptID(apply_id);
                 String deptRecord_id = new_deptJson.getString("deptRecord_id");
                 net.sf.json.JSONObject old_deptJson=queryDeptRecordByDeptID(deptRecord_id);
-                List<JSONObject> json=compareToDept(new_deptJson,old_deptJson);
-                if (new_deptJson.containsKey("remark")){
-                    JSONObject jsonObject=new JSONObject();
-                    jsonObject.put("remark",new_deptJson.getString("remark"));
-                    json.add(jsonObject);
-                }
+                List<JSONObject> json=compareToDept(new_deptJson,old_deptJson,deptname,deptcode);
                 map.put("updateType","机构基础类型");
                 map.put("updateContent",json);
                 map.put("isAudited",new_deptJson.getString("isAudited"));
@@ -786,8 +789,8 @@ public class AuthServiceImpl  implements AuthService {
             }
         }
 
-        if (null !=new_userJson && new_userJson.containsKey("headPortrait_auth") && !SummitTools.stringIsNull(new_userJson.getString("headPortrait_auth"))){
-            if (null !=old_userJson && old_userJson.containsKey("headPortrait") && !SummitTools.stringIsNull(old_userJson.getString("headPortrait"))){
+        if (null !=new_userJson && new_userJson.containsKey("headPortrait_auth")){
+            if (null !=old_userJson && old_userJson.containsKey("headPortrait")){
                 String headPortrait_auth = new_userJson.getString("headPortrait_auth");
                 String headportrait = old_userJson.getString("headPortrait");
                 if (!headPortrait_auth.equals(headportrait)){
@@ -797,43 +800,144 @@ public class AuthServiceImpl  implements AuthService {
                     comapre.put("id","头像");
                     comapre.put("old",headportrait);
                     comapre.put("new",headPortrait_auth);
-                   /* Map<String,JSONObject> map=new HashMap<>();
-                    map.put("headportrait",comapre);*/
                     compares.add(comapre);
                 }
+            }
+        }
+        if (null !=new_userJson && new_userJson.containsKey("headPortrait_auth")){
+            if (null !=old_userJson && !old_userJson.containsKey("headPortrait")){
+                String headPortrait_auth = new_userJson.getString("headPortrait_auth");
+                JSONObject comapre=new JSONObject();
+                comapre.put("applyname",applyname);
+                comapre.put("applyusername",username);
+                comapre.put("id","头像");
+                comapre.put("old","");
+                comapre.put("new",headPortrait_auth);
+                compares.add(comapre);
+            }
+        }
+        if (null !=new_userJson && !new_userJson.containsKey("headPortrait_auth")){
+            if (null !=old_userJson && old_userJson.containsKey("headPortrait")){
+                String headportrait = old_userJson.getString("headPortrait");
+                JSONObject comapre=new JSONObject();
+                comapre.put("applyname",applyname);
+                comapre.put("applyusername",username);
+                comapre.put("id","头像");
+                comapre.put("old",headportrait);
+                comapre.put("new","");
+                compares.add(comapre);
             }
         }
         return compares;
     }
 
     //对比机构
-    private List<JSONObject> compareToDept(net.sf.json.JSONObject new_deptJson, net.sf.json.JSONObject old_deptJson) {
-        //List<Map<String,JSONObject>> compares=new ArrayList<>();
+    private List<JSONObject> compareToDept(net.sf.json.JSONObject new_deptJson, net.sf.json.JSONObject old_deptJson,String deptName,String deptCode) {
         List<JSONObject> compares=new ArrayList<>();
-        //Integer index=1;
         if (null !=new_deptJson && new_deptJson.containsKey("pId_auth") && !SummitTools.stringIsNull(new_deptJson.getString("pId_auth"))){
             if (null !=old_deptJson && old_deptJson.containsKey("pid") && !SummitTools.stringIsNull(old_deptJson.getString("pid"))){
                 String pId_auth = new_deptJson.getString("pId_auth");
                 String pid = old_deptJson.getString("pid");
                 if (!pId_auth.equals(pid)){
                     JSONObject comapre=new JSONObject();
+                    comapre.put("applyname",deptName);
+                    comapre.put("applyusername",deptCode);
                     comapre.put("id","上级部门");
                     comapre.put("old",pid);
                     comapre.put("new",pId_auth);
-                    //Map<String,JSONObject> map=new HashMap<>();
-                   // map.put("superDept",comapre);
                     compares.add(comapre);
-                    //index++;
                 }
             }
 
         }
+        if (null !=new_deptJson && new_deptJson.containsKey("remark")){
+            if (null !=old_deptJson && old_deptJson.containsKey("remark")){
+                String newRemark = new_deptJson.getString("remark");
+                String oldRemark = old_deptJson.getString("remark");
+                if (!newRemark.equals(oldRemark)){
+                    JSONObject comapre=new JSONObject();
+                    comapre.put("applyname",deptName);
+                    comapre.put("applyusername",deptCode);
+                    comapre.put("id","备注");
+                    comapre.put("old",oldRemark);
+                    comapre.put("new",newRemark);
+                    compares.add(comapre);
+                }
+            }
+        }
+        if (null !=new_deptJson && new_deptJson.containsKey("remark")){
+            if (null !=old_deptJson && !old_deptJson.containsKey("remark")){
+                String newRemark = new_deptJson.getString("remark");
+                JSONObject comapre=new JSONObject();
+                comapre.put("applyname",deptName);
+                comapre.put("applyusername",deptCode);
+                comapre.put("id","备注");
+                comapre.put("old","");
+                comapre.put("new",newRemark);
+                compares.add(comapre);
+            }
+        }
+
+        if (null !=new_deptJson && !new_deptJson.containsKey("remark")){
+            if (null !=old_deptJson && old_deptJson.containsKey("remark")){
+                String oldRemark = old_deptJson.getString("remark");
+                JSONObject comapre=new JSONObject();
+                comapre.put("applyname",deptName);
+                comapre.put("applyusername",deptCode);
+                comapre.put("id","备注");
+                comapre.put("old",oldRemark);
+                comapre.put("new","");
+                compares.add(comapre);
+            }
+        }
+        if (null !=new_deptJson && new_deptJson.containsKey("deptHead_auth")){
+            if (null !=old_deptJson && old_deptJson.containsKey("deptHead")){
+                String deptHead_auth = new_deptJson.getString("deptHead_auth");
+                String deptHead = old_deptJson.getString("deptHead");
+                if (!deptHead_auth.equals(deptHead)){
+                    JSONObject comapre=new JSONObject();
+                    comapre.put("applyname",deptName);
+                    comapre.put("applyusername",deptCode);
+                    comapre.put("id","机构联系人");
+                    comapre.put("old",deptHead);
+                    comapre.put("new",deptHead_auth);
+                    compares.add(comapre);
+                }
+            }
+        }
+        if (null !=new_deptJson && new_deptJson.containsKey("deptHead_auth")){
+            if (null !=old_deptJson && !old_deptJson.containsKey("deptHead")){
+                String deptHead_auth = new_deptJson.getString("deptHead_auth");
+                JSONObject comapre=new JSONObject();
+                comapre.put("applyname",deptName);
+                comapre.put("applyusername",deptCode);
+                comapre.put("id","机构联系人");
+                comapre.put("old","");
+                comapre.put("new",deptHead_auth);
+                compares.add(comapre);
+            }
+        }
+        if (null !=new_deptJson && !new_deptJson.containsKey("deptHead_auth")){
+            if (null !=old_deptJson && old_deptJson.containsKey("deptHead")){
+                String deptHead = old_deptJson.getString("deptHead");
+                JSONObject comapre=new JSONObject();
+                comapre.put("applyname",deptName);
+                comapre.put("applyusername",deptCode);
+                comapre.put("id","机构联系人");
+                comapre.put("old",deptHead);
+                comapre.put("new","");
+                compares.add(comapre);
+            }
+        }
+
         if (null !=new_deptJson && new_deptJson.containsKey("deptcode_auth") && !SummitTools.stringIsNull(new_deptJson.getString("deptcode_auth"))){
             if (null !=old_deptJson && old_deptJson.containsKey("deptcode") && !SummitTools.stringIsNull(old_deptJson.getString("deptcode"))){
                 String deptcode_auth = new_deptJson.getString("deptcode_auth");
                 String deptcode = old_deptJson.getString("deptcode");
                 if (!deptcode_auth.equals(deptcode)){
                     JSONObject comapre=new JSONObject();
+                    comapre.put("applyname",deptName);
+                    comapre.put("applyusername",deptCode);
                     comapre.put("id","机构编码");
                     comapre.put("old",deptcode);
                     comapre.put("new",deptcode_auth);
@@ -843,7 +947,6 @@ public class AuthServiceImpl  implements AuthService {
                     //index++;
                 }
             }
-
         }
         if (null !=new_deptJson && new_deptJson.containsKey("deptName_auth")&& !SummitTools.stringIsNull(new_deptJson.getString("deptName_auth"))){
             if (null !=old_deptJson && old_deptJson.containsKey("deptName") && !SummitTools.stringIsNull(old_deptJson.getString("deptName"))){
@@ -851,6 +954,8 @@ public class AuthServiceImpl  implements AuthService {
                 String deptname = old_deptJson.getString("deptName");
                 if (!deptName_auth.equals(deptname)){
                     JSONObject comapre=new JSONObject();
+                    comapre.put("applyname",deptName);
+                    comapre.put("applyusername",deptCode);
                     comapre.put("id","机构名称");
                     comapre.put("old",deptname);
                     comapre.put("new",deptName_auth);
@@ -868,6 +973,8 @@ public class AuthServiceImpl  implements AuthService {
                 String adcd = old_deptJson.getString("adcd");
                 if (!adcd_auth.equals(adcd)){
                     JSONObject comapre=new JSONObject();
+                    comapre.put("applyname",deptName);
+                    comapre.put("applyusername",deptCode);
                     comapre.put("id","行政区划");
                     comapre.put("old",adcd);
                     comapre.put("new",adcd_auth);
@@ -885,6 +992,8 @@ public class AuthServiceImpl  implements AuthService {
                 String deptType = old_deptJson.getString("deptType");
                 if (!deptType_auth.equals(deptType)){
                     JSONObject comapre=new JSONObject();
+                    comapre.put("applyname",deptName);
+                    comapre.put("applyusername",deptCode);
                     comapre.put("id","机构类型");
                     comapre.put("old",deptType);
                     comapre.put("new",deptType_auth);
@@ -897,23 +1006,6 @@ public class AuthServiceImpl  implements AuthService {
 
         }
 
-        if (null !=new_deptJson && new_deptJson.containsKey("deptHead_auth") && !SummitTools.stringIsNull(new_deptJson.getString("deptHead_auth"))){
-            if (null !=old_deptJson && old_deptJson.containsKey("deptHead") && !SummitTools.stringIsNull(old_deptJson.getString("deptHead"))){
-                String deptHead_auth = new_deptJson.getString("deptHead_auth");
-                String deptHead = old_deptJson.getString("deptHead");
-                if (!deptHead_auth.equals(deptHead)){
-                    JSONObject comapre=new JSONObject();
-                    comapre.put("id","机构联系人");
-                    comapre.put("old",deptHead);
-                    comapre.put("new",deptHead_auth);
-                  /*  Map<String,JSONObject> map=new HashMap<>();
-                    map.put("deptType",comapre);*/
-                    compares.add(comapre);
-                    // index++;
-                }
-            }
-
-        }
       return compares;
     }
 
