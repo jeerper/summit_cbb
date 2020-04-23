@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.summit.common.entity.*;
 import com.summit.util.EditInvalidUtil;
+import org.apache.poi.ss.formula.functions.T;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -251,7 +252,7 @@ public class DeptController {
             boolean b=editInvalidUtil.editDeptInvalid(deptAuditBean);
             if (b){
                 logger.error("无效的编辑");
-                return ResultBuilder.buildSuccess();
+                return ResultBuilder.buildSuccess("Invalid_edit");
             }
             ResponseCodeEnum c =ds.editAudit(deptAuditBean);
             if (c != null) {

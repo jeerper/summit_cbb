@@ -348,7 +348,7 @@ public class UserController {
             boolean b=editInvalidUtil.editUserInvalid(userAuditBean);
             if (b){
                 logger.error("无效的编辑");
-                return ResultBuilder.buildSuccess();
+                return ResultBuilder.buildSuccess("Invalid_edit");
             }
             String base64Str = userAuditBean.getHeadPortraitAuth();
             if (SummitTools.stringNotNull(base64Str)) {
