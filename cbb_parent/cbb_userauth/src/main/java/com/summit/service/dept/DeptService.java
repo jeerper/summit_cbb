@@ -399,7 +399,7 @@ public class DeptService {
      * @return
      */
     public void edit(DeptBean ab) {
-        String sql = "UPDATE SYS_DEPT SET  pid = ?, DEPTCODE = ?, DEPTNAME = ?, ADCD=?,REMARK = ?,DEPTHEAD=?  where id = ?";
+        String sql = "UPDATE SYS_DEPT SET  pid = ?, DEPTCODE = ?, DEPTNAME = ?, ADCD=?,REMARK = ?,DEPTHEAD=?, deptType=?  where id = ? ";
         jdbcTemplate.update(
                 sql,
                 ab.getPid(),
@@ -408,6 +408,7 @@ public class DeptService {
                 ab.getAdcd(),
                 ab.getRemark(),
                 ab.getDeptHead(),
+                ab.getDeptType(),
                 ab.getId()
         );
         //return ResponseCodeBySummit.CODE_0000;

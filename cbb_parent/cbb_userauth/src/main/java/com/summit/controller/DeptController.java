@@ -1,10 +1,13 @@
 package com.summit.controller;
 
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
+import com.summit.common.Common;
 import com.summit.common.entity.*;
 import com.summit.util.EditInvalidUtil;
+import com.summit.util.UserInfoUtil;
 import org.apache.poi.ss.formula.functions.T;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,6 +43,8 @@ public class DeptController {
     LogUtilImpl logUtil;
     @Autowired
     EditInvalidUtil editInvalidUtil;
+    @Autowired
+    private UserInfoUtil userInfoUtil;
     /**
      * 查询部门树
      *
@@ -244,6 +249,7 @@ public class DeptController {
 
     @ApiOperation(value = "修改部门审批", notes = "id,部门名称(deptName),上级部门(pid)都是必输项,没有上级部门为pid=-1")
     @PostMapping("/editAudit")
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = {Exception.class})
     public RestfulEntityBySummit<String> editAudit(@RequestBody DeptAuditBean deptAuditBean){
         LogBean logBean = new LogBean();
         logBean.setStime(DateUtil.DTFormat("yyyy-MM-dd HH:mm:ss", new Date()));
@@ -254,7 +260,18 @@ public class DeptController {
                 logger.error("无效的编辑");
                 return ResultBuilder.buildSuccess("Invalid_edit");
             }
-            ResponseCodeEnum c =ds.editAudit(deptAuditBean);
+            List rolesList = null;
+            if (Common.getLogUser() != null && Common.getLogUser().getRoles()!=null) {
+                rolesList = Arrays.asList(Common.getLogUser().getRoles());
+            }
+            ResponseCodeEnum c=null;
+            if (rolesList !=null && rolesList.contains("ROLE_SUPERUSER")){
+                DeptBean deptBean=userInfoUtil.getDeptBean(deptAuditBean);
+                ds.edit(deptBean);
+                return ResultBuilder.buildSuccess("success");
+            }else if (rolesList !=null && !rolesList.contains("ROLE_SUPERUSER")){
+                c =ds.editAudit(deptAuditBean);
+            }
             if (c != null) {
                 return ResultBuilder.buildError(c);
             }

@@ -10,6 +10,7 @@ import com.alibaba.fastjson.TypeReference;
 import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import com.summit.MainAction;
 import com.summit.cbb.utils.page.Page;
+import com.summit.common.Common;
 import com.summit.common.entity.*;
 import com.summit.common.redis.user.UserInfoCache;
 import com.summit.common.util.ResultBuilder;
@@ -28,6 +29,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -65,9 +68,10 @@ public class UserController {
     private UserService us;
     @Value("${password.encode.key}")
     private String key;
-
     @Autowired
     EditInvalidUtil editInvalidUtil;
+    @Autowired
+    private UserInfoUtil userInfoUtil;
 
 
     @PostMapping("/add")
@@ -338,6 +342,7 @@ public class UserController {
 
     @ApiOperation(value = "修改用户审批", notes = "昵称(name)，用户名(userName),密码(password)都是必输项")
     @PostMapping("/editAudit")
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = {Exception.class})
     public RestfulEntityBySummit<String> editAudit(@RequestBody UserAuditBean userAuditBean) {
         LogBean logBean = new LogBean();
         logBean.setStime(DateUtil.DTFormat("yyyy-MM-dd HH:mm:ss", new Date()));
@@ -387,8 +392,25 @@ public class UserController {
                 FileUtil.writeBytes(fileBytes, headPicpath);
                 userAuditBean.setHeadPortraitAuth(headPicUrl);
             }
-            logger.debug("编辑用户信息："+userAuditBean);
-            ResponseCodeEnum c = us.editAudit(userAuditBean, key);
+            List rolesList = null;
+            if (Common.getLogUser() != null && Common.getLogUser().getRoles()!=null) {
+                rolesList = Arrays.asList(Common.getLogUser().getRoles());
+            }
+            ResponseCodeEnum c=null;
+            if (rolesList !=null && rolesList.contains("ROLE_SUPERUSER")){
+                UserInfo userInfo=userInfoUtil.getUserInfo(userAuditBean);
+                c = us.edit(userInfo, key);
+                if (c == null){
+                    UserInfo cacheUserInfo = userInfoCache.getUserInfo(userInfo.getUserName());
+                    if (cacheUserInfo != null) {
+                        BeanUtil.copyProperties(userInfo, cacheUserInfo, CopyOptions.create().setIgnoreNullValue(true));
+                        userInfoCache.setUserInfo(userInfo.getUserName(), cacheUserInfo);
+                    }
+                    return ResultBuilder.buildSuccess("success");
+                }
+            }else if (rolesList !=null && !rolesList.contains("ROLE_SUPERUSER")){
+                 c = us.editAudit(userAuditBean, key);
+            }
             if (c != null) {
                 return ResultBuilder.buildError(c);
             }
