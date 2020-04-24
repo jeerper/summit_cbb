@@ -19,6 +19,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.alibaba.fastjson.JSON;
@@ -448,7 +449,26 @@ public class DeptService {
      * @return
      * @throws Exception
      */
+
     public ResponseCodeEnum del(String ids) throws Exception {
+        //判断所删除部门里没有子节点
+        if (ids.contains(",")){
+            for (String deptId:ids.split(",")){
+                com.alibaba.fastjson.JSONObject jsonObject=new com.alibaba.fastjson.JSONObject();
+                jsonObject.put("pdept",deptId);
+                List<String> depts = deptsService.getAllDeptExcludeParentNodeByPdept(jsonObject);
+                if (!CommonUtil.isEmptyList(depts)){
+                    throw new Exception("该部门下还有子部门,无法删除");
+                }
+            }
+        }else {
+            com.alibaba.fastjson.JSONObject jsonObject=new com.alibaba.fastjson.JSONObject();
+            jsonObject.put("pdept",ids);
+            List<String> depts = deptsService.getAllDeptExcludeParentNodeByPdept(jsonObject);
+            if (!CommonUtil.isEmptyList(depts)){
+                throw new Exception("该部门下还有子部门,无法删除");
+            }
+        }
         ids = "'" + ids.replaceAll(",", "','") + "'";
         String sql = "select padcd, count(*) from SYS_AD_CD where padcd in (" + ids + ") group by padcd";
         LinkedMap linkedMap = new LinkedMap();
@@ -458,7 +478,7 @@ public class DeptService {
             String sql_userDept = "SELECT count(0) FROM sys_user_dept  userdept where userdept.DEPTID in (" + ids + ") and userdept.USERNAME <> '" + SysConstants.SUPER_USERNAME + "'";
             int countRow = ur.getRowCount(sql_userDept, linkedMap);
             if (countRow > 0) {
-                throw new Exception("本部门还有用户,无法删除");
+                throw new Exception("该部门下还有用户,无法删除");
             }
             String updateSql = "DELETE FROM SYS_DEPT WHERE id IN (" + ids + ") ";
             jdbcTemplate.update(updateSql);

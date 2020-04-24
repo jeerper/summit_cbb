@@ -116,6 +116,26 @@ public class DeptsServiceImpl implements DeptsService {
     }
 
     @Override
+    public List<String> getAllDeptExcludeParentNodeByPdept(JSONObject paramJson) {
+        try{
+            List<String> depts=new ArrayList<>();
+            JSONObject objct= deptUtil.getAllDeptByPdept(paramJson);
+            String pdept=objct.getString("pdept");
+            List<DeptBean> deptData=(List)objct.getJSONArray("deptList");
+            if(deptData!=null && deptData.size()>0) {
+                for(int i = 0; i < deptData.size() ; i++){
+                    String dept = String.valueOf(deptData.get(i));
+                    depts.add(dept);
+                }
+            }
+            return depts;
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    @Override
     public List<String> getAllDeptByPdept(JSONObject paramJson) {
         try{
             List<String> depts=new ArrayList<>();

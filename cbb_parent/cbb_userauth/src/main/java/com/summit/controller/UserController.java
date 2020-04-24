@@ -238,6 +238,7 @@ public class UserController {
 
     @ApiOperation(value = "删除用户信息审批")
     @DeleteMapping("/delAuth")
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = {Exception.class})
     public RestfulEntityBySummit<String> delAuth(@RequestParam(value = "userNames") String userNames) {
         LogBean logBean = new LogBean();
         logBean.setStime(DateUtil.DTFormat("yyyy-MM-dd HH:mm:ss", new Date()));
@@ -246,7 +247,25 @@ public class UserController {
             if (!permissionUtil.checkLoginUserAccessPermissionToOtherUser(userNames)) {
                 return ResultBuilder.buildError(ResponseCodeEnum.CODE_4012);
             }
-            us.delAuth(userNames);
+            List rolesList = null;
+            if (Common.getLogUser() != null && Common.getLogUser().getRoles()!=null) {
+                rolesList = Arrays.asList(Common.getLogUser().getRoles());
+            }
+            if (rolesList !=null && rolesList.contains("ROLE_SUPERUSER")){
+                if (userNames.contains(",")) {
+                    for (String username : userNames.split(",")) {
+                        //系统管路员用户不能删除
+                        if (SummitTools.stringEquals(SysConstants.SUPER_USERNAME, username)) {
+                            continue;
+                        }
+                        userInfoCache.deleteUserInfo(username);
+                    }
+                }
+                us.del(userNames);
+                return ResultBuilder.buildSuccess("success");
+            }else if (rolesList !=null && !rolesList.contains("ROLE_SUPERUSER")){
+                us.delAuth(userNames);
+            }
             logBean.setActionFlag("1");
         }catch (Exception e){
             msg = getErrorMsg(msg, e);

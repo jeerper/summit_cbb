@@ -260,7 +260,6 @@ public class UserService {
             }
             jdbcTemplate.batchUpdate(insertAdcdSql, userAdcdParams);
         }
-
         String deptSql = " delete from SYS_USER_DEPT where USERNAME  IN ('" + userInfo.getUserName() + "') ";
         jdbcTemplate.update(deptSql);
         //保存部门
