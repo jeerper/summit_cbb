@@ -814,49 +814,53 @@ public class DeptService {
      * @throws Exception
      */
     public Page<DeptBean> queryDeptByPage(int start, int limit, JSONObject paramJson) throws Exception {
-        StringBuffer sql = new StringBuffer("SELECT dept.ID,fdept.ID as PID,dept.DEPTCODE,dept.DEPTNAME,dept.ADCD,dept.REMARK,us.NAME as deptHead, fdept.DEPTNAME as PDEPTNAME,AD.ADNM,dic.NAME as deptType FROM SYS_DEPT dept left join SYS_DEPT fdept on dept.pid=fdept.id  ");
-        sql.append(" LEFT JOIN sys_user us ON dept.DEPTHEAD=us.USERNAME  ");
-        sql.append(" LEFT JOIN SYS_AD_CD AD ON AD.ADCD=DEPT.ADCD  ");
-        sql.append(" LEFT JOIN sys_dictionary dic on dic.PCODE='dept_type' and dept.deptType=dic.CKEY ");
-        sql.append(" where 1=1");
-        String depts = deptsService.getDeptsByPdept(null);
-        Integer index = 1;
-        LinkedMap linkedMap = new LinkedMap();
-        if(depts!=null && !depts.equals("")){
-            sql.append(" and dept.ID in('"+depts+"') ");
-        }
-        if (paramJson != null && !paramJson.isEmpty()) {
-            if (paramJson.containsKey("pid") && SummitTools.stringNotNull(paramJson.getString("pid"))) {
-                sql.append(" and fdept.ID = ? ");
-                linkedMap.put(index, paramJson.get("pid"));
-                index++;
+        String currentDeptService = deptsService.getCurrentDeptService();
+        com.alibaba.fastjson.JSONObject jsonObject=new com.alibaba.fastjson.JSONObject();
+        jsonObject.put("pdept",currentDeptService);
+        List<String> depts = deptsService.getAllDeptByPdept(jsonObject);
+        if (!CommonUtil.isEmptyList(depts)){
+            String deptIds = String.join("','", depts);
+            StringBuffer sql = new StringBuffer("SELECT dept.ID,fdept.ID as PID,dept.DEPTCODE,dept.DEPTNAME,dept.ADCD,dept.REMARK,us.NAME as deptHead, fdept.DEPTNAME as PDEPTNAME,AD.ADNM,dic.NAME as deptType FROM SYS_DEPT dept left join SYS_DEPT fdept on dept.pid=fdept.id  ");
+            sql.append(" LEFT JOIN sys_user us ON dept.DEPTHEAD=us.USERNAME  ");
+            sql.append(" LEFT JOIN SYS_AD_CD AD ON AD.ADCD=DEPT.ADCD  ");
+            sql.append(" LEFT JOIN sys_dictionary dic on dic.PCODE='dept_type' and dept.deptType=dic.CKEY ");
+            sql.append(" where  dept.ID in('" +deptIds+ "') ");
+            //String depts = deptsService.getDeptsByPdept(null);
+            Integer index = 1;
+            LinkedMap linkedMap = new LinkedMap();
+            if (paramJson != null && !paramJson.isEmpty()) {
+                if (paramJson.containsKey("pid") && SummitTools.stringNotNull(paramJson.getString("pid"))) {
+                    sql.append(" and fdept.ID = ? ");
+                    linkedMap.put(index, paramJson.get("pid"));
+                    index++;
+                }
+                if (paramJson.containsKey("deptcode")) {
+                    sql.append(" and dept.deptcode  like ? ");
+                    linkedMap.put(index, "%" + paramJson.get("deptcode") + "%");
+                    index++;
+                }
+                if (paramJson.containsKey("deptname")) {
+                    sql.append(" and dept.deptname like ? ");
+                    linkedMap.put(index, "%" + paramJson.get("deptname") + "%");
+                    index++;
+                }
+                if (paramJson.containsKey("adnm")) {
+                    sql.append(" and AD.ADNM like ? ");
+                    linkedMap.put(index, "%" + paramJson.get("adnm") + "%");
+                    index++;
+                }
+                if (paramJson.containsKey("adcd")) {
+                    sql.append(" and AD.ADCD = ? ");
+                    linkedMap.put(index, paramJson.get("adcd"));
+                    index++;
+                }
             }
-            if (paramJson.containsKey("deptcode")) {
-                sql.append(" and dept.deptcode  like ? ");
-                linkedMap.put(index, "%" + paramJson.get("deptcode") + "%");
-                index++;
+            Page<Object> rs = ur.queryByCustomPage(sql.toString(), start, limit, linkedMap);
+            if (rs != null) {
+                ArrayList<DeptBean> deptBeans = JSON.parseObject(rs.getContent().toString(), new TypeReference<ArrayList<DeptBean>>() {
+                });
+                return new Page<DeptBean>(deptBeans, rs.getPageable());
             }
-            if (paramJson.containsKey("deptname")) {
-                sql.append(" and dept.deptname like ? ");
-                linkedMap.put(index, "%" + paramJson.get("deptname") + "%");
-                index++;
-            }
-            if (paramJson.containsKey("adnm")) {
-                sql.append(" and AD.ADNM like ? ");
-                linkedMap.put(index, "%" + paramJson.get("adnm") + "%");
-                index++;
-            }
-            if (paramJson.containsKey("adcd")) {
-                sql.append(" and AD.ADCD = ? ");
-                linkedMap.put(index, paramJson.get("adcd"));
-                index++;
-            }
-        }
-        Page<Object> rs = ur.queryByCustomPage(sql.toString(), start, limit, linkedMap);
-        if (rs != null) {
-            ArrayList<DeptBean> deptBeans = JSON.parseObject(rs.getContent().toString(), new TypeReference<ArrayList<DeptBean>>() {
-            });
-            return new Page<DeptBean>(deptBeans, rs.getPageable());
         }
         return null;
     }
