@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 
-@Api(description = "路由管理")
+@Api(tags = "路由管理")
 @RestController
 @RequestMapping("/api/cbb-api-gateway-db/route")
 public class DictionaryController {
