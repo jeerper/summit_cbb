@@ -468,7 +468,20 @@ public class AuthServiceImpl  implements AuthService {
                         delUserRoleByUserName(userName_auth);
                         String deptSql=" delete from SYS_USER_DEPT where USERNAME  IN ('"+userName_auth+"') ";
                         jdbcTemplate.update(deptSql);
+                        //置部门联系人字段为空
+                        String dept_Sql="SELECT dept.ID,dept.DEPTCODE,dept.DEPTNAME from sys_dept dept where dept.deptHead=? ";
+                        LinkedMap linkedMap = new LinkedMap();
+                        linkedMap.put(1, userName_auth);
+                        List<Object> depts = ur.queryAllCustom(dept_Sql, linkedMap);
+                        if (!CommonUtil.isEmptyList(depts)){
+                            for (Object dept:depts){
+                                String deptId = ((net.sf.json.JSONObject) dept).getString("ID");
+                                String update_dept="update sys_dept set deptHead=NULL where ID=? ";
+                                jdbcTemplate.update(update_dept,deptId);
+                            }
+                        }
                     }
+
                 }
             }else if ("2".equals(isAudited)){//拒绝
                 if ("0".equals(apply_type)){//机构

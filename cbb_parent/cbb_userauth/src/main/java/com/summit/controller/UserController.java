@@ -202,6 +202,7 @@ public class UserController {
      */
     @ApiOperation(value = "删除用户信息")
     @DeleteMapping("/del")
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = {Exception.class})
     public RestfulEntityBySummit<String> del(
             @RequestParam(value = "userNames") String userNames) {
         LogBean logBean = new LogBean();

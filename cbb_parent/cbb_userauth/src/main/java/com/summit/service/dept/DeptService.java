@@ -85,7 +85,7 @@ public class DeptService {
                 StringBuffer sql = new StringBuffer("SELECT dept.ID,dept.PID,dept.DEPTCODE,dept.DEPTNAME,dept.REMARK,us.NAME as deptHead,fdept.DEPTNAME as PDEPTNAME,dic.NAME as deptType ");
                 sql.append("FROM SYS_DEPT dept ");
                 sql.append("left join SYS_DEPT fdept on dept.pid=fdept.id ");
-                sql.append("LEFT JOIN sys_user us ON dept.DEPTHEAD=us.USERNAME ");
+                sql.append("LEFT JOIN sys_user us ON dept.DEPTHEAD=us.USERNAME and us.STATE='1' ");
                 sql.append("LEFT JOIN SYS_AD_CD AD ON AD.ADCD=DEPT.ADCD ");
                 sql.append("LEFT JOIN sys_dictionary dic on dic.PCODE='dept_type' and dept.deptType=dic.CKEY ");
                 sql.append("where 1=1 and dept.ID =? ");
@@ -111,7 +111,7 @@ public class DeptService {
             StringBuffer sql = new StringBuffer("SELECT DEPT.ID,DEPT.PID,DEPT.DEPTNAME,FDEPT.ID AS CHILD_ID,FDEPT.DEPTCODE AS CHILD_CODE,FDEPT.DEPTNAME AS CHILD_NAME, FDEPT.REMARK AS CHILD_REMARK,us.NAME as deptHead,dic.NAME as deptType ");
             sql.append("FROM SYS_DEPT DEPT ");
             sql.append("INNER JOIN  SYS_DEPT FDEPT ON FDEPT.PID= DEPT.ID ");
-            sql.append("LEFT JOIN sys_user us ON FDEPT.deptHead=us.USERNAME ");
+            sql.append("LEFT JOIN sys_user us ON FDEPT.deptHead=us.USERNAME and us.STATE='1' ");
             sql.append("LEFT JOIN sys_dictionary dic on dic.PCODE='dept_type' and FDEPT.deptType=dic.CKEY ");
             sql.append(" ORDER BY  DEPT.ID ASC,FDEPT.ID ASC ");
             List<Object> list = ur.queryAllCustom(sql.toString(), new LinkedMap());

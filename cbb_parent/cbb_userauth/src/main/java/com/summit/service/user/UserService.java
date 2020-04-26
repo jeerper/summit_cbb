@@ -341,7 +341,7 @@ public class UserService {
     }
 
 
-    public void del(String userNames) {
+    public void del(String userNames) throws Exception {
         userNames = userNames.replaceAll(",", "','");
         String sql = "UPDATE SYS_USER SET STATE = '0',IS_ENABLED='0', LAST_UPDATE_TIME = ? WHERE USERNAME <> '" + SysConstants.SUPER_USERNAME + "' AND USERNAME IN ('" + userNames + "')";
         jdbcTemplate.update(sql, new Date());
@@ -352,6 +352,24 @@ public class UserService {
 //		
 		String deptSql=" delete from SYS_USER_DEPT where USERNAME  IN ('"+userNames+"') ";
 		jdbcTemplate.update(deptSql);
+
+		//置部门联系人字段为空
+        String[] user_names = userNames.split(",");
+        for (String user_name:user_names){
+            String dept_Sql="SELECT dept.ID,dept.DEPTCODE,dept.DEPTNAME from sys_dept dept where dept.deptHead=? ";
+            LinkedMap linkedMap = new LinkedMap();
+            linkedMap.put(1, user_name);
+            List<Object> depts = ur.queryAllCustom(dept_Sql, linkedMap);
+            if (!CommonUtil.isEmptyList(depts)){
+                for (Object dept:depts){
+                    String id = ((JSONObject) dept).getString("ID");
+                    String update_dept="update sys_dept set deptHead=NULL where ID=? ";
+                    jdbcTemplate.update(update_dept,id);
+                }
+            }
+        }
+
+
     }
 
     public UserInfo queryByUserName(String userName) throws Exception {
