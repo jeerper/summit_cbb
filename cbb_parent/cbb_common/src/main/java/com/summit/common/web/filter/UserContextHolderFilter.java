@@ -1,6 +1,7 @@
 package com.summit.common.web.filter;
 
 import cn.hutool.core.util.StrUtil;
+import com.summit.common.api.userauth.RemoteUserLogOutService;
 import com.summit.common.constant.CommonConstant;
 import com.summit.common.entity.UserInfo;
 import com.summit.common.redis.user.UserInfoCache;
@@ -24,7 +25,8 @@ public class UserContextHolderFilter extends GenericFilterBean {
 
     @Autowired
     UserInfoCache userInfoCache;
-
+    @Autowired
+    private RemoteUserLogOutService remoteUserLogOutService;
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
         HttpServletRequest request = (HttpServletRequest) servletRequest;
@@ -33,6 +35,9 @@ public class UserContextHolderFilter extends GenericFilterBean {
         if (StrUtil.isNotBlank(userName)) {
             //从redis取出用户信息
             UserInfo userInfo = userInfoCache.getUserInfo(userName);
+            if (userInfo==null){
+                remoteUserLogOutService.logout();
+            }
             UserContextHolder.setUserInfo(userInfo);
         }
         filterChain.doFilter(request, response);

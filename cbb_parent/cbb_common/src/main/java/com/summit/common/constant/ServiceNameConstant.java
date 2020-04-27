@@ -18,4 +18,8 @@ public interface ServiceNameConstant {
      */
     String Demo_Service = "cbb-demo";
 
+    /**
+     * 网关组件
+     */
+    String Gate_Way_Service="cbb-api-gateway-db";
 }

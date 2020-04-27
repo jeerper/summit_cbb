@@ -13,7 +13,7 @@ public class UserInfoUtil {
     public UserInfo getUserInfo(UserAuditBean userAuditBean) {
         UserInfo userInfo=new UserInfo();
         userInfo.setIsEnabled(Integer.parseInt(userAuditBean.getIsEnabledAuth()));
-        userInfo.setName(userAuditBean.getUserNameAuth());
+        userInfo.setName(userAuditBean.getNameAuth());
         userInfo.setPhoneNumber(userAuditBean.getPhoneNumberAuth());
         userInfo.setUserName(userAuditBean.getUserNameAuth());
         userInfo.setDepts(userAuditBean.getDeptAuth());

@@ -41,6 +41,9 @@ public class DeptBean implements Serializable {
     @ApiModelProperty(value = "机构类型(0:内部机构;1:外部机构)", name = "deptType")
     private String deptTypeName;
 
+    @ApiModelProperty(value = "电话号码", name = "phoneNumber")
+    private String phoneNumber;
+
 
 
     public DeptBean(String id, String pid, String deptCode, String deptName, String adcd, String adnm, String remark, List<DeptBean> children, String pdeptName, String deptHead, String deptType) {

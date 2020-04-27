@@ -83,7 +83,7 @@ public class EditInvalidUtil {
         LinkedMap lm=new LinkedMap();
         Integer index =1;
         if(!SummitTools.stringIsNull(userAuditBean.getNameAuth())){
-            sql.append(" and user.NAME=? ");
+            sql.append(" and user.USERNAME=? ");
             lm.put(index,userAuditBean.getNameAuth());
             index ++;
         }

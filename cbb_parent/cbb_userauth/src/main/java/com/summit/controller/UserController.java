@@ -11,6 +11,7 @@ import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import com.summit.MainAction;
 import com.summit.cbb.utils.page.Page;
 import com.summit.common.Common;
+import com.summit.common.api.userauth.RemoteUserLogOutService;
 import com.summit.common.entity.*;
 import com.summit.common.redis.user.UserInfoCache;
 import com.summit.common.util.ResultBuilder;
@@ -72,7 +73,8 @@ public class UserController {
     EditInvalidUtil editInvalidUtil;
     @Autowired
     private UserInfoUtil userInfoUtil;
-
+    @Autowired
+    private RemoteUserLogOutService remoteUserLogOutService;
 
     @PostMapping("/add")
     @ApiOperation(value = "新增用户,可以上传base64格式的头像", notes = "昵称(name)，用户名(userName),密码(password)都是必输项")
@@ -203,29 +205,22 @@ public class UserController {
     @ApiOperation(value = "删除用户信息")
     @DeleteMapping("/del")
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = {Exception.class})
-    public RestfulEntityBySummit<String> del(
-            @RequestParam(value = "userNames") String userNames) {
+    public RestfulEntityBySummit<String> del(@RequestParam(value = "userNames") String userNames) {
         LogBean logBean = new LogBean();
         logBean.setStime(DateUtil.DTFormat("yyyy-MM-dd HH:mm:ss", new Date()));
+        String msg = "删除用户信息失败";
         try {
             if (!permissionUtil.checkLoginUserAccessPermissionToOtherUser(userNames)) {
                 return ResultBuilder.buildError(ResponseCodeEnum.CODE_4012);
             }
-            if (userNames.contains(",")) {
-                for (String username : userNames.split(",")) {
-                    //系统管路员用户不能删除
-                    if (SummitTools.stringEquals(SysConstants.SUPER_USERNAME, username)) {
-                        continue;
-                    }
-                    userInfoCache.deleteUserInfo(username);
-                }
-            }
             us.del(userNames);
             logBean.setActionFlag("1");
         } catch (Exception e) {
-            logger.error("删除用户信息", e);
             logBean.setActionFlag("0");
             logBean.setErroInfo(e.getMessage());
+            msg = getErrorMsg(msg, e);
+            log.error(msg,e);
+            return ResultBuilder.buildError(ResponseCodeEnum.CODE_9999, msg, null);
         }
         SummitTools.getLogBean(logBean, "用户管理", "删除用户:" + userNames, "3");
         logUtil.insertLog(logBean);
@@ -436,7 +431,7 @@ public class UserController {
             }
             logBean.setActionFlag("1");
         }catch (Exception e){
-            logger.error("修改用户失败:", e);
+            logger.error("修改用户审批失败:", e);
             logBean.setActionFlag("0");
             logBean.setErroInfo(e.getMessage());
         }
@@ -793,6 +788,22 @@ public class UserController {
         }
         return ResultBuilder.buildError(ResponseCodeEnum.CODE_0000,"查询数据成功",userInfos);
     }
+
+
+
+    @ApiOperation(value = "根据部门Id查询该部门下的部门联系人")
+    @RequestMapping(value = "/queryDeptHeadByDeptId", method = RequestMethod.GET)
+    public RestfulEntityBySummit<List<UserInfo>> querydeptHeadByDeptId(@RequestParam(value = "deptId", required = true) String deptId){
+        List<UserInfo> userInfos=null;
+        try {
+            userInfos=us.queryDeptHeadByDeptId(deptId);
+        } catch (Exception e) {
+            logger.error("数据查询失败！", e);
+            return ResultBuilder.buildError(ResponseCodeEnum.CODE_9999);
+        }
+        return ResultBuilder.buildError(ResponseCodeEnum.CODE_0000,"查询数据成功",userInfos);
+    }
+
 
 
 

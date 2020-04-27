@@ -9,11 +9,13 @@ import com.alibaba.fastjson.TypeReference;
 import com.summit.cbb.utils.page.Page;
 import com.summit.common.Common;
 import com.summit.common.CommonConstants;
+import com.summit.common.api.userauth.RemoteUserLogOutService;
 import com.summit.common.entity.AuthBean;
 import com.summit.common.entity.DeptAuditBean;
 import com.summit.common.entity.UserInfo;
 import com.summit.common.redis.user.UserInfoCache;
 import com.summit.dao.repository.*;
+import com.summit.exception.ErrorMsgException;
 import com.summit.repository.UserRepository;
 import com.summit.service.auth.AuthService;
 import com.summit.service.dept.DeptsService;
@@ -25,6 +27,8 @@ import org.apache.commons.collections.map.LinkedMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 
@@ -48,6 +52,8 @@ public class AuthServiceImpl  implements AuthService {
     private  DeptRecordDao deptRecordDao;
     @Autowired
     private UserAuditDao userAuditDao;
+    @Autowired
+    private RemoteUserLogOutService remoteUserLogOutService;
 
     @Override
     public Page<AuthBean> queryByPage(Integer currentPage, Integer pageSize, JSONObject paramJson) throws Exception {
@@ -448,7 +454,15 @@ public class AuthServiceImpl  implements AuthService {
                                 }
                                 jdbcTemplate.batchUpdate(insertAdcdSql, userdeptParams);
                             }
-
+                            //如果修改部门则原来的部门联系人为null
+                            String userDept_sql="SELECT userDept.ID,userDept.USERNAME,userDept.DEPTID from sys_user_dept userDept where userDept.USERNAME=? ";
+                            LinkedMap lm=new LinkedMap();
+                            lm.put(1,user_json.getString("userName_auth") );
+                            net.sf.json.JSONObject userDept = ur.queryOneCustom(userDept_sql, lm);
+                            if (userDept!=null && !userDept.getString("DEPTID").equals(user_json.getString("dept_auth"))){
+                                String updateDeptHead="update sys_dept set DEPTHEAD=NULL where DEPTHEAD=?";
+                                jdbcTemplate.update(updateDeptHead,user_json.getString("userName_auth"));
+                            }
                         }
                         //5、设置redis缓存
                         UserInfo cacheUserInfo = userInfoCache.getUserInfo( user_json.getString("userName_auth"));
@@ -462,8 +476,15 @@ public class AuthServiceImpl  implements AuthService {
                         String sql = "UPDATE SYS_USER SET STATE = '0',IS_ENABLED='0', LAST_UPDATE_TIME = ? WHERE USERNAME <> '" + SysConstants.SUPER_USERNAME + "' AND USERNAME IN ('" + userName_auth + "')";
                         jdbcTemplate.update(sql, new Date());
                         if (SummitTools.stringEquals(SysConstants.SUPER_USERNAME, userName_auth)) {
-                            continue;
+                            new ErrorMsgException("系统管理员不能删除");
                         }
+                        //注销登录
+                        /*if (Common.getLogUser() != null) {
+                            String userName = Common.getLogUser().getUserName();
+                            if (Common.getLogUser().getUserName().equalsIgnoreCase(userName_auth)){
+                                remoteUserLogOutService.logout();
+                            }
+                        }*/
                         userInfoCache.deleteUserInfo(userName_auth);
                         delUserRoleByUserName(userName_auth);
                         String deptSql=" delete from SYS_USER_DEPT where USERNAME  IN ('"+userName_auth+"') ";

@@ -1,13 +1,19 @@
 package com.summit.service.user;
 
 import cn.hutool.core.util.StrUtil;
+import cn.hutool.extra.servlet.ServletUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
 import com.baomidou.mybatisplus.core.toolkit.IdWorker;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.summit.cbb.utils.page.Page;
 import com.summit.common.Common;
+import com.summit.common.api.userauth.RemoteUserLogOutService;
+import com.summit.common.constant.CommonConstant;
 import com.summit.common.entity.*;
+import com.summit.common.redis.user.UserInfoCache;
 import com.summit.common.util.Cryptographic;
+import com.summit.dao.repository.LoginLogDao;
 import com.summit.exception.ErrorMsgException;
 import com.summit.repository.UserRepository;
 import com.summit.service.dept.DeptService;
@@ -21,16 +27,18 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.BoundValueOperations;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
+import javax.servlet.http.HttpServletRequest;
+import java.util.*;
 
 @Service
 @Transactional
@@ -48,6 +56,14 @@ public class UserService {
     private DeptService ds;
     @Autowired
     private DeptsService deptsService;
+    @Autowired
+    private RemoteUserLogOutService  remoteUserLogOutService;
+    @Autowired
+    UserInfoCache userInfoCache;
+    @Autowired
+    RedisTemplate<String, Object> genericRedisTemplate;
+    @Autowired
+    LoginLogDao loginLogDao;
     @Transactional
     public ResponseCodeEnum add(UserInfo userInfo, String key) {
         //保存用户
@@ -214,7 +230,7 @@ public class UserService {
 
 
     @Transactional
-    public ResponseCodeEnum edit(UserInfo userInfo, String key) {
+    public ResponseCodeEnum edit(UserInfo userInfo, String key) throws Exception {
         if (userInfo.getPassword() != null && !"".equals(userInfo.getPassword())) {
             //解密
             try {
@@ -275,6 +291,16 @@ public class UserService {
                 userdeptParams.add(deptParam);
             }
             jdbcTemplate.batchUpdate(insertAdcdSql, userdeptParams);
+
+            //对比是否更改机构联系人为null
+            String userDept_sql="SELECT userDept.ID,userDept.USERNAME,userDept.DEPTID from sys_user_dept userDept where userDept.USERNAME=? ";
+            LinkedMap lm=new LinkedMap();
+            lm.put(1,userInfo.getUserName());
+            JSONObject userDept = ur.queryOneCustom(userDept_sql, lm);
+            if (userDept!=null && !userDept.getString("DEPTID").equals(userInfo.getDepts()[0])){
+                String updateDeptHead="update sys_dept set DEPTHEAD=NULL where DEPTHEAD=?";
+                jdbcTemplate.update(updateDeptHead,userInfo.getUserName());
+            }
         }
 
 
@@ -340,25 +366,36 @@ public class UserService {
         return null;
     }
 
-
     public void del(String userNames) throws Exception {
         userNames = userNames.replaceAll(",", "','");
         String sql = "UPDATE SYS_USER SET STATE = '0',IS_ENABLED='0', LAST_UPDATE_TIME = ? WHERE USERNAME <> '" + SysConstants.SUPER_USERNAME + "' AND USERNAME IN ('" + userNames + "')";
         jdbcTemplate.update(sql, new Date());
         delUserRoleByUserName(userNames);
 
-//		String adcdSql=" delete from sys_user_adcd where USERNAME  IN ('"+userNames+"') ";
-//		jdbcTemplate.update(adcdSql);
-//		
-		String deptSql=" delete from SYS_USER_DEPT where USERNAME  IN ('"+userNames+"') ";
-		jdbcTemplate.update(deptSql);
+		/*String adcdSql=" delete from sys_user_adcd where USERNAME  IN ('"+userNames+"') ";
+		jdbcTemplate.update(adcdSql);*/
 
+        String deptSql=" delete from SYS_USER_DEPT where USERNAME  IN ('"+userNames+"') ";
+		jdbcTemplate.update(deptSql);
 		//置部门联系人字段为空
         String[] user_names = userNames.split(",");
-        for (String user_name:user_names){
+        for (String username:user_names){
+            //系统管路员用户不能删除
+            if (SummitTools.stringEquals(SysConstants.SUPER_USERNAME, username)) {
+                new ErrorMsgException("系统管理员不能删除");
+            }
+           /* Set<String> keys = genericRedisTemplate.keys(CommonConstant.LOGIN_LOG_PREFIX + "*");
+            for (String key : keys) {
+                String loginId = (String) genericRedisTemplate.opsForValue().get(key);
+                LoginLogBean loginLogBean = loginLogDao.selectOne(Wrappers.<LoginLogBean>lambdaQuery().eq(LoginLogBean::getId, loginId));
+                if (loginLogBean!=null && loginLogBean.getLoginUserName().equals(username)){
+                    remoteUserLogOutService.logout();
+                }
+            }*/
+            userInfoCache.deleteUserInfo(username);
             String dept_Sql="SELECT dept.ID,dept.DEPTCODE,dept.DEPTNAME from sys_dept dept where dept.deptHead=? ";
             LinkedMap linkedMap = new LinkedMap();
-            linkedMap.put(1, user_name);
+            linkedMap.put(1, username);
             List<Object> depts = ur.queryAllCustom(dept_Sql, linkedMap);
             if (!CommonUtil.isEmptyList(depts)){
                 for (Object dept:depts){
@@ -368,7 +405,6 @@ public class UserService {
                 }
             }
         }
-
 
     }
 
@@ -1077,6 +1113,23 @@ public class UserService {
         }
         return userInfoList;
     }
+
+    public List<UserInfo> queryDeptHeadByDeptId(String deptId) throws Exception {
+        StringBuilder sb=new StringBuilder("SELECT user.USERNAME,user.NAME,user.PHONE_NUMBER from sys_user user left JOIN ");
+        sb.append("sys_user_dept userDept on user.USERNAME=userDept.USERNAME WHERE  userDept.DEPTID=? and user.USERNAME  <> 'admin' ");
+        LinkedMap linkedMap = new LinkedMap();
+        linkedMap.put(1,deptId);
+        List<UserInfo> userInfoList = new ArrayList<>();
+        List<Object> users = ur.queryAllCustom(sb.toString(), linkedMap);
+        for (Object o : users) {
+            UserInfo userInfo = JSON.parseObject(o.toString(), new TypeReference<UserInfo>() {});
+            userInfoList.add(userInfo);
+        }
+        return userInfoList;
+    }
+
+
+
     @Transactional(propagation= Propagation.REQUIRED,rollbackFor = {Exception.class} )
     public void delAuth(String userNames) throws Exception {
         //上级部门
@@ -1161,4 +1214,6 @@ public class UserService {
         }
 
     }
+
+
 }
