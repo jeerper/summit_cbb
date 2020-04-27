@@ -28,7 +28,7 @@ public class UserContextHolder {
      *
      * @param userInfo 用户信息
      */
-    static void setUserInfo(UserInfo userInfo) {
+    public static void setUserInfo(UserInfo userInfo) {
         USER_INFO_THREAD_LOCAL.set(userInfo);
     }
 

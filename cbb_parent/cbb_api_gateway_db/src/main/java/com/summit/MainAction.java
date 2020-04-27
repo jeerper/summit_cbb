@@ -1,6 +1,7 @@
 package com.summit;
 
 import com.summit.common.config.FeignConfig;
+import com.summit.common.web.filter.UserContextHolderFilter;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -18,7 +19,8 @@ import org.springframework.context.annotation.FilterType;
 @MapperScan(basePackages = "com.summit.dao.repository")
 @ComponentScan(excludeFilters = @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE,
         classes = {
-                FeignConfig.class
+                FeignConfig.class,
+                UserContextHolderFilter.class
         }))
 public class MainAction {
 

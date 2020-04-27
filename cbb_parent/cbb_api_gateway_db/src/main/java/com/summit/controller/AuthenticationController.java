@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-
 @Api(tags = "登录管理")
 @RestController
 @RequestMapping("/oauth")
