@@ -697,8 +697,8 @@ public class AuthServiceImpl  implements AuthService {
 
             }
         }
-        if (null !=new_userJson && new_userJson.containsKey("phone_number_auth") && !SummitTools.stringIsNull(new_userJson.getString("phone_number_auth"))){
-            if (null !=old_userJson && old_userJson.containsKey("phoneNumber") && !SummitTools.stringIsNull(old_userJson.getString("phoneNumber"))){
+        if (null !=new_userJson && new_userJson.containsKey("phone_number_auth")){
+            if (null !=old_userJson && old_userJson.containsKey("phoneNumber")){
                 String phone_number_auth = new_userJson.getString("phone_number_auth");
                 String phone_number = old_userJson.getString("phoneNumber");
                 if (!phone_number_auth.equals(phone_number)){
@@ -710,6 +710,32 @@ public class AuthServiceImpl  implements AuthService {
                     comapre.put("new",phone_number_auth);
                     compares.add(comapre);
                 }
+
+            }
+        }
+        if (null !=new_userJson && new_userJson.containsKey("phone_number_auth")){
+            if (null !=old_userJson && !old_userJson.containsKey("phoneNumber")){
+                String phone_number_auth = new_userJson.getString("phone_number_auth");
+                JSONObject comapre=new JSONObject();
+                comapre.put("applyname",applyname);
+                comapre.put("applyusername",username);
+                comapre.put("id","电话号码");
+                comapre.put("old","");
+                comapre.put("new",phone_number_auth);
+                compares.add(comapre);
+
+            }
+        }
+        if (null !=new_userJson && !new_userJson.containsKey("phone_number_auth")){
+            if (null !=old_userJson && old_userJson.containsKey("phoneNumber")){
+                String phone_number = old_userJson.getString("phoneNumber");
+                JSONObject comapre=new JSONObject();
+                comapre.put("applyname",applyname);
+                comapre.put("applyusername",username);
+                comapre.put("id","电话号码");
+                comapre.put("old",phone_number);
+                comapre.put("new","");
+                compares.add(comapre);
 
             }
         }
