@@ -1,6 +1,9 @@
 package com.summit.config;
 
+import com.summit.common.constant.CommonConstant;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.oauth2.common.DefaultOAuth2AccessToken;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.provider.ClientDetails;
@@ -10,10 +13,14 @@ import org.springframework.security.oauth2.provider.OAuth2Request;
 import org.springframework.security.oauth2.provider.token.store.redis.RedisTokenStore;
 
 import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 public class SummitRedisTokenStore extends RedisTokenStore {
 
     private ClientDetailsService clientDetailsService;
+
+    @Autowired
+    RedisTemplate<String, Object> genericRedisTemplate;
 
     public SummitRedisTokenStore(RedisConnectionFactory connectionFactory, ClientDetailsService clientDetailsService) {
         super(connectionFactory);
@@ -37,6 +44,12 @@ public class SummitRedisTokenStore extends RedisTokenStore {
             storeAccessToken(token, result);
         }
         return result;
+    }
+
+    @Override
+    public void storeAccessToken(OAuth2AccessToken token, OAuth2Authentication authentication) {
+            super.storeAccessToken(token,authentication);
+            genericRedisTemplate.opsForValue().set(CommonConstant.LOGIN_TOKEN_PREFIX+authentication.getName(), token.getValue(), 5, TimeUnit.MINUTES);
     }
 
     private int getAccessTokenValiditySeconds(OAuth2Request clientAuth) {

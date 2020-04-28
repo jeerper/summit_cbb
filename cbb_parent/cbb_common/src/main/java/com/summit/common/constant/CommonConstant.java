@@ -92,4 +92,8 @@ public interface CommonConstant {
     String ROUTE_KEY = "_ROUTE_KEY";
 
     String LOGIN_LOG_PREFIX="LOGIN_LOG_KEY:";
+    /**
+     * 用户登录token缓存
+     */
+    String LOGIN_TOKEN_PREFIX="LOGIN_TOKEN_KEY:";
 }
