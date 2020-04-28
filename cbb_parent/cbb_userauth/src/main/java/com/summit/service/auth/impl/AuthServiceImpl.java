@@ -485,7 +485,7 @@ public class AuthServiceImpl  implements AuthService {
                                 remoteUserLogOutService.logout();
                             }
                         }*/
-                        userInfoCache.deleteUserInfo(userName_auth);
+                        remoteUserLogOutService.logout(userName_auth);
                         delUserRoleByUserName(userName_auth);
                         String deptSql=" delete from SYS_USER_DEPT where USERNAME  IN ('"+userName_auth+"') ";
                         jdbcTemplate.update(deptSql);

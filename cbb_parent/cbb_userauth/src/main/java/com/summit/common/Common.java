@@ -3,6 +3,7 @@ package com.summit.common;
 import com.summit.common.entity.UserInfo;
 import com.summit.common.web.filter.UserContextHolder;
 
+
 /**
  * 常量类
  * 

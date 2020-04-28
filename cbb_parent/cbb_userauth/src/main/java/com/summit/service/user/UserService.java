@@ -392,7 +392,7 @@ public class UserService {
                     remoteUserLogOutService.logout();
                 }
             }*/
-            userInfoCache.deleteUserInfo(username);
+            remoteUserLogOutService.logout(username);
             String dept_Sql="SELECT dept.ID,dept.DEPTCODE,dept.DEPTNAME from sys_dept dept where dept.deptHead=? ";
             LinkedMap linkedMap = new LinkedMap();
             linkedMap.put(1, username);

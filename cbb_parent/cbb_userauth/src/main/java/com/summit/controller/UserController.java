@@ -254,7 +254,6 @@ public class UserController {
                         if (SummitTools.stringEquals(SysConstants.SUPER_USERNAME, username)) {
                             continue;
                         }
-                        userInfoCache.deleteUserInfo(username);
                     }
                 }
                 us.del(userNames);
