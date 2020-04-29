@@ -393,10 +393,10 @@ public class UserService {
             }*/
             delUserRoleByUserName(username);
             RestfulEntityBySummit<Boolean> logout = remoteUserLogOutService.logout(username);
-            Boolean logoutData = logout.getData();
+            /*Boolean logoutData = logout.getData();
             if (!logoutData){
                 throw new Exception("还未注销用户!");
-            }
+            }*/
             String dept_Sql="SELECT dept.ID,dept.DEPTCODE,dept.DEPTNAME from sys_dept dept where dept.deptHead=? ";
             LinkedMap linkedMap = new LinkedMap();
             linkedMap.put(1, username);
