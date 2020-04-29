@@ -381,10 +381,9 @@ public class AuthServiceImpl  implements AuthService {
                         continue;
                     }
                     if (null !=deptAuth_json){
-                        StringBuffer dept_sql=new StringBuffer("UPDATE SYS_DEPT SET PID=?, DEPTCODE=?,DEPTNAME=?,ADCD=?,isAudited=?,deptType=?,DEPTHEAD=?,REMARK=? ");
+                        StringBuffer dept_sql=new StringBuffer("UPDATE SYS_DEPT SET DEPTCODE=?,DEPTNAME=?,ADCD=?,isAudited=?,deptType=?,DEPTHEAD=?,REMARK=? ");
                         dept_sql.append("WHERE id=? ");
                         jdbcTemplate.update(dept_sql.toString(),
-                                deptAuth_json.containsKey("pId_auth") ? deptAuth_json.getString("pId_auth") : null,
                                 deptAuth_json.containsKey("deptcode_auth") ? deptAuth_json.getString("deptcode_auth") : null,
                                 deptAuth_json.containsKey("deptName_auth") ? deptAuth_json.getString("deptName_auth") : null,
                                 deptAuth_json.containsKey("adcd_auth") ? deptAuth_json.getString("adcd_auth") : null,
@@ -394,6 +393,12 @@ public class AuthServiceImpl  implements AuthService {
                                 deptAuth_json.containsKey("remark") ? deptAuth_json.getString("remark") : null,
                                 deptAuth_json.getString("deptId_auth")
                         );
+                        if (deptAuth_json.containsKey("pId_auth")){
+                            StringBuffer pid_sql =new StringBuffer("UPDATE SYS_DEPT SET PID=? WHERE id=? ");
+                            jdbcTemplate.update(pid_sql.toString(),deptAuth_json.getString("pId_auth"),
+                                    deptAuth_json.getString("deptId_auth"));
+                        }
+
                     }
                 }else if ("1".equals(apply_type)){//用户
                     net.sf.json.JSONObject user_json= queryUserByApplyId(apply_id);
