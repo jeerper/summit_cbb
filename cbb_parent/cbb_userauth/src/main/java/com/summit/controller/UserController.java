@@ -11,6 +11,7 @@ import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import com.summit.MainAction;
 import com.summit.cbb.utils.page.Page;
 import com.summit.common.Common;
+import com.summit.common.CommonConstants;
 import com.summit.common.api.userauth.RemoteUserLogOutService;
 import com.summit.common.entity.*;
 import com.summit.common.redis.user.UserInfoCache;
@@ -204,7 +205,6 @@ public class UserController {
      */
     @ApiOperation(value = "删除用户信息")
     @DeleteMapping("/del")
-    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = {Exception.class})
     public RestfulEntityBySummit<String> del(@RequestParam(value = "userNames") String userNames) {
         LogBean logBean = new LogBean();
         logBean.setStime(DateUtil.DTFormat("yyyy-MM-dd HH:mm:ss", new Date()));
@@ -234,7 +234,6 @@ public class UserController {
 
     @ApiOperation(value = "删除用户信息审批")
     @DeleteMapping("/delAuth")
-    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = {Exception.class})
     public RestfulEntityBySummit<String> delAuth(@RequestParam(value = "userNames") String userNames) {
         LogBean logBean = new LogBean();
         logBean.setStime(DateUtil.DTFormat("yyyy-MM-dd HH:mm:ss", new Date()));
@@ -263,9 +262,8 @@ public class UserController {
             }
             logBean.setActionFlag("1");
         }catch (Exception e){
-            msg = getErrorMsg(msg, e);
             log.error(msg,e);
-            return ResultBuilder.buildError(ResponseCodeEnum.CODE_9999, msg, null);
+            return ResultBuilder.buildError(ResponseCodeEnum.CODE_9999, e.getMessage(), null);
         }
         SummitTools.getLogBean(logBean, "用户管理", "删除用户审批:" + userNames, "3");
         logUtil.insertLog(logBean);

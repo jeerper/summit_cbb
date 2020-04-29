@@ -365,24 +365,23 @@ public class UserService {
 
         return null;
     }
-
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = {Exception.class})
     public void del(String userNames) throws Exception {
-        userNames = userNames.replaceAll(",", "','");
-        String sql = "UPDATE SYS_USER SET STATE = '0',IS_ENABLED='0', LAST_UPDATE_TIME = ? WHERE USERNAME <> '" + SysConstants.SUPER_USERNAME + "' AND USERNAME IN ('" + userNames + "')";
+        String user_Names = userNames.replaceAll(",", "','");
+        String sql = "UPDATE SYS_USER SET STATE = '0',IS_ENABLED='0', LAST_UPDATE_TIME = ? WHERE USERNAME <> '" + SysConstants.SUPER_USERNAME + "' AND USERNAME IN ('" + user_Names + "')";
         jdbcTemplate.update(sql, new Date());
-        delUserRoleByUserName(userNames);
 
 		/*String adcdSql=" delete from sys_user_adcd where USERNAME  IN ('"+userNames+"') ";
 		jdbcTemplate.update(adcdSql);*/
 
-        String deptSql=" delete from SYS_USER_DEPT where USERNAME  IN ('"+userNames+"') ";
+        String deptSql=" delete from SYS_USER_DEPT where USERNAME  IN ('"+user_Names+"') ";
 		jdbcTemplate.update(deptSql);
 		//置部门联系人字段为空
-        String[] user_names = userNames.split(",");
-        for (String username:user_names){
+        String[] usernames = userNames.split(",");
+        for (String username:usernames){
             //系统管路员用户不能删除
             if (SummitTools.stringEquals(SysConstants.SUPER_USERNAME, username)) {
-                new ErrorMsgException("系统管理员不能删除");
+                throw new Exception("系统管理员不能删除");
             }
            /* Set<String> keys = genericRedisTemplate.keys(CommonConstant.LOGIN_LOG_PREFIX + "*");
             for (String key : keys) {
@@ -392,7 +391,12 @@ public class UserService {
                     remoteUserLogOutService.logout();
                 }
             }*/
-            remoteUserLogOutService.logout(username);
+            delUserRoleByUserName(username);
+            RestfulEntityBySummit<Boolean> logout = remoteUserLogOutService.logout(username);
+            Boolean logoutData = logout.getData();
+            if (!logoutData){
+                throw new Exception("还未注销用户!");
+            }
             String dept_Sql="SELECT dept.ID,dept.DEPTCODE,dept.DEPTNAME from sys_dept dept where dept.deptHead=? ";
             LinkedMap linkedMap = new LinkedMap();
             linkedMap.put(1, username);
@@ -1144,7 +1148,7 @@ public class UserService {
                 String recordId = IdWorker.getIdStr();
                 boolean b =insertSysUserRecord(old_user,recordId);
                 if (!b){
-                    throw new ErrorMsgException("删除审批失败");
+                    throw new Exception("删除审批失败");
                 }
                 String idStr = IdWorker.getIdStr();
                 String user_auth="INSERT INTO sys_user_auth (id,userName_auth,name_auth,is_enabled_auth,state_auth,auth_person,isAudited,auth_time,submitted_to,apply_name,userRecord_id) VALUES " +
@@ -1181,7 +1185,7 @@ public class UserService {
             String recordId = IdWorker.getIdStr();
             boolean b =insertSysUserRecord(old_user,recordId);
             if (!b){
-                throw new ErrorMsgException("删除审批失败");
+                throw new Exception("删除审批失败");
             }
             String idStr = IdWorker.getIdStr();
             String user_auth="INSERT INTO sys_user_auth (id,userName_auth,name_auth,is_enabled_auth,state_auth,auth_person,isAudited,auth_time,submitted_to,apply_name,userRecord_id) VALUES " +
