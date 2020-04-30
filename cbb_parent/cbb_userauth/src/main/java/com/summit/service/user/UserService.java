@@ -243,7 +243,6 @@ public class UserService {
         sql.append(" ,COMPANY=?,DUTY=?,POST=?,SN=? ");
         if (SummitTools.stringNotNull(userInfo.getHeadPortrait())) {
             sql.append(" ,HEADPORTRAIT=? ");
-
         }
         sql.append(" WHERE USERNAME = ? AND STATE = 1 ");
         if (SummitTools.stringNotNull(userInfo.getHeadPortrait())) {
@@ -258,12 +257,10 @@ public class UserService {
                     userInfo.getPost(), userInfo.getSn(), userInfo.getUserName());
         }
 
-
-        String adcdSql = " delete from sys_user_adcd where USERNAME  IN ('" + userInfo.getUserName() + "') ";
-        jdbcTemplate.update(adcdSql);
-
         //保存行政区划
         if (userInfo.getAdcds() != null && userInfo.getAdcds().length > 0) {
+            String adcdSql = " delete from sys_user_adcd where USERNAME  IN ('" + userInfo.getUserName() + "') ";
+            jdbcTemplate.update(adcdSql);
             String insertAdcdSql = "INSERT INTO SYS_USER_ADCD(ID,USERNAME,ADCD,CREATETIME) VALUES ( ?, ?, ?, now())";
             List userAdcdParams = new ArrayList();
             for (String adcd : userInfo.getAdcds()) {
@@ -276,10 +273,10 @@ public class UserService {
             }
             jdbcTemplate.batchUpdate(insertAdcdSql, userAdcdParams);
         }
-        String deptSql = " delete from SYS_USER_DEPT where USERNAME  IN ('" + userInfo.getUserName() + "') ";
-        jdbcTemplate.update(deptSql);
         //保存部门
         if (userInfo.getDepts() != null && userInfo.getDepts().length > 0) {
+            String deptSql = " delete from SYS_USER_DEPT where USERNAME  IN ('" + userInfo.getUserName() + "') ";
+            jdbcTemplate.update(deptSql);
             String insertAdcdSql = "INSERT INTO SYS_USER_DEPT(ID,USERNAME,DEPTID,CREATETIME) VALUES ( ?, ?, ?, now())";
             List userdeptParams = new ArrayList();
             for (String deptId : userInfo.getDepts()) {
@@ -303,11 +300,10 @@ public class UserService {
             }
         }
 
-
-        String uddSql = " delete from sys_user_dept_duty where USERNAME  IN ('" + userInfo.getUserName() + "') ";
-        jdbcTemplate.update(uddSql);
         //保存部门，用户, 职位关系表
         if(userInfo.getUserName() !=null && userInfo.getDepts() !=null && !CommonUtil.isEmptyList(Arrays.asList(userInfo.getDepts())) && userInfo.getDuty() !=null && !StrUtil.isBlank(userInfo.getDuty())){
+            String uddSql = " delete from sys_user_dept_duty where USERNAME  IN ('" + userInfo.getUserName() + "') ";
+            jdbcTemplate.update(uddSql);
             String insertSql="INSERT INTO sys_user_dept_duty(ID,USERNAME,DEPTID,DUTY) VALUES ( ?, ?, ?, ?)";
             List params = new ArrayList();
             for (String deptId : userInfo.getDepts()) {
@@ -392,7 +388,7 @@ public class UserService {
                 }
             }*/
             delUserRoleByUserName(username);
-            RestfulEntityBySummit<Boolean> logout = remoteUserLogOutService.logout(username);
+            RestfulEntityBySummit<Boolean> logout = remoteUserLogOutService.logout();
             /*Boolean logoutData = logout.getData();
             if (!logoutData){
                 throw new Exception("还未注销用户!");
@@ -800,7 +796,7 @@ public class UserService {
                 }
 
             }
-        }else if (Common.getLogUser()!=null){
+        }/*else if (Common.getLogUser()!=null){
             String[] depts = Common.getLogUser().getDepts();
             for (int i = 0; i <depts.length; i++) {
                 if (i<depts.length-1){
@@ -809,7 +805,7 @@ public class UserService {
                     sbDept.append(depts[i]);
                 }
             }
-        }
+        }*/
         String deptAuth = sbDept.toString();
         String sql="INSERT INTO sys_user_auth (id,userName_auth,name_auth,sex_auth,password_auth,email_auth,phone_number_auth,is_enabled_auth,headPortrait_auth,duty_auth,dept_auth,adcd_auth,post_auth,auth_person,isAudited,auth_time,submitted_to,remark,apply_name,userRecord_id) VALUES " +
                 "(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,now(),?,?,?,?)";

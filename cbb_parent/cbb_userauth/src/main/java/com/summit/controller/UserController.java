@@ -367,6 +367,7 @@ public class UserController {
                 logger.error("无效的编辑");
                 return ResultBuilder.buildSuccess("Invalid_edit");
             }
+
             String base64Str = userAuditBean.getHeadPortraitAuth();
             if (SummitTools.stringNotNull(base64Str)) {
                 StringBuffer fileName = new StringBuffer();

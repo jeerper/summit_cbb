@@ -82,8 +82,13 @@ public class EditInvalidUtil {
         sql.append("adcd on userAdcd.ADCD=adcd.ADCD  GROUP BY USERNAME)userAdcd1 on user.USERNAME=userAdcd1.USERNAME  WHERE 1=1 ");
         LinkedMap lm=new LinkedMap();
         Integer index =1;
-        if(!SummitTools.stringIsNull(userAuditBean.getNameAuth())){
+        if(!SummitTools.stringIsNull(userAuditBean.getUserNameAuth())){
             sql.append(" and user.USERNAME=? ");
+            lm.put(index,userAuditBean.getUserNameAuth());
+            index ++;
+        }
+        if(!SummitTools.stringIsNull(userAuditBean.getNameAuth())){
+            sql.append(" and user.NAME=? ");
             lm.put(index,userAuditBean.getNameAuth());
             index ++;
         }
@@ -149,4 +154,5 @@ public class EditInvalidUtil {
         }
         return false;
     }
+
 }

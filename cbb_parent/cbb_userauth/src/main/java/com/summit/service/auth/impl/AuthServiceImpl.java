@@ -420,9 +420,9 @@ public class AuthServiceImpl  implements AuthService {
                                 user_json.containsKey("userName_auth") ? user_json.getString("userName_auth") : null
                         );
                         //3、保存行政区划
-                        String adcdSql = " delete from sys_user_adcd where USERNAME  IN ('" + user_json.getString("userName_auth") + "') ";
-                        jdbcTemplate.update(adcdSql);
-                        if (null != user_json && SummitTools.stringNotNull(user_json.getString("adcd_auth"))){
+                        if (null != user_json && user_json.containsKey("adcd_auth") && SummitTools.stringNotNull(user_json.getString("adcd_auth"))){
+                            String adcdSql = " delete from sys_user_adcd where USERNAME  IN ('" + user_json.getString("userName_auth") + "') ";
+                            jdbcTemplate.update(adcdSql);
                             String adcd_auth = user_json.getString("adcd_auth");
                             String[] adcds = adcd_auth.split(",");
                             if (adcds != null && adcds.length > 0) {
@@ -441,9 +441,9 @@ public class AuthServiceImpl  implements AuthService {
                             }
                         }
                         //4、保存部门表
-                        String deptSql = " delete from SYS_USER_DEPT where USERNAME  IN ('" + user_json.getString("userName_auth") + "') ";
-                        jdbcTemplate.update(deptSql);
-                        if (null != user_json && SummitTools.stringNotNull(user_json.getString("dept_auth"))){
+                        if (null != user_json && user_json.containsKey("dept_auth") && SummitTools.stringNotNull(user_json.getString("dept_auth"))){
+                            String deptSql = " delete from SYS_USER_DEPT where USERNAME  IN ('" + user_json.getString("userName_auth") + "') ";
+                            jdbcTemplate.update(deptSql);
                             String dept_auth = user_json.getString("dept_auth");
                             String[] depts = dept_auth.split(",");
                             if (depts != null && depts.length > 0) {
