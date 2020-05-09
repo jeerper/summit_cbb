@@ -21,6 +21,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
@@ -93,7 +94,6 @@ public class AuthController {
 
     @ApiOperation(value = "参数为id数组,isAudited:审核方式(1:批准,2:拒绝)", notes = "根据id审核用户信息")
     @PostMapping(value = "/authByIdBatch")
-    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = {Exception.class})
     public RestfulEntityBySummit<String> authByIdBatch(@RequestBody AuditTyptInfo auditTyptInfo) {
         LogBean logBean = new LogBean();
         logBean.setStime(DateUtil.DTFormat("yyyy-MM-dd HH:mm:ss", new Date()));
@@ -111,6 +111,9 @@ public class AuthController {
         } catch (Exception e) {
             logger.error("用户信息审核失败:", e);
             logBean.setActionFlag("0");
+            if (e instanceof DuplicateKeyException) {
+                return ResultBuilder.buildError(ResponseCodeEnum.CODE_9999, "部门编码已存在!",null);
+            }
             return ResultBuilder.buildError(ResponseCodeEnum.CODE_9999, e.getMessage(), null);
         }
         //SummitTools.getLogBean(logBean, "审核管理", "审核用户:" +authIds, "6");

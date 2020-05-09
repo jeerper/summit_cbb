@@ -12,6 +12,7 @@ import com.summit.common.CommonConstants;
 import com.summit.common.api.userauth.RemoteUserLogOutService;
 import com.summit.common.entity.AuthBean;
 import com.summit.common.entity.DeptAuditBean;
+import com.summit.common.entity.ResponseCodeEnum;
 import com.summit.common.entity.UserInfo;
 import com.summit.common.redis.user.UserInfoCache;
 import com.summit.dao.repository.*;
@@ -339,6 +340,7 @@ public class AuthServiceImpl  implements AuthService {
     }
 
     @Override
+    @Transactional(rollbackFor = {Exception.class})
     public int authByIdBatch(List<String> authIds, String isAudited) throws Exception {
         if(authIds == null || isAudited == null){
             return CommonConstants.UPDATE_ERROR;

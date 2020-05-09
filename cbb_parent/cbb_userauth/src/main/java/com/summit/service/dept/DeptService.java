@@ -17,6 +17,7 @@ import org.apache.commons.collections.map.LinkedMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -399,7 +400,8 @@ public class DeptService {
      * @param
      * @return
      */
-    public void edit(DeptBean ab) {
+    @Transactional(rollbackFor = {Exception.class})
+    public void edit(DeptBean ab) throws Exception {
         String sql = "UPDATE SYS_DEPT SET  pid = ?, DEPTCODE = ?, DEPTNAME = ?, ADCD=?,REMARK = ?,DEPTHEAD=?, deptType=?  where id = ? ";
         jdbcTemplate.update(
                 sql,
@@ -412,7 +414,6 @@ public class DeptService {
                 ab.getDeptType(),
                 ab.getId()
         );
-        //return ResponseCodeBySummit.CODE_0000;
     }
 
     /**

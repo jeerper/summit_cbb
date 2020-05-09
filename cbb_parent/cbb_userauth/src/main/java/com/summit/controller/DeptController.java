@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.List;
 
 import com.summit.common.Common;
+import com.summit.common.CommonConstants;
 import com.summit.common.entity.*;
 import com.summit.util.EditInvalidUtil;
 import com.summit.util.UserInfoUtil;
@@ -12,6 +13,8 @@ import org.apache.poi.ss.formula.functions.T;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DuplicateKeyException;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
@@ -45,6 +48,8 @@ public class DeptController {
     EditInvalidUtil editInvalidUtil;
     @Autowired
     private UserInfoUtil userInfoUtil;
+    @Autowired
+    public JdbcTemplate jdbcTemplate;
     /**
      * 查询部门树
      *
@@ -228,28 +233,26 @@ public class DeptController {
      */
     @ApiOperation(value = "部门编辑", notes = "id,部门名称(deptName),上级部门(pid)都是必输项,没有上级部门为pid=-1 ")
     @RequestMapping(value = "/edit", method = RequestMethod.POST)
-    public RestfulEntityBySummit<String> edit(@RequestBody DeptBean deptBean) {
+    public RestfulEntityBySummit<String> edit(@RequestBody DeptBean ab) throws Exception {
         LogBean logBean = new LogBean();
         logBean.setStime(DateUtil.DTFormat("yyyy-MM-dd HH:mm:ss", new Date()));
-        SummitTools.getLogBean(logBean, "部门管理", "修改部门信息:" + JSONObject.fromObject(deptBean).toString(), "2");
+        SummitTools.getLogBean(logBean, "部门管理", "修改部门信息:" + JSONObject.fromObject(ab).toString(), "2");
         try {
-            ds.edit(deptBean);
+            ds.edit(ab);
             logBean.setActionFlag("1");
             logUtil.insertLog(logBean);
-            return ResultBuilder.buildSuccess();
         } catch (Exception e) {
-            logger.error("操作失败：", e);
             logBean.setActionFlag("0");
             logBean.setErroInfo(e.getMessage());
             logUtil.insertLog(logBean);
-            return ResultBuilder.buildError(ResponseCodeEnum.CODE_9999);
+            return ResultBuilder.buildError(ResponseCodeEnum.CODE_9999, e.getMessage(),null);
         }
+        return ResultBuilder.buildError(ResponseCodeEnum.CODE_0000, "部门编辑成功", null);
     }
 
 
     @ApiOperation(value = "修改部门审批", notes = "id,部门名称(deptName),上级部门(pid)都是必输项,没有上级部门为pid=-1")
     @PostMapping("/editAudit")
-    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = {Exception.class})
     public RestfulEntityBySummit<String> editAudit(@RequestBody DeptAuditBean deptAuditBean){
         LogBean logBean = new LogBean();
         logBean.setStime(DateUtil.DTFormat("yyyy-MM-dd HH:mm:ss", new Date()));
@@ -283,8 +286,11 @@ public class DeptController {
             logBean.setActionFlag("0");
             logBean.setErroInfo(e.getMessage());
             logUtil.insertLog(logBean);
-            return ResultBuilder.buildError(ResponseCodeEnum.CODE_9999);
+            if (e instanceof DuplicateKeyException) {
+                return ResultBuilder.buildError(ResponseCodeEnum.CODE_9999, "部门编码已存在!",null);
+            }
         }
+        return ResultBuilder.buildError(ResponseCodeEnum.CODE_0000, "部门编辑成功", null);
     }
 
 

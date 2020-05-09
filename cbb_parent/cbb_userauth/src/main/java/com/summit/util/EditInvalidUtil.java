@@ -29,6 +29,11 @@ public class EditInvalidUtil {
         StringBuffer sql=new StringBuffer("select * from sys_dept dept where 1=1  ");
         LinkedMap lm=new LinkedMap();
         Integer index =1;
+        if(!SummitTools.stringIsNull(deptAuditBean.getDeptIdAuth())){
+            sql.append(" and dept.ID=? ");
+            lm.put(index,deptAuditBean.getDeptIdAuth());
+            index ++;
+        }
         if(!SummitTools.stringIsNull(deptAuditBean.getDeptcodeAuth())){
             sql.append(" and dept.DEPTCODE=? ");
             lm.put(index,deptAuditBean.getDeptcodeAuth());
