@@ -30,6 +30,7 @@ app:
     - '/swagger-ui.html'
     - '/swagger/api-docs'
     - '/webjars/**'
+    - '/**/wechat/**'
 
 
 
