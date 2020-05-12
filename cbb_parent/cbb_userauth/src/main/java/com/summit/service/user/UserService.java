@@ -388,7 +388,7 @@ public class UserService {
                 }
             }*/
             delUserRoleByUserName(username);
-            RestfulEntityBySummit<Boolean> logout = remoteUserLogOutService.logout();
+            remoteUserLogOutService.logout(username);
             /*Boolean logoutData = logout.getData();
             if (!logoutData){
                 throw new Exception("还未注销用户!");
