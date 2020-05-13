@@ -171,14 +171,14 @@ public class AuthServiceImpl  implements AuthService {
             map.put("apply_username",auth_json.getString("USERNAME"));
             map.put("apply_time",auth_json.getString("apply_time"));
             if ("0".equals(apply_type)){//机构
-                StringBuffer dept_auth_sql=new StringBuffer("SELECT auth.id,auth.apply_type,auth.apply_Id,dept.DEPTNAME,dept.DEPTCODE from sys_auth auth  ");
+                StringBuffer dept_auth_sql=new StringBuffer("SELECT auth.id,auth.apply_type,auth.apply_Id,dr.deptName,dr.deptcode from sys_auth auth  ");
                 dept_auth_sql.append("INNER JOIN sys_dept_auth authDept on auth.apply_Id=authDept.id  ");
-                dept_auth_sql.append("INNER JOIN sys_dept dept on authDept.deptId_auth=dept.ID  where auth.id=? ");
+                dept_auth_sql.append("INNER JOIN sys_dept_record dr on authDept.deptRecord_id=dr.id  where auth.id=? ");
                 LinkedMap user_auth = new LinkedMap();
                 user_auth.put(1, id);
                 net.sf.json.JSONObject dept_auth_json = ur.queryOneCustom(dept_auth_sql.toString(), user_auth);
-                String deptname = dept_auth_json.getString("DEPTNAME");
-                String deptcode = dept_auth_json.getString("DEPTCODE");
+                String deptname = dept_auth_json.getString("deptName");
+                String deptcode = dept_auth_json.getString("deptcode");
                 net.sf.json.JSONObject new_deptJson=queryDeptAuthByDeptID(apply_id);
                 String deptRecord_id = new_deptJson.getString("deptRecord_id");
                 net.sf.json.JSONObject old_deptJson=queryDeptRecordByDeptID(deptRecord_id);
