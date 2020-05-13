@@ -218,6 +218,9 @@ public class SendSmsServiceImpl implements SendSmsService {
                 log.error("发送短信失败,客户端异常", e);
             }
             smsDao.insertSms(smsEntity);
+            if(StrUtil.isBlank(smsEntity.getBizId())){
+                continue;
+            }
             //发送完成后启动定时任务，查询阿里短信接口，获取发送结果
             Observable.just(smsEntity)
                     .observeOn(Schedulers.io())
