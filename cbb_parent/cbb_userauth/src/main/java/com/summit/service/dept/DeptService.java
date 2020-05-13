@@ -461,6 +461,9 @@ public class DeptService {
                 if (!CommonUtil.isEmptyList(depts)){
                     throw new Exception("该部门下还有子部门,无法删除");
                 }
+                if(deptId.equalsIgnoreCase("1")){
+                    throw new Exception("根节点请勿删除或移动");
+                }
             }
         }else {
             com.alibaba.fastjson.JSONObject jsonObject=new com.alibaba.fastjson.JSONObject();
@@ -468,6 +471,9 @@ public class DeptService {
             List<String> depts = deptsService.getAllDeptExcludeParentNodeByPdept(jsonObject);
             if (!CommonUtil.isEmptyList(depts)){
                 throw new Exception("该部门下还有子部门,无法删除");
+            }
+            if(ids.equalsIgnoreCase("1")){
+                throw new Exception("根节点请勿删除或移动");
             }
         }
         ids = "'" + ids.replaceAll(",", "','") + "'";
