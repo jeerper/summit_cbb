@@ -11,10 +11,13 @@ sed -i 's,${WebServer_Port},'${WebServer_Port}',g' ${WORKSPACE}/cbb_parent/${pro
 
 sed -i 's,${Registry_Center_Port},'${Registry_Center_Port}',g' ${WORKSPACE}/cbb_parent/${projectName}/src/main/resources/application-pro.yml
 
+sed -i 's,${ApiGateway_Port},'${ApiGateway_Port}',g' ${WORKSPACE}/cbb_parent/${projectName}/src/main/resources/application-pro.yml
 
 sed -i 's,${Registry_Center_URL},'${Registry_Center_URL}',g' ./.env
 
 sed -i 's,${Registry_Center_IP},'${Registry_Center_IP}',g' ./.env
+
+
 
 
 
