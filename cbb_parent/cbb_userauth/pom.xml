@@ -18,6 +18,7 @@
         <dependency>
             <groupId>com.summit</groupId>
             <artifactId>cbb_common</artifactId>
+            <version>${cbb.common.version}</version>
         </dependency>
         <dependency>
             <groupId>com.summit</groupId>

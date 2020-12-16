@@ -266,7 +266,7 @@
 		<module>cbb_video</module>
     </modules>
 
-	<repositories>
+	<!--<repositories>
 		<repository>
 			<id>summit</id>
 			<name>summit</name>
@@ -279,14 +279,14 @@
 				<updatePolicy>always</updatePolicy>
 			</snapshots>
 		</repository>
-	</repositories>
-	<distributionManagement>
+	</repositories>-->
+	<!--<distributionManagement>
 		<repository>
 			<id>summit</id>
 			<name>summit</name>
 			<url>http://192.168.140.212/repository/summit-maven/</url>
 		</repository>
-	</distributionManagement>
+	</distributionManagement>-->
 
 
 </project>

@@ -2,12 +2,17 @@
 spring:
   datasource:
     driver-class-name: com.mysql.jdbc.Driver
-    url: jdbc:mysql://192.168.140.155:49999/cbb_api_gateway?createDatabaseIfNotExist=true&useSSL=false&useUnicode=yes&characterEncoding=UTF-8
+    url: jdbc:mysql://192.168.141.222:49999/cbb_api_gateway?createDatabaseIfNotExist=true&useSSL=false&useUnicode=yes&characterEncoding=UTF-8
     username: root
     password: Summit2017
+    #url: jdbc:mysql://localhost:3306/cbb_api_gateway?createDatabaseIfNotExist=true&useSSL=false&useUnicode=yes&characterEncoding=UTF-8
+    #username: root
+    #password: 123456
   redis:
-    host: 192.168.140.155
-    port: 10001
+    #host: 192.168.140.153
+    #port: 10001
+    host: 127.0.0.1
+    port: 6379
 eureka:
   instance:
     #使用IP注册服务
@@ -16,4 +21,5 @@ eureka:
     healthcheck:
       enabled: true
     serviceUrl:
-      defaultZone: "http://ucp:Summit2018@192.168.140.155:45000/eureka/"
+     # defaultZone: "http://ucp:Summit2018@192.168.140.153:45000/eureka/"
+      defaultZone: "http://ucp:Summit2018@localhost:8761/eureka/"

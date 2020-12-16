@@ -2,7 +2,7 @@ server:
   port: 22229
 spring:
   profiles:
-    active: pro
+    active: dev
     include: common
   application:
     name: "cbb-notification"

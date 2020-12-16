@@ -14,7 +14,7 @@
     </resultMap>
 
     <sql id="Base_Column">
-        template_id,template_name,template_content,template_code,template_type,create_time,update_time
+        template_id,template_content,template_code,template_type,create_time,update_time
     </sql>
 
     <insert id="insertTemplate" parameterType="com.summit.send.pojo.SmsTemplateEntity">
@@ -22,7 +22,7 @@
         (
         <include refid="Base_Column"/>
         ) values
-        (#{templateId},#{templateName},#{templateContent},#{templateCode},#{templateType},#{createTime},#{updateTime})
+        (#{templateId},#{templateContent},#{templateCode},#{templateType},#{createTime},#{updateTime})
     </insert>
 
 
@@ -30,7 +30,7 @@
 
         select template_code from sms_template
         <where>
-            template_id = #{templateCode}
+            template_code = #{templateCode}
         </where>
     </select>
 

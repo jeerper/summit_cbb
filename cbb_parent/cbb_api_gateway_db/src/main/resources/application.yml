@@ -2,9 +2,10 @@ server:
   port: 22222
 spring:
   profiles:
-    active: pro
+    active: dev
     include: common
   application:
+    #name: "qianyy-cbb-api-gateway-db"
     name: "cbb-api-gateway-db"
   flyway:
     # 如果启动的时候需要flyway管理sql脚本的话，将enabled设置为true
